@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'web',
+        'guard' => 'efectivo',
         'passwords' => 'users',
     ],
 
@@ -40,6 +40,16 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        'api' => [
+            'driver' => 'jwt',
+            'provider' => 'users',
+            'hash' => false,
+        ],
+        'efectivo' => [
+            'driver' => 'jwt',
+            'provider' => 'efectivo',
+            'hash' => false,
+        ],
     ],
 
     /*
@@ -64,7 +74,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
-
+        'efectivo' => [
+            'driver' => 'UserLoginProviderRepo',
+            'table' => 'users',
+        ],
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',

@@ -8,5 +8,15 @@ use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, ValidatesRequests;
+   
+   use AuthorizesRequests, ValidatesRequests;
+
+   protected $response = [
+      'status'=>[
+         'code' => 200,
+         'message' => 'OK'
+         ],
+      'data'=>[]
+   ];
+
 }

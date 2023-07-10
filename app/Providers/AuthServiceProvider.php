@@ -4,6 +4,8 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use App\Http\BillPay\Repositories\UserLoginProviderRepo;
+use Illuminate\Support\Facades\Auth;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -21,6 +23,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+              // add custom guard provider 
+      Auth::provider('UserLoginProviderRepo', function ($app, array $config) {
+        return new UserLoginProviderRepo($app['hash'],$config['table']);
+     });
     }
 }
