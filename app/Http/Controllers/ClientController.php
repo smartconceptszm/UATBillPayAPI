@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\BillPay\Services\ClientService;
-use App\Http\Controllers\CRUDController;
+use App\Http\Controllers\Contracts\CRUDController;
 
 class ClientController extends CRUDController
 {

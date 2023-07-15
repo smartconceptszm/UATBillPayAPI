@@ -3,7 +3,7 @@
 namespace App\Http\BillPay\Services\MoMo\InitiatePaymentSteps;
 
 use App\Http\BillPay\Services\Contracts\EfectivoPipelineContract;
-use App\Http\BillPay\Services\PaymentService;
+use App\Http\BillPay\Services\Payments\PaymentService;
 use App\Http\BillPay\DTOs\BaseDTO;
 
 class Step_CreatePaymentRecord extends EfectivoPipelineContract

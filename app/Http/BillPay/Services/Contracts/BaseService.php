@@ -22,33 +22,33 @@ abstract class BaseService implements ICreateService, IFindAllService,
       $this->repository=$repository;
    }
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(array $criteria = null, array $fields = ['*']):array|null
    {
 
       try {
-         return $this->repository->findAll();
+         return  $this->repository->findAll($criteria, $fields);
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
       
    }
 
-   public function findById(string $id):object|null
+   public function findById(string $id, array $fields = ['*']):object|null
    {
 
       try {
-         return  $this->repository->findById($id);
+         return  $this->repository->findById($id, $fields);
       } catch (\Exception $e) {
          throw new Exception($e->getMessage());
       }
 
    }
 
-   public function findOneBy(array $criteria):object|null
+   public function findOneBy(array $criteria, array $fields = ['*']):object|null
    {
 
       try {
-         return $this->repository->findOneBy($criteria);
+         return $this->repository->findOneBy($criteria, $fields);
       } catch (\Exception $e) {
          throw new Exception($e->getMessage());
       }

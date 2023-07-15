@@ -22,26 +22,26 @@ class RequestLoggerMiddleware
 
     public function terminate($request, $response)
     {
-        
-        //Log the Transaction Details
-        $txParams = $request->ussdParams;
-        if($txParams){
-            if($txParams['error']==''){
-                Log::info('('.$txParams['clientCode'].') '.
-                            'Request Cycle completed: Session id: '.
-                                $txParams['sessionId'].' - Phone: '.
-                                $txParams['mobileNumber'].' - Journey: '.
-                                $txParams['customerJourney']
-                            );
-            }else{
-                Log::error('('.$txParams['clientCode'].') '.
-                                $txParams['error'].'. - Session id: '.
-                                $txParams['sessionId'].' - Phone: '.
-                                $txParams['mobileNumber'].' - Journey: '.
-                                $txParams['customerJourney']
-                            );
-            }
-        }
+      
+      //Log the Transaction Details
+      $txParams = $request->ussdParams;
+      if($txParams){
+         if($txParams['error']==''){
+               Log::info('('.$txParams['clientCode'].') '.
+                           'Request Cycle completed: Session id: '.
+                              $txParams['sessionId'].' - Phone: '.
+                              $txParams['mobileNumber'].' - Journey: '.
+                              $txParams['customerJourney']
+                           );
+         }else{
+               Log::error('('.$txParams['clientCode'].') '.
+                              $txParams['error'].'. - Session id: '.
+                              $txParams['sessionId'].' - Phone: '.
+                              $txParams['mobileNumber'].' - Journey: '.
+                              $txParams['customerJourney']
+                           );
+         }
+      }
 
     }
 

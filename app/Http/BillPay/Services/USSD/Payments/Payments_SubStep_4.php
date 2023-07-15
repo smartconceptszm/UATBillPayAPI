@@ -3,36 +3,38 @@
 namespace App\Http\BillPay\Services\USSD\Payments;
 
 use App\Http\BillPay\Services\Contracts\EfectivoPipelineWithBreakContract;
-use App\Http\BillPay\Services\USSD\Utility\StepService_ConfirmToPay;
 use App\Http\BillPay\DTOs\BaseDTO;
+use Exception;
 
 class Payments_SubStep_4 extends EfectivoPipelineWithBreakContract
 {
 
-    private $confirmToPay;
-    public function __construct(StepService_ConfirmToPay $confirmToPay){
-        $this->confirmToPay=$confirmToPay;
-    }
-
     protected function stepProcess(BaseDTO $txDTO)
     {
 
-        if (\count(\explode("*", $txDTO->customerJourney)) == 4) {
-            $txDTO->stepProcessed=true;
-            try {
-                $txDTO=$this->confirmToPay->handle($txDTO);
-            } catch (\Throwable $e) {
-                $txDTO->errorType = 'InvalidConfimation';
-                $txDTO->error = $e->getMessage();
-                $txDTO->subscriberInput=$txDTO->customerJourney;
-                $txDTO->customerJourney='';
-                return $txDTO;
+      if (\count(\explode("*", $txDTO->customerJourney)) == 4) {
+         $txDTO->stepProcessed=true;
+         try {
+            if ($txDTO->subscriberInput == '1') {
+               $txDTO->response = \strtoupper($txDTO->urlPrefix)." Payment request submitted to ".$txDTO->mnoName."\n".
+                                    "You will receive a PIN prompt shortly!"."\n\n";
+               $txDTO->fireMoMoRequest = true;
+               $txDTO->status = 'COMPLETED';
+               $txDTO->lastResponse = true;
+            }else{
+               if (\strlen($txDTO->subscriberInput) > 1) {
+                  throw new Exception("Customer most likely put in PIN instead of '1' to confirm", 1);
+               }
+               throw new Exception("Invalid confirmation", 1);
             }
-            $txDTO->response= \strtoupper($txDTO->urlPrefix).
-                                    " Payment request submitted to ".$txDTO->mnoName."\n".
-                                        "You will receive a PIN prompt shortly!"."\n\n";
-        }
-        return $txDTO;
+         } catch (\Throwable $e) {
+            $txDTO->subscriberInput = $txDTO->customerJourney;
+            $txDTO->errorType = 'InvalidConfimation';
+            $txDTO->error = $e->getMessage();
+            $txDTO->customerJourney = '';
+         }
+      }
+      return $txDTO;
         
     }
     

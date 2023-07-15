@@ -24,36 +24,6 @@ return new class extends Migration
          $table->timestamps();
       });
 
-      Schema::create('rights', function (Blueprint $table) {
-         $table->id();
-         $table->string('name',50)->unique()->notNullable();
-         $table->string('description',50)->nullable();
-         $table->timestamps();
-      });
-
-      Schema::create('group_rights', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger("group_id")->notNullable();
-         $table->unsignedBigInteger("right_id")->notNullable();
-         $table->timestamps();
-      });
-
-      Schema::create('groups', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger('client_id')->notNullable();
-         $table->string('name',50)->notNullable();
-         $table->string('description',50)->nullable();
-         $table->unique(['client_id','name'],'client_id_name');
-         $table->timestamps();
-      });
-
-      Schema::create('user_groups', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger("user_id")->notNullable();
-         $table->unsignedBigInteger("group_id")->notNullable();
-         $table->timestamps();
-      });
-
    }
 
    /**
@@ -62,10 +32,6 @@ return new class extends Migration
    public function down(): void
    {
       Schema::dropIfExists('users');
-      Schema::dropIfExists('rights');
-      Schema::dropIfExists('group_rights');
-      Schema::dropIfExists('groups');
-      Schema::dropIfExists('user_groups');
    }
 
 };

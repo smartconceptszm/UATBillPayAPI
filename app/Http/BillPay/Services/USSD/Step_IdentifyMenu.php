@@ -4,8 +4,8 @@ namespace App\Http\BillPay\Services\USSD;
 
 use App\Http\BillPay\Services\Contracts\EfectivoPipelineContract;
 use App\Http\BillPay\Services\USSD\Menus\MenuBinderService;
-use App\Http\BillPay\Services\CustomerService;
-use App\Http\BillPay\Services\SessionService;
+use App\Http\BillPay\Services\USSD\ShortcutCustomerService;
+use App\Http\BillPay\Services\USSD\SessionService;
 use App\Http\BillPay\Services\MnoService;
 use Illuminate\Support\Facades\Cache;
 use App\Http\BillPay\DTOs\BaseDTO;
@@ -15,16 +15,16 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
 {
 
    private $menuBinderService;
-   private $customerService;
+   private $shortcutCustomerService;
    private $sessionService;
    private $mnoService;
    private $handleBack;
    public function __construct(MenuBinderService $menuBinderService, 
       SessionService $sessionService, MnoService $mnoService, 
-      CustomerService $customerService)
+      ShortcutCustomerService $shortcutCustomerService)
    {
       $this->menuBinderService = $menuBinderService;
-      $this->customerService = $customerService;
+      $this->shortcutCustomerService = $shortcutCustomerService;
       $this->sessionService = $sessionService;
       $this->mnoService = $mnoService;
    }
@@ -87,7 +87,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
    {
 
        $arrInputs = explode("*", $txDTO->subscriberInput);
-       $customer = $this->customerService->findOneBy([
+       $customer = $this->shortcutCustomerService->findOneBy([
                        'mobileNumber'=>$txDTO->mobileNumber,
                        'client_id'=>$txDTO->client_id
                    ]);

@@ -3,7 +3,7 @@
 namespace App\Http\BillPay\Services\MoMo\ResendSMSSteps;
 
 use App\Http\BillPay\Services\Contracts\EfectivoPipelineContract;
-use App\Http\BillPay\Services\SMSService;
+use App\Http\BillPay\Services\SMS\SMSService;
 use App\Http\BillPay\DTOs\SMSTxDTO;
 use App\Http\BillPay\DTOs\BaseDTO;
 

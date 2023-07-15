@@ -22,20 +22,23 @@ class Payments_SubStep_1 extends EfectivoPipelineWithBreakContract
     protected function stepProcess(BaseDTO $txDTO)
     {
 
-        if (\count(\explode("*", $txDTO->customerJourney)) == 1) {
-            $txDTO->stepProcessed=true;
-            try {    
-                $txDTO = $this->checkPaymentsEnabled->handle($txDTO);
-                if(!$txDTO->response){
-                    $prePaidText = $txDTO->menu === "BuyUnits" ? "PRE-PAID": "";
-                    $txDTO->response = $this->accountNoMenu->handle($prePaidText,$txDTO->urlPrefix);
-                }
-            } catch (\Throwable $e) {
-                $txDTO->error = 'Payments sub step 1. '.$e->getMessage();
-                $txDTO->errorType = 'SystemError';
+      if (\count(\explode("*", $txDTO->customerJourney)) == 1) {
+         $txDTO->stepProcessed=true;
+         try {    
+            $momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
+            if($momoPaymentStatus['enabled']){
+               $prePaidText = $txDTO->menu === "BuyUnits" ? "PRE-PAID": "";
+               $txDTO->response = $this->accountNoMenu->handle($prePaidText,$txDTO->urlPrefix);
+            }else{
+               $txDTO->response = $momoPaymentStatus['responseText'];
+               $txDTO->lastResponse= true;
             }
-        }
-        return $txDTO;
+         } catch (\Throwable $e) {
+            $txDTO->error = 'Payments sub step 1. '.$e->getMessage();
+            $txDTO->errorType = 'SystemError';
+         }
+      }
+      return $txDTO;
         
     }
 }

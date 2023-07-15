@@ -20,7 +20,7 @@ class User extends Authenticatable implements JWTSubject
     */
    protected $fillable = [
          'client_id','username','fullnames', 'email', 'mobileNumber','status'
-   ];
+      ];
 
    /**
     * The attributes that should be hidden for serialization.
@@ -28,14 +28,13 @@ class User extends Authenticatable implements JWTSubject
     * @var array<int, string>
     */
    protected $hidden = [
-      'password',
-      'remember_token',
-   ];
+         'password','remember_token',
+      ];
 
 
    protected $attributes = [
          'status' => 'REGISTERED'
-   ];
+      ];
 
    /**
     * The attributes that should be cast.
@@ -43,9 +42,11 @@ class User extends Authenticatable implements JWTSubject
     * @var array<string, string>
     */
    protected $casts = [
-      'email_verified_at' => 'datetime',
-      'password' => 'hashed',
-   ];
+         'email_verified_at' => 'datetime:Y-m-d H:i:s',
+         'created_at' => 'datetime:Y-m-d H:i:s',
+         'updated_at' => 'datetime:Y-m-d H:i:s',
+         'password' => 'hashed',
+      ];
 
    /**
     * Get the identifier that will be stored in the subject claim of the JWT.

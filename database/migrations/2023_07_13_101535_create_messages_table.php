@@ -1,0 +1,38 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+   /**
+    * Run the migrations.
+    */
+   public function up(): void
+   {
+      Schema::create('messages', function (Blueprint $table) {
+         $table->id();
+         $table->string('mobileNumber',12)->notNullable();
+         $table->string('message',160)->notNullable();
+         $table->unsignedBigInteger("mno_id")->notNullable();
+         $table->unsignedBigInteger("client_id")->notNullable();
+         $table->unsignedBigInteger('bulk_id')->nullable();
+         $table->string('transaction_id',50)->nullable();
+         $table->float('amount',10,2)->default(0);
+         $table->enum('type',['RECEIPT','SINGLE','BULK','BULKCUSTOM','NOTIFICATION'])->default('RECEIPT')->notNullable();
+         $table->enum('status',['INITIATED','DELIVERED','FAILED'])->default('INITIATED')->notNullable();
+         $table->unsignedBigInteger('user_id')->nullable();
+         $table->text('error')->nullable();
+         $table->timestamps();
+      });
+   }
+
+   /**
+    * Reverse the migrations.
+    */
+   public function down(): void
+   {
+      Schema::dropIfExists('messages');
+   }
+};

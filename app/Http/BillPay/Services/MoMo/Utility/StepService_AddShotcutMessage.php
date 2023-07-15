@@ -2,7 +2,7 @@
 
 namespace App\Http\BillPay\Services\MoMo\Utility;
 
-use App\Http\BillPay\Services\CustomerService;
+use App\Http\BillPay\Services\USSD\ShortcutCustomerService;
 use App\Http\BillPay\DTOs\BaseDTO;
 
 use Exception;
@@ -10,10 +10,10 @@ use Exception;
 class StepService_AddShotcutMessage
 {
 
-    private $customerService;
-    public function __construct(CustomerService $customerService)
+    private $shortcutCustomerService;
+    public function __construct(ShortcutCustomerService $shortcutCustomerService)
     {
-        $this->customerService = $customerService;
+        $this->shortcutCustomerService = $shortcutCustomerService;
     }
 
     public function handle (BaseDTO $momoDTO)
@@ -21,13 +21,13 @@ class StepService_AddShotcutMessage
 
         try {
             //Records in Cutomers Table UNIQUE on Phone_Number
-            $customer = $this->customerService->findOneBy([
+            $customer = $this->shortcutCustomerService->findOneBy([
                         'client_id'=>$momoDTO->client_id,
                         'mobileNumber'=>$momoDTO->mobileNumber
                     ]);
             if ($customer->count() == 0) {
                 //Create Record
-                $this->customerService->create([
+                $this->shortcutCustomerService->create([
                         'client_id'=> $momoDTO->client_id,
                         'accountNumber' => $momoDTO->accountNumber,
                         'mobileNumber' => $momoDTO->mobileNumber,

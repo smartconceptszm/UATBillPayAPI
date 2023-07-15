@@ -4,7 +4,7 @@ namespace App\Http\BillPay\Services\USSD;
 
 use App\Http\BillPay\Services\USSD\ErrorResponses\ErrorResponseBinderService;
 use App\Http\BillPay\Services\Contracts\EfectivoPipelineContract;
-use App\Http\BillPay\Services\SessionService;
+use App\Http\BillPay\Services\USSD\SessionService;
 use App\Http\BillPay\DTOs\BaseDTO;
 
 class Step_SaveSession extends EfectivoPipelineContract

@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+   /**
+    * Run the migrations.
+    */
+   public function up(): void
+   {
+
+      Schema::create('shortcut_customers', function (Blueprint $table) {
+         $table->id();
+         $table->unsignedBigInteger('client_id')->notNullable();
+         $table->string('mobileNumber',12)->notNullable();
+         $table->string('accountNumber',20)->notNullable();
+         $table->unique(['client_id','accountNumber', 'mobileNumber'],'accountNumber_mobileNumber');
+         $table->timestamps();
+      });
+   }
+
+   /**
+    * Reverse the migrations.
+    */
+   public function down(): void
+   {
+      Schema::dropIfExists('shortcut_customers');
+   }
+};

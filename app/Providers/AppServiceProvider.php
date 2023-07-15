@@ -107,7 +107,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
       //
 
       //USSD Error Response Handlers
-         $this->app->singleton('InvalidConfirmation', function () {
+         $this->app->singleton('InvalidConfimation', function () {
                return new InvalidConfirmation();
          });
          $this->app->singleton('MaintenanceMode', function () {
@@ -212,8 +212,8 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
          
          $this->app->singleton('Complaint_lukanga', function () {
                return new Complaint_Local(
-                     new \App\Http\BillPay\Services\ComplaintService(
-                           new \App\Http\BillPay\Repositories\ComplaintRepo()
+                     new \App\Http\BillPay\Services\CRM\ComplaintService(
+                           new \App\Http\BillPay\Repositories\CRM\ComplaintRepo()
                      )
                   );
          });
@@ -229,7 +229,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
          $this->app->singleton('Updates_lukanga', function () {
                return new UpdateDetails_Local(
                   new \App\Http\BillPay\Services\CustomerDetailService(
-                     new \App\Http\BillPay\Repositories\CustomerDetailRepo())
+                     new \App\Http\BillPay\Repositories\MenuConfigs\CustomerFieldRepo())
                );
          });
       //

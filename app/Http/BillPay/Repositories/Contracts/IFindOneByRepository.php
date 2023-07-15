@@ -4,5 +4,5 @@ namespace App\Http\BillPay\Repositories\Contracts;
 
 interface IFindOneByRepository
 {
-   public function findOneBy(array $criteria):object|null;
+   public function findOneBy(array $criteria, array $fields = ['*']):object|null;
 }

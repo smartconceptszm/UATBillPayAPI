@@ -3,7 +3,7 @@
 namespace App\Http\BillPay\Services\USSD\FaultsComplaints\ClientCallers;
 
 use App\Http\BillPay\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient;
-use App\Http\BillPay\Services\ComplaintService;
+use App\Http\BillPay\Services\CRM\ComplaintService;
 use Exception;
 
 class Complaint_Local implements IComplaintClient

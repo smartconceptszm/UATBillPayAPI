@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\BillPay\Services\DashboardService;
-use App\Http\Controllers\CRUDIndexController;
+use App\Http\Controllers\Contracts\CRUDIndexController;
 
 class DashboardController extends CRUDIndexController
 {

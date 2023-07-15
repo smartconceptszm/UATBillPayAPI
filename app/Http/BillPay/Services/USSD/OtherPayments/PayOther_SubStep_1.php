@@ -29,8 +29,8 @@ class PayOther_SubStep_1 extends EfectivoPipelineWithBreakContract
       if (\count(\explode("*", $txDTO->customerJourney)) == 1) {
          $txDTO->stepProcessed=true;
          try {    
-            $txDTO = $this->checkPaymentsEnabled->handle($txDTO);
-            if(!$txDTO->response){
+            $momoPaymentStatus =  $this->checkPaymentsEnabled->handle($txDTO);
+            if($momoPaymentStatus['enabled']){
                $otherPayTypes = $this->otherPayTypes->findAll(['client_id' => $txDTO->client_id]);
                if(\count($otherPayTypes) > 1){
                   $stringMenu = "Select:\n";
@@ -51,6 +51,9 @@ class PayOther_SubStep_1 extends EfectivoPipelineWithBreakContract
                   $txDTO->subscriberInput = $paymentType->order;
                }
 
+            }else{
+               $txDTO->response = $momoPaymentStatus['responseText'];
+               $txDTO->lastResponse= true;
             }
          } catch (\Throwable $e) {
             $txDTO->error = 'Payments sub step 1. '.$e->getMessage();
