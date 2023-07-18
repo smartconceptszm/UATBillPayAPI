@@ -9,21 +9,22 @@ use App\Http\BillPay\DTOs\BaseDTO;
 class Step_UpdateTransaction extends EfectivoPipelineContract
 {
 
-    private $paymentService;
-    public function __construct(PaymentService $paymentService)
-    {
-        $this->paymentService=$paymentService;
-    }
+   private $paymentService;
+   public function __construct(PaymentService $paymentService)
+   {
+      $this->paymentService=$paymentService;
+   }
 
-    protected function stepProcess(BaseDTO $momoDTO)
-    {
+   protected function stepProcess(BaseDTO $momoDTO)
+   {
 
-        try {
-            $this->paymentService->update($momoDTO->toPaymentData(),$momoDTO->id);
-        } catch (\Throwable $e) {
-            $momoDTO->error='At updating payment record. '.$e->getMessage();
-        }
-        return $momoDTO;
+      try {
+         $this->paymentService->update($momoDTO->toPaymentData(),$momoDTO->id);
+      } catch (\Throwable $e) {
+         $momoDTO->error='At updating payment record. '.$e->getMessage();
+      }
+      return $momoDTO;
 
-    }
+   }
+
 }

@@ -9,25 +9,26 @@ use App\Http\BillPay\DTOs\BaseDTO;
 class Step_CreatePaymentRecord extends EfectivoPipelineContract
 {
     
-    private  $paymentService;
-    public function __construct(PaymentService $paymentService)
-    {
-        $this->paymentService= $paymentService;
-    }
+   private  $paymentService;
+   public function __construct(PaymentService $paymentService)
+   {
+      $this->paymentService= $paymentService;
+   }
 
-    protected function stepProcess(BaseDTO $momoDTO)
-    {
+   protected function stepProcess(BaseDTO $momoDTO)
+   {
 
-        try {
-            if($momoDTO->error == ""){
-                $payment = $this->paymentService->create($momoDTO->toPaymentData());
-                $momoDTO->id = $payment->status;
-                $momoDTO->id = $payment->id;
-            }
-        } catch (\Throwable $e) {
-            $momoDTO->error='At creating payment record. '.$e->getMessage();
-        }
-        return $momoDTO;
+      try {
+         if($momoDTO->error == ""){
+               $payment = $this->paymentService->create($momoDTO->toPaymentData());
+               $momoDTO->id = $payment->status;
+               $momoDTO->id = $payment->id;
+         }
+      } catch (\Throwable $e) {
+         $momoDTO->error='At creating payment record. '.$e->getMessage();
+      }
+      return $momoDTO;
 
-    }
+   }
+   
 }

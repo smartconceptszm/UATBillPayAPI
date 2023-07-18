@@ -14,7 +14,7 @@ class MaintenanceMode implements IErrorResponse
         try {    
             $txDTO->response = \env('MODE_MESSAGE');
             $txDTO->error=$txDTO->response;
-            $txDTO->lastResponse= true;
+            $txDTO->lastResponse = true;
         } catch (\Throwable $e) {
             $txDTO->error = 'At Generate maintenance mode response. '.$e->getMessage();
         }

@@ -32,12 +32,13 @@ return [
                   "Home"=>"Welcome to Lukanga Water. Enter\n".
                               "1. Pay Water Bill\n".
                               "2. Check Balance\n".
-                              "3. Report Fault/Submit Complaint\n",
-                  //"4. Update Mobile Phone No.\n".
+                              "3. Report Fault/Complaint\n".
+                              "4. Update customer details\n",
                   'menu'=>[
                               "PayBill"=>"1",
                               "CheckBalance"=>"2",
-                              "FaultsComplaints"=>"3"
+                              "FaultsComplaints"=>"3",
+                              "UpdateDetails"=>"4"
                         ],
                   'hasPrepaid'=>false,
                   'prepaidExample'=>'',

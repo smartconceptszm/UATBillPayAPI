@@ -4,67 +4,51 @@ namespace App\Http\BillPay\Services\USSD\UpdateDetails;
 
 use App\Http\BillPay\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\BillPay\Services\USSD\Utility\StepService_GetCustomerAccount;
-use App\Http\BillPay\Services\ClientCustomerDetailViewService;
+use Illuminate\Support\Facades\Cache;
 use App\Http\BillPay\DTOs\BaseDTO;
+use Illuminate\Support\Carbon;
 use Exception;
 
 class UpdateDetails_SubStep_2 extends EfectivoPipelineWithBreakContract
 {
 
    private $getCustomerAccount;
-   private $detailsToChange;
-   public function __construct(ClientCustomerDetailViewService $detailsToChange,
-      StepService_GetCustomerAccount $getCustomerAccount)
+   public function __construct(StepService_GetCustomerAccount $getCustomerAccount)
    {
       $this->getCustomerAccount = $getCustomerAccount;
-      $this->detailsToChange = $detailsToChange;
    }
 
    protected function stepProcess(BaseDTO $txDTO)
    {
 
-      if(\count(\explode("*", $txDTO->customerJourney))==2){
-         $txDTO->stepProcessed=true;
+      if(\count(\explode("*", $txDTO->customerJourney)) == 2){
+         $txDTO->stepProcessed = true;
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-            $detailsToChange = $this->detailsToChange->findAll(['client_id'=> $txDTO->client_id]);
-            if(\count($detailsToChange) > 1){
-               $stringMenu = "Select item to edit:\n";
-               foreach ($detailsToChange as $detailType) {
-                  $stringMenu .= $detailType->order.'. '.$detailType->name."\n";
-               }
-               $txDTO->response = $stringMenu; 
-            }
-
-            if(\count($detailsToChange) == 1){
-               try {
-                  $txDTO->customer = $this->getCustomerAccount->handle(
-                                          $txDTO->accountNumber,$txDTO->urlPrefix,$txDTO->client_id);
-               } catch (\Throwable $e) {
-                  if($e->getCode()==1){
-                     $txDTO->errorType = 'InvalidAccount';
-                  }else{
-                     $txDTO->errorType = 'SystemError';
-                  }
-                  $txDTO->error=$e->getMessage();
-                  return $txDTO;
-               }
-               $itemToChange = $detailsToChange[0];
-               $txDTO->customerJourney = $txDTO->customerJourney*$txDTO->subscriberInput;
-               $txDTO->subscriberInput = $itemToChange->order;
-               $txDTO->response = "Update ".$itemToChange->name." on:\n". 
-               "Acc: ".$txDTO->subscriberInput."\n".
-               "Name: ".$txDTO->customer['name']."\n". 
-               "Addr: ".$txDTO->customer['address']."\n". 
-               "Mobile: ".$txDTO->customer['mobileNumber']."\n\n".
-               $itemToChange->prompt; 
-            }
-            if(\count($detailsToChange) == 1){
-               throw new Exception("No records found", 1);
-            }
+            $txDTO->accountNumber = $txDTO->subscriberInput;
+            $txDTO->customer = $this->getCustomerAccount->handle(
+                                    $txDTO->accountNumber,$txDTO->urlPrefix,$txDTO->client_id);
+            $txDTO->response = "Update details on:\n". 
+            "Acc: ".$txDTO->subscriberInput."\n".
+            "Name: ".$txDTO->customer['name']."\n". 
+            "Addr: ".$txDTO->customer['address']."\n". 
+            "Mobile: ".$txDTO->customer['mobileNumber']."\n\n".
+            "Enter\n". 
+                     "1. Confirm\n".
+                     "0. Back";
+            $cacheValue = \json_encode([
+                                 'must'=>false,
+                                 'steps'=>1,
+                           ]);                    
+            Cache::put($txDTO->sessionId."handleBack",$cacheValue, 
+                  Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
          } catch (\Throwable $e) {
-            $txDTO->errorType = 'SystemError';
-            $txDTO->error=$e->getMessage();  
+            if($e->getCode() == 1){
+               $txDTO->errorType = 'InvalidAccount';
+            }else{
+               $txDTO->errorType = 'SystemError';
+            }
+            $txDTO->error = $e->getMessage(); 
          }
       }
       return $txDTO;

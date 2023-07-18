@@ -9,35 +9,35 @@ use App\Http\BillPay\DTOs\BaseDTO;
 class Step_GetPaymentAmounts extends EfectivoPipelineContract
 {
 
-    private $calculatePaymentAmounts;
-    public function __construct(StepService_CalculatePaymentAmounts $calculatePaymentAmounts)
-    {
-        $this->calculatePaymentAmounts=$calculatePaymentAmounts;
-    }
+   private $calculatePaymentAmounts;
+   public function __construct(StepService_CalculatePaymentAmounts $calculatePaymentAmounts)
+   {
+      $this->calculatePaymentAmounts=$calculatePaymentAmounts;
+   }
 
-    protected function stepProcess(BaseDTO $momoDTO)
-    {
-        
-        try {
-            if($momoDTO->error==""){
-                $arrCustomerJourney = \explode("*", $momoDTO->customerJourney);
-                if($momoDTO->menu=='PayBill'){
-                    $paymentAmount = (float)(\str_replace(",", "",$arrCustomerJourney[3]));
-                }else{
-                    $paymentAmount= (float)(\str_replace(",", "",$arrCustomerJourney[4]));
-                }
-                $calculatedAmounts=$this->calculatePaymentAmounts->handle(
-                                            $momoDTO->urlPrefix,$momoDTO->mno_id,$paymentAmount);
-                $momoDTO->surchargeAmount= $calculatedAmounts['surchargeAmount'];
-                $momoDTO->receiptAmount= $calculatedAmounts['receiptAmount'];
-                $momoDTO->paymentAmount= $calculatedAmounts['paymentAmount'];
-                $momoDTO->clientCode= $calculatedAmounts['clientCode'];
+   protected function stepProcess(BaseDTO $momoDTO)
+   {
+      
+      try {
+         if($momoDTO->error==""){
+            $arrCustomerJourney = \explode("*", $momoDTO->customerJourney);
+            if($momoDTO->menu=='PayBill'){
+               $paymentAmount = \str_replace(",", "",$arrCustomerJourney[3]);
+            }else{
+               $paymentAmount = \str_replace(",", "",$arrCustomerJourney[4]);
             }
-        } catch (\Throwable $e) {
-            $momoDTO->error='At Calculate Payment Amounts. '.$e->getMessage();
-        }
-        return $momoDTO;
+            $calculatedAmounts=$this->calculatePaymentAmounts->handle(
+                                       $momoDTO->urlPrefix,$momoDTO->mno_id,$paymentAmount);
+            $momoDTO->surchargeAmount= $calculatedAmounts['surchargeAmount'];
+            $momoDTO->receiptAmount= $calculatedAmounts['receiptAmount'];
+            $momoDTO->paymentAmount= $calculatedAmounts['paymentAmount'];
+            $momoDTO->clientCode= $calculatedAmounts['clientCode'];
+         }
+      } catch (\Throwable $e) {
+         $momoDTO->error='At Calculate Payment Amounts. '.$e->getMessage();
+      }
+      return $momoDTO;
 
-    }
+   }
 
 }

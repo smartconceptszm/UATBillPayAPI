@@ -26,9 +26,7 @@ class BulkSMSJob extends BaseJob
     */
    public function handle(SMSService $smsService)
    {
-      foreach ($this->arrSMSes as $theSMS) {
-         $smsService->send($theSMS);
-      }
+      $smsService->sendMany($this->arrSMSes);
    }
 
 }

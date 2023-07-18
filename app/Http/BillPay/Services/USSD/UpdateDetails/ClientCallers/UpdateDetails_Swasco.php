@@ -18,10 +18,11 @@ class UpdateDetails_Swasco implements IUpdateDetailsClient
    {
 
       try{
+
          return $this->billingClient->changeCustomerDetail([
                      'accountNumber' => $detailsData['accountNumber'],
                      "phoneNumber" => $detailsData['mobileNumber'],
-                     'newMobileNo' => $detailsData['details']
+                     'newMobileNo' => $detailsData['updates'][1]
                   ]);
       } catch (\Throwable $e) {
          throw new Exception('At post updated customer details. '.$e->getMessage());

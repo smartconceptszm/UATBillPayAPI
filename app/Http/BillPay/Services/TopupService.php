@@ -8,9 +8,9 @@ use App\Http\BillPay\Repositories\TopupRepo;
 class TopupService   extends BaseService
 {
 
-    public function __construct(TopupRepo $repository)
-    {
-        parent::__construct($repository);
-    }
+   public function __construct(TopupRepo $repository)
+   {
+      parent::__construct($repository);
+   }
 
 }

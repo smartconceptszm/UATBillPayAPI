@@ -15,7 +15,7 @@ class DashboardService implements IFindAllService
         $this->repository=$repository;
     }
 
-    public function findAll(array $criteria=null):array|null{
+    public function findAll(array $criteria=null, array $fields = ['*']):array|null{
 
         try {
             $response=$this->repository->findAll($criteria);

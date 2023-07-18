@@ -11,7 +11,6 @@ class USSDService
    public function handle(BaseDTO $txDTO): BaseDTO
    {
    
-      //Pre-Menu Steps
       // ** Order of the classes in the pipeline is critical!
       $txDTO = \app(Pipeline::class)
             ->send($txDTO)

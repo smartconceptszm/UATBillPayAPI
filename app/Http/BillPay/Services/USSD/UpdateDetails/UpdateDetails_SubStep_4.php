@@ -2,66 +2,111 @@
 
 namespace App\Http\BillPay\Services\USSD\UpdateDetails;
 
-use App\Http\BillPay\Services\Contracts\EfectivoPipelineWithBreakContract;
+use App\Http\BillPay\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient;
 use App\Http\BillPay\Services\USSD\Utility\StepService_GetCustomerAccount;
-use App\Http\BillPay\Services\ClientCustomerDetailViewService;
+use App\Http\BillPay\Services\Contracts\EfectivoPipelineWithBreakContract;
+use App\Http\BillPay\Services\USSD\Utility\StepService_ValidateCRMInput;
+use App\Http\BillPay\Services\MenuConfigs\CustomerFieldService;
+use Illuminate\Support\Facades\Cache;
+use App\Jobs\SendSMSNotificationsJob;
+use Illuminate\Support\Facades\Queue;
 use App\Http\BillPay\DTOs\BaseDTO;
+use Illuminate\Support\Carbon;
 use Exception;
+
 class UpdateDetails_SubStep_4 extends EfectivoPipelineWithBreakContract
 {
 
+   private $customerFieldService;
+   private $updateDetailsClient;
    private $getCustomerAccount;
-   private $detailsToChange;
-   public function __construct(ClientCustomerDetailViewService $detailsToChange,
-      StepService_GetCustomerAccount $getCustomerAccount)
+   private $validateCRMInput;
+   public function __construct(IUpdateDetailsClient $updateDetailsClient,
+      StepService_GetCustomerAccount $getCustomerAccount,
+      StepService_ValidateCRMInput $validateCRMInput,
+      CustomerFieldService $customerFieldService)
    {
+      $this->customerFieldService = $customerFieldService;
+      $this->updateDetailsClient = $updateDetailsClient;
       $this->getCustomerAccount = $getCustomerAccount;
-      $this->detailsToChange = $detailsToChange;
+      $this->validateCRMInput = $validateCRMInput;
    } 
 
    protected function stepProcess(BaseDTO $txDTO)
    {
-      if(\count(\explode("*", $txDTO->customerJourney))==4){
+
+      if(\count(\explode("*", $txDTO->customerJourney)) == 4){
          $txDTO->stepProcessed=true;
          try {
-            $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-            $itemToChange = $this->detailsToChange->findOneBy(['client_id'=> $txDTO->client_id,
-                                 'order'=> $txDTO->subscriberInput]
-                              );
-            if($itemToChange){
-               try {
-                  $txDTO->customer = $this->getCustomerAccount->handle(
-                                          $txDTO->accountNumber,$txDTO->urlPrefix,$txDTO->client_id);
-               } catch (\Throwable $e) {
-                  if($e->getCode()==1){
-                     $txDTO->errorType = 'InvalidAccount';
-                  }else{
-                     $txDTO->errorType = 'SystemError';
-                  }
-                  $txDTO->error=$e->getMessage();
-                  return $txDTO;
-               }
-               $txDTO->response = "Update ".$itemToChange->name." on:\n". 
-                                 "Acc: ".$txDTO->subscriberInput."\n".
-                                 "Name: ".$txDTO->customer['name']."\n". 
-                                 "Addr: ".$txDTO->customer['address']."\n". 
-                                 "Mobile: ".$txDTO->customer['mobileNumber']."\n\n".
-                                 $itemToChange->prompt; 
+            $capturedUpdates = \json_decode(Cache::get($txDTO->sessionId."Updates",''),true);
+            $capturedUpdates = $capturedUpdates? $capturedUpdates:[];
+            $order = \count($capturedUpdates) + 1;
+            $customerFields = $this->customerFieldService->findAll([
+                                          'client_id' => $txDTO->client_id
+                                       ]);
+            $customerField = \array_values(\array_filter($customerFields, function ($record) use($order){
+                  return ($record->order == $order);
+               }));
+            $customerField = $customerField[0]; 
+            $txDTO->subscriberInput = $this->validateCRMInput->handle($customerField,$txDTO->subscriberInput);
+            $capturedUpdates[$order] = $txDTO->subscriberInput;
+            if(\count($customerFields) == (\count($capturedUpdates))){
+               $txDTO->customer = $this->getCustomerAccount->handle(
+                                       $txDTO->accountNumber,$txDTO->urlPrefix,$txDTO->client_id);
+               $txDTO->subscriberInput = \implode(";",\array_values($capturedUpdates));
+               $customerFieldUpdate = [
+                                          'accountNumber' => $txDTO->accountNumber,
+                                          'mobileNumber' => $txDTO->mobileNumber,
+                                          'client_id' => $txDTO->client_id,
+                                          'district' => $txDTO->customer['district'],
+                                          'updates' => $capturedUpdates
+                                    ];
+               $caseNumber = $this->updateDetailsClient->create($customerFieldUpdate);
+               $txDTO->response = "Application to update customer details successfully submitted. Case number: ".
+                                    $caseNumber; 
+               $this->sendSMSNotification($txDTO);
+               $txDTO->lastResponse = true;
+               $txDTO->status='COMPLETED';
+
             }else{
-               throw new Exception("No record found for selection", 1);
+               Cache::put($txDTO->sessionId."Updates",\json_encode($capturedUpdates), 
+                              Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
+               $customerField = \array_values(\array_filter($customerFields, function ($record)use($order){
+                     return ($record->order == $order +1);
+                  }));
+               $customerField = $customerField[0]; 
+               $txDTO->response = $customerField->prompt;
+               $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
+               $txDTO->subscriberInput = \end($arrCustomerJourney);
+               \array_pop($arrCustomerJourney);
+               $txDTO->customerJourney =\implode("*", $arrCustomerJourney);
             }
+
          } catch (\Throwable $e) {
             if($e->getCode() == 1){
                $txDTO->errorType = 'InvalidInput';
-               $txDTO->error = $e->getMessage(); 
             }else{
                $txDTO->errorType = 'SystemError';
-               $txDTO->error = $e->getMessage();  
             }
+            $txDTO->error='At update details step 4. '.$e->getMessage();
          }
       }
       return $txDTO;
 
+   }
+
+   private function sendSMSNotification(BaseDTO $txDTO): void
+   {
+      $arrSMSes = [
+               [
+                  'mobileNumber' => $txDTO->mobileNumber,
+                  'client_id' => $txDTO->client_id,
+                  'message' => $txDTO->response,
+                  'type' => 'NOTIFICATION',
+               ]
+         ];
+      Queue::later(Carbon::now()->addSeconds(3), 
+                     new SendSMSNotificationsJob($arrSMSes));
    }
 
 }

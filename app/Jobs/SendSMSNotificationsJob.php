@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Http\BillPay\Services\External\SMSClients\SMSClientBinderService;
 use App\Http\BillPay\Services\SMS\SMSService;
-use App\Http\BillPay\DTOs\SMSTxDTO;
 use App\Jobs\BaseJob;
 
 class SendSMSNotificationsJob extends BaseJob
@@ -18,7 +17,7 @@ class SendSMSNotificationsJob extends BaseJob
     */
    public function __construct(Array $arrSMSes)
    {
-      $this->arrSMSes=$arrSMSes;
+      $this->arrSMSes = $arrSMSes;
    }
 
    /**
@@ -27,7 +26,7 @@ class SendSMSNotificationsJob extends BaseJob
     * @return void
     */
    public function handle(SMSClientBinderService $smsClientBinderService, 
-                                 SMSService $smsService,SMSTxDTO $smsTxDTO )
+                                 SMSService $smsService)
    {
       //Bind the SMS Client
          $smsClient = '';
@@ -39,9 +38,7 @@ class SendSMSNotificationsJob extends BaseJob
          }
          $smsClientBinderService->bind($smsClient);
       //
-      foreach ($this->arrSMSes as $smsData) {
-         $smsService->send($smsTxDTO->fromArray($smsData));
-      }
+      $smsService->sendMany($this->arrSMSes);
    }
 
 }

@@ -33,14 +33,13 @@ class UpdateDetails implements IUSSDMenu
                   \App\Http\BillPay\Services\USSD\UpdateDetails\UpdateDetails_SubStep_2::class,
                   \App\Http\BillPay\Services\USSD\UpdateDetails\UpdateDetails_SubStep_3::class,
                   \App\Http\BillPay\Services\USSD\UpdateDetails\UpdateDetails_SubStep_4::class,                    
-                  \App\Http\BillPay\Services\USSD\UpdateDetails\UpdateDetails_SubStep_5::class,
-                  \App\Http\BillPay\Services\USSD\UpdateDetails\UpdateDetails_SubStep_6::class
+                  \App\Http\BillPay\Services\USSD\UpdateDetails\UpdateDetails_SubStep_5::class
                ]
             )
             ->thenReturn();
             $txDTO->stepProcessed=false;
          } catch (\Throwable $e) {
-            $txDTO->error='At handle check balance menu. '.$e->getMessage();
+            $txDTO->error='At handle customer field update menu. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';
          }
       }

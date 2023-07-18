@@ -3,16 +3,16 @@
 namespace App\Http\BillPay\Services\USSD\FaultsComplaints;
 
 use App\Http\BillPay\Services\Contracts\EfectivoPipelineWithBreakContract;
-use App\Http\BillPay\Services\ClientComplaintTypeViewService;
+use App\Http\BillPay\Services\MenuConfigs\ComplaintTypeService;
 use App\Http\BillPay\DTOs\BaseDTO;
 
 class FaultsComplaints_SubStep_1 extends EfectivoPipelineWithBreakContract
 {
 
-   private $cCTypeViewService;
-   public function __construct(ClientComplaintTypeViewService $cCTypeViewService)
+   private $complaintType;
+   public function __construct(ComplaintTypeService $complaintType)
    {
-      $this->cCTypeViewService=$cCTypeViewService;
+      $this->complaintType=$complaintType;
    }
 
    protected function stepProcess(BaseDTO $txDTO)
@@ -21,7 +21,7 @@ class FaultsComplaints_SubStep_1 extends EfectivoPipelineWithBreakContract
       if(\count(\explode("*", $txDTO->customerJourney))==1){
          $txDTO->stepProcessed=true;
          try {
-               $arrComplaintTypes = $this->cCTypeViewService->findAll(['client_id'=>$txDTO->client_id]);
+               $arrComplaintTypes = $this->complaintType->findAll(['client_id'=>$txDTO->client_id]);
                $stringMenu = "Select Complaint/Fault Type:\n";
                foreach ($arrComplaintTypes as $complaintType) {
                   $stringMenu.=$complaintType->order.'. '.$complaintType->name."\n";

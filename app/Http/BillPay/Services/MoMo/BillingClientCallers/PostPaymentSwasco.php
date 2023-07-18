@@ -4,7 +4,7 @@ namespace App\Http\BillPay\Services\MoMo\BillingClientCallers;
 
 use App\Http\BillPay\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\BillPay\Services\External\BillingClients\IBillingClient;
-use App\Http\BillPay\Services\ClientOtherPaymentTypeViewService;
+use App\Http\BillPay\Services\MenuConfigs\OtherPaymentTypeService;
 use Illuminate\Support\Facades\Cache;
 use App\Http\BillPay\DTOs\BaseDTO;
 use Illuminate\Support\Carbon;
@@ -14,7 +14,7 @@ class PostPaymentSwasco extends EfectivoPipelineWithBreakContract
 
     private $billingClient;
     private $otherPayTypes;
-    public function __construct(ClientOtherPaymentTypeViewService $otherPayTypes,
+    public function __construct(OtherPaymentTypeService $otherPayTypes,
         IBillingClient $billingClient)
     {
         $this->otherPayTypes = $otherPayTypes;

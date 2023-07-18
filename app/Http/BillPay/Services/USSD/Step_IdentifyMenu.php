@@ -186,7 +186,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
    {
 
       if($arrCustomerJourney){
-         $txDTO->subscriberInput=\end($arrCustomerJourney);
+         $txDTO->subscriberInput = \end($arrCustomerJourney);
          if( \count($arrCustomerJourney) > 1){
                \array_pop($arrCustomerJourney);
                if(\count($arrCustomerJourney)==1){

@@ -213,7 +213,9 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
          $this->app->singleton('Complaint_lukanga', function () {
                return new Complaint_Local(
                      new \App\Http\BillPay\Services\CRM\ComplaintService(
-                           new \App\Http\BillPay\Repositories\CRM\ComplaintRepo()
+                           new \App\Http\BillPay\Repositories\CRM\ComplaintRepo(
+                              new \App\Models\Complaint()
+                           )
                      )
                   );
          });
@@ -222,14 +224,21 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
       //Customer Updates Handlers
          $this->app->singleton('Updates_swasco', function () {
                return new UpdateDetails_Swasco(
-                  new \App\Http\BillPay\Services\External\BillingClients\IBillingClient()
+                  new Swasco(                    
+                     intval(\config('efectivo_clients.swasco.receipting_Timeout')),
+                     intval(\config('efectivo_clients.swasco.remote_Timeout')),
+                     \config('efectivo_clients.swasco.sms_Base_URL'),
+                     \env('SWASCO_base_URL'))
                );
          });
          
          $this->app->singleton('Updates_lukanga', function () {
                return new UpdateDetails_Local(
                   new \App\Http\BillPay\Services\CustomerDetailService(
-                     new \App\Http\BillPay\Repositories\MenuConfigs\CustomerFieldRepo())
+                     new \App\Http\BillPay\Repositories\MenuConfigs\CustomerFieldRepo(
+                        new \App\Models\CustomerField()
+                     )
+                  )
                );
          });
       //

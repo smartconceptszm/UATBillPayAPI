@@ -18,8 +18,8 @@ return new class extends Migration
          $table->string('name',50)->notNullable();
          $table->unsignedTinyInteger('order')->notNullable();
          $table->enum('requiresDetails',['YES','NO'])->default('NO');
-         $table->enum('detailType',['MOBILE','READING','METER','PAYMENTMODE'])->nullable();
-         $table->string('prompt')->nullable();
+         $table->enum('detailType',['MOBILE','READING','METER','PAYMENTMODE','APPLICATION'])->nullable();
+         $table->string('prompt',150)->nullable();
          $table->timestamps();
          $table->unique(['complaint_type_id','code'],'subtype_code');
          $table->unique(['complaint_type_id', 'order'],'subtype_order');

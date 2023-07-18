@@ -22,25 +22,25 @@ class Step_SaveSession extends EfectivoPipelineContract
     protected function stepProcess(BaseDTO $txDTO)
     {
         
-        try {
-            if( $txDTO->customerJourney){
-                $txDTO->customerJourney=$txDTO->customerJourney."*".$txDTO->subscriberInput;
-            }else{
-                $txDTO->customerJourney=$txDTO->subscriberInput;
-            }
-            $txDTO->error = $txDTO->error? \substr($txDTO->error,0,255):'';
-            if($txDTO->id){
-                $this->sessionService->update($txDTO->toSessionData(),$txDTO->id);
-            }
-        } catch (\Throwable $e) {
-            $txDTO->error='At Save session. '.$e->getMessage();
-            $txDTO->errorType = 'SystemError';        
-        }
-        //Bind error response service to interface
-        $txDTO->errorType = $txDTO->error? $txDTO->errorType:"NoError";   
-        $this->errorResponseBinder->bind($txDTO->errorType);
+      try {
+         if( $txDTO->customerJourney){
+               $txDTO->customerJourney = $txDTO->customerJourney."*".$txDTO->subscriberInput;
+         }else{
+               $txDTO->customerJourney = $txDTO->subscriberInput;
+         }
+         $txDTO->error = $txDTO->error? \substr($txDTO->error,0,255):'';
+         if($txDTO->id){
+               $this->sessionService->update($txDTO->toSessionData(),$txDTO->id);
+         }
+      } catch (\Throwable $e) {
+         $txDTO->error='At Save session. '.$e->getMessage();
+         $txDTO->errorType = 'SystemError';        
+      }
+      //Bind error response service to interface
+      $txDTO->errorType = $txDTO->error? $txDTO->errorType:"NoError";   
+      $this->errorResponseBinder->bind($txDTO->errorType);
 
-        return $txDTO;
+      return $txDTO;
         
     }
     

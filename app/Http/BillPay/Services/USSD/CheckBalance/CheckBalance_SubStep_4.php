@@ -10,52 +10,55 @@ use App\Http\BillPay\DTOs\BaseDTO;
 class CheckBalance_SubStep_4 extends EfectivoPipelineWithBreakContract
 {
 
-    private $checkPaymentsEnabled;
-    private $accountNoMenu;
-    public function __construct(StepService_CheckPaymentsEnabled $checkPaymentsEnabled,
-        StepService_AccountNoMenu $accountNoMenu
-    ){
-        $this->checkPaymentsEnabled=$checkPaymentsEnabled;
-        $this->accountNoMenu=$accountNoMenu;
-    }
+   private $checkPaymentsEnabled;
+   private $accountNoMenu;
+   public function __construct(StepService_CheckPaymentsEnabled $checkPaymentsEnabled,
+      StepService_AccountNoMenu $accountNoMenu
+   ){
+      $this->checkPaymentsEnabled=$checkPaymentsEnabled;
+      $this->accountNoMenu=$accountNoMenu;
+   }
 
-    protected function stepProcess(BaseDTO $txDTO)
-    {
-        $arrCustomerJourney=\explode("*", $txDTO->customerJourney);
-        if(\count($arrCustomerJourney)==4){
-            $txDTO->stepProcessed=true;
-            if($txDTO->subscriberInput=='1'){
-                $txDTO = $this->checkPaymentsEnabled->handle($txDTO);
-                if(!$txDTO->response){
-                    if($arrCustomerJourney[2]=='2'){
-                        $txDTO->menu = "BuyUnits";
-                    }else{
-                        $txDTO->menu = "PayBill";
-                    }
-                    $txDTO->customerJourney=$arrCustomerJourney[0]."*".
-                                        \config('efectivo_clients.'.$txDTO->urlPrefix.'.menu.'.$txDTO->menu);
-                    $txDTO->subscriberInput=$arrCustomerJourney[3];
-                    $txDTO->response="Enter Amount :\n";
-                    $txDTO->status='INITIATED';
-                }
-                return $txDTO;
+   protected function stepProcess(BaseDTO $txDTO)
+   {
+      $arrCustomerJourney=\explode("*", $txDTO->customerJourney);
+      if(\count($arrCustomerJourney)==4){
+         $txDTO->stepProcessed=true;
+         if($txDTO->subscriberInput=='1'){
+            $momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
+            if($momoPaymentStatus['enabled']){
+               if($arrCustomerJourney[2] == '2'){
+                  $txDTO->menu = "BuyUnits";
+               }else{
+                  $txDTO->menu = "PayBill";
+               }
+               $txDTO->customerJourney=$arrCustomerJourney[0]."*".
+                                    \config('efectivo_clients.'.$txDTO->urlPrefix.'.menu.'.$txDTO->menu);
+               $txDTO->subscriberInput = $arrCustomerJourney[3];
+               $txDTO->response = "Enter Amount :\n";
+               $txDTO->status = 'INITIATED';
+            }else{
+               $txDTO->response = $momoPaymentStatus['responseText'];
+               $txDTO->lastResponse = true;
             }
-            if($txDTO->subscriberInput=='0'){
-                $txDTO->customerJourney =$arrCustomerJourney[0].'*'.$arrCustomerJourney[1];
-                $txDTO->subscriberInput=$arrCustomerJourney[2];
-                $prePaidText = $txDTO->subscriberInput=="2"? "PRE-PAID ":"";
-                $txDTO->response=$this->accountNoMenu->handle($prePaidText,$txDTO->urlPrefix);
-                $txDTO->status='INITIATED';
-                return $txDTO;
-            }
+            return $txDTO;
+         }
+         if($txDTO->subscriberInput == '0'){
+            $txDTO->customerJourney = $arrCustomerJourney[0].'*'.$arrCustomerJourney[1];
+            $txDTO->subscriberInput = $arrCustomerJourney[2];
+            $prePaidText = $txDTO->subscriberInput == "2"? "PRE-PAID ":"";
+            $txDTO->response = $this->accountNoMenu->handle($prePaidText,$txDTO->urlPrefix);
+            $txDTO->status = 'INITIATED';
+            return $txDTO;
+         }
 
-            $txDTO->accountNumber=$arrCustomerJourney[2];
-            $txDTO->error = 'User entered invalid input';
-            $txDTO->errorType= "InvalidInput";
+         $txDTO->accountNumber=$arrCustomerJourney[2];
+         $txDTO->error = 'User entered invalid input';
+         $txDTO->errorType= "InvalidInput";
 
-        }
-        return $txDTO;
+      }
+      return $txDTO;
 
-    }
+   }
 
 }

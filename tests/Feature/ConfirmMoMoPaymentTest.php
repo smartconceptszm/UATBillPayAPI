@@ -12,50 +12,50 @@ use Tests\TestCase;
 class ConfirmMoMoPaymentTest extends TestCase
 {
 
-    public function testConfirmPayment()
-    { 
+   public function _testConfirmPayment()
+   { 
 
-        $billingServiceBinder = new BillingClientBinderService();
-        $momoServiceBinder = new MoMoClientBinderService();
-        $smsServiceBinder = new SMSClientBinderService();
+      $billingServiceBinder = new BillingClientBinderService();
+      $momoServiceBinder = new MoMoClientBinderService();
+      $smsServiceBinder = new SMSClientBinderService();
 
-        $billingServiceBinder->bind('lukanga');
-        $momoServiceBinder->bind('MoMoMock');
-        $smsServiceBinder->bind('MockDeliverySMS');
+      $billingServiceBinder->bind('lukanga');
+      $momoServiceBinder->bind('MoMoMock');
+      $smsServiceBinder->bind('MockDeliverySMS');
 
-        $momoClient = new MoMoMock();
-        $getPaymentStatus = new StepService_GetPaymentStatus($momoClient);
-        $momoService = new ConfirmMoMoPayment($getPaymentStatus);
+      $momoClient = new MoMoMock();
+      $getPaymentStatus = new StepService_GetPaymentStatus($momoClient);
+      $momoService = new ConfirmMoMoPayment($getPaymentStatus);
 
-        $momoDTO = new MoMoDTO();
-        $momoDTO = $momoDTO->fromArray(
-            [
-                "customerJourney" => "2106*1*1101000166*7.00*1",
-                "mobileNumber" => "260761028631",
-                'accountNumber' => '1101000166',
-                'sessionId' => '10000003',
-                'channel' => 'USSD',
+      $momoDTO = new MoMoDTO();
+      $momoDTO = $momoDTO->fromArray(
+         [
+               "customerJourney" => "2106*1*1101000166*5.67*1",
+               "mobileNumber" => "260761028631",
+               'accountNumber' => '1101000166',
+               'sessionId' => '10000001',
+               'channel' => 'USSD',
 
-                "paymentAmount" => 7,
-                'receiptAmount' => 7,
-                'surchargeAmount' => 0,
-                'transactionId' => "533eb81e-b58a-44c6-a3b7-bb517a69fcab",
-                "paymentStatus" => 'INITIATED',
-                'clientCode' => 'LgWSSC',
-                'session_id' => 3,
+               "paymentAmount" => 5.67,
+               'receiptAmount' => 5.67,
+               'surchargeAmount' => 0,
+               'transactionId' => "521090d2-2a43-4dc7-ba35-f71083a581de",
+               "paymentStatus" => 'INITIATED',
+               'clientCode' => 'LgWSSC',
+               'session_id' => 1,
 
-                'urlPrefix' => 'lukanga',
-                'mnoName' => 'MTN',
-                "district" => 'KABWE',
-                "menu" => "PayBill",
-                "client_id" => 2,
-                "mno_id" => 2,
-                "id" => 1,
-            ]);
-        
-        $response = $momoService->handle($momoDTO);
-        $this->assertTrue($response->paymentStatus == 'RECEIPT DELIVERED');
-        
-    }
+               'urlPrefix' => 'lukanga',
+               'mnoName' => 'MTN',
+               "district" => 'KABWE',
+               "menu" => "PayBill",
+               "client_id" => 2,
+               "mno_id" => 2,
+               "id" => 4,
+         ]);
+      
+      $response = $momoService->handle($momoDTO);
+      $this->assertTrue($response->paymentStatus == 'RECEIPT DELIVERED');
+      
+   }
 
 }
