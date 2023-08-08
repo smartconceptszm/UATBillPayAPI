@@ -19,7 +19,7 @@ class UserLoginService
     {
         try {
             if (! $token = Auth::attempt($dto->credentials())) {
-                throw new Exception("Unauthorized", 1);
+                throw new Exception("Invalid username and/or password. Try again!", 1);
             }
             $user = Auth::user(); 
             $dto->expires_in = Auth::factory()->getTTL()*60;

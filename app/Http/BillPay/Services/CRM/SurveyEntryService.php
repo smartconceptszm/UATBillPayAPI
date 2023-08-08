@@ -2,8 +2,9 @@
 
 namespace App\Http\BillPay\Services\CRM;
 
-use App\Http\BillPay\Services\Contracts\BaseService;
 use App\Http\BillPay\Repositories\CRM\SurveyEntryRepo;
+use App\Http\BillPay\Services\Contracts\BaseService;
+
 
 class SurveyEntryService extends BaseService
 {

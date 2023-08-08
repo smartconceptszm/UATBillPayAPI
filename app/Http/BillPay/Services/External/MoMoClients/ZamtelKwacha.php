@@ -23,9 +23,9 @@ class ZamtelKwacha implements IMoMoClient
    {
 
       $mainResponse=[
-               'status'=>"PAYMENT FAILED",
-               'mnoTransactionId'=>'',
-               'error'=>'',
+            'status'=>"FAILED",
+            'mnoTransactionId'=>'',
+            'error'=>''
          ];
 
       try {
@@ -38,7 +38,7 @@ class ZamtelKwacha implements IMoMoClient
          $zamtelURI.="&Shortcode=".trim($configs['shortCode']);
          $zamtelURI.="&ConversationId=".trim($dto->transactionId);
          $fullURL = $configs['baseURL'].$zamtelURI;
-         $apiResponse = Http::withHeaders([
+         $apiResponse = Http::timeout($configs['timeout'])->withHeaders([
             'Content-Type' => 'application/json',
             "Accept" => "*/*",
          ])->get($fullURL);
@@ -46,7 +46,7 @@ class ZamtelKwacha implements IMoMoClient
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
             $apiResponse=$apiResponse->json();
             if($apiResponse['status']==='0'){
-               $mainResponse['status'] = "PAID | NOT RECEIPTED";
+               $mainResponse['status'] = "PAID";
                $mainResponse['mnoTransactionId']=$apiResponse['TransactionId'];
             }else{
                $errorMessage='';
@@ -86,10 +86,11 @@ class ZamtelKwacha implements IMoMoClient
    private function getConfigs(string $urlPrefix):array
    {
       return [
-               'baseURL'=>\env('ZAMTEL_BASE_URL'),
-               'shortCode'=>\env(\strtoupper($urlPrefix).'_ZAMTEL_SHORTCODE'),
-               'clientId'=>\env(\strtoupper($urlPrefix).'_ZAMTEL_THIRDPARTYID'),
-               'clientSecret'=>\env(\strtoupper($urlPrefix).'_ZAMTEL_PASSWORD')
+            'clientId'=>\env(\strtoupper($urlPrefix).'_ZAMTEL_THIRDPARTYID'),
+            'clientSecret'=>\env(\strtoupper($urlPrefix).'_ZAMTEL_PASSWORD'),
+            'shortCode'=>\env(\strtoupper($urlPrefix).'_ZAMTEL_SHORTCODE'),
+            'timeout'=>\env('ZAMTEL_Http_Timeout'),
+            'baseURL'=>\env('ZAMTEL_BASE_URL')
          ];
    }
     

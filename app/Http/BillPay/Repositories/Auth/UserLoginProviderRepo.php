@@ -136,15 +136,15 @@ class UserLoginProviderRepo implements UserProvider
             $arrRights = $query->map(function($row){return $row->name;});
             $user = new User;
             $query = $query->first();
-            $user->id = $query->id;
             $user->client_id = $query->client_id;
-            $user->username = $query->username;
-            $user->password  = $query->password;
-            $user->fullnames = $query->fullnames;
-            $user->email = $query->email;
             $user->urlPrefix = $query->urlPrefix;
+            $user->fullnames = $query->fullnames;
+            $user->password  = $query->password;
+            $user->username = $query->username;
             $user->client = $query->client;
+            $user->email = $query->email;
             $user->rights = $arrRights;
+            $user->id = $query->id;
         }else{
             $user = null;
         }

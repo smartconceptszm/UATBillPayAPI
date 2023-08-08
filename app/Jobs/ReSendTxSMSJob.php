@@ -21,6 +21,9 @@ class ReSendTxSMSJob extends BaseJob
    {
       //Bind the SMS Client
          $smsClient = '';
+         if(!$smsClient && (\env('SMS_SEND_USE_MOCK') == "YES")){
+               $smsClient = 'MockDeliverySMS';
+         }
          if(!$smsClient && \config('efectivo_clients.'.$this->momoDTO->urlPrefix.'.hasOwnSMS')){
                $smsClient = \strtoupper($this->momoDTO->urlPrefix).'SMS';
          }

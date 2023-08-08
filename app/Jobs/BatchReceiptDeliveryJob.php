@@ -30,7 +30,7 @@ class BatchReceiptDeliveryJob extends BaseJob
 
       try {
          foreach ($this->transactions as $transaction) {
-               $deliverReceipt->handle($transaction['id']);
+               $deliverReceipt->update([],$transaction['id']);
          }
       } catch (\Throwable $e) {
          Log::error("Handling batch receipt delivery job. DETAILS: " . $e->getMessage());

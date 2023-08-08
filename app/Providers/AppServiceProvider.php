@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+//Service Applications Responses Handlers
+use App\Http\BillPay\Services\USSD\ServiceApplications\ClientCallers\ServiceApplication_Local;
+
 //Faults/Complaints Handlers
 use App\Http\BillPay\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local;
 use App\Http\BillPay\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Swasco;
@@ -9,6 +12,9 @@ use App\Http\BillPay\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Swas
 //Customer Updates Handlers
 use App\Http\BillPay\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Swasco;
 use App\Http\BillPay\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Local;
+
+//Survey Responses Handlers
+use App\Http\BillPay\Services\USSD\Survey\ClientCallers\Survey_Local;
 
 //Billing Clients
 use App\Http\BillPay\Services\External\BillingClients\LukangaSoapService;
@@ -34,6 +40,7 @@ use App\Http\BillPay\Services\USSD\Menus\UpdateDetails;
 use App\Http\BillPay\Services\USSD\Menus\CheckBalance;
 use App\Http\BillPay\Services\USSD\Menus\BuyUnits;
 use App\Http\BillPay\Services\USSD\Menus\PayBill;
+use App\Http\BillPay\Services\USSD\Menus\Survey;
 use App\Http\BillPay\Services\USSD\Menus\Home;
 
 //MoMo Services
@@ -68,20 +75,20 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
 
       //USSD Menu Option Handlers
          $this->app->singleton('ServiceApplications', function () {
-               return new ServiceApplications(
-                  new \App\Http\BillPay\Services\USSD\Menus\MenuService_PaymentSteps()
+            return new ServiceApplications(
+                  new \App\Http\BillPay\Services\USSD\ServiceApplications\ClientCallers\ServiceApplicationClientBinderService()
                );
          });
          $this->app->singleton('FaultsComplaints', function () {
-               return new FaultsComplaints(
+            return new FaultsComplaints(
                   new \App\Http\BillPay\Services\USSD\FaultsComplaints\ClientCallers\ComplaintClientBinderService()
                );
          });
          $this->app->singleton('OtherPayments', function () {
-               return new OtherPayments();
+            return new OtherPayments();
          });
          $this->app->singleton('UpdateDetails', function () {
-               return new UpdateDetails(
+            return new UpdateDetails(
                   new \App\Http\BillPay\Services\USSD\UpdateDetails\ClientCallers\UpdateDetailsClientBinderService()
                );
          });
@@ -89,20 +96,21 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
                return new CheckBalance();
          });
          $this->app->singleton('BuyUnits', function () {
-               return new BuyUnits(
-                  new \App\Http\BillPay\Services\USSD\Menus\MenuService_PaymentSteps()
-               );
+            return new BuyUnits();
          });
          $this->app->singleton('Cleanup', function () {
-               return new CleanupSession();
+            return new CleanupSession();
          });
          $this->app->singleton('PayBill', function () {
-               return new PayBill(
-                  new \App\Http\BillPay\Services\USSD\Menus\MenuService_PaymentSteps()
+            return new PayBill();
+         });
+         $this->app->singleton('Survey', function () {
+            return new Survey(
+                  new \App\Http\BillPay\Services\USSD\Survey\ClientCallers\SurveyClientBinderService()
                );
          });
          $this->app->singleton('Home', function () {
-               return new Home();
+            return new Home();
          });
       //
 
@@ -222,27 +230,82 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
       //
 
       //Customer Updates Handlers
-         $this->app->singleton('Updates_swasco', function () {
-               return new UpdateDetails_Swasco(
-                  new Swasco(                    
-                     intval(\config('efectivo_clients.swasco.receipting_Timeout')),
-                     intval(\config('efectivo_clients.swasco.remote_Timeout')),
-                     \config('efectivo_clients.swasco.sms_Base_URL'),
-                     \env('SWASCO_base_URL'))
-               );
-         });
-         
          $this->app->singleton('Updates_lukanga', function () {
-               return new UpdateDetails_Local(
-                  new \App\Http\BillPay\Services\CustomerDetailService(
+            return new UpdateDetails_Local(
+                  new \App\Http\BillPay\Services\CRM\CustomerFieldUpdateDetailService(
+                     new \App\Http\BillPay\Repositories\CRM\CustomerFieldUpdateDetailRepo(
+                        new \App\Models\CustomerFieldUpdateDetail()
+                     )
+                  ),
+                  new \App\Http\BillPay\Services\CRM\CustomerFieldUpdateService(
+                     new \App\Http\BillPay\Repositories\CRM\CustomerFieldUpdateRepo(
+                        new \App\Models\CustomerFieldUpdate()
+                     )
+                  ),
+                  new \App\Http\BillPay\Services\MenuConfigs\CustomerFieldService(
                      new \App\Http\BillPay\Repositories\MenuConfigs\CustomerFieldRepo(
                         new \App\Models\CustomerField()
                      )
                   )
                );
          });
+         
+         $this->app->singleton('Updates_swasco', function () {
+               return new UpdateDetails_Swasco(
+                     new Swasco(                    
+                        intval(\config('efectivo_clients.swasco.receipting_Timeout')),
+                        intval(\config('efectivo_clients.swasco.remote_Timeout')),
+                        \config('efectivo_clients.swasco.sms_Base_URL'),
+                        \env('SWASCO_base_URL'))
+                  );
+            });
       //
 
+      //Survey Entry Handlers
+         $this->app->singleton('Survey_swasco', function () {
+               return new Survey_Local(
+                     new \App\Http\BillPay\Services\CRM\SurveyEntryService(
+                        new \App\Http\BillPay\Repositories\CRM\SurveyEntryRepo(
+                           new \App\Models\SurveyEntry([])
+                        )
+                     ),
+                     new \App\Http\BillPay\Services\CRM\SurveyEntryDetailService((
+                           new \App\Http\BillPay\Repositories\CRM\SurveyEntryDetailRepo(
+                              new \App\Models\SurveyEntryDetail([])
+                           )
+                        )),
+                     new \App\Http\BillPay\Services\MenuConfigs\SurveyQuestionService(
+                        new \App\Http\BillPay\Repositories\MenuConfigs\SurveyQuestionRepo(
+                           new \App\Models\SurveyQuestion([])
+                        )
+                     )
+                  );
+            });
+      //
+
+      //Service Application Handlers
+         $this->app->singleton('ServiceApplications_chambeshi', function () {
+               return new ServiceApplication_Local(
+                     new \App\Http\BillPay\Services\CRM\ServiceApplicationDetailService(
+                        new \App\Http\BillPay\Repositories\CRM\ServiceApplicationDetailRepo(
+                           new \App\Models\ServiceApplicationDetail()
+                        )
+                     ),
+                     new \App\Http\BillPay\Services\MenuConfigs\ServiceTypeDetailService(
+                        new \App\Http\BillPay\Repositories\MenuConfigs\ServiceTypeDetailRepo(
+                           new \App\Models\ServiceTypeDetail()
+                        )
+                     ),
+                     new \App\Http\BillPay\Services\CRM\ServiceApplicationService(
+                        new \App\Http\BillPay\Repositories\CRM\ServiceApplicationRepo(
+                           new \App\Models\ServiceApplication()
+                        )
+                     )
+                  );
+            });
+      //
+
+      
    }
 
    /**

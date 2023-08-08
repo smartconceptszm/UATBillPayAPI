@@ -15,11 +15,11 @@ class CRUDController extends Controller
       $this->theService = $theService;
    }
 
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
-    {
+   /**
+    * Display a listing of the resource.
+    */
+   public function index(Request $request)
+   {
 
       try {
          $params = $request->all();
@@ -28,28 +28,28 @@ class CRUDController extends Controller
             $arrFields = explode(',', $params['fieldList']);
             \unset($params['fieldList']);
          }
-         $this->response['data']=$this->theService->findAll($params,$arrFields);
+         $this->response['data'] = $this->theService->findAll($params,$arrFields);
       } catch (\Throwable $e) {
-            $this->response['status']['code']=500;
-            $this->response['status']['message']=$e->getMessage();
+            $this->response['status']['code'] = 500;
+            $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json( $this->response);
 
-    }
+   }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+   /**
+    * Store a newly created resource in storage.
+    */
    public function store(Request $request)
    {
 
       try {
          //validate incoming request 
          $this->validate($request, $this->validationRules);
-         $this->response['data']=$this->theService->create($request->all());
+         $this->response['data'] = $this->theService->create($request->all());
       } catch (\Exception $e) {
-         $this->response['status']['code']=500;
-         $this->response['status']['message']=$e->getMessage();
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json($this->response);
 
@@ -69,8 +69,8 @@ class CRUDController extends Controller
          }
          $this->response['data'] = $this->theService->findById($id,$arrFields);
       } catch (\Exception $e) {
-            $this->response['status']['code']=500;
-            $this->response['status']['message']=$e->getMessage();
+            $this->response['status']['code'] = 500;
+            $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json($this->response);
 
@@ -89,10 +89,10 @@ class CRUDController extends Controller
             $arrFields = explode(',', $params['fieldList']);
             \unset($params['fieldList']);
          }
-         $this->response['data']=$this->theService->findOneBy($params,$arrFields);
+         $this->response['data'] = $this->theService->findOneBy($params,$arrFields);
       } catch (\Exception $e) {
-         $this->response['status']['code']=500;
-         $this->response['status']['message']=$e->getMessage();
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json($this->response);
 
@@ -105,10 +105,10 @@ class CRUDController extends Controller
    {
 
       try {
-            $this->response['data']=$this->theService->update($request->all(),$id);
+            $this->response['data'] = $this->theService->update($request->all(),$id);
       } catch (\Exception $e) {
-            $this->response['status']['code']=500;
-            $this->response['status']['message']=$e->getMessage();
+            $this->response['status']['code'] = 500;
+            $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json($this->response);
 
@@ -121,10 +121,10 @@ class CRUDController extends Controller
    {
       
       try {
-            $this->response['data']=$this->theService->delete($id);
+         $this->response['data'] = $this->theService->delete($id);
       } catch (\Exception $e) {
-            $this->response['status']['code']=500;
-            $this->response['status']['message']=$e->getMessage();
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json($this->response);
 

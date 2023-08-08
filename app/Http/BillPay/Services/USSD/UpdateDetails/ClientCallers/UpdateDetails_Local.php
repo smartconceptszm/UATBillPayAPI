@@ -2,27 +2,56 @@
 
 namespace App\Http\BillPay\Services\USSD\UpdateDetails\ClientCallers;
 
-use App\Http\BillPay\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient;
-use App\Http\BillPay\Services\CRM\CRMService;
+use App\Http\BillPay\Services\CRM\CustomerFieldUpdateDetailService;
+use App\Http\BillPay\Services\MenuConfigs\CustomerFieldService;
+use App\Http\BillPay\Services\CRM\CustomerFieldUpdateService;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
 class UpdateDetails_Local implements IUpdateDetailsClient
 {
 
-   private $customerUpdateService;
-   public function __construct(CRMService $customerUpdateService)
+   private $customerFieldUpdateDetailService;
+   private $customerFieldUpdateService;
+   private $customerFieldService;
+   public function __construct(CustomerFieldUpdateDetailService $customerFieldUpdateDetailService,
+      CustomerFieldUpdateService $customerFieldUpdateService,
+      CustomerFieldService $customerFieldService)
    {
-      $this->customerUpdateService = $customerUpdateService;
+      $this->customerFieldUpdateDetailService = $customerFieldUpdateDetailService;
+      $this->customerFieldUpdateService = $customerFieldUpdateService;
+      $this->customerFieldService = $customerFieldService;
    }
 
-   public function create(array $customerDetailsData):string
+   public function create(array $ticketData):string
    {
-      
-      try{
-         return $this->customerUpdateService->create($customerDetailsData);
-      } catch (\Throwable $e) {
-         throw new Exception('At Post customer update details. '.$e->getMessage());
-      }                                             
+
+      try {
+         $updatedFieldDetails = $ticketData['updates'];
+         unset($ticketData['updates']);
+         DB::beginTransaction();
+         try {
+               $updateTicket = $this->customerFieldUpdateService->create($ticketData);
+               foreach ($updatedFieldDetails as $order => $value) {
+                  $customerField = $this->customerFieldService->findOneBy([
+                                          'client_id' => $ticketData['client_id'],
+                                          'order' => $order
+                                       ]);
+                  $fieldDetail = $this->customerFieldUpdateDetailService->create([
+                        'customer_field_update_id' => $updateTicket->id,
+                        'customer_field_id' => $customerField->id,
+                        'value' => $value
+                     ]);
+               }
+               DB::commit();
+         } catch (\Throwable $e) {
+               DB::rollBack();
+               throw new Exception($e->getMessage());
+         }
+      } catch (\Exception $e) {
+         throw new Exception('Error at  CRMService@updateDetailTicket. '.$e->getMessage());
+      }
+      return $updateTicket->caseNumber;                                           
 
    }
 

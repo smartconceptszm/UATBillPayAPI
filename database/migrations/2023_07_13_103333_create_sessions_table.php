@@ -19,12 +19,13 @@ return new class extends Migration
          $table->unsignedBigInteger('client_id')->notNullable();
          $table->enum('menu',['Home','PayBill','BuyUnits','CheckBalance',
                               'FaultsComplaints','UpdateDetails',
-                              'ServiceApplications','OtherPayments']
+                              'ServiceApplications','OtherPayments',
+                              'Survey']
                            )->default('Home')->notNullable();
-         $table->string('customerJourney')->notNullable();
+         $table->text('customerJourney')->notNullable();
          $table->string('accountNumber',20)->nullable();
          $table->string('district',50)->nullable();
-         $table->string('response',160)->nullable();
+         $table->string('response',156)->nullable();
          $table->enum('status',['INITIATED','COMPLETED','FAILED','REVIEWED',
                                        'MANUALLY REVIEWED'])->default('INITIATED')->notNullable();
          $table->text('error')->nullable();

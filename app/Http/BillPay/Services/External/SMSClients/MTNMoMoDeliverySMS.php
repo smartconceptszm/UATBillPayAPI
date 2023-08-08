@@ -22,11 +22,12 @@ class MTNMoMoDeliverySMS implements ISMSClient
          $apiToken = $this->getToken($configs);
          $token=$apiToken['access_token'];
          $fullURL = $configs['baseURL']."v1_0/requesttopay/".$mtnParams['transactionId']."/deliverynotification";
-         $response = Http::withHeaders([
-                           'X-Target-Environment'=>$configs['targetEnv'],
-                           'Content-Type' => 'application/json',
-                           'Ocp-Apim-Subscription-Key' => $configs['clientId']
-                     ])
+         $response = Http::timeout($configs['timeout'])
+               ->withHeaders([
+                        'X-Target-Environment'=>$configs['targetEnv'],
+                        'Content-Type' => 'application/json',
+                        'Ocp-Apim-Subscription-Key' => $configs['clientId']
+                  ])
                ->withToken($token)
                ->post($fullURL, [
                      'notificationMessage'=>\substr(\str_replace("\n", " ", $mtnParams['message']),0,159)
@@ -51,7 +52,8 @@ class MTNMoMoDeliverySMS implements ISMSClient
 
       try {
          $fullURL = $configs['baseURL']."token/";
-         $apiResponse = Http::withBasicAuth($configs['clientUserName'], $configs['clientPassword'])
+         $apiResponse = Http::timeout($configs['timeout'])
+               ->withBasicAuth($configs['clientUserName'], $configs['clientPassword'])
                ->withHeaders([
                   'Ocp-Apim-Subscription-Key' => $configs['clientId'],
                   'Accept' => '*/*'
@@ -77,12 +79,14 @@ class MTNMoMoDeliverySMS implements ISMSClient
    private function getConfigs(string $urlPrefix):array
    {
       return [
-               'baseURL'=>\env('MTN_BASE_URL'),
-               'clientId'=>\env(\strtoupper($urlPrefix).'_MTN_OcpKey'),
                'clientUserName'=>\env(\strtoupper($urlPrefix).'_MTN_USERNAME'),
                'clientPassword'=>\env(\strtoupper($urlPrefix).'_MTN_PASSWORD'),
+               'clientId'=>\env(\strtoupper($urlPrefix).'_MTN_OcpKey'),
+               'targetEnv'=>\env('MTN_TARGET_ENVIRONMENT'),
+               'timeout'=>\env('MTN_Http_Timeout'),
                'txCurrency'=>\env('MTN_CURRENCY'),
-               'targetEnv'=>\env('MTN_TARGET_ENVIRONMENT')
+               'baseURL'=>\env('MTN_BASE_URL')
+
          ];
    }
 

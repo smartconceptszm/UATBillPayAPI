@@ -21,7 +21,7 @@ class FaultsComplaints implements IUSSDMenu
         
       if($txDTO->error=='' ){
          try {
-            //Bind the Complaint Client Creator
+            //Bind the Complaint Creator Client 
                $this->complaintClientBinderService->bind('Complaint_'.$txDTO->urlPrefix);
             //
             $txDTO->stepProcessed=false;

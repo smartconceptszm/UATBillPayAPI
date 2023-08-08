@@ -2,32 +2,49 @@
 
 namespace App\Http\BillPay\Services\USSD\Menus;
 
-use App\Http\BillPay\Services\USSD\Menus\MenuService_PaymentSteps;
+use App\Http\BillPay\Services\USSD\ServiceApplications\ClientCallers\ServiceApplicationClientBinderService;
 use App\Http\BillPay\Services\USSD\Menus\IUSSDMenu;
 use App\Http\BillPay\DTOs\BaseDTO;
+use Illuminate\Pipeline\Pipeline;
 
 class ServiceApplications implements IUSSDMenu
 {
 
-    private $paymentSteps;
-    public function __construct(MenuService_PaymentSteps $paymentSteps)
-    {
-        $this->paymentSteps=$paymentSteps;
-    }
+   private $serviceAppClientBinderService;
+   public function __construct(ServiceApplicationClientBinderService $serviceAppClientBinderService)
+   {
+      $this->serviceAppClientBinderService = $serviceAppClientBinderService;
+   }
 
-    public function handle(BaseDTO $txDTO):BaseDTO
-    {
-        
-        if ($txDTO->error == '') {
-            try {
-                $txDTO=$this->paymentSteps->handle($txDTO);
-            } catch (\Throwable $e) {
-                $txDTO->error='At handle check balance menu. '.$e->getMessage();
-                $txDTO->errorType = 'SystemError';
-            }
-        }
-        return $txDTO;
-
-    }
+   public function handle(BaseDTO $txDTO):BaseDTO
+   {
+      
+      if ($txDTO->error == '') {
+         try {
+            //Bind the Service Application Creator Client 
+               $this->serviceAppClientBinderService->bind('ServiceApplications_'.$txDTO->urlPrefix);
+            //
+            $txDTO->stepProcessed=false;
+            $txDTO = app(Pipeline::class)
+            ->send($txDTO)
+            ->through(
+               [
+                  \App\Http\BillPay\Services\USSD\ServiceApplications\ServiceApplications_SubStep_1::class,
+                  \App\Http\BillPay\Services\USSD\ServiceApplications\ServiceApplications_SubStep_2::class,
+                  \App\Http\BillPay\Services\USSD\ServiceApplications\ServiceApplications_SubStep_3::class,
+                  \App\Http\BillPay\Services\USSD\ServiceApplications\ServiceApplications_SubStep_4::class,                    
+                  \App\Http\BillPay\Services\USSD\ServiceApplications\ServiceApplications_SubStep_5::class
+               ]
+            )
+            ->thenReturn();
+            $txDTO->stepProcessed=false;
+         } catch (\Throwable $e) {
+            $txDTO->error='At handle service applications menu. '.$e->getMessage();
+            $txDTO->errorType = 'SystemError';
+         }
+      }
+      return $txDTO;
+      
+   }
     
 }

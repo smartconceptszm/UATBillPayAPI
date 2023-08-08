@@ -18,6 +18,7 @@ class UserLoginDTO extends BaseDTO implements JsonSerializable
    public $client;
    public $rights;
    public $token;
+   public $id;
    public $validationRules=[
       'username' => 'required|string',
       'password' => 'required|string',

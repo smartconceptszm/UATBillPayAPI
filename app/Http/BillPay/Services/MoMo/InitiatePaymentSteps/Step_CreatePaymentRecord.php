@@ -2,17 +2,21 @@
 
 namespace App\Http\BillPay\Services\MoMo\InitiatePaymentSteps;
 
+use App\Http\BillPay\Services\MenuConfigs\OtherPaymentTypeService;
 use App\Http\BillPay\Services\Contracts\EfectivoPipelineContract;
 use App\Http\BillPay\Services\Payments\PaymentService;
 use App\Http\BillPay\DTOs\BaseDTO;
 
 class Step_CreatePaymentRecord extends EfectivoPipelineContract
 {
-    
+
    private  $paymentService;
-   public function __construct(PaymentService $paymentService)
+   private $otherPayTypes;
+   public function __construct(PaymentService $paymentService,
+      OtherPaymentTypeService $otherPayTypes)
    {
       $this->paymentService= $paymentService;
+      $this->otherPayTypes = $otherPayTypes;
    }
 
    protected function stepProcess(BaseDTO $momoDTO)
@@ -20,12 +24,21 @@ class Step_CreatePaymentRecord extends EfectivoPipelineContract
 
       try {
          if($momoDTO->error == ""){
-               $payment = $this->paymentService->create($momoDTO->toPaymentData());
-               $momoDTO->id = $payment->status;
-               $momoDTO->id = $payment->id;
+            if($momoDTO->menu == 'OtherPayments'){
+               $arrCustomerJourney = \explode("*", $momoDTO->customerJourney);
+               $paymentType = $this->otherPayTypes->findOneBy([
+                                       'client_id' => $momoDTO->client_id,
+                                       'order' => $arrCustomerJourney[2]
+                                 ]);
+               $momoDTO->other_payment_type_id = $paymentType->id;
+               $momoDTO->reference = $arrCustomerJourney[4];
+            }
+            $payment = $this->paymentService->create($momoDTO->toPaymentData());
+            $momoDTO->id = $payment->status;
+            $momoDTO->id = $payment->id;
          }
       } catch (\Throwable $e) {
-         $momoDTO->error='At creating payment record. '.$e->getMessage();
+         $momoDTO->error = 'At creating payment record. '.$e->getMessage();
       }
       return $momoDTO;
 

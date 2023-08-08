@@ -39,6 +39,25 @@ class StepService_ValidateCRMInput
          $input = \str_replace(" ", "", $input);
          //Application Number validation checks
       }
+
+      if($crmField->type == "DATE"){
+         $input = \str_replace(" ", "", $input);
+         if(\strlen($input)!=10){
+            throw new Exception("Invalid input", 1);
+         }
+      }
+
+      if($crmField->type == "NATIONALID"){
+         $input = \str_replace(" ", "", $input);
+         if(\strlen($input)!=11){
+            throw new Exception("Invalid input", 1);
+         }
+      }
+
+      if($crmField->type == "ONEWORD"){
+         $input = \str_replace(" ", "", $input);
+      }
+
       return $input;
 
    }

@@ -57,17 +57,45 @@ Route::group(['middleware' => 'mode'], function (){
             });
       //End of Dev ROUTES
    //End of USSD Routes
-   //  Route::get('/users', [\App\Http\Controllers\Auth\UserController::class, 'index']);
-   Route::controller(\App\Http\Controllers\Auth\UserController::class)->group(function () {
-      Route::get('/users/findoneby', 'findOneBy');
-      Route::get('/users/{id}', 'show');
-      Route::get('/users', 'index');
-      Route::post('/users', 'store');
-   });
 
-   Route::controller(\App\Http\Controllers\SessionController::class)->group(function () {
-      Route::get('/sessions', 'index');
-      Route::get('/sessions/{id}', 'show');
-   });
+   //Auth
+   Route::post('/login', [\App\Http\Controllers\Auth\UserLoginController::class,'store']);
+   Route::post('/passwordreset', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'store']);
+   Route::put('/passwordreset/{id}', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'update']);
 
+   Route::group(['middleware' => 'auth'], function (){
+
+      Route::get('dashboard', [\App\Http\Controllers\Clients\ClientDashboardController::class, 'index']);
+      Route::get('paymenttransactions', [\App\Http\Controllers\Payments\PaymentTransactionController::class, 'index']);
+      Route::get('paymentsnotreceipted', [\App\Http\Controllers\Payments\PaymentNotReceiptedController::class, 'index']);
+      Route::get('failedpayments', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'index']);
+
+      Route::group(['middleware' => 'sms'], function (){
+         Route::post('receipts', [\App\Http\Controllers\Payments\PaymentReceiptController::class, 'store']);
+         Route::put('receipts/{id}', [\App\Http\Controllers\Payments\PaymentWithReceiptToDeliverController::class, 'update']);
+         Route::post('batchreceipts', [\App\Http\Controllers\Payments\BatchPaymentReceiptController::class, 'store']);
+         Route::put('failedpayments/{id}', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'update']);
+      });
+
+      Route::controller(\App\Http\Controllers\Payments\PaymentController::class)->group(function () {
+         Route::get('/payments/findoneby', 'findOneBy');
+         Route::get('/payments/{id}', 'show');
+         Route::get('/payments', 'index');
+         Route::post('/payments', 'store');
+         Route::put('/payments/{id}', 'update');
+      });
+
+      Route::controller(\App\Http\Controllers\Auth\UserController::class)->group(function () {
+         Route::get('/users/findoneby', 'findOneBy');
+         Route::get('/users/{id}', 'show');
+         Route::get('/users', 'index');
+         Route::post('/users', 'store');
+      });
+
+      Route::controller(\App\Http\Controllers\SessionController::class)->group(function () {
+         Route::get('/sessions', 'index');
+         Route::get('/sessions/{id}', 'show');
+      });
+
+   });
 });

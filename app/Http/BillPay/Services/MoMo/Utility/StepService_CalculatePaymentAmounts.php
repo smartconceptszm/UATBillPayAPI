@@ -2,18 +2,18 @@
 
 namespace App\Http\BillPay\Services\MoMo\Utility;
 
-use App\Http\BillPay\Services\MnoChargeService;
+use App\Http\BillPay\Services\ClientMnoService;
 use App\Http\BillPay\Services\ClientService;
 
 class StepService_CalculatePaymentAmounts
 {
 
-   private $mnoChargeService;
+   private $ClientMnoService;
    private $clientService;
    public function __construct(ClientService $clientService,
-      MnoChargeService $mnoChargeService)
+      ClientMnoService $ClientMnoService)
    {
-      $this->mnoChargeService = $mnoChargeService;
+      $this->ClientMnoService = $ClientMnoService;
       $this->clientService = $clientService;
    }
 
@@ -25,12 +25,12 @@ class StepService_CalculatePaymentAmounts
       $surchargeAmount = 0;
       $client = $this->clientService->findOneBy(['urlPrefix'=>$urlPrefix]); 
       if($client->surcharge=='YES'){
-         $mnoCharge = $this->mnoChargeService->findOneBy([
+         $ClientMno = $this->ClientMnoService->findOneBy([
                      'client_id'=>$client->id,
                      'mno_id'=>$mno_id
                   ]);
          //Apply Tariff Here
-         $surchargeAmount =  ($paymentAmount*0.01)*((100-(float)$mnoCharge->momoCommission)/100);
+         $surchargeAmount =  ($paymentAmount*0.01)*((100-(float)$ClientMno->momoCommission)/100);
          $paymentAmount += $paymentAmount *0.01;
       }
       return [

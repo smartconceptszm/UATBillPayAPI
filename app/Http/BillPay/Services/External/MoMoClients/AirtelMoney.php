@@ -25,7 +25,7 @@ class AirtelMoney implements IMoMoClient
          $token = $apiToken['access_token'];
 
          $fullURL = $configs['baseURL'] . "merchant/v1/payments/";
-         $airtelResponse = Http::withHeaders([
+         $airtelResponse = Http::timeout($configs['timeout'])->withHeaders([
                "Content-Type" => "application/json",
                "Accept" => "*/*",
                "X-Country" => "ZM",
@@ -97,7 +97,7 @@ class AirtelMoney implements IMoMoClient
    {
 
       $response = [
-         "status" => "PAYMENT FAILED",
+         "status" => "FAILED",
          "mnoTransactionId" => "",
          "error" => ""
       ];
@@ -107,7 +107,7 @@ class AirtelMoney implements IMoMoClient
          $apiToken = $this->getToken($configs);
          $token = $apiToken['access_token'];
          $fullURL = $configs['baseURL'] . "standard/v1/payments/".$dto->transactionId;
-         $apiResponse = Http::withHeaders([
+         $apiResponse = Http::timeout($configs['timeout'])->withHeaders([
                "Content-Type" => "application/json",
                "Accept" => "*/*",
                "X-Country" => "ZM",
@@ -122,7 +122,7 @@ class AirtelMoney implements IMoMoClient
                            if (\array_key_exists('transaction', $apiResponse['data'])) {
                               if (\array_key_exists('status', $apiResponse['data']['transaction'])) {
                                  if($apiResponse['data']['transaction']['status'] == "TS"){
-                                       $response['status'] = "PAID | NOT RECEIPTED";
+                                       $response['status'] = "PAID";
                                        $response['mnoTransactionId'] = $apiResponse['data']['transaction']['airtel_money_id'];
                                  }else{
                                        if (\array_key_exists('message', $apiResponse['data']['transaction'])) {
@@ -138,7 +138,7 @@ class AirtelMoney implements IMoMoClient
                               }
                            }
                      }
-                     if($response['status'] != "PAID | NOT RECEIPTED"){
+                     if($response['status'] != "PAID"){
                            throw new Exception("Error on get transaction status. Response data not available.", 2);
                      }
                   } else {
@@ -197,7 +197,7 @@ class AirtelMoney implements IMoMoClient
             }
          }
       } catch (\Throwable $e) {
-         $response['status'] = "PAYMENT FAILED";
+         $response['status'] = "FAILED";
          if ($e->getCode() == 1 || $e->getCode() == 2) {
                $response['error'] = $e->getMessage();
          } else {
@@ -218,7 +218,7 @@ class AirtelMoney implements IMoMoClient
 
       try {
          $fullURL = $configs['baseURL'] . "auth/oauth2/token";
-         $apiResponse = Http::withHeaders([
+         $apiResponse = Http::timeout($configs['timeout'])->withHeaders([
                   "Content-Type" => "application/json",
                   "Accept" => "*/*"
                ])->post($fullURL, [
@@ -271,6 +271,7 @@ class AirtelMoney implements IMoMoClient
             'clientSecret'=>\env(\strtoupper($urlPrefix).'_AIRTEL_SECRET'),
             'clientId'=>\env(\strtoupper($urlPrefix).'_AIRTEL_ID'),
             'grantType'=>\env('AIRTEL_GRANT_TYPE'),
+            'timeout'=>\env('AIRTEL_Http_Timeout'),
             'baseURL'=>\env('AIRTEL_BASE_URL')
          ];
    }

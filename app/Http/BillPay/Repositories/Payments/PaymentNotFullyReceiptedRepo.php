@@ -15,13 +15,15 @@ class PaymentNotFullyReceiptedRepo implements IFindAllRepository
       try {
          $dto=(object)$criteria;
          $records = DB::table('payments as p')
-                  ->select('id','created_at','mobileNumber','accountNumber',
-                           'receiptNumber','paymentAmount','paymentStatus','error')
+                  ->join('mnos as m','p.mno_id','=','m.id')
+                  ->select('p.id','p.created_at','p.mobileNumber','p.accountNumber','p.receiptNumber',
+                           'p.receiptAmount','p.paymentAmount','p.transactionId','p.district',
+                           'p.mnoTransactionId','m.name as mno','p.paymentStatus','p.error')
                   ->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED','RECEIPTED'])
                   ->where('p.client_id', '=', $dto->client_id);
-         if($dto->from && $dto->to){
-               $records =$records->whereDate('p.created_at', '>=', $dto->from)
-                                 ->whereDate('p.created_at', '<=', $dto->to);
+         if($dto->dateFrom && $dto->dateTo){
+               $records =$records->whereDate('p.created_at', '>=', $dto->dateFrom)
+                                 ->whereDate('p.created_at', '<=', $dto->dateTo);
          }
          $records =$records->get();
          return $records->all();

@@ -21,7 +21,7 @@ class UpdateDetails implements IUSSDMenu
       
       if ($txDTO->error == '') {
          try {
-            //Bind the Complaint Client Creator
+            //Bind the Update Application Creator Client 
                $this->updatesClientBinderService->bind('Updates_'.$txDTO->urlPrefix);
             //
             $txDTO->stepProcessed=false;

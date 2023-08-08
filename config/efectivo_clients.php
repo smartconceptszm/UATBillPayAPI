@@ -49,22 +49,23 @@ return [
       'swasco'=>[
                   'shortCode'=>'5757',
                   "Home"=>"Welcome to SWASCO. Enter\n".
-                              "1. Pay Water Bill\n".
-                              "2. Check Balance\n".
-                              "3. Report Fault/Submit Complaint\n".
-                              "4. Update Mobile Phone No.\n".
-                              "5. Pay for other Services\n",
+                              "1. Pay water bill\n".
+                              "2. Check balance\n".
+                              "3. Report fault/complaint\n".
+                              "4. Update details\n".
+                              "5. Other payments\n".
+                              "6. Survey\n",
                   'menu'=>[
                         "PayBill"=>"1",
                         "CheckBalance"=>"2",
                         "FaultsComplaints"=>"3",
                         "UpdateDetails"=>"4",
-                        "OtherPayments"=>"5"
+                        "OtherPayments"=>"5",
+                        "Survey"=>"6"
                   ],
                   'hasPrepaid'=>false,
                   'prepaidExample'=>'',
                   'postpaidExample'=>'liv000xxxx or cho000xxxx',
-                  'hasUpdateDetailsSubMenu'=>false,
                   'hasOwnSMS'=>true,
                   'sms_Base_URL'=>'https://apps.zamtel.co.zm/bsms/api/v2.1/action/send/api_key/',
                   'sms_APIKEY' => 'fb122bb2fca7703d8eed1d239e3f349a',

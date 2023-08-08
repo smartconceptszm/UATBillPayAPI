@@ -2,10 +2,17 @@
 
 namespace App\Http\BillPay\Services\USSD\Utility;
 
+use App\Http\BillPay\Services\ClientMnoService;
 use App\Http\BillPay\DTOs\BaseDTO;
 
 class StepService_CheckPaymentsEnabled 
 {
+
+   private $momoService;
+   public function __construct(ClientMnoService $momoService)
+   {
+      $this->momoService = $momoService;
+   }
 
    public function handle(BaseDTO $txDTO):array
    {
@@ -26,13 +33,26 @@ class StepService_CheckPaymentsEnabled
          }
       }
 
-      if (\env('APP_ENV') == 'Production' && 
-               \env(\strtoupper($txDTO->urlPrefix).'_'.$txDTO->mnoName.'_ACTIVE')!='YES'){
-         $response['responseText'] = "Payment for ".\strtoupper($txDTO->urlPrefix).
-                  " Water bills via " . $txDTO->mnoName . " Mobile Money will be launched soon!" . "\n" .
-                  "Thank you for your patience.";
-         $response['enabled'] = false;
+      if (\env('APP_ENV') == 'Production'){
+         if (\env(\strtoupper($txDTO->urlPrefix).'_'.$txDTO->mnoName.'_ACTIVE') != 'YES'){
+            $response['responseText'] = "Payment for ".\strtoupper($txDTO->urlPrefix).
+                     " Water bills via " . $txDTO->mnoName . " Mobile Money will be launched soon!" . "\n" .
+                     "Thank you for your patience.";
+            $response['enabled'] = false;
+         }
+         if (\env(\strtoupper($txDTO->urlPrefix).'_'.$txDTO->mnoName.'_ACTIVE') == 'YES'){
+            $mnoMoMo = $this->momoService->findOneBy([
+                                                         'client_id' => $txDTO->client_id,
+                                                         'mno_id' => $txDTO->mno_id,             
+                                                      ]);
+            if($mnoMoMo->momoMode == 'DOWN'){
+               $response['responseText'] = $mnoMoMo->modeMessage;
+               $response['enabled'] = false;
+            }
+         }
       }
+
+
       return $response;
       
    }

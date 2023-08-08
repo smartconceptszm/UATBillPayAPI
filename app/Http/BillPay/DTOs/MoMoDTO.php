@@ -7,6 +7,7 @@ use App\Http\BillPay\DTOs\BaseDTO;
 class MoMoDTO extends BaseDTO
 {
    
+   public $other_payment_type_id;
    public $mnoTransactionId;
    public $surchargeAmount;
    public $accountNumber;
@@ -18,6 +19,7 @@ class MoMoDTO extends BaseDTO
    public $mobileNumber;
    public $session_id;
    public $client_id;
+   public $reference;
    public $district;
    public $receipt;
    public $user_id;
@@ -61,9 +63,11 @@ class MoMoDTO extends BaseDTO
             'mobileNumber'=>$this->mobileNumber,'channel'=>$this->channel,
             'district'=>$this->district,'client_id'=>$this->client_id,
             'session_id'=>$this->session_id,'mno_id'=>$this->mno_id,
+            'other_payment_type_id'=>$this->other_payment_type_id,
             'mnoTransactionId'=>$this->mnoTransactionId,
             'receiptNumber'=>$this->receiptNumber,
-            'paymentStatus'=>$this->paymentStatus,   
+            'paymentStatus'=>$this->paymentStatus,
+            'reference'=>$this->reference      
          ]; 
    }
 

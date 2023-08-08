@@ -11,14 +11,14 @@ class OtherPaymentType extends Model
    use HasFactory;
 
    protected $fillable=[
-      'client_id','code','name', 'receiptAccount','hasApplicationNo',
-      'order','ledgerAccountNumber','prompt'
-   ];
+         'client_id','code','name','order', 'receiptAccount','ledgerAccountNumber',
+         'hasReference','type','detailPrompt'
+      ];
 
    protected $casts = [
-      'created_at' => 'datetime:Y-m-d H:i:s',
-      'updated_at' => 'datetime:Y-m-d H:i:s',
-   ];
+         'created_at' => 'datetime:Y-m-d H:i:s',
+         'updated_at' => 'datetime:Y-m-d H:i:s',
+      ];
 
    protected $attributes = [
          'receiptAccount' => 'CUSTOMER',

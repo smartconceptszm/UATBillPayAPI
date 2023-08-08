@@ -35,10 +35,10 @@ class ConfirmMoMoPaymentJob extends BaseJob
       //
       //Bind the SMS Client
          $smsClient = '';
-         if(!$smsClient && (\env('SMS_SEND_USE_MOCK')=="YES")){
+         if(!$smsClient && (\env('SMS_SEND_USE_MOCK') == "YES")){
                $smsClient = 'MockDeliverySMS';
          }
-         if(!$smsClient && \env($this->momoDTO->mnoName.'_HAS_FREESMS')=="YES"){
+         if(!$smsClient && \env($this->momoDTO->mnoName.'_HAS_FREESMS') == "YES"){
                $smsClient = $this->momoDTO->mnoName.'DeliverySMS';
          }
          if(!$smsClient && \config('efectivo_clients.'.$this->momoDTO->urlPrefix.'.hasOwnSMS')){

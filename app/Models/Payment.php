@@ -13,7 +13,8 @@ class Payment extends Model
       'client_id','session_id','mno_id', 'mobileNumber','accountNumber',
       'district','mnoTransactionId','surchargeAmount','paymentAmount',
       'receiptAmount','transactionId','receiptNumber','receipt',
-      'channel','paymentStatus','status','error','user_id'
+      'channel','paymentStatus','status','error','user_id',
+      'other_payment_type_id','reference'
    ];
 
    protected $casts = [

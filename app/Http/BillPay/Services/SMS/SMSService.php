@@ -3,7 +3,7 @@
 namespace App\Http\BillPay\Services\SMS;
 
 use App\Http\BillPay\Services\External\SMSClients\ISMSClient;
-use App\Http\BillPay\Services\MnoChargeService;
+use App\Http\BillPay\Services\ClientMnoService;
 use App\Http\BillPay\Services\SMS\MessageService;
 use App\Http\BillPay\Services\ClientService;
 use App\Http\BillPay\Services\Enums\MNOs;   
@@ -16,17 +16,17 @@ use Exception;
 class SMSService
 {
 
-   private $mnoChargeService;
+   private $ClientMnoService;
    private $messageService;
    private $clientService;
    private $mnoService;
    private $smsClient;
    private $smsTxDTO;
    public function __construct(MessageService $messageService, ISMSClient $smsClient, 
-      MnoChargeService $mnoChargeService, MnoService $mnoService, 
+      ClientMnoService $ClientMnoService, MnoService $mnoService, 
       ClientService $clientService,SMSTxDTO $smsTxDTO )
    {
-      $this->mnoChargeService = $mnoChargeService;
+      $this->ClientMnoService = $ClientMnoService;
       $this->messageService = $messageService;
       $this->clientService = $clientService;
       $this->mnoService = $mnoService;
@@ -106,11 +106,11 @@ class SMSService
                $mno = $this->mnoService->findOneBy(['name'=>$mnoName]);
                $dto->mno_id = $mno->id;
          }
-         $mnoCharges = $this->mnoChargeService->findOneBy([
+         $ClientMnos = $this->ClientMnoService->findOneBy([
                                  'client_id'=>$dto->client_id,
                                  'mno_id'=> $dto->mno_id
                               ]);
-         $dto->smsCharge = (float)$mnoCharges->smsCharge;
+         $dto->smsCharge = (float)$ClientMnos->smsCharge;
       //
 
       //Check if Client has enough balance
@@ -128,12 +128,12 @@ class SMSService
    {
       //Send the SMS
          if(!$dto->error){
-               if($this->smsClient->send($dto->toSMSClientData())){
-                  $dto->status="DELIVERED";
-               }else{
-                  $dto->error="SMS message not delivered by SMS Server.";
-                  $dto->status="FAILED";
-               } 
+            if($this->smsClient->send($dto->toSMSClientData())){
+               $dto->status = "DELIVERED";
+            }else{
+               $dto->error = "SMS message not delivered by SMS Server.";
+               $dto->status="FAILED";
+            } 
          }
       //
 

@@ -47,17 +47,17 @@ class SMSTxDTO extends BaseDTO
 
    public function toSMSMessageData():array{
       return [
-               'transaction_id'=>$this->transaction_id,
-               'mobileNumber'=>$this->mobileNumber,
-               'client_id'=>$this->client_id,
-               'message'=>$this->message,
-               'mno_id'=>$this->mno_id,
-               'user_id'=>$this->user_id,
-               'amount'=>$this->smsCharge,
-               'status'=>$this->status,
-               'error'=>$this->error,
-               'type'=>$this->type
-            ];
+            'transaction_id'=>$this->transaction_id,
+            'mobileNumber'=>$this->mobileNumber,
+            'client_id'=>$this->client_id,
+            'message'=>$this->message,
+            'mno_id'=>$this->mno_id,
+            'user_id'=>$this->user_id,
+            'amount'=>$this->smsCharge,
+            'status'=>$this->status,
+            'error'=>$this->error,
+            'type'=>$this->type
+         ];
    }
 
    public function toSMSClientData():array{

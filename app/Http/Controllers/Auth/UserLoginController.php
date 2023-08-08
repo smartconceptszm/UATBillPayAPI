@@ -18,17 +18,16 @@ class UserLoginController  extends Controller
       $this->dto = $dto;
    }
 
-
    public function store(Request  $request)
    {
 
       try {
          $this->validate($request, $this->dto->validationRules);
          $this->dto = $this->dto->fromArray($request->all());
-         $this->response['data']=$this->theService->create($this->dto);
+         $this->response['data'] = $this->theService->create($this->dto);
       } catch (\Exception $e) {
-         $this->response['status']['code']=500;
-         $this->response['status']['message']=$e->getMessage();
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json($this->response);
 

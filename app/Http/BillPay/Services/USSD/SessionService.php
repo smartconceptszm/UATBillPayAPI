@@ -2,8 +2,8 @@
 
 namespace App\Http\BillPay\Services\USSD;
 
-use App\Http\BillPay\Repositories\USSD\SessionRepo;
 use App\Http\BillPay\Services\Contracts\BaseService;
+use App\Http\BillPay\Repositories\USSD\SessionRepo;
 
 class SessionService  extends BaseService
 {

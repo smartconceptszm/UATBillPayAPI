@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('survey_id')->notNullable();
             $table->string('prompt',150)->notNullable();
-            $table->enum('type',['MOBILE','LIST','NATIONALID','ONEWORD','GENERAL'])->default('GENERAL')->notNullable();
+            $table->enum('type',['MOBILE','LIST','DATE','NATIONALID','ONEWORD','GENERAL'])->default('GENERAL')->notNullable();
             $table->unsignedTinyInteger('order')->notNullable();
             $table->timestamps();
          });
