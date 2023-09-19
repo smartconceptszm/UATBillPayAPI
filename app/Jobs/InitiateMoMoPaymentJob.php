@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
-use App\Http\BillPay\Services\External\MoMoClients\MoMoClientBinderService;
-use App\Http\BillPay\Services\MoMo\InitiateMoMoPayment;
-use App\Http\BillPay\DTOs\BaseDTO;
+use App\Http\Services\External\MoMoClients\MoMoClientBinderService;
+use App\Http\Services\MoMo\InitiateMoMoPayment;
+use App\Http\DTOs\BaseDTO;
 use App\Jobs\BaseJob;
 
 class InitiateMoMoPaymentJob extends BaseJob

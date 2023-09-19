@@ -2,24 +2,34 @@
 
 namespace App\Jobs;
 
-use App\Http\BillPay\Services\Payments\PaymentWithReceiptToDeliverService;
+use App\Http\Services\Payments\PaymentWithReceiptToDeliverService;
+use \App\Http\Services\External\SMSClients\SMSClientBinderService;
+use App\Jobs\Middleware\SMSClientBindJobMiddleware;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\BaseJob;
 
 class BatchReceiptDeliveryJob extends BaseJob
 {
 
-   private $transactions;
-
    /**
     * Create a new job instance.
     *
     * @return void
     */
-   public function __construct(Array $transactions)
-   {
-      $this->transactions = $transactions;
-   }
+   public function __construct(
+      private Array $transactions, 
+      public String $urlPrefix = null)
+   {}
+
+   /**
+    * Get the middleware the job should pass through.
+    *
+    * @return array<int, object>
+    */
+    public function middleware(): array
+    {
+       return [new SMSClientBindJobMiddleware(new SMSClientBinderService())];
+    }
 
    /**
     * Execute the job.

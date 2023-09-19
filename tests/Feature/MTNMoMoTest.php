@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\BillPay\Services\External\MoMoClients\MTNMoMo;
+use App\Http\Services\External\MoMoClients\MTNMoMo;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 

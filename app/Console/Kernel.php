@@ -2,8 +2,12 @@
 
 namespace App\Console;
 
-use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Http\ScheduledTasks\RetryFailedTrasactions;
+use App\Http\ScheduledTasks\ClearFailedJobs;
+use Illuminate\Console\Scheduling\Schedule;
+
+
 
 class Kernel extends ConsoleKernel
 {
@@ -13,6 +17,14 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            new ClearFailedJobs;
+        })->timezone('Africa/Lusaka')->dailyAt("00:30");
+
+        $schedule->call(function () {
+            new RetryFailedTrasactions;
+        })->timezone('Africa/Lusaka')->dailyAt("01:00");
+
     }
 
     /**

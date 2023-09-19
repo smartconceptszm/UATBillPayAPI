@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\Payments;
 
-use App\Http\BillPay\Services\Payments\PaymentNotReceiptedService;
-use App\Http\Controllers\Contracts\Controller;
+use App\Http\Services\Payments\PaymentNotReceiptedService;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class PaymentNotReceiptedController extends Controller
 {
 
-   private $theService;
-   public function __construct(PaymentNotReceiptedService $theService)
-   {
-      $this->theService = $theService;
-   }
+	public function __construct(
+		private PaymentNotReceiptedService $theService)
+	{}
 
    /**
     * Display a listing of the resource.
@@ -22,13 +20,7 @@ class PaymentNotReceiptedController extends Controller
    {
 
       try {
-         $params = $request->all();
-         $arrFields = ['*'];
-         if(\Arr::exists($params, 'fieldList')){
-            $arrFields = explode(',', $params['fieldList']);
-            \unset($params['fieldList']);
-         }
-         $this->response['data']=$this->theService->findAll($params,$arrFields);
+         $this->response['data']=$this->theService->findAll($request->all());
       } catch (\Throwable $e) {
          $this->response['status']['code']=500;
          $this->response['status']['message']=$e->getMessage();

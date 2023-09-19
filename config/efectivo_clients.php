@@ -33,12 +33,14 @@ return [
                               "1. Pay Water Bill\n".
                               "2. Check Balance\n".
                               "3. Report Fault/Complaint\n".
-                              "4. Update customer details\n",
+                              "4. Update customer details\n".
+                              "5. Survey\n",
                   'menu'=>[
                               "PayBill"=>"1",
                               "CheckBalance"=>"2",
                               "FaultsComplaints"=>"3",
-                              "UpdateDetails"=>"4"
+                              "UpdateDetails"=>"4",
+                              "Survey"=>"5"
                         ],
                   'hasPrepaid'=>false,
                   'prepaidExample'=>'',

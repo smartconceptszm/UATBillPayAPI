@@ -6,27 +6,32 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('survey_questions', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('survey_id')->notNullable();
-            $table->string('prompt',150)->notNullable();
-            $table->enum('type',['MOBILE','LIST','DATE','NATIONALID','ONEWORD','GENERAL'])->default('GENERAL')->notNullable();
-            $table->unsignedTinyInteger('order')->notNullable();
-            $table->timestamps();
-         });
-      
-    }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('survey_questions');
-    }
+	/**
+	 * Run the migrations.
+	 */
+	public function up(): void
+	{
+
+		Schema::create('survey_questions', function (Blueprint $table) {
+			$table->id();
+			$table->unsignedBigInteger('survey_id')->notNullable();
+			$table->unsignedTinyInteger('order')->notNullable();
+			$table->string('prompt',150)->notNullable();
+			$table->enum('type',['MOBILE','LIST','DATE','NATIONALID','ONEWORD','GENERAL'])->default('GENERAL')->notNullable();
+			$table->unsignedBigInteger('survey_question_list_type_id')->nullable();
+			$table->unique(['survey_id', 'order'],'survey_question_order');
+			$table->timestamps();
+		});
+	
+	}
+
+	/**
+	 * Reverse the migrations.
+	 */
+	public function down(): void
+	{
+		Schema::dropIfExists('survey_questions');
+	}
+
 };

@@ -10,7 +10,7 @@ class SurveyQuestionListItem extends Model
    use HasFactory;
 
    protected $fillable=[
-      'survey_question_id','prompt', 'order'
+      'survey_question_list_type_id','value', 'order'
    ];
 
    protected $casts = [

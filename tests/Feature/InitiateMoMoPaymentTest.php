@@ -1,8 +1,8 @@
 <?php
 
-use App\Http\BillPay\Services\External\MoMoClients\MoMoClientBinderService;
-use App\Http\BillPay\Services\MoMo\InitiateMoMoPayment;
-use App\Http\BillPay\DTOs\MoMoDTO;
+use App\Http\Services\External\MoMoClients\MoMoClientBinderService;
+use App\Http\Services\MoMo\InitiateMoMoPayment;
+use App\Http\DTOs\MoMoDTO;
 use Tests\TestCase;
 
 class InitiateMoMoPaymentTest extends TestCase

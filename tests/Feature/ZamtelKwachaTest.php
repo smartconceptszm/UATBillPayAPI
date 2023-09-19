@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\BillPay\Services\External\MoMoClients\ZamtelKwacha;
+use App\Http\Services\External\MoMoClients\ZamtelKwacha;
 use Tests\TestCase;
 
 class ZamtelKwachaTest extends TestCase

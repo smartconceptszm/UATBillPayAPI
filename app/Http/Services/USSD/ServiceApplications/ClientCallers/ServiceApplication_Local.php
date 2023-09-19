@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Http\Services\USSD\ServiceApplications\ClientCallers;
+
+use App\Http\Services\USSD\ServiceApplications\ClientCallers\IServiceApplicationClient;
+use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
+use App\Http\Services\CRM\ServiceApplicationDetailService;
+use App\Http\Services\CRM\ServiceApplicationService;
+use Illuminate\Support\Facades\DB;
+use Exception;
+
+class ServiceApplication_Local implements IServiceApplicationClient
+{
+
+   public function __construct(
+      private ServiceApplicationDetailService $serviceAppDetailService,
+      private ServiceTypeDetailService $serviceTypeDetails,
+      private ServiceApplicationService $serviceAppService)
+   {}
+
+   public function create(array $serviceApplicationData):string
+   {
+
+      try {
+         DB::beginTransaction();
+         try {
+            $serviceTicket = $this->serviceAppService->create([
+                                    'service_type_id' => $serviceApplicationData['service_type_id'],
+                                    'accountNumber' => $serviceApplicationData['accountNumber'],
+                                    'mobileNumber' => $serviceApplicationData['mobileNumber'],
+                                    'client_id' => $serviceApplicationData['client_id'],
+                                    'status' => 'SUBMITTED',
+                                 ]);
+            foreach ($serviceApplicationData['responses'] as $order => $value) {
+               $applicationQuestion = $this->serviceTypeDetails->findOneBy([
+                                       'service_type_id' => $serviceApplicationData['service_type_id'],
+                                       'order' => $order
+                                    ]);
+               $this->serviceAppDetailService->create([
+                                       'service_application_id' => $serviceTicket->id,
+                                       'service_type_detail_id' => $applicationQuestion->id,
+                                       'value' => $value
+                                    ]);
+            }
+            DB::commit();
+         } catch (Exception $e) {
+            DB::rollBack();
+            throw new Exception($e->getMessage());
+         }
+      } catch (Exception $e) {
+         throw new Exception('Error at  service application. '.$e->getMessage());
+      }
+      return $serviceTicket->caseNumber;                                             
+
+   }
+
+}

@@ -9,6 +9,8 @@ class ComplaintSubType extends Model
 {
    use HasFactory;
 
+   protected $table = 'complaint_sub_types';
+
    protected $fillable=[
       'complaint_type_id','code','name', 'order','requiresDetails',
       'detailType','prompt'

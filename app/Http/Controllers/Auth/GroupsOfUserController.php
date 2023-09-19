@@ -2,15 +2,32 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\BillPay\Services\Auth\GroupsOfUserService;
-use App\Http\Controllers\Contracts\CRUDIndexController;
+use App\Http\Services\Auth\GroupsOfUserService;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
-class GroupsOfUserController extends CRUDIndexController
+class GroupsOfUserController extends Controller
 {
 
-    public function __construct(GroupsOfUserService $theService)
-    {
-        parent::__construct($theService);
-    }
-    
+   public function __construct(
+		private GroupsOfUserService $theService)
+   {}
+                  
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return \Illuminate\Http\Response
+	*/
+	public function index(Request  $request,$id){
+
+		try {
+			$this->response['data'] = $this->theService->findAll(['user_id' => $id]);
+		} catch (\Throwable $e) {
+			$this->response['status']['code'] = 500;
+			$this->response['status']['message'] = $e->getMessage();
+		}
+		return response()->json( $this->response);
+		
+	}
+
 }

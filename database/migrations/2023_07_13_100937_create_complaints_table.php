@@ -13,8 +13,9 @@ return new class extends Migration
    {
       Schema::create('complaints', function (Blueprint $table) {
          $table->id();
-         $table->unsignedBigInteger('client_id')->notNullable();
          $table->unsignedBigInteger('complaint_subtype_id')->notNullable();
+         $table->unsignedBigInteger('client_id')->notNullable();
+         $table->unsignedBigInteger('session_id')->nullable();
          $table->string('caseNumber',50)->unique()->nullable();
          $table->string('mobileNumber',12)->notNullable();
          $table->string('accountNumber',20)->notNullable();

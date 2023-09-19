@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\Payments;
 
-use App\Http\BillPay\Services\Payments\PaymentFailedService;
-use App\Http\Controllers\Contracts\Controller;
+use App\Http\Services\Payments\PaymentFailedService;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class PaymentFailedController extends Controller
 {
 
-   private $theService;
-   public function __construct(PaymentFailedService $theService)
-   {
-      $this->theService = $theService;
-   }
+	public function __construct(
+		private PaymentFailedService $theService)
+	{}
 
    /**
     * Display a listing of the resource.
@@ -22,10 +20,7 @@ class PaymentFailedController extends Controller
    {
 
       try {
-         $params = $request->all();
-         $arrFields = ['*'];
-         $serviceResponse = $this->theService->findAll($params,$arrFields);
-         $this->response['data'] = $serviceResponse['data'];
+         $this->response['data'] = $this->theService->findAll($request->all());
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -38,7 +33,8 @@ class PaymentFailedController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->theService->update($request->all(),$id);
+         $response = $this->theService->update($request->all(),$id);
+         $this->response['data'] = $response->data;
       } catch (\Exception $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

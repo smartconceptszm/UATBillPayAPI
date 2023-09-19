@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\BillPay\Repositories\ClientComplaintTypeViewRepo;
-use App\Http\BillPay\Services\ClientComplaintTypeViewService;
-use App\Http\BillPay\DTOs\ClientComplaintTypeViewDTO;
+use App\Http\Services\ClientComplaintTypeViewService;
+use App\Http\DTOs\ClientComplaintTypeViewDTO;
 use App\Models\Client_Complaint_Type_View;
 use Tests\TestCase;
 

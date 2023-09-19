@@ -2,26 +2,23 @@
 
 namespace App\Http\Controllers\USSD;
 
-use App\Http\BillPay\Services\USSD\USSDService;
-use App\Http\Controllers\Contracts\Controller;
-use App\Http\BillPay\DTOs\UssdDTO;
+use App\Http\Services\USSD\USSDService;
+use App\Http\Controllers\Controller;
+use App\Http\DTOs\UssdDTO;
 use Illuminate\Http\Request;
 
 class USSDController extends Controller
 {
 
-    protected $theService;
-    protected $theDTO;
-    public function __construct(USSDService $theService, UssdDTO $theDTO)
-    {
-        $this->theService=$theService;
-        $this->theDTO=$theDTO;
-    }
+    public function __construct(
+		protected USSDService $theService, 
+        protected UssdDTO $theDTO)
+	{}
 
     protected function getUrlPrefix(Request $request):string
     {
-        $requestUrlArr=\explode("/",$request->url());
-        $clientUrlPrefix=$requestUrlArr[\count($requestUrlArr)-2];
+        $requestUrlArr = \explode("/",$request->url());
+        $clientUrlPrefix = $requestUrlArr[\count($requestUrlArr)-2];
         return $clientUrlPrefix;
     }
 

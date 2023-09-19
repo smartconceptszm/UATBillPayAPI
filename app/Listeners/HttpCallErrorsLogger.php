@@ -2,9 +2,9 @@
 
 namespace App\Listeners;
 
-use App\Http\BillPay\Services\Utility\PsrMessageToStringConvertor;
+use App\Http\Services\Utility\PsrMessageToStringConvertor;
 use Illuminate\Http\Client\Events\ResponseReceived;
-use App\Jobs\SendSMSNotificationsJob;
+use App\Jobs\SendSMSesJob;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Log;
@@ -84,7 +84,7 @@ class HttpCallErrorsLogger
                                                       ." have failed over 5 times in the last ".
                                                       env('Http_Error_CACHE')." minutes!";
                      }
-                     Queue::later(Carbon::now()->addSeconds(1), new SendSMSNotificationsJob($arrSMSes));
+                     Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes));
                   //
                   Cache::put($errorType.'_ErrorCount', $httpErrorCount, Carbon::now()->addMinutes((int)env('Http_Error_CACHE')));
                } 

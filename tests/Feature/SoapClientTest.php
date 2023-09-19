@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\BillPay\Services\External\BillingClients\Lukanga;
+use App\Http\Services\External\BillingClients\Lukanga;
 use Tests\TestCase;
 
 class SoapClientTest extends TestCase

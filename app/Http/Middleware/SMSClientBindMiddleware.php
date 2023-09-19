@@ -2,17 +2,15 @@
 
 namespace App\Http\Middleware;
 
-use App\Http\BillPay\Services\External\SMSClients\SMSClientBinderService;
+use App\Http\Services\External\SMSClients\SMSClientBinderService;
 use Closure;
 
 class SMSClientBindMiddleware
 {
 
-   private $smsClientBinder;
-   public function __construct(SMSClientBinderService $smsClientBinder)
-   {
-      $this->smsClientBinder = $smsClientBinder;
-   }
+   public function __construct(
+      private SMSClientBinderService $smsClientBinder)
+   {}
 
    /**
     * Handle an incoming request.

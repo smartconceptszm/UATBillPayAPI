@@ -2,11 +2,11 @@
 
 namespace App\Jobs;
 
-use App\Http\BillPay\Services\External\BillingClients\BillingClientBinderService;
-use App\Http\BillPay\Services\External\MoMoClients\MoMoClientBinderService;
-use App\Http\BillPay\Services\External\SMSClients\SMSClientBinderService;
-use App\Http\BillPay\Services\MoMo\ConfirmMoMoPayment;
-use App\Http\BillPay\DTOs\BaseDTO;
+use App\Http\Services\External\BillingClients\BillingClientBinderService;
+use App\Http\Services\External\MoMoClients\MoMoClientBinderService;
+use App\Http\Services\External\SMSClients\SMSClientBinderService;
+use App\Http\Services\MoMo\ConfirmMoMoPayment;
+use App\Http\DTOs\BaseDTO;
 use App\Jobs\BaseJob;
 
 class ConfirmMoMoPaymentJob extends BaseJob

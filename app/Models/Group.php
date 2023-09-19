@@ -15,7 +15,7 @@ class Group extends Model
    ];
    
    protected $fillable=[
-         'name','description'
+         'client_id','name','description'
       ];
 
 }

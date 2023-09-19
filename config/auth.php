@@ -75,7 +75,7 @@ return [
             'model' => App\Models\User::class,
         ],
         'efectivo' => [
-            'driver' => 'UserLoginProviderRepo',
+            'driver' => 'UserLogin',
             'table' => 'users',
         ],
         // 'users' => [

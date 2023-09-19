@@ -10,9 +10,8 @@ class Complaint extends Model
    use HasFactory;
 
    protected $fillable=[
-      'client_id','complaint_subtype_id','caseNumber', 'mobileNumber','accountNumber',
-      'district','address','details', 'status','assignedBy','assignedTo',
-      'resolution','comments'
+      'complaint_subtype_id','client_id','session_id','caseNumber', 'mobileNumber','accountNumber',
+      'district','address','details', 'status','assignedBy','assignedTo','resolution','comments'
    ];
    
    protected $casts = [

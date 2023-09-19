@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\BillPay\Services\Auth\UserLoginService;
-use App\Http\Controllers\Contracts\Controller;
-use App\Http\BillPay\DTOs\UserLoginDTO;
+use App\Http\Services\Auth\UserLoginService;
+use App\Http\Controllers\Controller;
+use App\Http\DTOs\UserLoginDTO;
 use Illuminate\Http\Request;
 
 class UserLoginController  extends Controller
 {
 
-   private $theService;
-   private $dto;
-   public function __construct(UserLoginService $theService, UserLoginDTO $dto)
-   { 
-      $this->theService = $theService;
-      $this->dto = $dto;
-   }
+   public function __construct(
+		private UserLoginService $theService,
+      private UserLoginDTO $dto)
+	{}
 
    public function store(Request  $request)
    {

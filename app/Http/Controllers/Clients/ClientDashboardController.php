@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers\Clients;
 
-use App\Http\BillPay\Services\Clients\ClientDashboardService;
-use App\Http\Controllers\Contracts\Controller;
+use App\Http\Services\Clients\ClientDashboardService;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class ClientDashboardController extends Controller
 {
 
-   private $theService;
-   public function __construct(ClientDashboardService $theService)
-   {
-      $this->theService = $theService;
-   }
+	public function __construct(
+		private ClientDashboardService $theService)
+	{}
 
    /**
     * Display a listing of the resource.
@@ -22,13 +20,7 @@ class ClientDashboardController extends Controller
    {
 
       try {
-         $params = $request->all();
-         $arrFields = ['*'];
-         if(\Arr::exists($params, 'fieldList')){
-            $arrFields = explode(',', $params['fieldList']);
-            \unset($params['fieldList']);
-         }
-         $this->response['data']=$this->theService->findAll($params,$arrFields);
+         $this->response['data']=$this->theService->findAll($request->all());
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

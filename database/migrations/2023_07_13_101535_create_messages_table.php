@@ -11,9 +11,11 @@ return new class extends Migration
     */
    public function up(): void
    {
+
       Schema::create('messages', function (Blueprint $table) {
          $table->id();
          $table->string('mobileNumber',12)->notNullable();
+         $table->string('accountNumber',20)->nullable();
          $table->string('message',160)->notNullable();
          $table->unsignedBigInteger("mno_id")->notNullable();
          $table->unsignedBigInteger("client_id")->notNullable();
@@ -26,6 +28,7 @@ return new class extends Migration
          $table->text('error')->nullable();
          $table->timestamps();
       });
+
    }
 
    /**

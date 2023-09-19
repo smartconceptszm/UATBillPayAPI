@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\BillPay\Services\Utility\SMSTheReceipt;
+use App\Http\Services\Utility\SMSTheReceipt;
 use App\Http\BillPayServices\SMS\Gateway\Step_DB_SAVE;
 use Tests\TestCase;
 

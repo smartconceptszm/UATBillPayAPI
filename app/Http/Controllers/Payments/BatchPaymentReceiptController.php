@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Payments;
 
-use App\Http\BillPay\Services\Payments\BatchPaymentReceiptService;
-use App\Http\Controllers\Contracts\Controller;
+use App\Http\Services\Payments\BatchPaymentReceiptService;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class BatchPaymentReceiptController extends Controller
@@ -13,11 +13,9 @@ class BatchPaymentReceiptController extends Controller
                                  'dateFrom' => 'required|string',
                                  'dateTo' => 'required|string'
                               ];
-   private $theService;
-   public function __construct(BatchPaymentReceiptService $theService)
-   {
-      $this->theService = $theService;
-   }
+	public function __construct(
+		private BatchPaymentReceiptService $theService)
+	{}
 
    public function store(Request  $request)
    {

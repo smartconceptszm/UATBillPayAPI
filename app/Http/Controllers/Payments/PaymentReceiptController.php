@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Payments;
 
-use App\Http\BillPay\Services\Payments\PaymentReceiptService;
-use App\Http\Controllers\Contracts\Controller;
+use App\Http\Services\Payments\PaymentReceiptService;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class PaymentReceiptController extends Controller
@@ -12,12 +12,9 @@ class PaymentReceiptController extends Controller
    private $validationRules = [
                               'id' => 'required|string',
                            ];
-   private $theService;
-   public function __construct(PaymentReceiptService $theService)
-   {
-      $this->theService = $theService;
-   }
-
+	public function __construct(
+		private PaymentReceiptService $theService)
+	{}
 
    public function store(Request $request)
    {
@@ -38,10 +35,10 @@ class PaymentReceiptController extends Controller
    {
 
       try {
-            $this->response['data'] = $this->theService->update($request->all(),$id);
+         $this->response['data'] = $this->theService->update($request->all(),$id);
       } catch (\Exception $e) {
-            $this->response['status']['code'] = 500;
-            $this->response['status']['message'] = $e->getMessage();
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json($this->response);
 

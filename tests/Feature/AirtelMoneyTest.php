@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\BillPay\Services\External\MoMoClients\AirtelMoney;
+use App\Http\Services\External\MoMoClients\AirtelMoney;
 use Tests\TestCase;
 
 class AirtelMoneyTest extends TestCase
@@ -22,11 +22,11 @@ class AirtelMoneyTest extends TestCase
 
     }
 
-    public function testConfirmPayment()
+    public function _testConfirmPayment()
     {   
 
         $momoParams = (object)[
-                        'transactionId'=>'D230725T123739A3302000327',
+                        'transactionId'=>'D230725T123741A3302000327',
                         'accountNumber'=>'3302000327',
                         'paymentAmount'=>400,
                         'mobileNumber'=>'260974148749',

@@ -14,12 +14,12 @@ class USSDMTNController extends USSDController
         try {
             //msisdn=260761028631&subscriberInput=2106&sessionId=16790307700731726&isnewrequest=1 
             //Extract Target Client
-                $mtnParams['subscriberInput']= \strtoupper(\trim($request->input('subscriberInput')));
+                $mtnParams['subscriberInput'] = \strtoupper(\trim($request->input('subscriberInput')));
                 $mtnParams['isNewRequest'] =$request->input('isnewrequest');
                 $mtnParams['mobileNumber'] = $request->input('msisdn');
                 $mtnParams['sessionId'] = $request->input('sessionId');
-                $mtnParams['urlPrefix']=$this->getUrlPrefix($request);
-                $mtnParams['clean'] =$request->input('clean','');
+                $mtnParams['urlPrefix'] = $this->getUrlPrefix($request);
+                $mtnParams['clean'] = $request->input('clean','');
                 $mtnParams['mnoName'] = 'MTN';
                 $this->theDTO=$this->theDTO->fromArray($mtnParams);
             //Process the Request

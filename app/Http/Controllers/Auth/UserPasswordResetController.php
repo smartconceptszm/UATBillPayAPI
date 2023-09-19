@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\BillPay\Services\Auth\UserPasswordResetService;
-use App\Http\Controllers\Contracts\Controller;
+use App\Http\Services\Auth\UserPasswordResetService;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class UserPasswordResetController extends Controller
 {
 
-   protected $validationRules=[
-      'username' => 'required|string'
-   ];
+   private $validationRules=[
+                        'username' => 'required|string'
+                     ];
 
-   public function __construct(UserPasswordResetService $theService)
-   {
-      parent::__construct($theService);
-   }
+	public function __construct(
+		private UserPasswordResetService $theService)
+	{}
 
    /**
     * Store a newly created resource in storage.
@@ -27,10 +26,10 @@ class UserPasswordResetController extends Controller
       try {
          //validate incoming request 
          $this->validate($request, $this->validationRules);
-         $this->response['data']=$this->theService->create($request->all());
+         $this->response['data'] = $this->theService->create($request->all());
       } catch (\Exception $e) {
-         $this->response['status']['code']=500;
-         $this->response['status']['message']=$e->getMessage();
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json($this->response);
 
@@ -47,7 +46,7 @@ class UserPasswordResetController extends Controller
          $this->response['data'] = $this->theService->update($request->all(),$id);
       } catch (\Exception $e) {
          $this->response['status']['code'] = 500;
-         $this->response['status']['message']=$e->getMessage();
+         $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json($this->response);
 

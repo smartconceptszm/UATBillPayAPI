@@ -3,62 +3,62 @@
 namespace App\Providers;
 
 //Service Applications Responses Handlers
-use App\Http\BillPay\Services\USSD\ServiceApplications\ClientCallers\ServiceApplication_Local;
+use App\Http\Services\USSD\ServiceApplications\ClientCallers\ServiceApplication_Local;
 
 //Faults/Complaints Handlers
-use App\Http\BillPay\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local;
-use App\Http\BillPay\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Swasco;
+use App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local;
+use App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Swasco;
 
 //Customer Updates Handlers
-use App\Http\BillPay\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Swasco;
-use App\Http\BillPay\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Local;
+use App\Http\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Swasco;
+use App\Http\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Local;
 
 //Survey Responses Handlers
-use App\Http\BillPay\Services\USSD\Survey\ClientCallers\Survey_Local;
+use App\Http\Services\USSD\Survey\ClientCallers\Survey_Local;
 
 //Billing Clients
-use App\Http\BillPay\Services\External\BillingClients\LukangaSoapService;
-use App\Http\BillPay\Services\External\BillingClients\Lukanga;
-use App\Http\BillPay\Services\External\BillingClients\Swasco;
+use App\Http\Services\External\BillingClients\LukangaSoapService;
+use App\Http\Services\External\BillingClients\Lukanga;
+use App\Http\Services\External\BillingClients\Swasco;
 
 //USSD Error Response Services
-use App\Http\BillPay\Services\USSD\ErrorResponses\InvalidConfirmation;
-use App\Http\BillPay\Services\USSD\ErrorResponses\MaintenanceMode;
-use App\Http\BillPay\Services\USSD\ErrorResponses\InvalidAccount;
-use App\Http\BillPay\Services\USSD\ErrorResponses\InvalidAmount;
-use App\Http\BillPay\Services\USSD\ErrorResponses\ClientBlocked;
-use App\Http\BillPay\Services\USSD\ErrorResponses\InvalidInput;
-use App\Http\BillPay\Services\USSD\ErrorResponses\SystemError;
-use App\Http\BillPay\Services\USSD\ErrorResponses\NoError;
+use App\Http\Services\USSD\ErrorResponses\InvalidConfirmation;
+use App\Http\Services\USSD\ErrorResponses\MaintenanceMode;
+use App\Http\Services\USSD\ErrorResponses\InvalidAccount;
+use App\Http\Services\USSD\ErrorResponses\InvalidAmount;
+use App\Http\Services\USSD\ErrorResponses\ClientBlocked;
+use App\Http\Services\USSD\ErrorResponses\InvalidInput;
+use App\Http\Services\USSD\ErrorResponses\SystemError;
+use App\Http\Services\USSD\ErrorResponses\MoMoOffline;
+use App\Http\Services\USSD\ErrorResponses\NoError;
 
 //USSD Menu Services
-use App\Http\BillPay\Services\USSD\Menus\ServiceApplications;
-use App\Http\BillPay\Services\USSD\Menus\FaultsComplaints;
-use App\Http\BillPay\Services\USSD\Menus\CleanupSession;
-use App\Http\BillPay\Services\USSD\Menus\OtherPayments;
-use App\Http\BillPay\Services\USSD\Menus\UpdateDetails;
-use App\Http\BillPay\Services\USSD\Menus\CheckBalance;
-use App\Http\BillPay\Services\USSD\Menus\BuyUnits;
-use App\Http\BillPay\Services\USSD\Menus\PayBill;
-use App\Http\BillPay\Services\USSD\Menus\Survey;
-use App\Http\BillPay\Services\USSD\Menus\Home;
+use App\Http\Services\USSD\Menus\ServiceApplications;
+use App\Http\Services\USSD\Menus\FaultsComplaints;
+use App\Http\Services\USSD\Menus\CleanupSession;
+use App\Http\Services\USSD\Menus\OtherPayments;
+use App\Http\Services\USSD\Menus\UpdateDetails;
+use App\Http\Services\USSD\Menus\CheckBalance;
+use App\Http\Services\USSD\Menus\BuyUnits;
+use App\Http\Services\USSD\Menus\PayBill;
+use App\Http\Services\USSD\Menus\Survey;
+use App\Http\Services\USSD\Menus\Home;
 
 //MoMo Services
-use App\Http\BillPay\Services\External\MoMoClients\ZamtelKwacha;
-use App\Http\BillPay\Services\External\MoMoClients\AirtelMoney;
-use App\Http\BillPay\Services\External\MoMoClients\MoMoMock;
-use App\Http\BillPay\Services\External\MoMoClients\MTNMoMo;
+use App\Http\Services\External\MoMoClients\ZamtelKwacha;
+use App\Http\Services\External\MoMoClients\AirtelMoney;
+use App\Http\Services\External\MoMoClients\MoMoMock;
+use App\Http\Services\External\MoMoClients\MTNMoMo;
 
 //SMS Service Clients
-use App\Http\BillPay\Services\External\SMSClients\MTNMoMoDeliverySMS;
-use App\Http\BillPay\Services\External\SMSClients\MockDeliverySMS;
-use App\Http\BillPay\Services\External\SMSClients\SwascoSMS;
-use App\Http\BillPay\Services\External\SMSClients\ZamtelSMS;
-use App\Http\BillPay\Services\External\SMSClients\Kannel;
-
+use App\Http\Services\External\SMSClients\MTNMoMoDeliverySMS;
+use App\Http\Services\External\SMSClients\MockDeliverySMS;
+use App\Http\Services\External\SMSClients\SwascoSMS;
+use App\Http\Services\External\SMSClients\ZamtelSMS;
+use App\Http\Services\External\SMSClients\Kannel;
 
 //Utility Services
-use App\Http\BillPay\Services\Utility\XMLtoArrayParser;
+use App\Http\Services\Utility\XMLtoArrayParser;
 
 //Laravel Dependancies
 use Illuminate\Contracts\Support\DeferrableProvider;
@@ -76,12 +76,12 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
       //USSD Menu Option Handlers
          $this->app->singleton('ServiceApplications', function () {
             return new ServiceApplications(
-                  new \App\Http\BillPay\Services\USSD\ServiceApplications\ClientCallers\ServiceApplicationClientBinderService()
+                  new \App\Http\Services\USSD\ServiceApplications\ClientCallers\ServiceApplicationClientBinderService()
                );
          });
          $this->app->singleton('FaultsComplaints', function () {
             return new FaultsComplaints(
-                  new \App\Http\BillPay\Services\USSD\FaultsComplaints\ClientCallers\ComplaintClientBinderService()
+                  new \App\Http\Services\USSD\FaultsComplaints\ClientCallers\ComplaintClientBinderService()
                );
          });
          $this->app->singleton('OtherPayments', function () {
@@ -89,7 +89,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
          });
          $this->app->singleton('UpdateDetails', function () {
             return new UpdateDetails(
-                  new \App\Http\BillPay\Services\USSD\UpdateDetails\ClientCallers\UpdateDetailsClientBinderService()
+                  new \App\Http\Services\USSD\UpdateDetails\ClientCallers\UpdateDetailsClientBinderService()
                );
          });
          $this->app->singleton('CheckBalance', function () {
@@ -106,7 +106,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
          });
          $this->app->singleton('Survey', function () {
             return new Survey(
-                  new \App\Http\BillPay\Services\USSD\Survey\ClientCallers\SurveyClientBinderService()
+                  new \App\Http\Services\USSD\Survey\ClientCallers\SurveyClientBinderService()
                );
          });
          $this->app->singleton('Home', function () {
@@ -136,13 +136,15 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
          $this->app->singleton('SystemError', function () {
                return new SystemError();
          });
+         $this->app->singleton('MoMoOffline', function () {
+               return new MoMoOffline();
+         });
          $this->app->singleton('NoError', function () {
                return new NoError();
          });
       //
 
       //MoMo Clients
-      
          $this->app->singleton('MoMoMock', function () {
                return new MoMoMock();
          });
@@ -219,34 +221,26 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
          });
          
          $this->app->singleton('Complaint_lukanga', function () {
-               return new Complaint_Local(
-                     new \App\Http\BillPay\Services\CRM\ComplaintService(
-                           new \App\Http\BillPay\Repositories\CRM\ComplaintRepo(
-                              new \App\Models\Complaint()
-                           )
-                     )
-                  );
+               return new Complaint_Local( 
+                  new \App\Http\Services\CRM\ComplaintService(
+                     new \App\Models\Complaint()
+                  )
+               );
          });
       //
 
       //Customer Updates Handlers
          $this->app->singleton('Updates_lukanga', function () {
             return new UpdateDetails_Local(
-                  new \App\Http\BillPay\Services\CRM\CustomerFieldUpdateDetailService(
-                     new \App\Http\BillPay\Repositories\CRM\CustomerFieldUpdateDetailRepo(
-                        new \App\Models\CustomerFieldUpdateDetail()
-                     )
-                  ),
-                  new \App\Http\BillPay\Services\CRM\CustomerFieldUpdateService(
-                     new \App\Http\BillPay\Repositories\CRM\CustomerFieldUpdateRepo(
-                        new \App\Models\CustomerFieldUpdate()
-                     )
-                  ),
-                  new \App\Http\BillPay\Services\MenuConfigs\CustomerFieldService(
-                     new \App\Http\BillPay\Repositories\MenuConfigs\CustomerFieldRepo(
-                        new \App\Models\CustomerField()
-                     )
-                  )
+                        new \App\Http\Services\CRM\CustomerFieldUpdateDetailService(                     
+                           new \App\Models\CustomerFieldUpdateDetail()
+                        ),
+                  new \App\Http\Services\CRM\CustomerFieldUpdateService(
+                           new \App\Models\CustomerFieldUpdate()
+                        ),
+                  new \App\Http\Services\MenuConfigs\CustomerFieldService(
+                           new \App\Models\CustomerField()
+                        )
                );
          });
          
@@ -263,45 +257,32 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
 
       //Survey Entry Handlers
          $this->app->singleton('Survey_swasco', function () {
-               return new Survey_Local(
-                     new \App\Http\BillPay\Services\CRM\SurveyEntryService(
-                        new \App\Http\BillPay\Repositories\CRM\SurveyEntryRepo(
-                           new \App\Models\SurveyEntry([])
-                        )
-                     ),
-                     new \App\Http\BillPay\Services\CRM\SurveyEntryDetailService((
-                           new \App\Http\BillPay\Repositories\CRM\SurveyEntryDetailRepo(
-                              new \App\Models\SurveyEntryDetail([])
-                           )
-                        )),
-                     new \App\Http\BillPay\Services\MenuConfigs\SurveyQuestionService(
-                        new \App\Http\BillPay\Repositories\MenuConfigs\SurveyQuestionRepo(
-                           new \App\Models\SurveyQuestion([])
-                        )
-                     )
-                  );
+               return new Survey_Local(new \App\Http\Services\CRM\SurveyEntryDetailService(new \App\Models\SurveyEntryDetail()),
+                  new \App\Http\Services\MenuConfigs\SurveyQuestionService(new \App\Models\SurveyQuestion()),
+                  new \App\Http\Services\CRM\SurveyEntryService(new \App\Models\SurveyEntry())
+               );
             });
+         $this->app->singleton('Survey_lukanga', function () {
+            return new Survey_Local(new \App\Http\Services\CRM\SurveyEntryDetailService(new \App\Models\SurveyEntryDetail()),
+               new \App\Http\Services\MenuConfigs\SurveyQuestionService(new \App\Models\SurveyQuestion()),
+               new \App\Http\Services\CRM\SurveyEntryService(new \App\Models\SurveyEntry())
+            );
+         });
       //
 
       //Service Application Handlers
          $this->app->singleton('ServiceApplications_chambeshi', function () {
                return new ServiceApplication_Local(
-                     new \App\Http\BillPay\Services\CRM\ServiceApplicationDetailService(
-                        new \App\Http\BillPay\Repositories\CRM\ServiceApplicationDetailRepo(
-                           new \App\Models\ServiceApplicationDetail()
-                        )
+                     new \App\Http\Services\CRM\ServiceApplicationDetailService(
+                        new \App\Models\ServiceApplicationDetail()
                      ),
-                     new \App\Http\BillPay\Services\MenuConfigs\ServiceTypeDetailService(
-                        new \App\Http\BillPay\Repositories\MenuConfigs\ServiceTypeDetailRepo(
-                           new \App\Models\ServiceTypeDetail()
-                        )
+                     new \App\Http\Services\MenuConfigs\ServiceTypeDetailService(
+                        new \App\Models\ServiceTypeDetail()
                      ),
-                     new \App\Http\BillPay\Services\CRM\ServiceApplicationService(
-                        new \App\Http\BillPay\Repositories\CRM\ServiceApplicationRepo(
+                     new \App\Http\Services\CRM\ServiceApplicationService(
                            new \App\Models\ServiceApplication()
                         )
-                     )
-                  );
+                     );
             });
       //
 

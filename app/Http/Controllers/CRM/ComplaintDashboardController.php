@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Controllers\CRM;
+
+use App\Http\Services\CRM\ComplaintDashboardService;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class ComplaintDashboardController extends Controller
+{
+
+	public function __construct(
+		private ComplaintDashboardService $theService)
+	{}
+
+   /**
+    * Display a listing of the resource.
+   */
+   public function index(Request $request)
+   {
+
+      try {
+         $this->response['data'] = $this->theService->findAll($request->all());
+      } catch (\Throwable $e) {
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
+      }
+      return response()->json( $this->response);
+
+   }
+
+}
