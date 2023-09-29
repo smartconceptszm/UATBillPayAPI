@@ -14,7 +14,7 @@ class InvalidInput implements IErrorResponse
 	{
 
 		try {    
-			$txDTO->response = "Invalid input.\n\n<<Enter 0 to go back>>\n";
+			$txDTO->response = $txDTO->error.".\n\n<<Enter 0 to go back>>\n";
 			$cacheValue = \json_encode([
 									'must'=>true,
 									'steps'=>1,

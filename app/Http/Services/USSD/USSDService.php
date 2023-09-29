@@ -2,8 +2,9 @@
 
 namespace App\Http\Services\USSD;
 
-use App\Http\DTOs\BaseDTO;
 use Illuminate\Pipeline\Pipeline;
+use App\Http\DTOs\BaseDTO;
+
 
 class USSDService
 {

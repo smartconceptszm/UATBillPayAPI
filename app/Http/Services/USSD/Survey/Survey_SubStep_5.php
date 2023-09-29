@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\Survey;
 
-use App\Http\Services\USSD\Utility\StepService_GetCustomerAccount;
+use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
 use App\Http\Services\MenuConfigs\SurveyQuestionListItemService;
@@ -20,7 +20,7 @@ class Survey_SubStep_5 extends EfectivoPipelineWithBreakContract
 
    public function __construct(
       private SurveyQuestionListItemService $questionListItemService,
-      private StepService_GetCustomerAccount $getCustomerAccount,
+      private GetCustomerAccount $getCustomerAccount,
       private StepService_ValidateCRMInput $validateCRMInput,
       private SurveyQuestionService $surveyQuestionService,
       private ISurveyClient $surveyCreateClient)
@@ -58,9 +58,9 @@ class Survey_SubStep_5 extends EfectivoPipelineWithBreakContract
             }else{
                $surveyResponses[$order] = $txDTO->subscriberInput;
             }
+
             if(\count($surveyQuestions) == (\count($surveyResponses))){
-               $txDTO->customer = $this->getCustomerAccount->handle(
-                                       $txDTO->accountNumber,$txDTO->urlPrefix,$txDTO->client_id);
+               $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
                $txDTO->subscriberInput = \implode(";",\array_values($surveyResponses));
                $surveyResponse = [
                                           'accountNumber' => $txDTO->accountNumber,
@@ -97,7 +97,7 @@ class Survey_SubStep_5 extends EfectivoPipelineWithBreakContract
                $txDTO->response = $thePrompt;
                $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
                $txDTO->subscriberInput = \end($arrCustomerJourney);
-                                             \array_pop($arrCustomerJourney);
+               \array_pop($arrCustomerJourney);
                $txDTO->customerJourney =\implode("*", $arrCustomerJourney);
             }
 

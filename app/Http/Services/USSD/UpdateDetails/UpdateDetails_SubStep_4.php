@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\UpdateDetails;
 
 use App\Http\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient;
-use App\Http\Services\USSD\Utility\StepService_GetCustomerAccount;
+use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
 use App\Http\Services\MenuConfigs\CustomerFieldService;
@@ -18,7 +18,7 @@ class UpdateDetails_SubStep_4 extends EfectivoPipelineWithBreakContract
 {
 
    public function __construct(
-      private StepService_GetCustomerAccount $getCustomerAccount,
+      private GetCustomerAccount $getCustomerAccount,
       private StepService_ValidateCRMInput $validateCRMInput,
       private CustomerFieldService $customerFieldService,
       private IUpdateDetailsClient $updateDetailsClient)
@@ -43,8 +43,7 @@ class UpdateDetails_SubStep_4 extends EfectivoPipelineWithBreakContract
             $txDTO->subscriberInput = $this->validateCRMInput->handle($customerField,$txDTO->subscriberInput);
             $capturedUpdates[$order] = $txDTO->subscriberInput;
             if(\count($customerFields) == (\count($capturedUpdates))){
-               $txDTO->customer = $this->getCustomerAccount->handle(
-                                       $txDTO->accountNumber,$txDTO->urlPrefix,$txDTO->client_id);
+               $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
                $txDTO->subscriberInput = \implode(";",\array_values($capturedUpdates));
                $customerFieldUpdate = [
                                           'accountNumber' => $txDTO->accountNumber,

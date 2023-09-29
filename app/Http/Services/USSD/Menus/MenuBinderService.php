@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\App;
 class MenuBinderService 
 {
 
-   public function bind(String $key):void
+   public function bind(String $key = 'Home'):void
    {
       App::instance(IUSSDMenu::class,App::make($key));
    }

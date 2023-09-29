@@ -810,7 +810,7 @@ class ComposerStaticInit4e18f2a8200f24ce56abd683a0e3a523
         'App\\Http\\Services\\USSD\\Utility\\StepService_AccountNoMenu' => __DIR__ . '/../..' . '/app/Http/Services/USSD/Utility/StepService_AccountNoMenu.php',
         'App\\Http\\Services\\USSD\\Utility\\StepService_CheckPaymentsEnabled' => __DIR__ . '/../..' . '/app/Http/Services/USSD/Utility/StepService_CheckPaymentsEnabled.php',
         'App\\Http\\Services\\USSD\\Utility\\StepService_GetAmount' => __DIR__ . '/../..' . '/app/Http/Services/USSD/Utility/StepService_GetAmount.php',
-        'App\\Http\\Services\\USSD\\Utility\\StepService_GetCustomerAccount' => __DIR__ . '/../..' . '/app/Http/Services/USSD/Utility/StepService_GetCustomerAccount.php',
+        'App\\Http\\Services\\USSD\\Utility\\GetCustomerAccount' => __DIR__ . '/../..' . '/app/Http/Services/USSD/Utility/GetCustomerAccount.php',
         'App\\Http\\Services\\USSD\\Utility\\StepService_ValidateCRMInput' => __DIR__ . '/../..' . '/app/Http/Services/USSD/Utility/StepService_ValidateCRMInput.php',
         'App\\Http\\Services\\Utility\\PsrMessageToStringConvertor' => __DIR__ . '/../..' . '/app/Http/Services/Utility/PsrMessageToStringConvertor.php',
         'App\\Http\\Services\\Utility\\XMLtoArrayParser' => __DIR__ . '/../..' . '/app/Http/Services/Utility/XMLtoArrayParser.php',

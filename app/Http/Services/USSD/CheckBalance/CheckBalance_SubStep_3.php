@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\CheckBalance;
 
-use App\Http\Services\USSD\Utility\StepService_GetCustomerAccount;
+use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -10,7 +10,7 @@ use Exception;
 class CheckBalance_SubStep_3 extends EfectivoPipelineWithBreakContract
 {
 
-	public function __construct(private StepService_GetCustomerAccount $getCustomerAccount)
+	public function __construct(private GetCustomerAccount $getCustomerAccount)
 	{}
 	
 	protected function stepProcess(BaseDTO $txDTO)
@@ -23,7 +23,7 @@ class CheckBalance_SubStep_3 extends EfectivoPipelineWithBreakContract
 				$txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
             $txDTO->accountNumber=$txDTO->subscriberInput;
             try {
-                $txDTO->customer=$this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix,$txDTO->client_id);
+                $txDTO->customer=$this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
             } catch (\Throwable $e) {
                 if($e->getCode()==1){
                     $txDTO->errorType = "InvalidAccount";

@@ -110,7 +110,9 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
                );
          });
          $this->app->singleton('Home', function () {
-            return new Home();
+            return new Home(new \App\Http\Services\Clients\ClientMenuService(
+               new \App\Models\ClientMenu()
+            ));
          });
       //
 
@@ -285,7 +287,6 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
                      );
             });
       //
-
       
    }
 

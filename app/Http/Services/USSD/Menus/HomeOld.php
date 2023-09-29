@@ -21,10 +21,9 @@ class Home implements IUSSDMenu
 			try {
 					$menus = $this->clientMenuService->findAll([
 									'client_id'=>$txDTO->client_id,
-									'parent_id'=>$txDTO->menu_id,
 									'isActive' => 'YES'
 								]);
-					$prompt = $txDTO->menu_id.". Enter\n";
+					$prompt = "Welcome to ".strtoupper($txDTO->urlPrefix).". Enter\n";
 					foreach ($menus as $menu) {
 						$prompt .= $menu->order.". ".$menu->prompt."\n";
 					}

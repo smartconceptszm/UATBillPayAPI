@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\OtherPayments;
 
 use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
-use App\Http\Services\USSD\Utility\StepService_GetCustomerAccount;
+use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use App\Http\Services\MenuConfigs\OtherPaymentTypeService;
 use App\Http\Services\USSD\Utility\StepService_GetAmount;
 use App\Http\DTOs\BaseDTO;
@@ -14,7 +14,7 @@ class OtherPayment_SubStep_5 extends EfectivoPipelineWithBreakContract
 
    public function __construct(
       private OtherPaymentTypeService $otherPayTypes,
-      private StepService_GetCustomerAccount $getCustomerAccount,
+      private GetCustomerAccount $getCustomerAccount,
       private StepService_GetAmount $getAmount)
    {}
 
@@ -43,8 +43,7 @@ class OtherPayment_SubStep_5 extends EfectivoPipelineWithBreakContract
                   ]);
             if($paymentType->receiptAccount == 'CUSTOMER'){
                try {
-                  $txDTO->customer  = $this->getCustomerAccount->handle($txDTO->accountNumber,
-                                       $txDTO->urlPrefix, $txDTO->client_id);
+                  $txDTO->customer  = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
                } catch (Exception $e) {
                   if($e->getCode() == 1){
                      $txDTO->errorType = 'InvalidAccount';

@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\ServiceApplications;
 
 use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
-use App\Http\Services\USSD\Utility\StepService_GetCustomerAccount;
+use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
 use App\Http\Services\MenuConfigs\ServiceTypeService;
 use App\Http\DTOs\BaseDTO;
@@ -13,7 +13,7 @@ class ServiceApplications_SubStep_3 extends EfectivoPipelineWithBreakContract
 {
 
    public function __construct(
-      protected StepService_GetCustomerAccount $getCustomerAccount,
+      protected GetCustomerAccount $getCustomerAccount,
       protected ServiceTypeDetailService $serviceTypeDetails,
       protected ServiceTypeService $serviceTypes)
    {}
@@ -26,8 +26,7 @@ class ServiceApplications_SubStep_3 extends EfectivoPipelineWithBreakContract
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
             $txDTO->accountNumber = $txDTO->subscriberInput;
-            $txDTO->customer = $this->getCustomerAccount->handle(
-                                    $txDTO->accountNumber,$txDTO->urlPrefix,$txDTO->client_id);
+            $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
             $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
             $theServiceType = $this->serviceTypes->findOneBy([
                         'client_id'=>$txDTO->client_id,

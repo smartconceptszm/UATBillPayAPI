@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
-class Step_IdentifyMenu extends EfectivoPipelineContract
+class Step_IdentifyMenuOld extends EfectivoPipelineContract
 {
 
    private $handleBack;
@@ -52,7 +52,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
       }
       //Bind selected Menu Handler to the Interface
       try {
-         $this->menuBinderService->bind($txDTO->Handler);
+         $this->menuBinderService->bind($txDTO->menu);
       } catch (\Throwable $th) {
          $txDTO->error = 'Erro binding the menu. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
@@ -67,15 +67,12 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
       if(\count(\explode("*", $txDTO->subscriberInput))>1){
          $txDTO = $this->handleShortcut($txDTO);
       }else{
-         $selectedMenu = $this->clientMenuService->findOneBy([
-                              'client_id' => $txDTO->client_id,
-                              'parent_id' => 0
-                           ]);
-         $txDTO->menu_id = $selectedMenu->id; 
-         $txDTO->handler = $selectedMenu->handler; 
+         $txDTO->customerJourney = $txDTO->subscriberInput;
+         $txDTO->menu = 'Home'; 
       }
       $ussdSession = $this->sessionService->create($txDTO->toSessionData());
       $txDTO->id=$ussdSession->id;
+      $txDTO->customerJourney = $txDTO->menu =='Home'? '': $txDTO->customerJourney;
       return $txDTO;
 
    }
@@ -139,32 +136,27 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
       $txDTO->district = $ussdSession->district;
       $txDTO->mno_id = $ussdSession->mno_id;
       $txDTO->status = $ussdSession->status;
-      $txDTO->menu_id = $ussdSession->menu_id;
+      $txDTO->menu = $ussdSession->menu;
       $txDTO->id = $ussdSession->id;
       $txDTO->error = '';
-      $currentMenu = $this->clientMenuService->findById($txDTO->menu_id);
-      if($currentMenu->isParent == 'YES'){
+
+      if (count(\explode("*", $txDTO->customerJourney)) == 1) {
          $selectedMenu = $this->clientMenuService->findOneBy([
-                        'order' => $txDTO->subscriberInput,
-                        'client_id' => $txDTO->client_id,
-                        'parent_id' => $txDTO->menu_id,
-                        'isActive' => "YES"
-                     ]);
+                     'order' => $txDTO->subscriberInput,
+                     'client_id' => $txDTO->client_id,
+                     'isActive' => "YES"
+                  ]);
          if(!$selectedMenu){
             throw new Exception("Invalid Menu Item number", 1);
          }else{
-            $txDTO->menu_id = $selectedMenu->id;
-            $txDTO->handler = $selectedMenu->handler;
+            $txDTO->menu = $selectedMenu->code;
          }
       }else{
-         $txDTO->handler = $currentMenu->handler;
+         $this->handleBack = \json_decode(Cache::get($txDTO->sessionId."handleBack",''),true);
+         if($this->handleBack){
+            $txDTO = $this->handleBackStep($txDTO); 
+         }
       }
-
-      $this->handleBack = \json_decode(Cache::get($txDTO->sessionId."handleBack",''),true);
-      if($this->handleBack){
-         $txDTO = $this->handleBackStep($txDTO); 
-      }
-      
       return $txDTO;
 
    }

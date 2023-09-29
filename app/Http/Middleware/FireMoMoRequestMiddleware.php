@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Support\Facades\Queue;
+
 use App\Jobs\InitiateMoMoPaymentJob;
 use App\Http\DTOs\MoMoDTO;
 use Illuminate\Support\Carbon;

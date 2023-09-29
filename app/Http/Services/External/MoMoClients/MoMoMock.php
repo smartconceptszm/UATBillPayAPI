@@ -20,7 +20,7 @@ class MoMoMock implements IMoMoClient
    public function confirmPayment(object $dto): object
    {
       return (object)[
-            'status' => "PAID",
+            'status' => "PAID | NOT RECEIPTED",
             'mnoTransactionId' => 'MP'.date('ymd').".".date('Hi').".".strtoupper(Str::random(6)),
             'error' => '',
          ];

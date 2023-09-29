@@ -82,9 +82,14 @@ class SMSService
    private function getClient(BaseDTO $dto):BaseDTO|null
    {
 
-      $client = $this->clientService->findById($dto->client_id);
+      if($dto->client_id!=''){
+         $client = $this->clientService->findById($dto->client_id);
+         $dto->urlPrefix = $client->urlPrefix;
+      }else{
+         $client = $this->clientService->findOneBy($dto->urlPrefix);
+         $dto->client_id = $client->id;
+      }
       $dto->smsPayMode = $client->smsPayMode;
-      $dto->urlPrefix = $client->urlPrefix;
       $dto->shortName = $client->shortName;
       $dto->balance = $client->balance;
       return $dto;

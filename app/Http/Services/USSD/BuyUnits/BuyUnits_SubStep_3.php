@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\BuyUnits;
 
 use App\Http\Services\MoMo\Utility\StepService_CalculatePaymentAmounts;
-use App\Http\Services\USSD\Utility\StepService_GetCustomerAccount;
+use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\Services\USSD\Utility\StepService_GetAmount;
 use Illuminate\Support\Facades\Cache;
@@ -16,7 +16,7 @@ class BuyUnits_SubStep_3 extends EfectivoPipelineWithBreakContract
    private $calculatePaymentAmounts;
    private $getCustomerAccount;
    private $getAmount;
-   public function __construct(StepService_GetCustomerAccount $getCustomerAccount,
+   public function __construct(GetCustomerAccount $getCustomerAccount,
          StepService_CalculatePaymentAmounts $calculatePaymentAmounts,
          StepService_GetAmount $getAmount)
    {
@@ -44,8 +44,7 @@ class BuyUnits_SubStep_3 extends EfectivoPipelineWithBreakContract
          }
          
          try {
-               $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,
-                     $txDTO->urlPrefix, $txDTO->client_id);
+               $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
          } catch (Exception $e) {
                if($e->getCode()==1){
                   $txDTO->errorType = 'InvalidAccount';

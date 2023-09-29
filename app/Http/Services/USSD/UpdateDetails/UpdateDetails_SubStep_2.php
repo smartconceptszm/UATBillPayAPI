@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\UpdateDetails;
 
 use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
-use App\Http\Services\USSD\Utility\StepService_GetCustomerAccount;
+use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -13,7 +13,7 @@ class UpdateDetails_SubStep_2 extends EfectivoPipelineWithBreakContract
 {
 
    public function __construct(
-      private StepService_GetCustomerAccount $getCustomerAccount)
+      private GetCustomerAccount $getCustomerAccount)
    {}
 
    protected function stepProcess(BaseDTO $txDTO)
@@ -24,8 +24,7 @@ class UpdateDetails_SubStep_2 extends EfectivoPipelineWithBreakContract
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
             $txDTO->accountNumber = $txDTO->subscriberInput;
-            $txDTO->customer = $this->getCustomerAccount->handle(
-                                    $txDTO->accountNumber,$txDTO->urlPrefix,$txDTO->client_id);
+            $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
             $txDTO->response = "Update details on:\n". 
             "Acc: ".$txDTO->subscriberInput."\n".
             "Name: ".$txDTO->customer['name']."\n". 

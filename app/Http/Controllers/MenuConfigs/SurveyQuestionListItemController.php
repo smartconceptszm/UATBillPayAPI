@@ -12,7 +12,7 @@ class SurveyQuestionListItemController extends Controller
     protected $validationRules = [
 									'survey_question_list_type_id' => 'required',
 									'value' => 'required|string',
-									'order' => 'required|string'
+									'order' => 'required'
 								];
 	public function __construct(
 		private SurveyQuestionListItemService $theService)

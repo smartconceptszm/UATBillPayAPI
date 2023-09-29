@@ -57,9 +57,16 @@ Route::group(['middleware' => 'mode'], function (){
    //End of USSD Routes
 
    //Auth
-   Route::post('/login', [\App\Http\Controllers\Auth\UserLoginController::class,'store']);
-   Route::post('/passwordreset', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'store']);
-   Route::put('/passwordreset/{id}', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'update']);
+      Route::post('/login', [\App\Http\Controllers\Auth\UserLoginController::class,'store']);
+      Route::post('/passwordreset', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'store']);
+      Route::put('/passwordreset/{id}', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'update']);
+
+   //Web Payment Routes
+      Route::get('/webpayments/swasco/menus', [\App\Http\Controllers\Web\PaymentMenuController::class, 'index']);
+      Route::get('/webpayments/swasco/otherpaymenttypes', [\App\Http\Controllers\Web\OtherPaymentsMenuController::class, 'index']);
+      Route::get('/webpayments/swasco/customers/{accountNumber}', [\App\Http\Controllers\Web\WebPaymentController::class, 'show']);
+      Route::post('/webpayments/swasco/payments', [\App\Http\Controllers\Web\WebPaymentController::class, 'store']);
+   //
 
    Route::group(['middleware' => 'auth'], function (){
 

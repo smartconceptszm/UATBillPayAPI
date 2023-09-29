@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\Survey;
 
 use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
-use App\Http\Services\USSD\Utility\StepService_GetCustomerAccount;
+use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use Illuminate\Support\Facades\Cache;
 use App\Http\DTOs\BaseDTO;
 use Illuminate\Support\Carbon;
@@ -13,7 +13,7 @@ class Survey_SubStep_2 extends EfectivoPipelineWithBreakContract
 {
 
    public function __construct(
-      private StepService_GetCustomerAccount $getCustomerAccount)
+      private GetCustomerAccount $getCustomerAccount)
    {}
 
    protected function stepProcess(BaseDTO $txDTO)
@@ -24,8 +24,7 @@ class Survey_SubStep_2 extends EfectivoPipelineWithBreakContract
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
             $txDTO->accountNumber = $txDTO->subscriberInput;
-            $txDTO->customer = $this->getCustomerAccount->handle(
-                                    $txDTO->accountNumber,$txDTO->urlPrefix,$txDTO->client_id);
+            $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
             $txDTO->response = "Good ".$this->timeofDay().",\n". 
                $txDTO->customer['name']." (".$txDTO->subscriberInput.")\n". 
                "Thank you for participating in this survey.\n". 

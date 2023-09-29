@@ -9,28 +9,28 @@ class InitiateMoMoPaymentTest extends TestCase
 {
 
 
-   public function _testInitiatePayment()
+   public function testInitiatePayment()
    { 
 
       $serviceBinder = new MoMoClientBinderService();
       $momoService = new InitiateMoMoPayment();
 
-      $serviceBinder->bind('MoMoMock');
+      $serviceBinder->bind('MTN');
 
       $momoDTO = new MoMoDTO();
       $momoDTO = $momoDTO->fromUssdData(
          [
-               "customerJourney" => "2106*1*1101000166*5.67*1",
+               "customerJourney" => "5757*1*CHO0001527*1.45*1",
                "mobileNumber" => "260761028631",
-               'accountNumber' => '1101000166',
-               'sessionId' => '10000001',
-               'urlPrefix' => 'lukanga',
+               'accountNumber' => 'CHO0001527',
+               'sessionId' => '100002116',
+               'urlPrefix' => 'swasco',
                'mnoName' => 'MTN',
-               "district" => 'KABWE',
+               "district" => 'CHOMA',
                "menu" => "PayBill",
-               "client_id" => 2,
+               "client_id" => 3,
                "mno_id" => 2,
-               "id" => 1,
+               "id" => 35630,
          ]);
       
       $response = $momoService->handle($momoDTO);

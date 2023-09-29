@@ -279,7 +279,7 @@ return array(
     'App\\Http\\Services\\USSD\\Utility\\StepService_AccountNoMenu' => $baseDir . '/app/Http/Services/USSD/Utility/StepService_AccountNoMenu.php',
     'App\\Http\\Services\\USSD\\Utility\\StepService_CheckPaymentsEnabled' => $baseDir . '/app/Http/Services/USSD/Utility/StepService_CheckPaymentsEnabled.php',
     'App\\Http\\Services\\USSD\\Utility\\StepService_GetAmount' => $baseDir . '/app/Http/Services/USSD/Utility/StepService_GetAmount.php',
-    'App\\Http\\Services\\USSD\\Utility\\StepService_GetCustomerAccount' => $baseDir . '/app/Http/Services/USSD/Utility/StepService_GetCustomerAccount.php',
+    'App\\Http\\Services\\USSD\\Utility\\GetCustomerAccount' => $baseDir . '/app/Http/Services/USSD/Utility/GetCustomerAccount.php',
     'App\\Http\\Services\\USSD\\Utility\\StepService_ValidateCRMInput' => $baseDir . '/app/Http/Services/USSD/Utility/StepService_ValidateCRMInput.php',
     'App\\Http\\Services\\Utility\\PsrMessageToStringConvertor' => $baseDir . '/app/Http/Services/Utility/PsrMessageToStringConvertor.php',
     'App\\Http\\Services\\Utility\\XMLtoArrayParser' => $baseDir . '/app/Http/Services/Utility/XMLtoArrayParser.php',

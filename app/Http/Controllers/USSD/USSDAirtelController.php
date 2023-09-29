@@ -19,8 +19,9 @@ class USSDAirtelController extends USSDController
             $airtelParams['sessionId']=$request->input('SESSION_ID');
             $airtelParams['mobileNumber']=$request->input('MSISDN');
             $airtelParams['urlPrefix']=$this->getUrlPrefix($request);
-            $airtelParams['mnoName']='AIRTEL';
-            $this->theDTO=$this->theDTO->fromArray($airtelParams);
+            $airtelParams['mnoName'] = 'AIRTEL';
+            $airtelParams['mno_id'] = $this->getMNO($airtelParams['mnoName']); 
+            $this->theDTO = $this->theDTO->fromArray($airtelParams);
          //Process the Request
          $this->theDTO = $this->theService->handle($this->theDTO);
       } catch (\Throwable $e) {

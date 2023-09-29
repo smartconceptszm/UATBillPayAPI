@@ -1,26 +1,20 @@
 <?php
 
-namespace App\Http\Services\MenuConfigs;
+namespace App\Http\Services\Clients;
 
-use Illuminate\Support\Facades\Auth;
-use App\Models\ComplaintType;
-use Illuminate\Support\Arr;
+use App\Models\OtherPaymentType;
 use Exception;
 
-class ComplaintTypeService
+class OtherPaymentTypeService
 {
 
    public function __construct(
-         private ComplaintType $model
+         private OtherPaymentType $model
    ) {}
 
    public function findAll(array $criteria = null):array|null
    {
       try {
-         if(!Arr::exists($criteria,"client_id")){
-            $user = Auth::user(); 
-            $criteria['client_id'] = $user->client_id;
-         }
          return $this->model->where($criteria)->get()->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
@@ -44,9 +38,7 @@ class ComplaintTypeService
    }
 
    public function create(array $data) : object|null {
-      try {       
-         $user = Auth::user(); 
-         $criteria['client_id'] = $user->client_id;
+      try {
          foreach ( $data as $key => $value) {
             if($value == ''){
                   unset($data[$key]);
@@ -93,4 +85,3 @@ class ComplaintTypeService
    }
 
 }
-

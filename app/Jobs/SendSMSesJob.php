@@ -18,7 +18,7 @@ class SendSMSesJob extends BaseJob
     */
    public function __construct(
       private Array $arrSMSes, 
-      public String $urlPrefix = null)
+      public String $urlPrefix = '')
    {}
 
 

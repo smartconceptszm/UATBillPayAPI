@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services\USSD\Utility;
+namespace App\Http\Services\External\BillingClients;
 
 use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Facades\Queue;
@@ -9,14 +9,14 @@ use Illuminate\Support\Carbon;
 use App\Jobs\SendSMSesJob;
 use Exception;
 
-class StepService_GetCustomerAccount 
+class GetCustomerAccount 
 {
 
     public function __construct(
         private IBillingClient $billingClient)
     {}
 
-    public function handle(string $accountNumber, string $urlPrefix , string $client_id):array
+    public function handle(string $accountNumber, string $urlPrefix):array
     {
 
         try {
@@ -36,7 +36,9 @@ class StepService_GetCustomerAccount
             if($customer){
                 return \json_decode($customer,true);
             }
-            $arrAccount= $this->billingClient->getAccountDetails($accountNumber);
+
+            $arrAccount = $this->billingClient->getAccountDetails($accountNumber);
+            
             Cache::put($urlPrefix.$accountNumber, 
                     \json_encode($arrAccount), 
                     Carbon::now()->addMinutes(intval(\env('CUSTOMER_ACCOUNT_CACHE'))));
@@ -59,7 +61,7 @@ class StepService_GetCustomerAccount
                             foreach ($adminMobileNumbers as $key => $mobileNumber) {
                                 $arrSMSes[$key]['mobileNumber']=$mobileNumber;
                                 $arrSMSes[$key]['type']="NOTIFICATION";
-                                $arrSMSes[$key]['client_id']=$client_id;
+                                $arrSMSes[$key]['urlPrefix']=$urlPrefix;
                                 $arrSMSes[$key]['message']=\strtoupper($urlPrefix).
                                         " billing system is currently offline - please check the service.";
                             }

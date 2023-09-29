@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\PayBill;
 
 use App\Http\Services\MoMo\Utility\StepService_CalculatePaymentAmounts;
-use App\Http\Services\USSD\Utility\StepService_GetCustomerAccount;
+use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\Services\USSD\Utility\StepService_GetAmount;
 use Illuminate\Support\Facades\Cache;
@@ -16,7 +16,7 @@ class Payments_SubStep_3 extends EfectivoPipelineWithBreakContract
 
    public function __construct(
       private StepService_CalculatePaymentAmounts $calculatePaymentAmounts,
-      private StepService_GetCustomerAccount $getCustomerAccount,
+      private GetCustomerAccount $getCustomerAccount,
       private StepService_GetAmount $getAmount, 
    ){}
 
@@ -39,8 +39,8 @@ class Payments_SubStep_3 extends EfectivoPipelineWithBreakContract
          }
          
          try {
-               $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,
-                     $txDTO->urlPrefix, $txDTO->client_id);
+               $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
+               $txDTO->district = $txDTO->customer['district'];
          } catch (Exception$e) {
                if($e->getCode()==1){
                   $txDTO->errorType = 'InvalidAccount';

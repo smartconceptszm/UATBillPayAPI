@@ -12,7 +12,7 @@ class OtherPaymentType extends Model
 
    protected $fillable=[
          'client_id','code','name','order', 'receiptAccount','ledgerAccountNumber',
-         'hasReference','type','detailPrompt'
+         'hasReference','type','prompt','isActive'
       ];
 
    protected $casts = [
@@ -24,6 +24,7 @@ class OtherPaymentType extends Model
          'receiptAccount' => 'CUSTOMER',
          'hasApplicationNo' => 'NO',
          'hasApplicationNo' => 'NO',
+         'isActive' =>'NO'
       ];
 
 }

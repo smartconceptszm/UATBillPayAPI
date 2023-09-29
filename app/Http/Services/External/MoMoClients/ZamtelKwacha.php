@@ -4,7 +4,6 @@ namespace App\Http\Services\External\MoMoClients;
 
 use App\Http\Services\External\MoMoClients\IMoMoClient;
 use Illuminate\Support\Facades\Http;
-use App\Http\DTOs\BaseDTO;
 use Exception;
 
 class ZamtelKwacha implements IMoMoClient
@@ -23,7 +22,7 @@ class ZamtelKwacha implements IMoMoClient
    {
 
       $mainResponse=[
-            'status'=>"FAILED",
+            'status'=>"PAYMENT FAILED",
             'mnoTransactionId'=>'',
             'error'=>''
          ];
@@ -46,7 +45,7 @@ class ZamtelKwacha implements IMoMoClient
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
             $apiResponse=$apiResponse->json();
             if($apiResponse['status']==='0'){
-               $mainResponse['status'] = "PAID";
+               $mainResponse['status'] = "PAID | NOT RECEIPTED";
                $mainResponse['mnoTransactionId']=$apiResponse['TransactionId'];
             }else{
                $errorMessage='';
@@ -74,9 +73,9 @@ class ZamtelKwacha implements IMoMoClient
          }
       } catch (\Throwable $e){
          if($e->getCode()==1){
-               $mainResponse['error']=$e->getMessage();
+            $mainResponse['error']=$e->getMessage();
          }else{
-               $mainResponse['error']="Zamtel Kwacha unavailable";
+            $mainResponse['error']="Zamtel Kwacha unavailable";
          }
       }
       return (object)$mainResponse;

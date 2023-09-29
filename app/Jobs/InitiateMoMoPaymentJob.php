@@ -19,6 +19,7 @@ class InitiateMoMoPaymentJob extends BaseJob
    public function handle(InitiateMoMoPayment $initiateMoMoPayment, 
                            MoMoClientBinderService $momoClientBinderService)
    {
+      
       //Bind the MoMoClient
       $momoClient = $this->momoDTO->mnoName;
       if(\env("MOBILEMONEY_USE_MOCK") == 'YES'){
@@ -27,6 +28,7 @@ class InitiateMoMoPaymentJob extends BaseJob
       $momoClientBinderService->bind($momoClient);
       //Handle the Job
       $initiateMoMoPayment->handle($this->momoDTO);
+
    }
 
 }

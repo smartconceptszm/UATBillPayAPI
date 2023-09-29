@@ -23,6 +23,7 @@ return new class extends Migration
          $table->enum('hasReference',['NO','YES'])->default('NO')->notNullable();
          $table->enum('type',['MOBILE','GENERAL'])->default('GENERAL')->notNullable();
          $table->string('prompt',150)->nullable();
+         $table->enum('isActive',['YES','NO'])->default('NO')->notNullable();
          $table->timestamps();
          $table->unique(['client_id', 'name'],'client_payment_type');
          $table->unique(['client_id', 'order'],'client_payment_order');

@@ -3,8 +3,6 @@
 use App\Http\Services\External\BillingClients\BillingClientBinderService;
 use App\Http\Services\External\MoMoClients\MoMoClientBinderService;
 use App\Http\Services\External\SMSClients\SMSClientBinderService;
-use App\Http\Services\MoMo\Utility\StepService_GetPaymentStatus;
-use App\Http\Services\External\MoMoClients\MoMoMock;
 use App\Http\Services\MoMo\ConfirmMoMoPayment;
 use App\Http\DTOs\MoMoDTO;
 use Tests\TestCase;
@@ -18,14 +16,11 @@ class ConfirmMoMoPaymentTest extends TestCase
       $billingServiceBinder = new BillingClientBinderService();
       $momoServiceBinder = new MoMoClientBinderService();
       $smsServiceBinder = new SMSClientBinderService();
+      $momoService = new ConfirmMoMoPayment();
 
       $billingServiceBinder->bind('lukanga');
       $momoServiceBinder->bind('MoMoMock');
       $smsServiceBinder->bind('MockDeliverySMS');
-
-      $momoClient = new MoMoMock();
-      $getPaymentStatus = new StepService_GetPaymentStatus($momoClient);
-      $momoService = new ConfirmMoMoPayment($getPaymentStatus);
 
       $momoDTO = new MoMoDTO();
       $momoDTO = $momoDTO->fromArray(

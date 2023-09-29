@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\FaultsComplaints;
 
 use App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient;
-use App\Http\Services\USSD\Utility\StepService_GetCustomerAccount;
+use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\Services\MenuConfigs\ComplaintSubTypeService;
 use App\Http\Services\MenuConfigs\ComplaintTypeService;
@@ -18,7 +18,7 @@ class FaultsComplaints_SubStep_5 extends EfectivoPipelineWithBreakContract
 
    public function __construct(
       private ComplaintSubTypeService $cSubTypeService,
-      private StepService_GetCustomerAccount $getCustomerAccount,
+      private GetCustomerAccount $getCustomerAccount,
       private ComplaintTypeService $cTypeService,
       private IComplaintClient $complaintClient)
    {}
@@ -33,8 +33,7 @@ class FaultsComplaints_SubStep_5 extends EfectivoPipelineWithBreakContract
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
             $txDTO->accountNumber = $txDTO->subscriberInput;
             try {
-               $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,
-                                                      $txDTO->urlPrefix,$txDTO->client_id);
+               $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
             } catch (\Throwable $e) {
                if($e->getCode()==1){
                   $txDTO->errorType = 'InvalidAccount';
@@ -95,7 +94,7 @@ class FaultsComplaints_SubStep_5 extends EfectivoPipelineWithBreakContract
             ]
          ];
       Queue::later(Carbon::now()->addSeconds(3), 
-                     new SendSMSesJob($arrSMSes));
+                     new SendSMSesJob($arrSMSes,$txDTO->urlPrefix));
 
    }
 

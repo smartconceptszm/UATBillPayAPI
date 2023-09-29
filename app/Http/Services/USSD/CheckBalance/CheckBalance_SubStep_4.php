@@ -5,6 +5,7 @@ namespace App\Http\Services\USSD\CheckBalance;
 use App\Http\Services\USSD\Utility\StepService_CheckPaymentsEnabled;
 use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\Services\USSD\Utility\StepService_AccountNoMenu;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -13,7 +14,8 @@ class CheckBalance_SubStep_4 extends EfectivoPipelineWithBreakContract
 
    public function __construct( 
       private StepService_CheckPaymentsEnabled $checkPaymentsEnabled,
-      private StepService_AccountNoMenu $accountNoMenu
+      private StepService_AccountNoMenu $accountNoMenu,
+      private ClientMenuService $clientMenuService
    ){}
 
    protected function stepProcess(BaseDTO $txDTO)
@@ -31,8 +33,12 @@ class CheckBalance_SubStep_4 extends EfectivoPipelineWithBreakContract
                   }else{
                      $txDTO->menu = "PayBill";
                   }
-                  $txDTO->customerJourney=$arrCustomerJourney[0]."*".
-                                       \config('efectivo_clients.'.$txDTO->urlPrefix.'.menu.'.$txDTO->menu);
+                  $selectedMenu = $this->clientMenuService->findOneBy([
+                                       'code' => $txDTO->subscriberInput,
+                                       'client_id' => $txDTO->client_id,
+                                       'isActive' => "YES"
+                                    ]);
+                  $txDTO->customerJourney = $arrCustomerJourney[0]."*".$selectedMenu->order;
                   $txDTO->subscriberInput = $arrCustomerJourney[3];
                   $txDTO->response = "Enter Amount :\n";
                   $txDTO->status = 'INITIATED';
@@ -41,6 +47,8 @@ class CheckBalance_SubStep_4 extends EfectivoPipelineWithBreakContract
                   $txDTO->lastResponse = true;
                }
                return $txDTO;
+
+
             }
             if($txDTO->subscriberInput == '0'){
                $txDTO->customerJourney = $arrCustomerJourney[0].'*'.$arrCustomerJourney[1];
@@ -52,7 +60,7 @@ class CheckBalance_SubStep_4 extends EfectivoPipelineWithBreakContract
             }
    
             $txDTO->accountNumber = $arrCustomerJourney[2];
-            $txDTO->error = 'User entered invalid input';
+            $txDTO->error = 'Invalid selection';
             $txDTO->errorType= "InvalidInput";
    
          }

@@ -4,7 +4,6 @@ namespace App\Http\Services\External\MoMoClients;
 
 use App\Http\Services\External\MoMoClients\IMoMoClient;
 use Illuminate\Support\Facades\Http;
-use App\Http\DTOs\BaseDTO;
 use Illuminate\Support\Str;
 use Exception;
 
@@ -63,10 +62,10 @@ class MTNMoMo implements IMoMoClient
       
    }
 
-   public function confirmPayment(BaseDTO $dto): BaseDTO
+   public function confirmPayment(object $dto): object
    {
 
-      $response=['status'=>"FAILED",
+      $response=['status'=>"PAYMENT FAILED",
                   'mnoTransactionId'=>'',
                   'error'=>''];
 
@@ -86,7 +85,7 @@ class MTNMoMo implements IMoMoClient
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
                $apiResponse=$apiResponse->json();
                if($apiResponse['status']==='SUCCESSFUL'){
-                  $response['status'] = "PAID";
+                  $response['status'] = "PAID | NOT RECEIPTED";
                   $response['mnoTransactionId']=$apiResponse['financialTransactionId'];
                }else{
                   switch ($apiResponse['status']) {
@@ -123,11 +122,10 @@ class MTNMoMo implements IMoMoClient
                }
          }
       } catch (\Throwable $e) {
-         $response['status'] = "FAILED";
          if ($e->getCode()==2 || $e->getCode()==3) {
-               $response['error']=$e->getMessage();
+            $response['error']=$e->getMessage();
          } else {
-               $response['error']="Error on get transaction status. ".$e->getMessage();
+            $response['error']="Error on get transaction status. ".$e->getMessage();
          }
       }
       return (object)$response;
@@ -141,9 +139,9 @@ class MTNMoMo implements IMoMoClient
                      'expires_in'=>''];
 
       try {
-         $fullURL = $$configs['baseURL']."token/";
+         $fullURL = $configs['baseURL']."token/";
          $apiResponse = Http::timeout($configs['timeout'])
-            ->withBasicAuth($$configs['clientUserName'], $configs['clientPassword'])
+            ->withBasicAuth($configs['clientUserName'], $configs['clientPassword'])
                ->withHeaders([
                   'Ocp-Apim-Subscription-Key' => $configs['clientId'],
                   'Accept' => '*/*'

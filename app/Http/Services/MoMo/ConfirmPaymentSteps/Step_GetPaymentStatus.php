@@ -21,12 +21,8 @@ class Step_GetPaymentStatus extends EfectivoPipelineContract
          if($momoDTO->error == ''){
             $mnoResponse = $this->momoClient->confirmPayment($momoDTO->toMoMoParams());
             $momoDTO->mnoTransactionId = $mnoResponse->mnoTransactionId;
+            $momoDTO->paymentStatus = $mnoResponse->status;
             $momoDTO->error = $mnoResponse->error;
-            if($mnoResponse->status == 'PAID'){
-               $momoDTO->paymentStatus = "PAID | NOT RECEIPTED";
-            }else{
-               $momoDTO->paymentStatus = "PAYMENT FAILED";
-            }
             if (\strpos($momoDTO->error,'PENDING')){
                $momoDTO->error = $momoDTO->mnoName." response: PENDING";
             }
