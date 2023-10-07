@@ -2,15 +2,15 @@
 
 namespace App\Http\Services\MoMo\BillingClientCallers;
 
-use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
+use App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
-class PostPaymentMock extends EfectivoPipelineWithBreakContract
+class PostPaymentMock implements IReceiptPayment
 {
     private $newBalance;
 
-    protected function stepProcess(BaseDTO $momoDTO)
+    public function handle(BaseDTO $momoDTO):BaseDTO
     {
         if (\env('USE_RECEIPTING_MOCK') == "YES"){
             $momoDTO->stepProcessed=true;

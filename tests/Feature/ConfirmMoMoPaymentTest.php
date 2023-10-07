@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Services\External\BillingClients\BillingClientBinderService;
-use App\Http\Services\External\MoMoClients\MoMoClientBinderService;
-use App\Http\Services\External\SMSClients\SMSClientBinderService;
 use App\Http\Services\MoMo\ConfirmMoMoPayment;
+use Illuminate\Support\Facades\App;
 use App\Http\DTOs\MoMoDTO;
 use Tests\TestCase;
 
@@ -13,14 +11,10 @@ class ConfirmMoMoPaymentTest extends TestCase
    public function _testConfirmPayment()
    { 
 
-      $billingServiceBinder = new BillingClientBinderService();
-      $momoServiceBinder = new MoMoClientBinderService();
-      $smsServiceBinder = new SMSClientBinderService();
       $momoService = new ConfirmMoMoPayment();
-
-      $billingServiceBinder->bind('lukanga');
-      $momoServiceBinder->bind('MoMoMock');
-      $smsServiceBinder->bind('MockDeliverySMS');
+      App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,'lukanga');
+      App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,'MoMoMock');
+      App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,'MockDeliverySMS');
 
       $momoDTO = new MoMoDTO();
       $momoDTO = $momoDTO->fromArray(

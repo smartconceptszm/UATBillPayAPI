@@ -2,15 +2,11 @@
 
 namespace App\Jobs\Middleware;
 
-use App\Http\Services\External\SMSClients\SMSClientBinderService;
+use Illuminate\Support\Facades\App;
 use Closure;
 
 class SMSClientBindJobMiddleware
 {
-
-   public function __construct(
-      private SMSClientBinderService $smsClientBinder) 
-   {}
 
     /**
      * Process the queued job.
@@ -33,7 +29,7 @@ class SMSClientBindJobMiddleware
       if(!$smsClientKey){
          $smsClientKey = \env('SMPP_CHANNEL');
       }
-      $this->smsClientBinder->bind($smsClientKey);
+      App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClientKey);
       $next($job);
       
    }

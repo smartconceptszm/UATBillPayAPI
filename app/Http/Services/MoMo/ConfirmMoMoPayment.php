@@ -7,6 +7,7 @@ use App\Jobs\ReConfirmMoMoPaymentJob;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
+use Exception;
 
 class ConfirmMoMoPayment
 {
@@ -17,16 +18,16 @@ class ConfirmMoMoPayment
       try {
          
          $momoDTO =  app(Pipeline::class)
-                     ->send($momoDTO)
-                     ->through(
-                        [
-                           \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
-                           \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
-                           \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
-                           \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
-                        ]
-                     )
-                     ->thenReturn();
+                  ->send($momoDTO)
+                  ->through(
+                     [
+                        \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
+                        \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
+                        \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
+                        \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
+                     ]
+                  )
+                  ->thenReturn();
          if($momoDTO->paymentStatus == "PAYMENT FAILED"){
             if((\strpos($momoDTO->error,'on get transaction status'))
                || (\strpos($momoDTO->error,"Status Code"))
@@ -44,13 +45,13 @@ class ConfirmMoMoPayment
          $momoDTO =  app(Pipeline::class)
             ->send($momoDTO)
             ->through(
-                  [
-                     \App\Http\Services\MoMo\Utility\Step_UpdateTransaction::class,  
-                     \App\Http\Services\MoMo\Utility\Step_LogStatus::class 
-                  ]
+               [
+                  \App\Http\Services\MoMo\Utility\Step_UpdateTransaction::class,  
+                  \App\Http\Services\MoMo\Utility\Step_LogStatus::class 
+               ]
             )
             ->thenReturn();
-      } catch (\Throwable $e) {
+      } catch (Exception $e) {
          $momoDTO->error='At get confirm payment pipeline. '.$e->getMessage();
       }
 

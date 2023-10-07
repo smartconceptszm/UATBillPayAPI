@@ -8,6 +8,7 @@ use App\Jobs\ReConfirmMoMoPaymentJob;
 use App\Jobs\ConfirmMoMoPaymentJob;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
+use Exception;
 
 class Step_DispatchConfirmationJob extends EfectivoPipelineContract
 {
@@ -32,8 +33,8 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
                }
             }
          }
-      } catch (\Throwable $e) {
-         $momoDTO->error='At dispatching confirmstion job. '.$e->getMessage();
+      } catch (Exception $e) {
+         $momoDTO->error='At dispatching confirmation job. '.$e->getMessage();
       }
       return $momoDTO;
 

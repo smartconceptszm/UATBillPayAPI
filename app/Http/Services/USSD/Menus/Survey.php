@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\USSD\Menus;
 
-use App\Http\Services\USSD\Survey\ClientCallers\SurveyClientBinderService;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
+use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -11,18 +11,17 @@ use Exception;
 class Survey implements IUSSDMenu
 {
 
-   public function __construct(
-      private SurveyClientBinderService $surveyClientBinderService)
-   {}
-
    public function handle(BaseDTO $txDTO):BaseDTO
    {
       
       if ($txDTO->error == '') {
          try {
-            //Bind the Survey Entry Creator Client
-               $this->surveyClientBinderService->bind('Survey_'.$txDTO->urlPrefix);
-            //
+            if (\count(\explode("*", $txDTO->customerJourney)) == 2 || \count(\explode("*", $txDTO->customerJourney)) == 5) {
+               App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$txDTO->urlPrefix);
+            }
+            if (\count(\explode("*", $txDTO->customerJourney)) == 5) {
+               App::bind(\App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient::class,$txDTO->urlPrefix);
+            }
             $txDTO->stepProcessed=false;
             $txDTO = app(Pipeline::class)
             ->send($txDTO)

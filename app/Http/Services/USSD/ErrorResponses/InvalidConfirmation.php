@@ -13,7 +13,9 @@ class InvalidConfirmation implements IErrorResponse
    public function handle(BaseDTO $txDTO):BaseDTO
    {
 
-      try {    
+      try {   
+         $txDTO->subscriberInput = $txDTO->customerJourney;
+         $txDTO->customerJourney = '';
          $txDTO->response = "Invalid selection. Please enter\n". 
                               "1. to Confirm payment\n".
                               "0. Back";
@@ -21,6 +23,7 @@ class InvalidConfirmation implements IErrorResponse
                   'must'=>false,
                   'steps'=>1,
                ]);
+         
          Cache::put($txDTO->sessionId."handleBack",$cacheValue, 
                      Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
       } catch (\Throwable $e) {

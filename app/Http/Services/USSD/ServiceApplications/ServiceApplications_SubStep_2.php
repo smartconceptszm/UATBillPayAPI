@@ -34,7 +34,7 @@ class ServiceApplications_SubStep_2 extends EfectivoPipelineWithBreakContract
                throw new Exception("Returned empty service type",1);
             } 
             if($theServiceType->onExistingAccount == 'YES'){
-               $txDTO->response = $this->accountNoMenu->handle('',$txDTO->urlPrefix);
+               $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix);
             }else{
                $serviceAppQuestions = $this->serviceTypeDetails->findAll([
                      'service_type_id'=>$theServiceType->id

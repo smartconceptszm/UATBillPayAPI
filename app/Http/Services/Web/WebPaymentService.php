@@ -3,11 +3,11 @@
 namespace App\Http\Services\Web;
 
 use App\Http\Services\MoMo\Utility\StepService_CalculatePaymentAmounts;
-use App\Http\Services\External\MoMoClients\MoMoClientBinderService;
 use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use App\Http\Services\Payments\PaymentService;
 USE App\Http\Services\Clients\ClientService;
 USE App\Http\Services\Clients\MnoService;
+use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\MoMoDTO;
 use Exception;
@@ -17,7 +17,6 @@ class WebPaymentService
 
    public function __construct(
       private StepService_CalculatePaymentAmounts $calculatePaymentAmounts,
-      private MoMoClientBinderService $moMoClientBinderService,
       private GetCustomerAccount $getCustomerAccount,
       private PaymentService $paymentService,
       private ClientService $clientService,
@@ -96,7 +95,7 @@ class WebPaymentService
 
       $mno = $this->mnoService->findOneBy(['name'=>$moMoDTO->mnoName]);               
       $moMoDTO->mno_id = $mno->id;
-      $this->moMoClientBinderService->bind($moMoDTO->mnoName);
+      App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,$moMoDTO->mnoName);
       return $moMoDTO;
    }
 

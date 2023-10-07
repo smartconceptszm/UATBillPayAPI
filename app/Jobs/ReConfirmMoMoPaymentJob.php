@@ -2,10 +2,9 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\External\BillingClients\BillingClientBinderService;
-use App\Http\Services\External\MoMoClients\MoMoClientBinderService;
-use App\Http\Services\External\SMSClients\SMSClientBinderService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\MoMo\ReConfirmMoMoPayment;
+use Illuminate\Support\Facades\App;
 use App\Http\DTOs\BaseDTO;
 use App\Jobs\BaseJob;
 
@@ -16,18 +15,27 @@ class ReConfirmMoMoPaymentJob extends BaseJob
    {}
 
    public function handle(ReConfirmMoMoPayment $reConfirmMoMoPayment, 
-      BillingClientBinderService $billingClientBinderService,
-      MoMoClientBinderService $moMoClientBinderService,
-      SMSClientBinderService $smsClientBinderService)
+      ClientMenuService $clientMenuService)
    {
-      //Bind the billing client
-         $billingClientBinderService->bind($this->momoDTO->urlPrefix);
+
       //Bind the MoMoClient
          $momoClient = $this->momoDTO->mnoName;
          if(\env("MOBILEMONEY_USE_MOCK") == 'YES'){
             $momoClient = 'MoMoMock';
          }
-         $moMoClientBinderService->bind($momoClient);
+         App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,$momoClient);
+      //
+      //Bind the billing client
+         App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$this->momoDTO->urlPrefix);
+      //
+      //Bind Receipting Handler
+         $theMenu = $clientMenuService->findById($this->momoDTO->menu_id);
+         $receiptHandler = $theMenu->paymentHandler;
+         if (\env('USE_RECEIPTING_MOCK') == "YES"){
+            $receiptHandler = "MockReceipting";
+         }
+         App::bind(\App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment::class,$receiptHandler);
+      //
       //Bind the SMS Client
          $smsClient = '';
          if(!$smsClient && (\env('SMS_SEND_USE_MOCK') == "YES")){
@@ -42,10 +50,10 @@ class ReConfirmMoMoPaymentJob extends BaseJob
          if(!$smsClient){
                $smsClient = \env('SMPP_CHANNEL');
          }
-         $smsClientBinderService->bind($smsClient);
+         App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClient);
       //
       //Handle Job Service
-      $reConfirmMoMoPayment->handle($this->txDTO);
+         $reConfirmMoMoPayment->handle($this->txDTO);
    }
     
 }

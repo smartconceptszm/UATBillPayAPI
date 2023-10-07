@@ -7,54 +7,54 @@ use Exception;
 class StepService_ValidateCRMInput 
 {
 
-   public function handle(object $crmField, string $input):string
+   public function handle(string $crmFieldType, string $input):string
    {
       
-      if($crmField->type == 'MOBILE'){
+      if($crmFieldType == 'MOBILE'){
          $input = \str_replace(" ", "", $input);
          if(\strlen($input)!=10){
             throw new Exception("Invalid input", 1);
          }
       }
 
-      if($crmField->type == "GENERAL"){
+      if($crmFieldType == "GENERAL"){
          //payment mode validation checks
       }
 
-      if($crmField->type == 'READING'){
+      if($crmFieldType == 'READING'){
          $input = \str_replace(" ", "", $input);
          //payment mode validation checks
       }
 
-      if($crmField->type == 'METER'){
+      if($crmFieldType == 'METER'){
          //Meter number validation checks
       }
 
-      if($crmField->type == "PAYMENTMODE"){
+      if($crmFieldType == "PAYMENTMODE"){
          $input = \str_replace(" ", "", $input);
          //payment mode validation checks
       }
 
-      if($crmField->type == "APPLICATION"){
+      if($crmFieldType == "APPLICATION"){
          $input = \str_replace(" ", "", $input);
          //Application Number validation checks
       }
 
-      if($crmField->type == "DATE"){
+      if($crmFieldType == "DATE"){
          $input = \str_replace(" ", "", $input);
          if(\strlen($input)!=10){
             throw new Exception("Invalid input", 1);
          }
       }
 
-      if($crmField->type == "NATIONALID"){
+      if($crmFieldType == "NATIONALID"){
          $input = \str_replace(" ", "", $input);
          if(\strlen($input)!=11){
             throw new Exception("Invalid input", 1);
          }
       }
 
-      if($crmField->type == "ONEWORD"){
+      if($crmFieldType == "ONEWORD"){
          $input = \str_replace(" ", "", $input);
       }
 

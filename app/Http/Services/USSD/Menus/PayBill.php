@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\Menus;
 
 use App\Http\Services\USSD\Menus\IUSSDMenu;
-use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\App;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -14,20 +14,12 @@ class PayBill implements IUSSDMenu
    {
 
       try {     
-         $txDTO->stepProcessed=false;
-         $txDTO = \app(Pipeline::class)
-               ->send($txDTO)
-               ->through(
-                  [
-                     \App\Http\Services\USSD\PayBill\Payments_SubStep_1::class,
-                     \App\Http\Services\USSD\PayBill\Payments_SubStep_2::class,
-                     \App\Http\Services\USSD\PayBill\Payments_SubStep_3::class,
-                     \App\Http\Services\USSD\PayBill\Payments_SubStep_4::class,
-                     \App\Http\Services\USSD\PayBill\Payments_SubStep_5::class
-                  ]
-               )
-               ->thenReturn();
-         $txDTO->stepProcessed=false;
+
+         if (\count(\explode("*", $txDTO->customerJourney)) == 3) {
+            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$txDTO->urlPrefix);
+         }
+         $stepHandler = App::make('PayBill_Step_'.\count(\explode("*", $txDTO->customerJourney)));
+         $txDTO = $stepHandler->run($txDTO);
       } catch (Exception $e) {
          $txDTO->error = 'At pay bill sub steps. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';

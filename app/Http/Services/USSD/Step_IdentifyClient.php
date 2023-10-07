@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\USSD;
 
-use App\Http\Services\External\BillingClients\BillingClientBinderService;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Clients\ClientService; 
 use App\Http\DTOs\BaseDTO;
@@ -12,7 +11,6 @@ class Step_IdentifyClient extends EfectivoPipelineContract
 {
     
    public function __construct(
-      private BillingClientBinderService $binderService,
       private ClientService $clientService)
    {}
    
@@ -35,8 +33,6 @@ class Step_IdentifyClient extends EfectivoPipelineContract
                $txDTO->errorType = "ClientBlocked";
                return $txDTO;
             }
-            //Bind selected Billing Client to the Interface
-            $this->binderService->bind($txDTO->urlPrefix);
          } catch (Exception $e) {
             $txDTO->error = 'At identify client step. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';

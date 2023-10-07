@@ -3,8 +3,9 @@
 namespace App\Http\Services\USSD\Menus;
 
 use App\Http\Services\USSD\Menus\IUSSDMenu;
-use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\App;
 use App\Http\DTOs\BaseDTO;
+use Exception;
 
 class BuyUnits implements IUSSDMenu
 {
@@ -13,21 +14,12 @@ class BuyUnits implements IUSSDMenu
    {
 
       try {     
-         $txDTO->stepProcessed=false;
-         $txDTO = \app(Pipeline::class)
-            ->send($txDTO)
-            ->through(
-               [
-                     \App\Http\Services\USSD\BuyUnits\BuyUnits_SubStep_1::class,
-                     \App\Http\Services\USSD\BuyUnits\BuyUnits_SubStep_2::class,
-                     \App\Http\Services\USSD\BuyUnits\BuyUnits_SubStep_3::class,
-                     \App\Http\Services\USSD\BuyUnits\BuyUnits_SubStep_4::class,
-                     \App\Http\Services\USSD\BuyUnits\BuyUnits_SubStep_5::class
-               ]
-            )
-            ->thenReturn();
-         $txDTO->stepProcessed=false;
-      } catch (\Throwable $e) {
+         if (\count(\explode("*", $txDTO->customerJourney)) == 3) {
+            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$txDTO->urlPrefix);
+         }
+         $stepHandler = App::make('BuyUnits_Step_'.\count(\explode("*", $txDTO->customerJourney)));
+         $txDTO = $stepHandler->run($txDTO);
+      } catch (Exception $e) {
          $txDTO->error = 'At buy units sub steps. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }

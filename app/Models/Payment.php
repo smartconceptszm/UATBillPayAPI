@@ -10,11 +10,11 @@ class Payment extends Model
    use HasFactory;
 
    protected $fillable=[
-      'client_id','session_id','mno_id', 'mobileNumber','accountNumber',
+      'client_id','session_id','mno_id','menu_id', 'mobileNumber','accountNumber',
       'district','mnoTransactionId','surchargeAmount','paymentAmount',
       'receiptAmount','transactionId','receiptNumber','receipt',
       'channel','paymentStatus','status','error','user_id',
-      'other_payment_type_id','reference'
+      'reference'
    ];
 
    protected $casts = [

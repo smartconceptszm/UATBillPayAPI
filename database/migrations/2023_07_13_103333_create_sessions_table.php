@@ -18,11 +18,6 @@ return new class extends Migration
          $table->string('mobileNumber',12)->notNullable();
          $table->unsignedBigInteger('mno_id')->nullable();
          $table->unsignedBigInteger('menu_id')->nullable();
-         $table->enum('handler',['Home','PayBill','BuyUnits','CheckBalance',
-                              'FaultsComplaints','UpdateDetails',
-                              'ServiceApplications','OtherPayments',
-                              'Survey']
-                           )->default('Home')->notNullable();
          $table->text('customerJourney')->notNullable();
          $table->string('accountNumber',20)->nullable();
          $table->float('paymentAmount',10,2)->default(0);

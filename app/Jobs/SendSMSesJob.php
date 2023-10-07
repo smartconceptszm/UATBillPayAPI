@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use \App\Http\Services\External\SMSClients\SMSClientBinderService;
 use App\Jobs\Middleware\SMSClientBindJobMiddleware;
 use App\Http\Services\SMS\SMSService;
 use App\Http\DTOs\SMSTxDTO;
@@ -29,7 +28,7 @@ class SendSMSesJob extends BaseJob
     */
    public function middleware(): array
    {
-      return [new SMSClientBindJobMiddleware(new SMSClientBinderService())];
+      return [new SMSClientBindJobMiddleware()];
    }
 
    /**

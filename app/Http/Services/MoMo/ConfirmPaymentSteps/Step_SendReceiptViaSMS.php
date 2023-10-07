@@ -6,6 +6,7 @@ use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\SMS\SMSService;
 use App\Http\DTOs\SMSTxDTO;
 use App\Http\DTOs\BaseDTO;
+use Exception;
 
 class Step_SendReceiptViaSMS extends EfectivoPipelineContract
 {
@@ -31,7 +32,7 @@ class Step_SendReceiptViaSMS extends EfectivoPipelineContract
                $momoDTO->paymentStatus = "RECEIPT DELIVERED";
             }
          }
-      } catch (\Throwable $e) {
+      } catch (Exception $e) {
          $momoDTO->error='At receipt via sms. '.$e->getMessage();
       }
       return $momoDTO;

@@ -5,6 +5,7 @@ namespace App\Http\Services\MoMo\Utility;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Payments\PaymentService;
 use App\Http\DTOs\BaseDTO;
+use Exception;
 
 class Step_UpdateTransaction extends EfectivoPipelineContract
 {
@@ -18,7 +19,7 @@ class Step_UpdateTransaction extends EfectivoPipelineContract
 
       try {
          $this->paymentService->update($momoDTO->toPaymentData(),$momoDTO->id);
-      } catch (\Throwable $e) {
+      } catch (Exception $e) {
          $momoDTO->error='At updating payment record. '.$e->getMessage();
       }
       return $momoDTO;

@@ -5,6 +5,7 @@ namespace App\Http\Services\MoMo;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\BaseDTO;
+use Exception;
 
 class ReConfirmMoMoPayment
 {
@@ -46,7 +47,7 @@ class ReConfirmMoMoPayment
                ]
             )
             ->thenReturn();
-      } catch (\Throwable $e){
+      } catch (Exception $e){
          Log::error("At re-confirm payment job. " . $e->getMessage() . ' - Session: ' . $momoDTO->sessionId);
       }
       return $momoDTO;

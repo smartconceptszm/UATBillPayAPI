@@ -22,14 +22,14 @@ class AirtelMoneyTest extends TestCase
 
     }
 
-    public function _testConfirmPayment()
+    public function testConfirmPayment()
     {   
 
         $momoParams = (object)[
-                        'transactionId'=>'D230725T123741A3302000327',
-                        'accountNumber'=>'3302000327',
-                        'paymentAmount'=>400,
-                        'mobileNumber'=>'260974148749',
+                        'transactionId'=>'D230825T205027A1120000314',
+                        'accountNumber'=>'112000314',
+                        'paymentAmount'=>100,
+                        'mobileNumber'=>'260977182676',
                         'urlPrefix'=>'lukanga'
                     ];
 

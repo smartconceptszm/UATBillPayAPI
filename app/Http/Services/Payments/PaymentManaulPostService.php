@@ -2,13 +2,13 @@
 
 namespace App\Http\Services\Payments;
 
-use App\Http\Services\External\BillingClients\BillingClientBinderService;
 use App\Http\Services\MoMo\ConfirmPaymentSteps\Step_PostPaymentToClient;
 use App\Http\Services\MoMo\ConfirmPaymentSteps\Step_SendReceiptViaSMS;
 use App\Http\Services\MoMo\Utility\Step_UpdateTransaction;
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\MoMo\Utility\Step_LogStatus;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\MoMoDTO;
 use Exception;
@@ -17,7 +17,6 @@ class PaymentManaulPostService
 {
 
    public function __construct(
-      private BillingClientBinderService $bindBillingClientService,
       private PaymentToReviewService $paymentToReviewService, 
       private MoMoDTO $momoDTO)
    {}
@@ -35,7 +34,7 @@ class PaymentManaulPostService
             }
          }  
          //Bind the Services
-            $this->bindBillingClientService->bind($momoDTO->urlPrefix);
+            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$momoDTO->urlPrefix);
          //
          $user = Auth::user(); 
          $momoDTO->user_id = $user->id;

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Http\Services\External\BillingClients\BillingClientBinderService;
 use App\Http\Services\Web\WebPaymentService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 
 class WebPaymentController extends Controller
@@ -19,13 +19,10 @@ class WebPaymentController extends Controller
       'menu' => 'required|string',
    ];
 
-	public function __construct(
-      private BillingClientBinderService $bindService,
-      private Request $request
-   )
+	public function __construct(private Request $request)
 	{
       $this->getUrlPrefix($request);
-      $bindService->bind($this->urlPrefix);
+      App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$this->urlPrefix);
    }
 
    /**

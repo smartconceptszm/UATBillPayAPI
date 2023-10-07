@@ -21,7 +21,7 @@ class ComplaintTypeService
             $user = Auth::user(); 
             $criteria['client_id'] = $user->client_id;
          }
-         return $this->model->where($criteria)->get()->all();
+         return $this->model->where($criteria)->orderBy('order')->get()->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

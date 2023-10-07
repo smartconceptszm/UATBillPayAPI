@@ -15,8 +15,8 @@ return new class extends Migration
          $table->id();
          $table->unsignedBigInteger('client_id')->notNullable();
          $table->unsignedBigInteger('session_id')->nullable();
-         $table->unsignedBigInteger('other_payment_type_id')->nullable();
          $table->unsignedBigInteger('mno_id')->notNullable();
+         $table->unsignedBigInteger('menu_id')->notNullable();
          $table->string('mobileNumber',12)->notNullable();
          $table->string('accountNumber',20)->notNullable();
          $table->string('district',50)->nullable();

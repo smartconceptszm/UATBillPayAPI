@@ -10,8 +10,8 @@ class Session extends Model
    use HasFactory;
 
    protected $fillable=[
-      'client_id','sessionId','mno_id', 'mobileNumber','accountNumber',
-      'district','customerJourney','response','status','error'
+      'client_id','sessionId','menu_id','mno_id', 'mobileNumber','accountNumber',
+      'paymentAmount','district','customerJourney','response','status','error'
    ];
 
    protected $casts = [
@@ -20,7 +20,6 @@ class Session extends Model
    ];
 
    protected $attributes = [
-         'menu' => 'Home',
          'status' => 'INITIATED',
       ];
 

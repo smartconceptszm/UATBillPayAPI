@@ -24,7 +24,7 @@ class Home implements IUSSDMenu
 									'parent_id'=>$txDTO->menu_id,
 									'isActive' => 'YES'
 								]);
-					$prompt = $txDTO->menu_id.". Enter\n";
+					$prompt = $txDTO->menuPrompt.". Enter\n";
 					foreach ($menus as $menu) {
 						$prompt .= $menu->order.". ".$menu->prompt."\n";
 					}

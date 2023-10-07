@@ -7,7 +7,6 @@ use App\Http\DTOs\BaseDTO;
 class MoMoDTO extends BaseDTO
 {
    
-   public $other_payment_type_id;
    public $mnoTransactionId;
    public $surchargeAmount;
    public $accountNumber;
@@ -22,6 +21,7 @@ class MoMoDTO extends BaseDTO
    public $reference;
    public $district;
    public $receipt;
+   public $menu_id;
    public $user_id;
    public $mno_id;
    public $channel;
@@ -63,11 +63,11 @@ class MoMoDTO extends BaseDTO
             'mobileNumber'=>$this->mobileNumber,'channel'=>$this->channel,
             'district'=>$this->district,'client_id'=>$this->client_id,
             'session_id'=>$this->session_id,'mno_id'=>$this->mno_id,
-            'other_payment_type_id'=>$this->other_payment_type_id,
             'mnoTransactionId'=>$this->mnoTransactionId,
             'receiptNumber'=>$this->receiptNumber,
             'paymentStatus'=>$this->paymentStatus,
-            'reference'=>$this->reference      
+            'reference'=>$this->reference,
+            'menu_id'=>$this->menu_id
          ]; 
    }
 

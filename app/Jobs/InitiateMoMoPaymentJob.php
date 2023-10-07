@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\External\MoMoClients\MoMoClientBinderService;
 use App\Http\Services\MoMo\InitiateMoMoPayment;
+use Illuminate\Support\Facades\App;
 use App\Http\DTOs\BaseDTO;
 use App\Jobs\BaseJob;
 
@@ -16,8 +16,7 @@ class InitiateMoMoPaymentJob extends BaseJob
       $this->momoDTO = $momoDTO;
    }
 
-   public function handle(InitiateMoMoPayment $initiateMoMoPayment, 
-                           MoMoClientBinderService $momoClientBinderService)
+   public function handle(InitiateMoMoPayment $initiateMoMoPayment)
    {
       
       //Bind the MoMoClient
@@ -25,7 +24,7 @@ class InitiateMoMoPaymentJob extends BaseJob
       if(\env("MOBILEMONEY_USE_MOCK") == 'YES'){
          $momoClient = 'MoMoMock';
       }
-      $momoClientBinderService->bind($momoClient);
+      App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,$momoClient);
       //Handle the Job
       $initiateMoMoPayment->handle($this->momoDTO);
 

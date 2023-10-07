@@ -6,7 +6,11 @@ use App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient;
 use App\Http\Services\MenuConfigs\SurveyQuestionService;
 use App\Http\Services\CRM\SurveyEntryDetailService;
 use App\Http\Services\CRM\SurveyEntryService;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
+use App\Jobs\SendSMSesJob;
+
 use Exception;
 
 class Survey_Local implements ISurveyClient
@@ -46,11 +50,28 @@ class Survey_Local implements ISurveyClient
             DB::rollBack();
             throw new Exception($e->getMessage());
          }
+
+         $this->sendSMSNotification($surveyData);
+
       } catch (Exception $e) {
          throw new Exception('Error at  create survey entry. '.$e->getMessage());
       }
       return $surveyTicket->caseNumber;                                            
 
+   }
+
+   private function sendSMSNotification(array $smsData): void
+   {
+      $arrSMSes = [
+               [
+                  'mobileNumber' => $smsData['mobileNumber'],
+                  'client_id' => $smsData['client_id'],
+                  'message' => $smsData['response'],
+                  'type' => 'NOTIFICATION',
+               ]
+         ];
+      Queue::later(Carbon::now()->addSeconds(3), 
+                     new SendSMSesJob($arrSMSes,$smsData['urlPrefix']));
    }
 
 }

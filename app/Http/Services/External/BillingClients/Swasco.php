@@ -270,6 +270,9 @@ class Swasco implements IBillingClient
       $response = "";
       try {
 
+
+         //$response = 'CASE2929292929';
+
          $fullURL = $this->baseURL . "navision/mobilenos";
          $apiResponse = Http::timeout($this->swascoTimeout)
                ->withHeaders([
@@ -292,6 +295,7 @@ class Swasco implements IBillingClient
                   throw new Exception("SWASCO Remote Service responded with status code: " . $apiResponse->status(), 1);
                }
          }
+
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
