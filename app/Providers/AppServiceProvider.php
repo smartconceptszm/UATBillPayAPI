@@ -141,65 +141,63 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
 			});            
 		//
 
-
-
       //USSD Error Response Handlers
          $this->app->singleton('InvalidConfirmation', function () {
-               return new \App\Http\Services\USSD\ErrorResponses\InvalidConfirmation();
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidConfirmation::class);
          });
          $this->app->singleton('MaintenanceMode', function () {
-               return new \App\Http\Services\USSD\ErrorResponses\MaintenanceMode();
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\MaintenanceMode::class);
          });
          $this->app->singleton('InvalidAccount', function () {
-               return new \App\Http\Services\USSD\ErrorResponses\InvalidAccount();
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidAccount::class);
          });
          $this->app->singleton('InvalidAmount', function () {
-               return new \App\Http\Services\USSD\ErrorResponses\InvalidAmount();
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidAmount::class);
          });
          $this->app->singleton('ClientBlocked', function () {
-               return new \App\Http\Services\USSD\ErrorResponses\ClientBlocked();
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\ClientBlocked::class);
          });
          $this->app->singleton('InvalidInput', function () {
-               return new \App\Http\Services\USSD\ErrorResponses\InvalidInput();
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidInput::class);
          });
          $this->app->singleton('SystemError', function () {
-               return new \App\Http\Services\USSD\ErrorResponses\SystemError();
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\SystemError::class);
          });
          $this->app->singleton('MoMoOffline', function () {
-               return new \App\Http\Services\USSD\ErrorResponses\MoMoOffline();
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\MoMoOffline::class);
          });
          $this->app->singleton('NoError', function () {
-               return new \App\Http\Services\USSD\ErrorResponses\NoError();
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\NoError::class);
          });
       //
 
       //MoMo Clients
 			$this->app->singleton('ZAMTEL', function () {
-					return new \App\Http\Services\External\MoMoClients\ZamtelKwacha();
+            return $this->app->make(\App\Http\Services\External\MoMoClients\ZamtelKwacha::class);
 				});
 			$this->app->singleton('AIRTEL', function () {
-					return new \App\Http\Services\External\MoMoClients\AirtelMoney();
+               return $this->app->make(\App\Http\Services\External\MoMoClients\AirtelMoney::class);
 				});
 			$this->app->singleton('MTN', function () {
-					return new \App\Http\Services\External\MoMoClients\MTNMoMo();
+               return $this->app->make(\App\Http\Services\External\MoMoClients\MTNMoMo::class);
 				});
          $this->app->singleton('MoMoMock', function () {
-					return new \App\Http\Services\External\MoMoClients\MoMoMock();
+               return $this->app->make(\App\Http\Services\External\MoMoClients\MoMoMock::class);
 				});
       //
 
       //SMS Clients
          $this->app->singleton('MTNDeliverySMS', function () {
-               return new \App\Http\Services\External\SMSClients\MTNMoMoDeliverySMS();
+            return $this->app->make(\App\Http\Services\External\SMSClients\MTNMoMoDeliverySMS::class);
          });
          $this->app->singleton('MockDeliverySMS', function () {
-               return new \App\Http\Services\External\SMSClients\MockDeliverySMS();
+            return $this->app->make(\App\Http\Services\External\SMSClients\MockDeliverySMS::class);
          });
 			$this->app->singleton('ZAMTELSMS', function () {
-						return new \App\Http\Services\External\SMSClients\ZamtelSMS();
+            return $this->app->make(\App\Http\Services\External\SMSClients\ZamtelSMS::class);
 				});
 			$this->app->singleton('KANNEL', function () {
-					return new \App\Http\Services\External\SMSClients\Kannel();
+            return $this->app->make(\App\Http\Services\External\SMSClients\Kannel::class);
 			});
       //
       
@@ -214,28 +212,27 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
    {
 
       return [
+
+         'Home',
          
-         'PayBill',
+         'PayBill','PayBill_Step_1','PayBill_Step_2','PayBill_Step_3',
+         'PayBill_Step_4','PayBill_Step_5',
+
+         'BuyUnits','BuyUnits_Step_1','BuyUnits_Step_2','BuyUnits_Step_3',
+         'BuyUnits_Step_4','BuyUnits_Step_5',
 
 			'CheckBalance','CheckBalance_Step_1','CheckBalance_Step_2',
          'CheckBalance_Step_3','CheckBalance_Step_4', 
 
-         'FaultsComplaints',
+         'FaultsComplaints','FaultsComplaints_Step_1','FaultsComplaints_Step_2',
+         'FaultsComplaints_Step_3','FaultsComplaints_Step_4',
+         'FaultsComplaints_Step_5','FaultsComplaints_Step_6',
          
-         'UpdateDetails',
-         
-         'BuyUnits',
-
-
-			'Cleanup',
-         
-
-         
-         'Home',
-
+         'UpdateDetails', 'UpdateDetails_Step_1', 'UpdateDetails_Step_2',
+         'UpdateDetails_Step_3','UpdateDetails_Step_4',
+         'UpdateDetails_Step_5','UpdateDetails_Step_6',
+      
 			'MockReceipting',
-
-
 
          'InvalidConfirmation','MaintenanceMode','InvalidAccount',
          'InvalidAmount','ClientBlocked','InvalidInput',

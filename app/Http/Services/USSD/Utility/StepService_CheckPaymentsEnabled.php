@@ -4,7 +4,6 @@ namespace App\Http\Services\USSD\Utility;
 
 use App\Http\Services\Clients\ClientMnoService;
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class StepService_CheckPaymentsEnabled 
 {
@@ -20,10 +19,28 @@ class StepService_CheckPaymentsEnabled
                   'enabled'=>true,
                   'responseText' => ""
                ];
+
+      $mnoMoMo = $this->momoService->findOneBy([
+                        'client_id' => $txDTO->client_id,
+                        'mno_id' => $txDTO->mno_id,             
+                     ]);
+
+      if ($mnoMoMo->momoActive != 'YES'){
+         $response['responseText'] = "Payment for ".\strtoupper($txDTO->urlPrefix).
+                  " Water bills via " . $txDTO->mnoName . " Mobile Money will be launched soon!" . "\n" .
+                  "Thank you for your patience.";
+         $response['enabled'] = false;
+      }
+
+      if($mnoMoMo->momoMode == 'DOWN'){
+         $response['responseText'] = $mnoMoMo->modeMessage;
+         $response['enabled'] = false;
+      }
+
       if (\env('APP_ENV') != 'Production'){
-         $testMSISDN= \explode("*", 
+         $testMSISDN = \explode("*", 
                               \env('APP_TEST_MSISDN')."*".
-                              \env(\strtoupper($txDTO->urlPrefix).'_APP_TEST_MSISDN'));
+                              $txDTO->testMSISDN);
          if (!\in_array($txDTO->mobileNumber, $testMSISDN)){
             $response['responseText'] = "Payment for ".\strtoupper($txDTO->urlPrefix).
                   " Water bills via " . $txDTO->mnoName . " Mobile Money will be launched soon!" . "\n" .
@@ -31,25 +48,6 @@ class StepService_CheckPaymentsEnabled
             $response['enabled'] = false;
          }
       }
-
-      if (\env('APP_ENV') == 'Production'){
-         if (\env(\strtoupper($txDTO->urlPrefix).'_'.$txDTO->mnoName.'_ACTIVE') != 'YES'){
-            $response['responseText'] = "Payment for ".\strtoupper($txDTO->urlPrefix).
-                     " Water bills via " . $txDTO->mnoName . " Mobile Money will be launched soon!" . "\n" .
-                     "Thank you for your patience.";
-            $response['enabled'] = false;
-         }
-         if (\env(\strtoupper($txDTO->urlPrefix).'_'.$txDTO->mnoName.'_ACTIVE') == 'YES'){
-            $mnoMoMo = $this->momoService->findOneBy([
-                                                         'client_id' => $txDTO->client_id,
-                                                         'mno_id' => $txDTO->mno_id,             
-                                                      ]);
-            if($mnoMoMo->momoMode == 'DOWN'){
-               throw new Exception($mnoMoMo->modeMessage, 1);
-            }
-         }
-      }
-
 
       return $response;
       

@@ -2,27 +2,28 @@
 
 namespace App\Http\Services\USSD\Utility;
 
+use App\Http\DTOs\BaseDTO;
 use Exception;
 
 class StepService_GetAmount 
 {
 
-   public function handle(string $subscriberInput, string $urlPrefix, string $mobileNumber):string
+   public function handle(BaseDTO $txDTO):string
    {
-      $subscriberInput = \str_replace("ZMW", "", $subscriberInput);
-      $subscriberInput = \str_replace("ZMK", "", $subscriberInput);
-      $subscriberInput = \str_replace(" ", "", $subscriberInput);
-      $subscriberInput = \str_replace("K", "",$subscriberInput);
-      $subscriberInput = \str_replace(",", "",$subscriberInput);
-      $subscriberInput = number_format((float)$subscriberInput, 2, '.', ',');
-      $minPaymentAmount = (float)\env(\strtoupper($urlPrefix).'_MIN_PAYMENT_AMOUNT');
-      $maxPaymentAmount = (float)\env(\strtoupper($urlPrefix).'_MAX_PAYMENT_AMOUNT');
-      $amount = (float)\str_replace(",", "",$subscriberInput);
-      $testMSISDN = \explode("*", 
-                           \env('APP_TEST_MSISDN')."*".
-                           \env(\strtoupper($urlPrefix).'_APP_TEST_MSISDN'));
+      $subscriberInput = \str_replace("ZMW", "", $txDTO->subscriberInput);
+      $subscriberInput = \str_replace("ZMK", "", $txDTO->subscriberInput);
+      $subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
+      $subscriberInput = \str_replace("K", "",$txDTO->subscriberInput);
+      $subscriberInput = \str_replace(",", "",$txDTO->subscriberInput);
+      $subscriberInput = number_format((float)$txDTO->subscriberInput, 2, '.', ',');
+      $minPaymentAmount = (float)\env(\strtoupper($txDTO->urlPrefix).'_MIN_PAYMENT_AMOUNT');
+      $maxPaymentAmount = (float)\env(\strtoupper($txDTO->urlPrefix).'_MAX_PAYMENT_AMOUNT');
+      $amount = (float)\str_replace(",", "",$txDTO->subscriberInput);
+
+      $testMSISDN = \explode("*", \env('APP_ADMIN_MSISDN')."*".$txDTO->testMSISDN);
+
       if ((($amount< $minPaymentAmount) || $amount > $maxPaymentAmount)
-               && !(\in_array($mobileNumber, $testMSISDN))) {
+               && !(\in_array($txDTO->mobileNumber, $testMSISDN))) {
          throw new Exception("InvalidAmount", 1);
       }
       return $subscriberInput;

@@ -20,21 +20,10 @@ class Survey implements IUSSDMenu
                App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$txDTO->urlPrefix);
             }
             if (\count(\explode("*", $txDTO->customerJourney)) == 5) {
-               App::bind(\App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient::class,$txDTO->urlPrefix);
+               App::bind(\App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient::class,'Survey_'.$txDTO->urlPrefix);
             }
-            $txDTO->stepProcessed=false;
-            $txDTO = app(Pipeline::class)
-            ->send($txDTO)
-            ->through(
-               [
-                  \App\Http\Services\USSD\Survey\Survey_SubStep_1::class,
-                  \App\Http\Services\USSD\Survey\Survey_SubStep_2::class,
-                  \App\Http\Services\USSD\Survey\Survey_SubStep_3::class,
-                  \App\Http\Services\USSD\Survey\Survey_SubStep_5::class
-               ]
-            )
-            ->thenReturn();
-            $txDTO->stepProcessed=false;
+            $stepHandler = App::make('Survey_Step_'.\count(\explode("*", $txDTO->customerJourney)));
+            $txDTO = $stepHandler->run($txDTO);
          } catch (Exception $e) {
             $txDTO->error = 'At handle survey menu. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';

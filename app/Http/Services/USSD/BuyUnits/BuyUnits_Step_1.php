@@ -31,13 +31,8 @@ class BuyUnits_Step_1
             $txDTO->lastResponse= true;
          }
       } catch (Exception $e) {
-         if($e->getCode() == 1){
-            $txDTO->error = $e->getMessage();
-            $txDTO->errorType = 'MoMoOffline';
-         }else{
-            $txDTO->error = 'Buy units sub step 1. '.$e->getMessage();
-            $txDTO->errorType = 'SystemError';
-         }
+         $txDTO->error = 'Buy units sub step 1. '.$e->getMessage();
+         $txDTO->errorType = 'SystemError';
       }
       return $txDTO;
       

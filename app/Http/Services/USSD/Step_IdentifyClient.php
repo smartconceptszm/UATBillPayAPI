@@ -22,7 +22,9 @@ class Step_IdentifyClient extends EfectivoPipelineContract
             $client = $this->clientService->findOneBy(['urlPrefix'=>$txDTO->urlPrefix]);
             $txDTO->client_id = $client->id;
             $txDTO->clientCode = $client->code;
+            $txDTO->testMSISDN = $client->testMSISDN;
             $txDTO->clientSurcharge = $client->surcharge;
+            
             if($client->mode != 'UP'){
                $txDTO->error = 'System in Maintenance Mode';
                $txDTO->errorType = "MaintenanceMode";

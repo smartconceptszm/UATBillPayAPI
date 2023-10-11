@@ -12,11 +12,11 @@ class WebPaymentController extends Controller
 
    private $urlPrefix;
    private $validationRules = [
-      'paymentAmount' => 'required|string',
       'accountNumber' => 'required|string',
       'mobileNumber' => 'required|string',
-      'mnoName' => 'required|string',
-      'menu' => 'required|string',
+      'paymentAmount' => 'required',
+      'mno_id' => 'required',
+      'menu' => 'required',
    ];
 
 	public function __construct(private Request $request)
@@ -32,7 +32,7 @@ class WebPaymentController extends Controller
    {
 
       try {
-         $this->response['data'] = $theService->getCustomer($accountNumber);
+         $this->response['data'] = $theService->getCustomer($accountNumber, $this->urlPrefix);
       } catch (\Exception $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -52,7 +52,6 @@ class WebPaymentController extends Controller
          $this->validate($request, $this->validationRules);
          $params = $request->all();
          $params['urlPrefix'] = $this->urlPrefix;
-         $params['sessionId'] = 'WEBSITE';
          $params['channel'] = 'WEBSITE';
          $this->response['data'] = $theService->initiateWebPayement($params);
       } catch (\Exception $e) {
@@ -67,9 +66,9 @@ class WebPaymentController extends Controller
    {
       $requestUrlArr = \explode("/",$request->url());
       if ($request->isMethod('post')) {
-         $this->urlPrefix = $requestUrlArr[\count($requestUrlArr)-1];
-      }else{
          $this->urlPrefix = $requestUrlArr[\count($requestUrlArr)-2];
+      }else{
+         $this->urlPrefix = $requestUrlArr[\count($requestUrlArr)-3];
       }
    }
    

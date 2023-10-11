@@ -27,13 +27,8 @@ class PayBill_Step_1
             $txDTO->lastResponse = true;
          }
       } catch (Exception $e) {
-         if($e->getCode() == 1){
-            $txDTO->error = $e->getMessage();
-            $txDTO->errorType = 'MoMoOffline';
-         }else{
-            $txDTO->error = 'Pay bill sub step 1. '.$e->getMessage();
-            $txDTO->errorType = 'SystemError';
-         }
+         $txDTO->error = 'Pay bill sub step 1. '.$e->getMessage();
+         $txDTO->errorType = 'SystemError';
       }
       return $txDTO;
       

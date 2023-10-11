@@ -33,6 +33,7 @@ class FireMoMoRequestMiddleware
 
     public function terminate($request, $response)
     {
+        
         $ussdParams = $request->ussdParams;
         if ($ussdParams) {
             if($ussdParams['fireMoMoRequest']){

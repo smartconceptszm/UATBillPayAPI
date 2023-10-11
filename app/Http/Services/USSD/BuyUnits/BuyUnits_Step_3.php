@@ -28,8 +28,7 @@ class BuyUnits_Step_3
    {
 
       try {
-         $txDTO->subscriberInput = $this->getAmount->handle($txDTO->subscriberInput,
-               $txDTO->urlPrefix, $txDTO->mobileNumber);
+         $txDTO->subscriberInput = $this->getAmount->handle($txDTO);
       } catch (Exception $e) {
          if($e->getCode()==1){
             $txDTO->errorType = 'InvalidAmount';
@@ -41,7 +40,7 @@ class BuyUnits_Step_3
       }
          
       try {
-            $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
+            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
       } catch (Exception $e) {
             if($e->getCode()==1){
                $txDTO->errorType = 'InvalidAccount';
@@ -66,11 +65,10 @@ class BuyUnits_Step_3
          $txDTO->response .= "Addr: ".$txDTO->customer['address']."\n". 
          "Bal: ".$txDTO->customer['balance']."\n\n";
       }else{
-         $paymentAmounts = $this->calculatePaymentAmounts->handle(
-                                          $txDTO->urlPrefix,$txDTO->mno_id,$txDTO->suscriberInput);
+         $calculatedAmounts = $this->calculatePaymentAmounts->handle($txDTO);
          $txDTO->response .= "\nYou will be surcharged ZMW "
-                     .number_format($paymentAmounts['paymentAmount'] -
-                                 $paymentAmounts['receiptAmount'], 2, '.', ',')
+                     .number_format($calculatedAmounts['paymentAmount'] -
+                                 $calculatedAmounts['receiptAmount'], 2, '.', ',')
                      ." for this transaction\n\n";
       }
       $txDTO->response .= "Enter\n". 

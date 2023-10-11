@@ -14,6 +14,7 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
 	 */
 	public function register(): void
 	{
+
 		//Menu Update Mobile Number 
 			$this->app->singleton('SwascoUpdateMobile', function () {
 				return $this->app->make(\App\Http\Services\USSD\Menus\SwascoUpdateMobile::class);
@@ -99,6 +100,11 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
 				});
 			//
 		//
+		//Survey Entry Handlers
+			$this->app->singleton('Survey_swasco', function () {
+				return $this->app->make(\App\Http\Services\USSD\Survey\ClientCallers\Survey_Local::class);
+			});
+		//
 
 		//SMS Clients
 			$this->app->singleton('SWASCOSMS', function () {
@@ -112,11 +118,11 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
 
 		//Billing Clients			
 			$this->app->singleton('swasco', function () {
-				return $this->app->make( \App\Http\Services\External\BillingClients\Swasco::class,[
-										intval(\config('efectivo_clients.swasco.receipting_Timeout')),
-										intval(\config('efectivo_clients.swasco.remote_Timeout')),
-										\env('SWASCO_base_URL')
-									]);
+				return $this->app->make(\App\Http\Services\External\BillingClients\Swasco::class,[
+									'swascoReceiptingTimeout'=>\intval(\config('efectivo_clients.swasco.receipting_Timeout')),
+									'swascoTimeout' => \intval(\config('efectivo_clients.swasco.remote_Timeout')),
+									'baseURL' => \env('SWASCO_base_URL')
+								]);
 			});
 
 			$this->app->singleton('PostPaymentSwasco', function () {
@@ -124,9 +130,7 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
 			});
 
 			$this->app->singleton('PostReconnectionSwasco', function () {
-				return new \App\Http\Services\MoMo\BillingClientCallers\PostReconnectionSwasco(
-								$this->app->make(\App\Http\Services\External\BillingClients\IBillingClient::class)
-							);
+				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\PostReconnectionSwasco::class);
 			});
 			$this->app->singleton('PostVacuumTankerSwasco', function () {
 				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\PostVacuumTankerSwasco::class);
@@ -137,18 +141,11 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
 			$this->app->singleton('Complaint_swasco', function () {
 					return new \App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Swasco(
 									$this->app->make(\App\Http\Services\External\BillingClients\Swasco::class,[                    
-											intval(\config('efectivo_clients.swasco.receipting_Timeout')),
-											intval(\config('efectivo_clients.swasco.remote_Timeout')),
-											\config('efectivo_clients.swasco.sms_Base_URL'),
-											\env('SWASCO_base_URL')
+											'swascoReceiptingTimeout'=>\intval(\config('efectivo_clients.swasco.receipting_Timeout')),
+											'swascoTimeout' => \intval(\config('efectivo_clients.swasco.remote_Timeout')),
+											'baseURL' => \env('SWASCO_base_URL')
 										])
 								);
-			});
-		//
-
-		//Survey Entry Handlers
-			$this->app->singleton('Survey_swasco', function () {
-				return $this->app->make(\App\Http\Services\USSD\Survey\ClientCallers\Survey_Local::class);
 			});
 		//
   
@@ -163,13 +160,27 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
    {
 
       return [
-			'SWASCOSMS','swasco','Complaint_swasco',
-			'Survey_swasco','PostPaymentSwasco',
-			'PostReconnectionSwasco','Survey',
-			'PostVacuumTankerSwasco',
-			'VacuumTankerSwasco',
-			'SwascoUpdateMobile',
-			'ReconnectionFeesSwasco'
+
+			'SwascoUpdateMobile','SwascoUpdateMobile_Step_1','SwascoUpdateMobile_Step_2',
+			'SwascoUpdateMobile_Step_3','SwascoUpdateMobile_Step_4',
+
+			'ReconnectionFeesSwasco','ReconnectionFeesSwasco_Step_2','ReconnectionFeesSwasco_Step_3',
+			'ReconnectionFeesSwasco_Step_4','ReconnectionFeesSwasco_Step_5',
+			'ReconnectionFeesSwasco_Step_6',
+
+			'VacuumTankerSwasco','VacuumTankerSwasco_Step_2','VacuumTankerSwasco_Step_3',
+			'VacuumTankerSwasco_Step_4','VacuumTankerSwasco_Step_5',
+			'VacuumTankerSwasco_Step_6',
+
+			'Survey','Survey_Step_1','Survey_Step_2','Survey_Step_3','Survey_Step_5',
+			'Survey_swasco',
+
+			'SWASCOSMS',
+			
+			'Complaint_swasco',
+			
+			'swasco','PostPaymentSwasco','PostReconnectionSwasco','PostVacuumTankerSwasco',
+			
       ];
 
    }

@@ -25,7 +25,9 @@ class Survey_Local implements ISurveyClient
    public function create(array $surveyData):string
    {
 
+      $response = "";
       try {
+
          DB::beginTransaction();
          try {
             $surveyTicket = $this->surveyEntryService->create([
@@ -50,28 +52,26 @@ class Survey_Local implements ISurveyClient
             DB::rollBack();
             throw new Exception($e->getMessage());
          }
-
-         $this->sendSMSNotification($surveyData);
+         $response = "Thank you for participating in the survey. Reference number: ".$surveyTicket->caseNumber;
+         // $this->sendSMSNotification([
+         //                   'mobileNumber' => $surveyData['mobileNumber'],
+         //                   'client_id' => $surveyData['client_id'],
+         //                   'urlPrefix' => $surveyData['urlPrefix'],
+         //                   'message' => $response,
+         //                   'type' => 'NOTIFICATION',
+         //                ]);
 
       } catch (Exception $e) {
          throw new Exception('Error at  create survey entry. '.$e->getMessage());
       }
-      return $surveyTicket->caseNumber;                                            
+      return  $response;                                            
 
    }
 
    private function sendSMSNotification(array $smsData): void
    {
-      $arrSMSes = [
-               [
-                  'mobileNumber' => $smsData['mobileNumber'],
-                  'client_id' => $smsData['client_id'],
-                  'message' => $smsData['response'],
-                  'type' => 'NOTIFICATION',
-               ]
-         ];
       Queue::later(Carbon::now()->addSeconds(3), 
-                     new SendSMSesJob($arrSMSes,$smsData['urlPrefix']));
+                     new SendSMSesJob([$smsData],$smsData['urlPrefix']));
    }
 
 }

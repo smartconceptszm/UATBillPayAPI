@@ -19,9 +19,11 @@ class UssdDTO extends BaseDTO
    public $accountNumber;
    public $paymentAmount;
    public $stepProcessed;
+   public $isPaymentMenu;
    public $lastResponse;
    public $isNewRequest;
    public $mobileNumber;
+   public $testMSISDN;
    public $menuPrompt;
    public $created_at;
    public $clientCode;

@@ -15,6 +15,7 @@ return new class extends Migration
          $table->id();
          $table->unsignedBigInteger("client_id")->notNullable();
          $table->unsignedBigInteger("mno_id")->notNullable();
+         $table->enum('momoActive',['YES','NO'])->default('NO')->notNullable();
          $table->float('momoCommission',10,2)->default(0);
          $table->float('smsCharge',10,2)->default(0);
          $table->string('modeMessage',155)->nullable();

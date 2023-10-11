@@ -2,13 +2,12 @@
 
 namespace App\Http\Services\Web;
 
-use App\Http\Services\MoMo\Utility\StepService_CalculatePaymentAmounts;
 use App\Http\Services\External\BillingClients\GetCustomerAccount;
-use App\Http\Services\Payments\PaymentService;
 USE App\Http\Services\Clients\ClientService;
 USE App\Http\Services\Clients\MnoService;
-use Illuminate\Support\Facades\App;
-use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\Queue;
+use App\Jobs\InitiateMoMoPaymentJob;
+use Illuminate\Support\Carbon;
 use App\Http\DTOs\MoMoDTO;
 use Exception;
 
@@ -16,20 +15,24 @@ class WebPaymentService
 {
 
    public function __construct(
-      private StepService_CalculatePaymentAmounts $calculatePaymentAmounts,
       private GetCustomerAccount $getCustomerAccount,
-      private PaymentService $paymentService,
       private ClientService $clientService,
       private MnoService $mnoService,
       private MoMoDTO $moMoDTO
    )
    {}
 
-   public function getCustomer(string $accountNumber):array
+   public function getCustomer(string $accountNumber, string $urlPrefix):array
    {
 
       try {
-         return $this->getCustomerAccount->handle($accountNumber,'swasco');
+         $momoDTO = $this->moMoDTO->fromArray([
+                                             'accountNumber'=> $accountNumber,
+                                             'urlPrefix'=>$urlPrefix
+                                          ]);
+         $momoDTO = $this->getClient($momoDTO);
+         $momoDTO = $this->getMNO($momoDTO);
+         return $this->getCustomerAccount->handle($momoDTO);
       } catch (Exception $e) {
          throw new Exception($e->getMessage());
       }
@@ -40,72 +43,46 @@ class WebPaymentService
    {
 
       try {
-         $momoDTO = $this->getClient($this->moMoDTO->fromArray($params));
+         $momoDTO = $this->moMoDTO->fromArray($params);
+         $momoDTO = $this->getClient($momoDTO);
          $momoDTO = $this->getMNO($momoDTO);
-
-         $calculatedAmounts = $this->calculatePaymentAmounts->handle(
-                                    $momoDTO->urlPrefix,$momoDTO->mno_id,$momoDTO->paymentAmount);
-
-         $momoDTO->surchargeAmount = $calculatedAmounts['surchargeAmount'];
-         $momoDTO->receiptAmount = $calculatedAmounts['receiptAmount'];
-         $momoDTO->paymentAmount = $calculatedAmounts['paymentAmount'];
-         $momoDTO->clientCode = $calculatedAmounts['clientCode'];
-         $momoDTO = $this->createPaymentRecord($momoDTO);
-         //Process the request
-         $momoDTO  =  app(Pipeline::class)
-            ->send($momoDTO)
-            ->through(
-               [
-                  \App\Http\Services\MoMo\InitiatePaymentSteps\Step_SendMoMoRequest::class, 
-                  \App\Http\Services\MoMo\InitiatePaymentSteps\Step_DispatchConfirmationJob::class,
-                  \App\Http\Services\MoMo\Utility\Step_UpdateTransaction::class,  
-                  \App\Http\Services\MoMo\Utility\Step_LogStatus::class 
-               ]
-            )
-            ->thenReturn();
-
+         Queue::later(Carbon::now()->addSeconds((int)\env($momoDTO->mnoName.
+                     '_SUBMIT_PAYMENT')), new InitiateMoMoPaymentJob($momoDTO));
       } catch (Exception $e) {
-         # code...
+         throw new Exception($e->getMessage());
       }
-      return \strtoupper($momoDTO->urlPrefix)." Payment request submitted to ".$momoDTO->mnoName."\n".
-                  "You will receive a PIN prompt shortly!"."\n\n";
+      return \strtoupper($momoDTO->urlPrefix)." Payment request submitted to ".$momoDTO->mnoName.
+                  ". You will receive a PIN prompt shortly!";
 
    }
 
-   private function getClient(MoMoDTO $moMoDTO) : MoMoDTO
+   private function getClient(MoMoDTO $momoDTO) : MoMoDTO
    {
-      $client = $this->clientService->findOneBy(['urlPrefix'=>$moMoDTO->urlPrefix]);
-      $moMoDTO->client_id = $client->id;
-      $moMoDTO->clientCode = $client->code;
-      $moMoDTO->clientSurcharge = $client->surcharge;
+      $client = $this->clientService->findOneBy(['urlPrefix'=>$momoDTO->urlPrefix]);
+      $momoDTO->client_id = $client->id;
+      $momoDTO->clientCode = $client->code;
+      $momoDTO->testMSISDN = $client->testMSISDN;
+      $momoDTO->clientSurcharge = $client->surcharge;
       if($client->mode != 'UP'){
-         $moMoDTO->error = 'System in Maintenance Mode';
-         $moMoDTO->errorType = "MaintenanceMode";
-         return $moMoDTO;
+         throw new Exception(\env('MODE_MESSAGE'));
       }
       if($client->status != 'ACTIVE'){
-         $moMoDTO->error = 'Client is blocked';
-         $moMoDTO->errorType = "ClientBlocked";
-         return $moMoDTO;
+         throw new Exception(\env('BLOCKED_MESSAGE')." ".strtoupper($momoDTO->urlPrefix));
       }
+      return $momoDTO;
    }
 
-   private function getMNO(MoMoDTO $moMoDTO) : MoMoDTO
+   private function getMNO(MoMoDTO $momoDTO) : MoMoDTO
    {
 
-      $mno = $this->mnoService->findOneBy(['name'=>$moMoDTO->mnoName]);               
-      $moMoDTO->mno_id = $mno->id;
-      App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,$moMoDTO->mnoName);
-      return $moMoDTO;
-   }
+      try {
+         $mno = $this->mnoService->findById($momoDTO->mno_id);               
+         $momoDTO->mnoName = $mno->name;
+         return $momoDTO;
+      } catch (Exception $e) {
+         throw new Exception($e->getMessage());
+      }
 
-   private function createPaymentRecord(MoMoDTO $moMoDTO) : MoMoDTO
-   {
-      $payment = $this->paymentService->create($moMoDTO->toPaymentData());
-      $moMoDTO->id = $payment->status;
-      $moMoDTO->id = $payment->id;
-      return $moMoDTO;
    }
-
 
 }

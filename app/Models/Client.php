@@ -11,9 +11,9 @@ class Client extends Model
 
    protected $fillable=[
       'code','shortName','urlPrefix', 'name','balance',
-      'smsPayMode','surcharge','mode', 'status'
+      'smsPayMode','surcharge','mode','testMSISDN', 'status'
    ];
-   
+
    protected $casts = [
          'created_at' => 'datetime:Y-m-d H:i:s',
          'updated_at' => 'datetime:Y-m-d H:i:s',

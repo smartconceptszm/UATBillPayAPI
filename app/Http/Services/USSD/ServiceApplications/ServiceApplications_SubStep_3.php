@@ -26,7 +26,7 @@ class ServiceApplications_SubStep_3 extends EfectivoPipelineWithBreakContract
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
             $txDTO->accountNumber = $txDTO->subscriberInput;
-            $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
+            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
             $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
             $theServiceType = $this->serviceTypes->findOneBy([
                         'client_id'=>$txDTO->client_id,

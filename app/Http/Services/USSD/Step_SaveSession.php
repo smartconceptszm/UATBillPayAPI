@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\USSD;
 
-use App\Http\Services\USSD\ErrorResponses\ErrorResponseBinderService;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\USSD\SessionService;
 use App\Http\DTOs\BaseDTO;
@@ -12,7 +11,6 @@ class Step_SaveSession extends EfectivoPipelineContract
 {
 
 	public function __construct(
-		private ErrorResponseBinderService $errorResponseBinder,
 		private SessionService $sessionService)
 	{}
 
@@ -31,10 +29,6 @@ class Step_SaveSession extends EfectivoPipelineContract
 			$txDTO->error='At save session. '.$e->getMessage();
 			$txDTO->errorType = 'SystemError';        
 		}
-		//Bind error response service to interface
-		$txDTO->errorType = $txDTO->error? $txDTO->errorType:"NoError";   
-		$this->errorResponseBinder->bind($txDTO->errorType);
-
 		return $txDTO;
 		
 	}

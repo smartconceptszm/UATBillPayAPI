@@ -34,7 +34,9 @@ class Step_HandleMenu extends EfectivoPipelineContract
 					Cache::forget($txDTO->sessionId."responseNext");
 					$txDTO = $this->resetCustomerJourney($txDTO);
 				}
+
 				$txDTO = $this->ussdMenu->handle($txDTO);   
+				
 			}
 		} catch (Exception $e) {
 			$txDTO->error = 'At handle menu option. '.$e->getMessage();

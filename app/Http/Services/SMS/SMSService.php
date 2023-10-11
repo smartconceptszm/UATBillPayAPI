@@ -30,27 +30,27 @@ class SMSService
          $dto = $this->getClient($dto);
          //Get receipient MNO
          if(!$dto->mno_id){
-               $mnoName = MNOs::getMNO(\substr($dto->mobileNumber,0,5));
-               $mno = $this->mnoService->findOneBy(['name'=>$mnoName]);
-               $dto->mno_id = $mno->id;
+            $mnoName = MNOs::getMNO(\substr($dto->mobileNumber,0,5));
+            $mno = $this->mnoService->findOneBy(['name'=>$mnoName]);
+            $dto->mno_id = $mno->id;
          }
          //Take Care of Charges
          if($this->smsClient->channelChargeable()){
-               $dto = $this->getCharges($dto);
+            $dto = $this->getCharges($dto);
          }
          //Send the SMS
          $dto = $this->sendMessage($dto);
          // Save the Record
          DB::beginTransaction();
          try {
-               $sms = $this->messageService->create($dto->toSMSMessageData());
-               if($sms->status == 'DELIVERED' && $this->smsClient->channelChargeable()){
-                  $this->clientService->update(['balance'=>$dto->balance],$dto->client_id);
-               }
-               DB::commit();
+            $sms = $this->messageService->create($dto->toSMSMessageData());
+            if($sms->status == 'DELIVERED' && $this->smsClient->channelChargeable()){
+               $this->clientService->update(['balance'=>$dto->balance],$dto->client_id);
+            }
+            DB::commit();
          } catch (Exception $e) {
-               DB::rollBack();
-               throw new Exception($e->getMessage());
+            DB::rollBack();
+            throw new Exception($e->getMessage());
          }
          $dto->status = $sms->status;
          $dto->id = $sms->id;

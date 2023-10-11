@@ -19,7 +19,7 @@ class SwascoUpdateMobile_Step_2
       try {
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->accountNumber = $txDTO->subscriberInput;
-         $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
+         $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
          $txDTO->response = "Update Mobile on:\n". 
          "Acc: ".$txDTO->subscriberInput."\n".
          "Name: ".$txDTO->customer['name']."\n". 

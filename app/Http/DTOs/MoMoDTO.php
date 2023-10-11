@@ -28,10 +28,12 @@ class MoMoDTO extends BaseDTO
    public $status = 'INITIATED';
    public $error = '';
 
-   public $customerJourney;
+   public $customerJourney;   
+   public $clientSurcharge;
    public $stepProcessed;
    public $mnoResponse;
    public $clientCode;
+   public $testMSISDN;
    public $sessionId;
    public $urlPrefix;
    public $customer;

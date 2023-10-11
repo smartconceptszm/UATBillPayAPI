@@ -23,8 +23,7 @@ class PayBill_Step_3
    {
 
       try {
-         $txDTO->subscriberInput = $this->getAmount->handle($txDTO->subscriberInput,
-               $txDTO->urlPrefix, $txDTO->mobileNumber);
+         $txDTO->subscriberInput = $this->getAmount->handle($txDTO);
          $txDTO->paymentAmount = $txDTO->subscriberInput;
       } catch (Exception $e) {
          if($e->getCode()==1){
@@ -37,16 +36,16 @@ class PayBill_Step_3
       }
       
       try {
-            $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
-            $txDTO->district = $txDTO->customer['district'];
+         $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
+         $txDTO->district = $txDTO->customer['district'];
       } catch (Exception$e) {
-            if($e->getCode()==1){
-               $txDTO->errorType = 'InvalidAccount';
-            }else{
-               $txDTO->errorType = 'SystemError';
-            }
-            $txDTO->error=$e->getMessage();
-            return $txDTO;
+         if($e->getCode()==1){
+            $txDTO->errorType = 'InvalidAccount';
+         }else{
+            $txDTO->errorType = 'SystemError';
+         }
+         $txDTO->error=$e->getMessage();
+         return $txDTO;
       }
       $txDTO = $this->getResponse($txDTO);
       return $txDTO;
@@ -63,11 +62,10 @@ class PayBill_Step_3
          $txDTO->response .= "Addr: ".$txDTO->customer['address']."\n". 
          "Bal: ".$txDTO->customer['balance']."\n\n";
       }else{
-         $paymentAmounts = $this->calculatePaymentAmounts->handle(
-                                          $txDTO->urlPrefix,$txDTO->mno_id,$txDTO->suscriberInput);
+         $calculatedAmounts = $this->calculatePaymentAmounts->handle($txDTO);
          $txDTO->response .= "\nYou will be surcharged ZMW "
-                     .number_format($paymentAmounts['paymentAmount'] -
-                                 $paymentAmounts['receiptAmount'], 2, '.', ',')
+                     .number_format($calculatedAmounts['paymentAmount'] -
+                                 $calculatedAmounts['receiptAmount'], 2, '.', ',')
                      ." for this transaction\n\n";
       }
       $txDTO->response .= "Enter\n". 

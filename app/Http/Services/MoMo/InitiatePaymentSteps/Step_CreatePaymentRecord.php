@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\MoMo\InitiatePaymentSteps;
 
-use App\Http\Services\MenuConfigs\OtherPaymentTypeService;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Payments\PaymentService;
 use App\Http\DTOs\BaseDTO;
@@ -12,7 +11,6 @@ class Step_CreatePaymentRecord extends EfectivoPipelineContract
 {
 
    public function __construct(
-      private OtherPaymentTypeService $otherPayTypes,
       private PaymentService $paymentService)
    {}
 

@@ -37,11 +37,11 @@ class Survey_Step_3
          $thePrompt = $surveyQuestion->prompt;
          if($surveyQuestion->type == 'LIST'){
             $listItems = $this->questionListItemService->findAll([
-                              'survey_question_id' => $surveyQuestion->id,
+                              'survey_question_list_type_id' => $surveyQuestion->survey_question_list_type_id,
                            ]);
             $thePrompt = $thePrompt."\n";
-            foreach ($listItems as $value){
-               $thePrompt.=$value->order.'. '.$value->prompt."\n";
+            foreach ($listItems as $item){
+               $thePrompt.=$item->order.'. '.$item->value."\n";
             }
          }
          $txDTO->response = $thePrompt;

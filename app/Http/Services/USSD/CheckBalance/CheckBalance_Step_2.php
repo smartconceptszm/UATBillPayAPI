@@ -19,7 +19,7 @@ class CheckBalance_Step_2
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
         $txDTO->accountNumber=$txDTO->subscriberInput;
         try {
-            $txDTO->customer=$this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
+            $txDTO->customer=$this->getCustomerAccount->handle($txDTO);
         } catch (\Throwable $e) {
             if($e->getCode()==1){
                 $txDTO->errorType = "InvalidAccount";

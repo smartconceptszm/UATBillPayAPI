@@ -4,6 +4,7 @@ namespace App\Http\Services\MoMo\Utility;
 
 use App\Http\Services\Clients\ClientMnoService;
 use App\Http\Services\Clients\ClientService;
+use App\Http\DTOs\BaseDTO;
 
 class StepService_CalculatePaymentAmounts
 {
@@ -13,17 +14,16 @@ class StepService_CalculatePaymentAmounts
       private ClientMnoService $ClientMnoService)
    {}
 
-   public function handle(string $urlPrefix, string $mno_id, string $paymentAmount):array
+   public function handle(BaseDTO $txDTO):array
    {
 
-      $paymentAmount = (float)(\str_replace(",", "",$paymentAmount));
+      $paymentAmount = (float)(\str_replace(",", "",$txDTO->paymentAmount));
       $receiptAmount = $paymentAmount;
       $surchargeAmount = 0;
-      $client = $this->clientService->findOneBy(['urlPrefix'=>$urlPrefix]); 
-      if($client->surcharge=='YES'){
+      if($txDTO->clientSurcharge=='YES'){
          $ClientMno = $this->ClientMnoService->findOneBy([
-                     'client_id'=>$client->id,
-                     'mno_id'=>$mno_id
+                     'client_id'=>$txDTO->client_id,
+                     'mno_id'=>$txDTO->mno_id
                   ]);
          //Apply Tariff Here
          $surchargeAmount =  ($paymentAmount*0.01)*((100-(float)$ClientMno->momoCommission)/100);
@@ -32,8 +32,7 @@ class StepService_CalculatePaymentAmounts
       return [
             'paymentAmount'=>$paymentAmount,
             'receiptAmount'=>$receiptAmount,
-            'surchargeAmount'=>$surchargeAmount,
-            'clientCode'=>$client->code
+            'surchargeAmount'=>$surchargeAmount
          ];
    }
 

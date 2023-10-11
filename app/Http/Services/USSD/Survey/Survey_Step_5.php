@@ -39,11 +39,11 @@ class Survey_Step_5
          $txDTO->subscriberInput = $this->validateCRMInput->handle($surveyQuestion->type,$txDTO->subscriberInput);
          if($surveyQuestion->type == 'LIST'){
             $listItem = $this->questionListItemService->findOneBy([
-                              'survey_question_id' => $surveyQuestion->id,
+                              'survey_question_list_type_id' => $surveyQuestion->survey_question_list_type_id,
                               'order' => $txDTO->subscriberInput
                            ]);
             if($listItem->id){
-               $surveyResponses[$order] = $listItem->prompt;
+               $surveyResponses[$order] = $listItem->value;
             }else{
                throw new Exception("Invalid list item selection", 1);
             }
@@ -54,7 +54,7 @@ class Survey_Step_5
                                  'survey_id' => $surveyId
                               ]);
          if(\count($surveyQuestions) == (\count($surveyResponses))){
-            $txDTO->customer = $this->getCustomerAccount->handle($txDTO->accountNumber,$txDTO->urlPrefix);
+            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
             $txDTO->subscriberInput = \implode(";",\array_values($surveyResponses));
             $surveyResponseData = [
                                     'accountNumber' => $txDTO->accountNumber,
@@ -65,8 +65,7 @@ class Survey_Step_5
                                     'district' => $txDTO->customer['district'],
                                     'responses' => $surveyResponses
                                  ];
-            $caseNumber = $this->surveyCreateClient->create($surveyResponseData);
-            $txDTO->response = "Thank you for participating in the survey. Ref. number: ".$caseNumber; 
+            $txDTO->response = $this->surveyCreateClient->create($surveyResponseData);
             $txDTO->lastResponse = true;
             $txDTO->status='COMPLETED';
 
@@ -80,11 +79,11 @@ class Survey_Step_5
             $thePrompt = $surveyQuestion->prompt;
             if($surveyQuestion->type == 'LIST'){
                $listItems = $this->questionListItemService->findAll([
-                                 'survey_question_id' => $surveyQuestion->id,
+                                 'survey_question_list_type_id' => $surveyQuestion->survey_question_list_type_id,
                               ]);
                $thePrompt = $thePrompt."\n";
-               foreach ($listItems as $value){
-                  $thePrompt.=$value->order.'. '.$value->prompt."\n";
+               foreach ($listItems as $item){
+                  $thePrompt.=$item->order.'. '.$item->value."\n";
                }
             }
             $txDTO->response = $thePrompt;

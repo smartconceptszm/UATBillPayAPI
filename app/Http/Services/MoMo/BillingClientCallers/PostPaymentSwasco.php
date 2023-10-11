@@ -68,7 +68,7 @@ class PostPaymentSwasco implements IReceiptPayment
 						$momoDTO->receipt.="Bal: ZMW ". $newBalance . "\n";
 					}
 					$momoDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
-					if (($momoDTO->mobileNumber == $customer['mobileNumber'])){
+					if ((($momoDTO->mobileNumber == $customer['mobileNumber']) && ($momoDTO->channel == 'USSD'))){
 						try {
 							$momoDTO = $this->addShotcutMessage->handle($momoDTO);
 						} catch (Exception $e) {

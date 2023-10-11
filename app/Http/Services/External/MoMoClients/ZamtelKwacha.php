@@ -38,9 +38,9 @@ class ZamtelKwacha implements IMoMoClient
          $zamtelURI.="&ConversationId=".trim($dto->transactionId);
          $fullURL = $configs['baseURL'].$zamtelURI;
          $apiResponse = Http::timeout($configs['timeout'])->withHeaders([
-            'Content-Type' => 'application/json',
-            "Accept" => "*/*",
-         ])->get($fullURL);
+                                 'Content-Type' => 'application/json',
+                                 "Accept" => "*/*",
+                              ])->get($fullURL);
          //{"Conversation id":"00001","message":"Success","status":"0","TransactionId":"000000239171","Transaction id":"000000239171"}
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
             $apiResponse=$apiResponse->json();

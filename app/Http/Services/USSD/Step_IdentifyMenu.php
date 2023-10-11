@@ -57,13 +57,16 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                               'client_id' => $txDTO->client_id,
                               'parent_id' => 0
                            ]);
+
       if(\count(\explode("*", $txDTO->subscriberInput))>1){
          $txDTO = $this->handleShortcut($txDTO, $selectedMenu);
       }else{
          $txDTO->menu_id = $selectedMenu->id; 
          $txDTO->handler = $selectedMenu->handler; 
          $txDTO->menuPrompt = $selectedMenu->prompt; 
+         $txDTO->isPaymentMenu = $selectedMenu->isPayment; 
       }
+
       $ussdSession = $this->sessionService->create($txDTO->toSessionData());
       $txDTO->id = $ussdSession->id;
       return $txDTO;
@@ -89,7 +92,8 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
             $txDTO->menu_id = $selectedMenu->id; 
             $txDTO->handler = $selectedMenu->handler; 
             $txDTO->menuPrompt = $selectedMenu->prompt; 
-            if($selectedMenu->ispayment == 'YES'){
+            $txDTO->isPaymentMenu = $selectedMenu->isPayment; 
+            if($selectedMenu->isPayment == 'YES'){
                $momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
                if(!$momoPaymentStatus['enabled']){
                   $txDTO->response = $momoPaymentStatus['responseText'];
@@ -132,7 +136,9 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
       $txDTO->status = $ussdSession->status;
       $txDTO->id = $ussdSession->id;
       $txDTO->error = '';
+
       $currentMenu = $this->clientMenuService->findById($txDTO->menu_id);
+
       if($currentMenu->isParent == 'YES'){
          $selectedMenu = $this->clientMenuService->findOneBy([
                         'order' => $txDTO->subscriberInput,
@@ -142,15 +148,17 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                      ]);
          if(!$selectedMenu){
             throw new Exception("Invalid Menu Item number", 1);
-         }else{
-            $txDTO->menu_id = $selectedMenu->id; 
-            $txDTO->handler = $selectedMenu->handler; 
-            $txDTO->menuPrompt = $selectedMenu->prompt; 
          }
+         $txDTO->menu_id = $selectedMenu->id; 
+         $txDTO->handler = $selectedMenu->handler; 
+         $txDTO->menuPrompt = $selectedMenu->prompt; 
+         $txDTO->isPaymentMenu = $selectedMenu->isPayment; 
       }else{
+         $txDTO->isPaymentMenu = $currentMenu->isPayment; 
          $txDTO->menuPrompt = $currentMenu->prompt; 
          $txDTO->handler = $currentMenu->handler;
       }
+
       $this->handleBack = \json_decode(Cache::get($txDTO->sessionId."handleBack",''),true);
       if($this->handleBack){
          $txDTO = $this->handleBackStep($txDTO); 
