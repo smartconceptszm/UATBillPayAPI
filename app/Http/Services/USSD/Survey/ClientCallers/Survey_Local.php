@@ -34,6 +34,7 @@ class Survey_Local implements ISurveyClient
                                     'accountNumber' => $surveyData['accountNumber'],
                                     'mobileNumber' => $surveyData['mobileNumber'],
                                     'survey_id' => $surveyData['survey_id'],
+                                    'district' => $surveyData['district'],
                                     'status' => 'SUBMITTED',
                                  ]);
             foreach ($surveyData['responses'] as $order => $value) {
