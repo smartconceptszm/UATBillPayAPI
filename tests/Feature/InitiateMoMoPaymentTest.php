@@ -17,19 +17,21 @@ class InitiateMoMoPaymentTest extends TestCase
       App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,'MoMoMock');
 
       $momoDTO = new MoMoDTO();
-      $momoDTO = $momoDTO->fromUssdData(
+      $momoDTO = $momoDTO->fromArray(
          [
-               "customerJourney" => "5757*1*LIV0003066*6.50*1",
+               "customerJourney" => "2106*1*1101000166*6.50*1",
                "mobileNumber" => "260977787659",
-               'accountNumber' => 'LIV0003066',
-               'sessionId' => '100002122',
-               'urlPrefix' => 'swasco',
+               'accountNumber' => '1101000166',
+               "paymentAmount" => 6.50,
+               'session_id' => 35634,
+               'urlPrefix' => 'lukanga',
+               'clientCode' => 'LgWSSC',
                'mnoName' => 'AIRTEL',
-               "district" => 'LIVINGSTONE',
-               "menu" => "PayBill",
-               "client_id" => 3,
-               "mno_id" => 2,
-               "id" => 35630,
+               "district" => 'KABWE',
+               'channel' => 'USSD',
+               "menu_id" => 1,
+               "client_id" => 2,
+               "mno_id" => 1
          ]);
       
       $response = $momoService->handle($momoDTO);

@@ -4,7 +4,7 @@ namespace App\Http\Services\External\SMSClients;
 
 use App\Http\Services\External\SMSClients\ISMSClient;
 
-class MockDeliverySMS implements ISMSClient
+class MockSMSDelivery implements ISMSClient
 {
     
    public function channelChargeable():bool

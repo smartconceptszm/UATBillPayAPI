@@ -16,7 +16,7 @@ class WebPaymentController extends Controller
       'mobileNumber' => 'required|string',
       'paymentAmount' => 'required',
       'mno_id' => 'required',
-      'menu' => 'required',
+      'menu_id' => 'required',
    ];
 
 	public function __construct(private Request $request)

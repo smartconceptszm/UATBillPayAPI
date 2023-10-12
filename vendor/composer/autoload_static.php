@@ -680,7 +680,7 @@ class ComposerStaticInit4e18f2a8200f24ce56abd683a0e3a523
         'App\\Http\\Services\\External\\SMSClients\\ISMSClient' => __DIR__ . '/../..' . '/app/Http/Services/External/SMSClients/ISMSClient.php',
         'App\\Http\\Services\\External\\SMSClients\\Kannel' => __DIR__ . '/../..' . '/app/Http/Services/External/SMSClients/Kannel.php',
         'App\\Http\\Services\\External\\SMSClients\\MTNMoMoDeliverySMS' => __DIR__ . '/../..' . '/app/Http/Services/External/SMSClients/MTNMoMoDeliverySMS.php',
-        'App\\Http\\Services\\External\\SMSClients\\MockDeliverySMS' => __DIR__ . '/../..' . '/app/Http/Services/External/SMSClients/MockDeliverySMS.php',
+        'App\\Http\\Services\\External\\SMSClients\\MockSMSDelivery' => __DIR__ . '/../..' . '/app/Http/Services/External/SMSClients/MockSMSDelivery.php',
         'App\\Http\\Services\\External\\SMSClients\\SMSClientBinderService' => __DIR__ . '/../..' . '/app/Http/Services/External/SMSClients/SMSClientBinderService.php',
         'App\\Http\\Services\\External\\SMSClients\\SwascoSMS' => __DIR__ . '/../..' . '/app/Http/Services/External/SMSClients/SwascoSMS.php',
         'App\\Http\\Services\\External\\SMSClients\\ZamtelSMS' => __DIR__ . '/../..' . '/app/Http/Services/External/SMSClients/ZamtelSMS.php',

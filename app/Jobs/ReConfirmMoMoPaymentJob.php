@@ -39,7 +39,7 @@ class ReConfirmMoMoPaymentJob extends BaseJob
       //Bind the SMS Client
          $smsClient = '';
          if(!$smsClient && (\env('SMS_SEND_USE_MOCK') == "YES")){
-               $smsClient = 'MockDeliverySMS';
+               $smsClient = 'MockSMSDelivery';
          }
          if(!$smsClient && \env($this->momoDTO->mnoName.'_HAS_FREESMS') == "YES"){
                $smsClient = $this->momoDTO->mnoName.'DeliverySMS';

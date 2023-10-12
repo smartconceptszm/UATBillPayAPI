@@ -190,8 +190,8 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
          $this->app->singleton('MTNDeliverySMS', function () {
             return $this->app->make(\App\Http\Services\External\SMSClients\MTNMoMoDeliverySMS::class);
          });
-         $this->app->singleton('MockDeliverySMS', function () {
-            return $this->app->make(\App\Http\Services\External\SMSClients\MockDeliverySMS::class);
+         $this->app->singleton('MockSMSDelivery', function () {
+            return $this->app->make(\App\Http\Services\External\SMSClients\MockSMSDelivery::class);
          });
 			$this->app->singleton('ZAMTELSMS', function () {
             return $this->app->make(\App\Http\Services\External\SMSClients\ZamtelSMS::class);
@@ -240,7 +240,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
 
          'MoMoMock','ZAMTEL','AIRTEL','MTN',
 
-         'MTNDeliverySMS','MockDeliverySMS','ZAMTELSMS','KANNEL'
+         'MTNDeliverySMS','MockSMSDelivery','ZAMTELSMS','KANNEL'
 
       ];
 

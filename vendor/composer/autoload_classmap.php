@@ -149,7 +149,7 @@ return array(
     'App\\Http\\Services\\External\\SMSClients\\ISMSClient' => $baseDir . '/app/Http/Services/External/SMSClients/ISMSClient.php',
     'App\\Http\\Services\\External\\SMSClients\\Kannel' => $baseDir . '/app/Http/Services/External/SMSClients/Kannel.php',
     'App\\Http\\Services\\External\\SMSClients\\MTNMoMoDeliverySMS' => $baseDir . '/app/Http/Services/External/SMSClients/MTNMoMoDeliverySMS.php',
-    'App\\Http\\Services\\External\\SMSClients\\MockDeliverySMS' => $baseDir . '/app/Http/Services/External/SMSClients/MockDeliverySMS.php',
+    'App\\Http\\Services\\External\\SMSClients\\MockSMSDelivery' => $baseDir . '/app/Http/Services/External/SMSClients/MockSMSDelivery.php',
     'App\\Http\\Services\\External\\SMSClients\\SMSClientBinderService' => $baseDir . '/app/Http/Services/External/SMSClients/SMSClientBinderService.php',
     'App\\Http\\Services\\External\\SMSClients\\SwascoSMS' => $baseDir . '/app/Http/Services/External/SMSClients/SwascoSMS.php',
     'App\\Http\\Services\\External\\SMSClients\\ZamtelSMS' => $baseDir . '/app/Http/Services/External/SMSClients/ZamtelSMS.php',

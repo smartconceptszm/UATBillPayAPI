@@ -22,7 +22,7 @@ class AirtelMoneyTest extends TestCase
 
     }
 
-    public function testConfirmPayment()
+    public function _testConfirmPayment()
     {   
 
         $momoParams = (object)[

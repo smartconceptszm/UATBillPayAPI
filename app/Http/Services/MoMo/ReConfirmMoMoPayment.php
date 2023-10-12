@@ -16,16 +16,16 @@ class ReConfirmMoMoPayment
       try {
          for ($i = 0; $i < (int)\env('PAYMENT_REVIEW_THRESHOLD'); $i++) {
             $momoDTO =  app(Pipeline::class)
-                        ->send($momoDTO)
-                        ->through(
-                           [
-                              \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
-                              \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
-                              \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
-                              \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
-                           ]
-                        )
-                        ->thenReturn();
+                     ->send($momoDTO)
+                     ->through(
+                        [
+                           \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
+                           \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
+                           \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
+                           \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
+                        ]
+                     )
+                     ->thenReturn();
             if($momoDTO->paymentStatus == "PAYMENT FAILED"){
                if(!((\strpos($momoDTO->error,'on get transaction status'))
                   || (\strpos($momoDTO->error,'API Get Token error'))

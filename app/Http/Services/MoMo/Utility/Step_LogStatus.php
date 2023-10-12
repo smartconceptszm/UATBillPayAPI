@@ -23,7 +23,7 @@ class Step_LogStatus extends EfectivoPipelineContract
 					$logMessage.='DETAILS: '.$momoDTO->receipt;
 				}
 				$logMessage.='Transaction ID = '.$momoDTO->transactionId. '. - Session: '.$momoDTO->sessionId.
-						' - Phone: '.$momoDTO->mobileNumber;
+				'. - Channel: '.$momoDTO->channel.' - Phone: '.$momoDTO->mobileNumber;
 				Log::info($logMessage);
 				if($momoDTO->sms){
 					if($momoDTO->sms['status'] == 'DELIVERED'){
@@ -37,7 +37,7 @@ class Step_LogStatus extends EfectivoPipelineContract
 			}else{
 				Log::error('('.$momoDTO->clientCode.'). '.$momoDTO->error.' Payment Status: '
 					.$momoDTO->paymentStatus.' (via '.$momoDTO->mnoName.'). Transaction ID = '.$momoDTO->transactionId.
-					'- Session: '.$momoDTO->sessionId.' - Phone: '.$momoDTO->mobileNumber);
+					'- Session: '.$momoDTO->sessionId.'- Channel: '.$momoDTO->channel.' - Phone: '.$momoDTO->mobileNumber);
 			}
 		} catch (Exception $e) {
 			$momoDTO->error='At logging transaction. '.$e->getMessage();

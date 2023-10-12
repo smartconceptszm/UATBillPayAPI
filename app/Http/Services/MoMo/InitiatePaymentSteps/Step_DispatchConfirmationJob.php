@@ -17,11 +17,12 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
    {
 
       try {
+         
          if( $momoDTO->paymentStatus == "SUBMITTED"){
             Queue::later(Carbon::now()->addSeconds(
                (int)\env($momoDTO->mnoName.'_PAYSTATUS_CHECK')),
                                     new ConfirmMoMoPaymentJob($momoDTO));
-         }else{
+         }else if($momoDTO->mnoResponse){
             if((\strpos($momoDTO->mnoResponse['error'],'on collect funds'))
                      || (\strpos($momoDTO->mnoResponse['error'],"Status Code"))
                      || (\strpos($momoDTO->mnoResponse['error'],'API Get Token error')))

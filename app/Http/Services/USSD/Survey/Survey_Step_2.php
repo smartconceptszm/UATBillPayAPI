@@ -25,8 +25,8 @@ class Survey_Step_2
          $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
          $txDTO->response = "Good ".$this->timeofDay().",\n". 
             $txDTO->customer['name']." (".$txDTO->subscriberInput.")\n". 
-            "Thank you for participating in this survey.\n". 
-            "All data will be used in confidence\n\n".
+            "Thank you for participating in this survey,\n". 
+            "where we want to get your feedback\n\n".
             "Enter\n". 
                      "1. Confirm\n".
                      "0. Back";
