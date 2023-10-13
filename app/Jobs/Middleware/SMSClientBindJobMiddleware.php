@@ -22,7 +22,7 @@ class SMSClientBindJobMiddleware
          $smsClientKey = 'MockSMSDelivery';
       }
       if(!$smsClientKey &&  isset($job->urlPrefix)){
-         if(\config('efectivo_clients.'.$job->urlPrefix.'.hasOwnSMS')){
+         if(\env(\strtoupper($job->urlPrefix).'_HAS_OWNSMS') == 'YES'){
             $smsClientKey = \strtoupper($job->urlPrefix).'SMS';
          }
       }

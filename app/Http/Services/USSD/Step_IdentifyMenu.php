@@ -218,8 +218,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
             $txDTO->customerJourney='';
          }
       }else{
-         $txDTO->subscriberInput = \config('efectivo_clients.'.
-                                          $txDTO->urlPrefix.'.shortCode');
+         $txDTO->subscriberInput = \env(\strtoupper($txDTO->urlPrefix).'_USSD_SHORT_CODE');
          $selectedMenu = $this->clientMenuService->findOneBy([
                                  'client_id' => $txDTO->client_id,
                                  'parent_id' => 0

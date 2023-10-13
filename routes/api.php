@@ -53,6 +53,11 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
                Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
             });
+            Route::group(['prefix' => '/mazabuka'], function (){
+               Route::get('/zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
+               Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
+               Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
+            });
       //End of Dev ROUTES
    //End of USSD Routes
 

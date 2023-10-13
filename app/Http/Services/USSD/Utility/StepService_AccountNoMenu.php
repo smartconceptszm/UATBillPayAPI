@@ -8,7 +8,7 @@ class StepService_AccountNoMenu
     {
 
         $client = \strtoupper($urlPrefix);
-        $accountExamples = \config('efectivo_clients.'.$urlPrefix.'.postpaidExample');
+        $accountExamples = \env(\strtoupper($urlPrefix).'_POSTPAID_EXAMPLE');
         $menuItem = "Enter ".$client." Account Number in full";
         $menuItem = $accountExamples? $menuItem." (for example: ".$accountExamples.")":$menuItem;
         $menuItem = $menuItem.":\n";

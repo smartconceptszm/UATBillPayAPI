@@ -24,18 +24,18 @@ class LukangaServiceProvider extends ServiceProvider implements DeferrableProvid
             return new \App\Http\Services\External\BillingClients\Lukanga(
                   new \App\Http\Services\Utility\XMLtoArrayParser(),
                   new \App\Http\Services\External\BillingClients\LukangaSoapService(
-                              \env('LUKANGA_base_URL').\env('LUKANGA_wsdl_URI'),
+                              \env('LUKANGA_BASE_URL').\env('LUKANGA_WSDL_URI'),
                                        [
                                           'exceptions' => true,
                                           'cache_wsdl' => WSDL_CACHE_BOTH,
                                           'soap_version' => SOAP_1_1,
                                           'trace' => 1,
-                                          'connection_timeout' => \env('LUKANGA_soapConnectionTimeout')
+                                          'connection_timeout' => \env('LUKANGA_SOAP_CONNECTION_TIMEOUT')
                                        ]),
-                              \env('LUKANGA_soapUsername'),
-                              \env('LUKANGA_soapPassword'),
-                              \env('LUKANGA_soapToken'),
-                              \env('LUKANGA_soapOperator')
+                              \env('LUKANGA_SOAP_USERNAME'),
+                              \env('LUKANGA_SOAP_PASSWORD'),
+                              \env('LUKANGA_SOAP_TOKEN'),
+                              \env('LUKANGA_SOAP_OPERATOR')
                            );
          });
          $this->app->singleton('PostpaymentLukanga', function () {

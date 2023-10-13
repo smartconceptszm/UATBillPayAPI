@@ -81,7 +81,7 @@ class MTNMoMoDeliverySMS implements ISMSClient
       return [
                'clientUserName'=>\env(\strtoupper($urlPrefix).'_MTN_USERNAME'),
                'clientPassword'=>\env(\strtoupper($urlPrefix).'_MTN_PASSWORD'),
-               'clientId'=>\env(\strtoupper($urlPrefix).'_MTN_OcpKey'),
+               'clientId'=>\env(\strtoupper($urlPrefix).'_MTN_OCPKEY'),
                'targetEnv'=>\env('MTN_TARGET_ENVIRONMENT'),
                'timeout'=>\env('MTN_Http_Timeout'),
                'txCurrency'=>\env('MTN_CURRENCY'),

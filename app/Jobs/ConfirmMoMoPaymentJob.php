@@ -47,7 +47,7 @@ class ConfirmMoMoPaymentJob extends BaseJob
          if(!$smsClient && \env($this->momoDTO->mnoName.'_HAS_FREESMS') == "YES"){
                $smsClient = $this->momoDTO->mnoName.'DeliverySMS';
          }
-         if(!$smsClient && \config('efectivo_clients.'.$this->momoDTO->urlPrefix.'.hasOwnSMS')){
+         if(!$smsClient && (\env(\strtoupper($this->momoDTO->urlPrefix).'_HAS_OWNSMS') == 'YES')){
                $smsClient = \strtoupper($this->momoDTO->urlPrefix).'SMS';
          }
          if(!$smsClient){

@@ -51,7 +51,7 @@ class GetCustomerAccount
             }else{
                 $billingServiceErrorCount = (int)Cache::get($txDTO->urlPrefix.'_BillingErrorCount');
                 if($billingServiceErrorCount){
-                    if (($billingServiceErrorCount+1) < (int)\env('BILLING_Error_THRESHOLD')) {
+                    if (($billingServiceErrorCount+1) < (int)\env('BILLING_ERROR_THRESHOLD')) {
                         Cache::increment($txDTO->urlPrefix.'_BillingErrorCount');
                     }else{
                         //Send Notification here
@@ -70,11 +70,11 @@ class GetCustomerAccount
                                             new SendSMSesJob($arrSMSes));
                         //
                         Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1, 
-                                            Carbon::now()->addMinutes((int)env('BILLING_Error_CACHE')));
+                                            Carbon::now()->addMinutes((int)env('BILLING_ERROR_CACHE')));
                     }
                 }else{
                     Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1,
-                                        Carbon::now()->addMinutes((int)env('BILLING_Error_CACHE')));
+                                        Carbon::now()->addMinutes((int)env('BILLING_ERROR_CACHE')));
                 }
                 throw new Exception($e->getMessage(), 2);
             }   

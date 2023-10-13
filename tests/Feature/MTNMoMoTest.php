@@ -18,7 +18,7 @@ class MTNMoMoTest extends TestCase
       $momoParams['mobileNumber']= $mobile;
       $momoParams['configs']=[
                'baseURL'=>\env('MTN_BASE_URL'),
-               'clientId'=>\env($strClientName.'_MTN_OcpKey'),
+               'clientId'=>\env($strClientName.'_MTN_OCPKEY'),
                'clientUserName'=>\env($strClientName.'_MTN_USERNAME'),
                'clientPassword'=>\env($strClientName.'_MTN_PASSWORD'),
                'txCurrency'=>\env('MTN_CURRENCY'),
@@ -40,7 +40,7 @@ class MTNMoMoTest extends TestCase
       $momoParams['transactionId']="dbd36ae6-237b-4f42-8892-54f233492c03";
       $momoParams['configs']=[
                'baseURL'=>\env('MTN_BASE_URL'),
-               'clientId'=>\env($strClientName.'_MTN_OcpKey'),
+               'clientId'=>\env($strClientName.'_MTN_OCPKEY'),
                'clientUserName'=>\env($strClientName.'_MTN_USERNAME'),
                'clientPassword'=>\env($strClientName.'_MTN_PASSWORD'),
                'txCurrency'=>\env('MTN_CURRENCY'),
@@ -65,7 +65,7 @@ class MTNMoMoTest extends TestCase
                               $momoParams['transactionId'];
       $momoParams['configs']=[
                'baseURL'=>\env('MTN_BASE_URL'),
-               'clientId'=>\env($strClientName.'_MTN_OcpKey'),
+               'clientId'=>\env($strClientName.'_MTN_OCPKEY'),
                'clientUserName'=>\env($strClientName.'_MTN_USERNAME'),
                'clientPassword'=>\env($strClientName.'_MTN_PASSWORD'),
                'txCurrency'=>\env('MTN_CURRENCY'),

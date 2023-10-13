@@ -8,7 +8,7 @@ class LukangaSoapService extends \SoapClient
     function __doRequest($request, $location, $action, $version, $one_way = 0):?string {
 
         //$SoapServerUSERPWD = "";
-        $SoapServerTimeout = \env('LUKANGA_soapExecuteTimeout');
+        $SoapServerTimeout = \env('LUKANGA_SOAP_EXECUTE_TIMEOUT');
 
         $headers = array(
             'Method: POST',
@@ -19,7 +19,7 @@ class LukangaSoapService extends \SoapClient
         );
         
         $this->__last_request_headers = $headers;
-        $ch= curl_init(\env('LUKANGA_base_URL'));
+        $ch= curl_init(\env('LUKANGA_BASE_URL'));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_POST, true );

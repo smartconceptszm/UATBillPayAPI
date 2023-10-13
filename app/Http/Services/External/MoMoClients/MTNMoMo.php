@@ -168,7 +168,7 @@ class MTNMoMo implements IMoMoClient
    {
       return [
                'baseURL'=>\env('MTN_BASE_URL'),
-               'clientId'=>\env(\strtoupper($urlPrefix).'_MTN_OcpKey'),
+               'clientId'=>\env(\strtoupper($urlPrefix).'_MTN_OCPKEY'),
                'clientUserName'=>\env(\strtoupper($urlPrefix).'_MTN_USERNAME'),
                'clientPassword'=>\env(\strtoupper($urlPrefix).'_MTN_PASSWORD'),
                'targetEnv'=>\env('MTN_TARGET_ENVIRONMENT'),

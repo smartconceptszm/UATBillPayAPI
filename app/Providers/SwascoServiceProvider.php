@@ -109,9 +109,9 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
 		//SMS Clients
 			$this->app->singleton('SWASCOSMS', function () {
 				return $this->app->make( \App\Http\Services\External\SMSClients\SwascoSMS::class,[
-											\config('efectivo_clients.swasco.sms_Base_URL'),
-											\config('efectivo_clients.swasco.sms_APIKEY'),
-											\config('efectivo_clients.swasco.sms_SENDER_ID')
+											\env('SWASCO_SMS_BASE_URL'),
+											env('SWASCO_SMS_APIKEY'),
+											env('SWASCO_SMS_SENDER_ID'),
 										]);
 			});
 		//
@@ -119,9 +119,9 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
 		//Billing Clients			
 			$this->app->singleton('swasco', function () {
 				return $this->app->make(\App\Http\Services\External\BillingClients\Swasco::class,[
-									'swascoReceiptingTimeout'=>\intval(\config('efectivo_clients.swasco.receipting_Timeout')),
-									'swascoTimeout' => \intval(\config('efectivo_clients.swasco.remote_Timeout')),
-									'baseURL' => \env('SWASCO_base_URL')
+									'swascoReceiptingTimeout'=>\intval(\env('SWASCO_RECEIPTING_TIMEOUT')),
+									'swascoTimeout' => \intval(\env('SWASCO_REMOTE_TIMEOUT')),
+									'baseURL' => \env('SWASCO_BASE_URL')
 								]);
 			});
 
@@ -141,9 +141,9 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
 			$this->app->singleton('Complaint_swasco', function () {
 					return new \App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Swasco(
 									$this->app->make(\App\Http\Services\External\BillingClients\Swasco::class,[                    
-											'swascoReceiptingTimeout'=>\intval(\config('efectivo_clients.swasco.receipting_Timeout')),
-											'swascoTimeout' => \intval(\config('efectivo_clients.swasco.remote_Timeout')),
-											'baseURL' => \env('SWASCO_base_URL')
+											'swascoReceiptingTimeout'=>\intval(\env('SWASCO_RECEIPTING_TIMEOUT')),
+											'swascoTimeout' => \intval(\env('SWASCO_REMOTE_TIMEOUT')),
+											'baseURL' => \env('SWASCO_BASE_URL')
 										])
 								);
 			});
