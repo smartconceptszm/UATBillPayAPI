@@ -13,14 +13,16 @@ class PaymentWithReceiptToDeliverController extends Controller
 		private PaymentWithReceiptToDeliverService $theService)
 	{}
 
-   public function update(Request $request,$id){
+   public function update($id){
+
       try {
-         $this->response['data'] = $this->theService->update($request->all(),$id );
+         $this->response['data'] = $this->theService->update($id);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json( $this->response);
+
    }
 
 }

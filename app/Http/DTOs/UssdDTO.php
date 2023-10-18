@@ -19,7 +19,6 @@ class UssdDTO extends BaseDTO
    public $accountNumber;
    public $paymentAmount;
    public $stepProcessed;
-   public $isPaymentMenu;
    public $lastResponse;
    public $isNewRequest;
    public $mobileNumber;
@@ -30,7 +29,9 @@ class UssdDTO extends BaseDTO
    public $urlPrefix;
    public $sessionId;
    public $client_id;
+   public $reference;
    public $errorType;
+   public $isPayment;
    public $customer;
    public $district;
    public $response;

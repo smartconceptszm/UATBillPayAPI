@@ -11,7 +11,6 @@ class CheckBalance_Step_4
 	{
 		
 		if (\count(\explode("*", $txDTO->customerJourney)) > 3) {
-			$txDTO->stepProcessed=true;
 			$txDTO->error="Duplicated request from ".$txDTO->mnoName.
 											" with input: ".$txDTO->subscriberInput; 
 			$txDTO->errorType = 'SystemError';

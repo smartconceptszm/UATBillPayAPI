@@ -15,7 +15,7 @@ class VacuumTankerSwasco implements IUSSDMenu
 
       if ($txDTO->error == '') {
          try {
-            $stepHandler = App::make('BuyUnits_Step_'.\count(\explode("*", $txDTO->customerJourney)));
+            $stepHandler = App::make('VacuumTankerSwasco_Step_'.\count(\explode("*", $txDTO->customerJourney)));
             $txDTO = $stepHandler->run($txDTO);
          } catch (Exception $e) {
             $txDTO->error='At pay for vacuum tanker menu. '.$e->getMessage();

@@ -2,9 +2,10 @@
 
 namespace App\Http\Services\USSD\CheckBalance;
 
-use App\Http\Services\USSD\Utility\StepService_CheckPaymentsEnabled;
 use App\Http\Services\USSD\Utility\StepService_AccountNoMenu;
+use App\Http\Services\Payments\PaymentHistoryService;
 use App\Http\Services\Clients\ClientMenuService;
+use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -12,7 +13,7 @@ class CheckBalance_Step_3
 {
 
    public function __construct( 
-      private StepService_CheckPaymentsEnabled $checkPaymentsEnabled,
+      private PaymentHistoryService $paymentHistoryService,
       private StepService_AccountNoMenu $accountNoMenu,
       private ClientMenuService $clientMenuService
    ){}
@@ -22,26 +23,19 @@ class CheckBalance_Step_3
 
       try {
          $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
-         $txDTO->stepProcessed = true;
          if($txDTO->subscriberInput == '1'){
-            $momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
-            if($momoPaymentStatus['enabled']){
-               $selectedMenu = $this->clientMenuService->findOneBy([
-                                    'client_id' => $txDTO->client_id,
-                                    'isPayment' => "YES",
-                                    'isDefault' => "YES",
-                                    'isParent' => "NO",
-                                    'isActive' => "YES"
-                                 ]);
-               $txDTO->customerJourney = $arrCustomerJourney[0]."*".$selectedMenu->order;
-               $txDTO->subscriberInput = $arrCustomerJourney[2];
-               $txDTO->menu_id = $selectedMenu->id;
-               $txDTO->response = "Enter Amount :\n";
-               $txDTO->status = 'INITIATED';
-            }else{
-               $txDTO->response = $momoPaymentStatus['responseText'];
-               $txDTO->lastResponse = true;
-            }
+            $selectedMenu = $this->clientMenuService->findOneBy([
+                                 'client_id' => $txDTO->client_id,
+                                 'isPayment' => "YES",
+                                 'isDefault' => "YES",
+                                 'isParent' => "NO",
+                                 'isActive' => "YES"
+                              ]);
+            $txDTO->customerJourney = $arrCustomerJourney[0]."*".$selectedMenu->order;
+            $txDTO->subscriberInput = $arrCustomerJourney[2];
+            $txDTO->menu_id = $selectedMenu->id;
+            $txDTO->response = "Enter Amount :\n";
+            $txDTO->status = 'INITIATED';
             return $txDTO;
          }
          if($txDTO->subscriberInput == '0'){
@@ -51,10 +45,34 @@ class CheckBalance_Step_3
             $txDTO->status = 'INITIATED';
             return $txDTO;
          }
+
+         if($txDTO->subscriberInput == '2'){
+            $payments = $this->paymentHistoryService->findAll([
+                              'limit' => \env(\strtoupper($txDTO->urlPrefix).'_PAYMENT_HISTORY'),
+                              'accountNumber' => $txDTO->accountNumber,
+                              'mobileNumber' => $txDTO->mobileNumber,
+                              'client_id' => $txDTO->client_id,
+                           ]);
+            if($payments){
+               $prompt = "Payment history for ".$txDTO->mobileNumber.":\n";
+               foreach ($payments as $key=>$payment) {
+                  
+                  $prompt .= ($key+1).". ".Carbon::parse($payment->created_at)->format('d-M-Y').
+                              " ".$payment->accountNumber.
+                              " ZMW ".number_format($payment->receiptAmount, 2, '.', ',')."\n";
+               }
+               $txDTO->response = $prompt;
+               $txDTO->lastResponse = true;
+            }else{
+               $txDTO->response = "There are no Mobile Money based payments to Acc: ".$txDTO->accountNumber." from ".$txDTO->mobileNumber;
+               $txDTO->lastResponse = true;
+            }
+            return $txDTO;
+         }
+
          $txDTO->accountNumber = $arrCustomerJourney[2];
          $txDTO->error = 'Invalid selection';
          $txDTO->errorType= "InvalidInput";
-         return $txDTO;
       } catch (Exception $e) {
          if($e->getCode() == 1){
             $txDTO->error = $e->getMessage();
@@ -64,7 +82,7 @@ class CheckBalance_Step_3
             $txDTO->errorType = 'SystemError';
          }
       }
-
+      return $txDTO;
    }
 
 }

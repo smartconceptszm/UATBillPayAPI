@@ -18,12 +18,12 @@ class ServiceApplications implements IUSSDMenu
       if ($txDTO->error == '') {
          try {
             if (\count(\explode("*", $txDTO->customerJourney)) == 3) {
-               App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$txDTO->urlPrefix);
+               $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$txDTO->urlPrefix;
+               App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
             }
             if (\count(\explode("*", $txDTO->customerJourney)) == 5) {
                App::bind(\App\Http\Services\USSD\ServiceApplications\ClientCallers\IServiceApplicationClient::class,$txDTO->urlPrefix);
             }
-            $txDTO->stepProcessed=false;
             $txDTO = app(Pipeline::class)
             ->send($txDTO)
             ->through(
@@ -36,7 +36,6 @@ class ServiceApplications implements IUSSDMenu
                ]
             )
             ->thenReturn();
-            $txDTO->stepProcessed=false;
          } catch (Exception $e) {
             $txDTO->error='At handle service applications menu. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';

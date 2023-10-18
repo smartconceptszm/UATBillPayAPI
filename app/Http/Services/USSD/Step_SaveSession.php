@@ -27,7 +27,8 @@ class Step_SaveSession extends EfectivoPipelineContract
 			$this->sessionService->update($txDTO->toSessionData(),$txDTO->id);
 		} catch (Exception $e) {
 			$txDTO->error='At save session. '.$e->getMessage();
-			$txDTO->errorType = 'SystemError';        
+			$txDTO->response = \env('ERROR_MESSAGE');
+			$txDTO->lastResponse = true;     
 		}
 		return $txDTO;
 		

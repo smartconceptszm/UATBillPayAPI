@@ -30,7 +30,6 @@ class MoMoDTO extends BaseDTO
 
    public $customerJourney;   
    public $clientSurcharge;
-   public $stepProcessed;
    public $mnoResponse;
    public $clientCode;
    public $testMSISDN;
@@ -38,7 +37,6 @@ class MoMoDTO extends BaseDTO
    public $urlPrefix;
    public $customer;
    public $mnoName;
-   public $menu;
    public $sms;
 
    public function fromUssdData(array $ussdParams): BaseDTO
@@ -57,19 +55,27 @@ class MoMoDTO extends BaseDTO
 
    public function toPaymentData():array{
       return [
-            'id'=>$this->id,'transactionId'=>$this->transactionId,
-            'surchargeAmount'=>$this->surchargeAmount,'error'=>$this->error,
-            'receiptAmount'=>$this->receiptAmount,'user_id'=>$this->user_id,
-            'accountNumber'=>$this->accountNumber,'receipt'=>$this->receipt,
-            'paymentAmount'=>$this->paymentAmount,'status'=>$this->status,
-            'mobileNumber'=>$this->mobileNumber,'channel'=>$this->channel,
-            'district'=>$this->district,'client_id'=>$this->client_id,
-            'session_id'=>$this->session_id,'mno_id'=>$this->mno_id,
             'mnoTransactionId'=>$this->mnoTransactionId,
-            'receiptNumber'=>$this->receiptNumber,
+            'surchargeAmount'=>$this->surchargeAmount,
+            'accountNumber'=>$this->accountNumber,
+            'paymentAmount'=>$this->paymentAmount,
+            'transactionId'=>$this->transactionId,
+            'receiptAmount'=>$this->receiptAmount,
             'paymentStatus'=>$this->paymentStatus,
+            'receiptNumber'=>$this->receiptNumber,
+            'mobileNumber'=>$this->mobileNumber,
+            'session_id'=>$this->session_id,
+            'client_id'=>$this->client_id,         
             'reference'=>$this->reference,
-            'menu_id'=>$this->menu_id
+            'district'=>$this->district,
+            'menu_id'=>$this->menu_id,
+            'channel'=>$this->channel,
+            'receipt'=>$this->receipt, 
+            'user_id'=>$this->user_id,
+            'status'=>$this->status,
+            'mno_id'=>$this->mno_id,
+            'error'=>$this->error,
+            'id'=>$this->id
          ]; 
    }
 

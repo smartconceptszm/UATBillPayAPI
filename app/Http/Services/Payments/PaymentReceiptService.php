@@ -37,22 +37,23 @@ class PaymentReceiptService
             throw new Exception("Payment not yet confirmed!");
          }  
          //Bind the Services
-            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$momoDTO->urlPrefix);
+            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$momoDTO->urlPrefix;
+            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
          //
          $user = Auth::user(); 
          $momoDTO->user_id = $user->id;
          $momoDTO->error = "";
          $momoDTO =  app(Pipeline::class)
-            ->send($momoDTO)
-            ->through(
-               [
-                  Step_PostPaymentToClient::class,
-                  Step_SendReceiptViaSMS::class,
-                  Step_UpdateTransaction::class,  
-                  Step_LogStatus::class 
-               ]
-            )
-            ->thenReturn();
+                        ->send($momoDTO)
+                        ->through(
+                           [
+                              Step_PostPaymentToClient::class,
+                              Step_SendReceiptViaSMS::class,
+                              Step_UpdateTransaction::class,  
+                              Step_LogStatus::class 
+                           ]
+                        )
+                        ->thenReturn();
       } catch (Exception $e) {
          throw new Exception($e->getMessage());
       }
@@ -65,16 +66,18 @@ class PaymentReceiptService
          $thePayment = $this->paymentToReviewService->findById($id);
          $momoDTO = $this->momoDTO->fromArray(\get_object_vars($thePayment));
          if($momoDTO->receiptNumber != ''){
-            throw new Exception("Payment appears receipted! Receipt number ".$momoDTO->receiptNumber);
+            throw new Exception("Payment already receipted! Receipt number ".$momoDTO->receiptNumber);
          }
          $momoDTO->receiptNumber = $data['receiptNumber'];
          $momoDTO->paymentStatus = "RECEIPTED";
+
          //consider a format receipt public method for each billing client
-         $momoDTO->receipt = "Payment successful\n" .
-               "Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
-               "Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
-               "Acc: " . $momoDTO->accountNumber . "\n";
-         $momoDTO->receipt .= "Date: " . Carbon::now()->format('d-M-Y') . "\n";
+            $momoDTO->receipt = "Payment successful\n" .
+                  "Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
+                  "Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
+                  "Acc: " . $momoDTO->accountNumber . "\n";
+            $momoDTO->receipt .= "Date: " . Carbon::now()->format('d-M-Y') . "\n";
+         //
          $momoDTO =  app(Pipeline::class)
             ->send($momoDTO)
             ->through(

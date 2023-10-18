@@ -11,7 +11,6 @@ class FaultsComplaints_Step_6
    {
 
       if (\count(\explode("*", $txDTO->customerJourney)) > 5) {
-         $txDTO->stepProcessed = true;
          $txDTO->error = "Duplicated request from ".$txDTO->mnoName.
                                  " with input: ".$txDTO->subscriberInput; 
          $txDTO->errorType = 'SystemError';

@@ -33,7 +33,7 @@ class PaymentFailedController extends Controller
    {
 
       try {
-         $response = $this->theService->update($request->all(),$id);
+         $response = $this->theService->update($id);
          $this->response['data'] = $response->data;
       } catch (\Exception $e) {
          $this->response['status']['code'] = 500;

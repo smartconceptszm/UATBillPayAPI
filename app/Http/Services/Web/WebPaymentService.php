@@ -30,8 +30,6 @@ class WebPaymentService
                                              'accountNumber'=> $accountNumber,
                                              'urlPrefix'=>$urlPrefix
                                           ]);
-         $momoDTO = $this->getClient($momoDTO);
-         $momoDTO = $this->getMNO($momoDTO);
          return $this->getCustomerAccount->handle($momoDTO);
       } catch (Exception $e) {
          throw new Exception($e->getMessage());

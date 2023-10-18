@@ -20,7 +20,7 @@ class ReconnectionFeesSwasco_Step_4
 
       try{
          try {
-            $txDTO->subscriberInput = $this->getAmount->handle($txDTO);
+            [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
          } catch (Exception $e) {
             if($e->getCode()==1){
                $txDTO->errorType = 'InvalidAmount';
@@ -31,7 +31,7 @@ class ReconnectionFeesSwasco_Step_4
             return $txDTO;
          }
          try {
-            $txDTO->customer  = $this->getCustomerAccount->handle($txDTO);
+            [$txDTO->customer, $txDTO->district] = $this->getCustomerAccount->handle($txDTO);
          } catch (Exception $e) {
             if($e->getCode() == 1){
                $txDTO->errorType = 'InvalidAccount';

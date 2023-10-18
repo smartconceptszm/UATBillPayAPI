@@ -20,9 +20,11 @@ class Survey_Step_2
    {
 
       try {
+
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->accountNumber = $txDTO->subscriberInput;
-         $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
+         [$txDTO->customer, $txDTO->district] = $this->getCustomerAccount->handle($txDTO);
+         
          $txDTO->response = "Good ".$this->timeofDay().",\n". 
             $txDTO->customer['name']." (".$txDTO->subscriberInput.")\n". 
             "Thank you for participating in this survey,\n". 

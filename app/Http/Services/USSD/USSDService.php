@@ -21,8 +21,8 @@ class USSDService
                \App\Http\Services\USSD\Step_IdentifyMenu::class,
                \App\Http\Services\USSD\Step_HandleMenu::class,
                \App\Http\Services\USSD\Step_TrimResponse::class,
-               \App\Http\Services\USSD\Step_SaveSession::class,
-               \App\Http\Services\USSD\Step_HandleErrorResponse::class
+               \App\Http\Services\USSD\Step_HandleErrorResponse::class,
+               \App\Http\Services\USSD\Step_SaveSession::class
             ]
          )
          ->thenReturn();

@@ -22,7 +22,8 @@ class WebPaymentController extends Controller
 	public function __construct(private Request $request)
 	{
       $this->getUrlPrefix($request);
-      App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$this->urlPrefix);
+      $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$this->urlPrefix;
+      App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
    }
 
    /**

@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
 
-class PostVacuumTankerSwasco implements IReceiptPayment
+class ReceiptVacuumTankerSwasco implements IReceiptPayment
 {
 
 	public function __construct(

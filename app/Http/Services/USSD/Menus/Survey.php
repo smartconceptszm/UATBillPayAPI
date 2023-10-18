@@ -4,7 +4,6 @@ namespace App\Http\Services\USSD\Menus;
 
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use Illuminate\Support\Facades\App;
-use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -17,7 +16,8 @@ class Survey implements IUSSDMenu
       if ($txDTO->error == '') {
          try {
             if (\count(\explode("*", $txDTO->customerJourney)) == 2 || \count(\explode("*", $txDTO->customerJourney)) == 5) {
-               App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$txDTO->urlPrefix);
+               $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$txDTO->urlPrefix;
+               App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
             }
             if (\count(\explode("*", $txDTO->customerJourney)) == 5) {
                App::bind(\App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient::class,'Survey_'.$txDTO->urlPrefix);

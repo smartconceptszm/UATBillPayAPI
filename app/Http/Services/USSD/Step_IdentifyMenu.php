@@ -64,7 +64,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
          $txDTO->menu_id = $selectedMenu->id; 
          $txDTO->handler = $selectedMenu->handler; 
          $txDTO->menuPrompt = $selectedMenu->prompt; 
-         $txDTO->isPaymentMenu = $selectedMenu->isPayment; 
+         $txDTO->isPayment = $selectedMenu->isPayment; 
       }
 
       $ussdSession = $this->sessionService->create($txDTO->toSessionData());
@@ -92,7 +92,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
             $txDTO->menu_id = $selectedMenu->id; 
             $txDTO->handler = $selectedMenu->handler; 
             $txDTO->menuPrompt = $selectedMenu->prompt; 
-            $txDTO->isPaymentMenu = $selectedMenu->isPayment; 
+            $txDTO->isPayment = $selectedMenu->isPayment; 
             if($selectedMenu->isPayment == 'YES'){
                $momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
                if(!$momoPaymentStatus['enabled']){
@@ -152,9 +152,9 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
          $txDTO->menu_id = $selectedMenu->id; 
          $txDTO->handler = $selectedMenu->handler; 
          $txDTO->menuPrompt = $selectedMenu->prompt; 
-         $txDTO->isPaymentMenu = $selectedMenu->isPayment; 
+         $txDTO->isPayment = $selectedMenu->isPayment; 
       }else{
-         $txDTO->isPaymentMenu = $currentMenu->isPayment; 
+         $txDTO->isPayment = $currentMenu->isPayment; 
          $txDTO->menuPrompt = $currentMenu->prompt; 
          $txDTO->handler = $currentMenu->handler;
       }
@@ -215,6 +215,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
             $txDTO->menu_id = $selectedMenu->id; 
             $txDTO->handler = $selectedMenu->handler; 
             $txDTO->menuPrompt = $selectedMenu->prompt; 
+            $txDTO->isPayment = $selectedMenu->isPayment; 
             $txDTO->customerJourney='';
          }
       }else{
@@ -226,6 +227,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
          $txDTO->menu_id = $selectedMenu->id; 
          $txDTO->handler = $selectedMenu->handler; 
          $txDTO->menuPrompt = $selectedMenu->prompt; 
+         $txDTO->isPayment = $selectedMenu->isPayment; 
          $txDTO->customerJourney = '';
       }
       return $txDTO;

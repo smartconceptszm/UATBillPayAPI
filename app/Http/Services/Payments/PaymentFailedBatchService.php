@@ -23,7 +23,7 @@ class PaymentFailedBatchService
          $data['client_id'] = $user->client_id;
          $thePayments = $this->paymentToReviewService->findAll($data);
          foreach ($thePayments as $payment) {
-            $this->paymentFailedService->update($data,$payment->id);
+            $this->paymentFailedService->update($payment->id);
          }
          $response = (object)[
                               'data' => \count($thePayments).' payments submitted for review. Check status after a while'      

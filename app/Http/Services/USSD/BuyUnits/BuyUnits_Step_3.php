@@ -12,23 +12,18 @@ use Exception;
 
 class BuyUnits_Step_3
 {
-   private $calculatePaymentAmounts;
-   private $getCustomerAccount;
-   private $getAmount;
-   public function __construct(GetCustomerAccount $getCustomerAccount,
-         StepService_CalculatePaymentAmounts $calculatePaymentAmounts,
-         StepService_GetAmount $getAmount)
-   {
-         $this->calculatePaymentAmounts=$calculatePaymentAmounts;
-         $this->getCustomerAccount=$getCustomerAccount;
-         $this->getAmount=$getAmount;
-   }
+
+   public function __construct(
+      private StepService_CalculatePaymentAmounts $calculatePaymentAmounts,
+      private GetCustomerAccount $getCustomerAccount,
+      private StepService_GetAmount $getAmount)
+   {}
 
    public function run(BaseDTO $txDTO)
    {
 
       try {
-         $txDTO->subscriberInput = $this->getAmount->handle($txDTO);
+         [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
       } catch (Exception $e) {
          if($e->getCode()==1){
             $txDTO->errorType = 'InvalidAmount';
@@ -40,7 +35,7 @@ class BuyUnits_Step_3
       }
          
       try {
-            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
+         [$txDTO->customer, $txDTO->district] = $this->getCustomerAccount->handle($txDTO);
       } catch (Exception $e) {
             if($e->getCode()==1){
                $txDTO->errorType = 'InvalidAccount';

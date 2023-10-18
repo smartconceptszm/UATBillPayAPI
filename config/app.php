@@ -167,6 +167,7 @@ return [
         App\Providers\ChambeshiServiceProvider::class,
         App\Providers\LukangaServiceProvider::class,
         App\Providers\SwascoServiceProvider::class,
+        App\Providers\MazabukaServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,

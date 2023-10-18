@@ -26,14 +26,15 @@ class PaymentFailedService
          $dto=(object)$criteria;
          $records = DB::table('payments as p')
                   ->join('sessions as s','p.session_id','=','s.id')
-                  ->join('mnos as m','p.mno_id','=','m.id')
-                  ->leftJoin('other_payment_types as opt','p.other_payment_type_id','=','opt.id')
+                  ->join('mnos','p.mno_id','=','mnos.id')
+                  ->join('client_menus as m','p.menu_id','=','m.id')
                   ->select('p.id','p.created_at','p.mobileNumber','p.accountNumber','p.receiptNumber',
                            'p.receiptAmount','p.paymentAmount','p.transactionId','p.district',
-                           'p.mnoTransactionId','m.name as mno','s.menu',
-                           'opt.name as paymentType','p.paymentStatus','p.error')
+                           'p.mnoTransactionId','mnos.name as mno','m.prompt as paymentType',
+                           'p.paymentStatus','p.error')
                   ->whereIn('p.paymentStatus', ['SUBMISSION FAILED','PAYMENT FAILED'])
-                  ->where('p.client_id', '=', $dto->client_id);
+                  ->where('p.client_id', '=', $dto->client_id)
+                  ->orderByDesc('p.created_at');
          if($dto->dateFrom && $dto->dateTo){
                $records =$records->whereDate('p.created_at', '>=', $dto->dateFrom)
                                  ->whereDate('p.created_at', '<=', $dto->dateTo);
@@ -61,7 +62,7 @@ class PaymentFailedService
 
    }
 
-   public function update(array $data, string $id):object{
+   public function update(string $id):object{
 
       try {
          $thePayment = $this->paymentToReviewService->findById($id);
@@ -73,7 +74,7 @@ class PaymentFailedService
                                                 new ReConfirmMoMoPaymentJob($momoDTO));
          $response = (object)[
                            'data' => 'Payment of ZMW '.$momoDTO->paymentAmount." on Account ".
-                                 $momoDTO->accountNumber." submitted for review. Check status after a while"      
+                                 $momoDTO->accountNumber." submitted for review. Check status after a short while"      
                      ];
       } catch (Exception $e) {
          throw new Exception($e->getMessage());

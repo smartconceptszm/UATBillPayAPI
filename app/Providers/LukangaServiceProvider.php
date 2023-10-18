@@ -38,8 +38,8 @@ class LukangaServiceProvider extends ServiceProvider implements DeferrableProvid
                               \env('LUKANGA_SOAP_OPERATOR')
                            );
          });
-         $this->app->singleton('PostpaymentLukanga', function () {
-            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\PostPaymentLukanga::class);
+         $this->app->singleton('ReceiptPaymentLukanga', function () {
+            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPaymentLukanga::class);
          });
          
       //

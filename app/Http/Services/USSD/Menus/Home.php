@@ -21,7 +21,7 @@ class Home implements IUSSDMenu
 		
 		if($txDTO->error==''){
 			try {
-				if($txDTO->isPaymentMenu=='YES'){
+				if($txDTO->isPayment=='YES'){
 					$momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
 					if(!$momoPaymentStatus['enabled']){
 						$txDTO->response = $momoPaymentStatus['responseText'];

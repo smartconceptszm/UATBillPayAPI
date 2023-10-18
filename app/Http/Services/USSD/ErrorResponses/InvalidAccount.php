@@ -17,8 +17,8 @@ class InvalidAccount implements IErrorResponse
       try {    
          $txDTO->response = "Invalid ".\strtoupper($txDTO->urlPrefix).
                               " account number.\n\n<<Enter 0 to go back>>\n";
-         $txDTO->error=$txDTO->response;      
-         if($txDTO->menu == 'PayBill' || $txDTO->menu == 'BuyUnits' || $txDTO->menu == 'OtherPayments')
+         $txDTO->error=$txDTO->response;  
+         if($txDTO->isPayment == 'YES')
          {
             $theSteps=2;
          }else{

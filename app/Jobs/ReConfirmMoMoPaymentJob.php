@@ -26,7 +26,8 @@ class ReConfirmMoMoPaymentJob extends BaseJob
          App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,$momoClient);
       //
       //Bind the billing client
-         App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$this->momoDTO->urlPrefix);
+         $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$this->momoDTO->urlPrefix;
+         App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
       //
       //Bind Receipting Handler
          $theMenu = $clientMenuService->findById($this->momoDTO->menu_id);

@@ -135,9 +135,15 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
          //
       //
 
+      //Billing Clients
+			$this->app->singleton('BillingMock', function () {
+            return $this->app->make(\App\Http\Services\External\BillingClients\BillingMock::class);
+			});            
+		//
+
 		//Receipting Payment
 			$this->app->singleton('MockReceipting', function () {
-				return new \App\Http\Services\MoMo\BillingClientCallers\PostPaymentMock();
+            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPaymentMock::class);
 			});            
 		//
 
@@ -165,9 +171,6 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
          });
          $this->app->singleton('MoMoOffline', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\MoMoOffline::class);
-         });
-         $this->app->singleton('NoError', function () {
-            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\NoError::class);
          });
       //
 
@@ -232,7 +235,7 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
          'UpdateDetails_Step_3','UpdateDetails_Step_4',
          'UpdateDetails_Step_5','UpdateDetails_Step_6',
       
-			'MockReceipting',
+			'BillingMock','MockReceipting',
 
          'InvalidConfirmation','MaintenanceMode','InvalidAccount',
          'InvalidAmount','ClientBlocked','InvalidInput',

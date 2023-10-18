@@ -10,7 +10,6 @@ class VacuumTankerSwasco_Step_6
    public function run(BaseDTO $txDTO)
    {
       if (\count(\explode("*", $txDTO->customerJourney)) > 5) {
-         $txDTO->stepProcessed = true;
          $txDTO->error = "Duplicated request from ".$txDTO->mnoName.
                                  " with input: ".$txDTO->subscriberInput; 
          $txDTO->errorType = 'SystemError';

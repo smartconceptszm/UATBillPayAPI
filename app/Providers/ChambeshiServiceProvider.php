@@ -76,6 +76,12 @@ class ChambeshiServiceProvider extends ServiceProvider implements DeferrableProv
                      );
             });
       //
+
+      //Billing Clients			
+			$this->app->singleton('chambeshi', function () {
+				return $this->app->make(\App\Http\Services\External\BillingClients\Chambeshi::class);
+			});
+		//
       
    }
 
@@ -89,7 +95,8 @@ class ChambeshiServiceProvider extends ServiceProvider implements DeferrableProv
 
       return [
          'ServiceApplications','Complaint_chambeshi','Updates_chambeshi',
-         'ServiceApplications_chambeshi'
+         'ServiceApplications_chambeshi',
+         'chambeshi',
       ];
 
    }

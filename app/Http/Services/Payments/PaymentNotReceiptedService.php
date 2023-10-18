@@ -18,25 +18,20 @@ class PaymentNotReceiptedService
          $dto=(object)$criteria;
          $records = DB::table('payments as p')
                   ->join('sessions as s','p.session_id','=','s.id')
-                  ->join('mnos as m','p.mno_id','=','m.id')
-                  ->leftJoin('other_payment_types as opt','p.other_payment_type_id','=','opt.id')
+                  ->join('mnos','p.mno_id','=','mnos.id')
+                  ->join('client_menus as m','p.menu_id','=','m.id')
                   ->select('p.id','p.created_at','p.mobileNumber','p.accountNumber','p.receiptNumber',
                            'p.receiptAmount','p.paymentAmount','p.transactionId','p.district',
-                           's.menu','opt.name as paymentType','p.mnoTransactionId',
-                           'm.name as mno','p.paymentStatus','p.channel','p.error')
+                           'm.prompt as paymentType','p.mnoTransactionId',
+                           'mnos.name as mno','p.paymentStatus','p.channel','p.error')
                   ->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED','RECEIPTED'])
-                  ->where('p.client_id', '=', $dto->client_id);
+                  ->where('p.client_id', '=', $dto->client_id)
+                  ->orderByDesc('p.created_at');
          if($dto->dateFrom && $dto->dateTo){
                $records =$records->whereDate('p.created_at', '>=', $dto->dateFrom)
                                  ->whereDate('p.created_at', '<=', $dto->dateTo);
          }
          $records = $records->get();
-         $records = $records->map(function($row){
-            if(!$row->paymentType){
-               $row->paymentType = $row->menu;
-            }
-            return $row;
-         });
          return $records->all();
       } catch (Exception $e) {
          throw new Exception($e->getMessage());

@@ -27,15 +27,18 @@ class Survey_Step_5
    {
 
       try {
+
          $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
          $surveyId = $arrCustomerJourney[4];
          $surveyResponses = \json_decode(Cache::get($txDTO->sessionId."SurveyResponses",''),true);
          $surveyResponses = $surveyResponses? $surveyResponses:[];
+
          $order = \count($surveyResponses) + 1;
          $surveyQuestion = $this->surveyQuestionService->findOneBy([
-                           'survey_id' => $surveyId,
-                           'order' => $order
-                        ]);
+                                                         'survey_id' => $surveyId,
+                                                         'order' => $order
+                                                      ]);
+
          $txDTO->subscriberInput = $this->validateCRMInput->handle($surveyQuestion->type,$txDTO->subscriberInput);
          if($surveyQuestion->type == 'LIST'){
             $listItem = $this->questionListItemService->findOneBy([
@@ -50,11 +53,13 @@ class Survey_Step_5
          }else{
             $surveyResponses[$order] = $txDTO->subscriberInput;
          }
+
          $surveyQuestions = $this->surveyQuestionService->findAll([
-                                 'survey_id' => $surveyId
-                              ]);
+                                                'survey_id' => $surveyId
+                                             ]);
+         
          if(\count($surveyQuestions) == (\count($surveyResponses))){
-            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
+            [$txDTO->customer, $txDTO->district] = $this->getCustomerAccount->handle($txDTO);
             $txDTO->subscriberInput = \implode(";",\array_values($surveyResponses));
             $surveyResponseData = [
                                     'accountNumber' => $txDTO->accountNumber,
@@ -68,13 +73,12 @@ class Survey_Step_5
             $txDTO->response = $this->surveyCreateClient->create($surveyResponseData);
             $txDTO->lastResponse = true;
             $txDTO->status='COMPLETED';
-
          }else{
             Cache::put($txDTO->sessionId."SurveyResponses",\json_encode($surveyResponses), 
                            Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
             $surveyQuestion = \array_values(\array_filter($surveyQuestions, function ($record)use($order){
-                  return ($record->order == $order +1);
-               }));
+                                                               return ($record->order == $order +1);
+                                                            }));
             $surveyQuestion = $surveyQuestion[0]; 
             $thePrompt = $surveyQuestion->prompt;
             if($surveyQuestion->type == 'LIST'){

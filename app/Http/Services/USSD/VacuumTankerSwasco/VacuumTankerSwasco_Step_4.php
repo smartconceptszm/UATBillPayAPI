@@ -19,8 +19,7 @@ class VacuumTankerSwasco_Step_4
       try{
          $customerJourney = \explode("*", $txDTO->customerJourney);
          try {
-            $txDTO->subscriberInput = $this->getAmount->handle($txDTO->subscriberInput,
-                                       $txDTO->urlPrefix, $txDTO->mobileNumber);
+            [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
          } catch (Exception $e) {
             if($e->getCode()==1){
                $txDTO->errorType = 'InvalidAmount';
@@ -31,10 +30,9 @@ class VacuumTankerSwasco_Step_4
             return $txDTO;
          }
 
-         $txDTO->response = "Pay ZMW " . $txDTO->subscriberInput . "\n" .
-                              "Into: GENERAL LEDGER - " . $txDTO->accountNumber."\n";
-         $txDTO->response = $txDTO->response."For: Vaccoum tanker pit emptying\n";
-         $txDTO->response .= "Reference: " . $customerJourney[2] . "\n";
+         $txDTO->response = "Pay ZMW " . $txDTO->subscriberInput . " to SWASCO\n" .
+                              "For: Vaccoum tanker pit emptying\n";
+         $txDTO->response .= "Reference: " . $customerJourney[3] . "\n";
          $txDTO->response .= "\nEnter\n" .
                               "1. Confirm\n" .
                               "0. Back";    

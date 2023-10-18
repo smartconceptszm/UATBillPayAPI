@@ -22,7 +22,6 @@ class ServiceApplications_SubStep_2 extends EfectivoPipelineWithBreakContract
    {
 
       if(\count(\explode("*", $txDTO->customerJourney)) == 2){
-         $txDTO->stepProcessed=true;
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
             $theServiceType = $this->serviceTypes->findOneBy([

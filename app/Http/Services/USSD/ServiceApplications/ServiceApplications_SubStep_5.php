@@ -12,7 +12,6 @@ class ServiceApplications_SubStep_5 extends EfectivoPipelineWithBreakContract
    {
 
       if (\count(\explode("*", $txDTO->customerJourney)) > 4) {
-         $txDTO->stepProcessed = true;
          $txDTO->error = "Duplicated request from ".$txDTO->mnoName.
                                  " with input: ".$txDTO->subscriberInput; 
          $txDTO->errorType = 'SystemError';

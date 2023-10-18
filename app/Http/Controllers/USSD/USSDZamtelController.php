@@ -31,7 +31,7 @@ class USSDZamtelController extends USSDController
             $zamtelParams['urlPrefix']=$this->getUrlPrefix($request);
             $zamtelParams['sessionId'] = $request->input('TransId');
             $zamtelParams['mnoName'] = 'ZAMTEL';
-            $zamtelParams['mno_id'] = $this->getMNO($zamtelParams['mnoName']); 
+            $zamtelParams['mno_id'] = $this->getMnoId($zamtelParams['mnoName']); 
             $this->theDTO=$this->theDTO->fromArray($zamtelParams);
             //Process the Request
             $this->theDTO = $this->theService->handle($this->theDTO);

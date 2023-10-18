@@ -16,8 +16,8 @@ class ReconnectionFeesSwasco implements IUSSDMenu
       if ($txDTO->error == '') {
          try {
             if (\count(\explode("*", $txDTO->customerJourney)) == 4) {
-               //Bind selected Billing Client to the Interface
-               App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$txDTO->urlPrefix);
+               $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$txDTO->urlPrefix;
+               App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
             }
             $stepHandler = App::make('ReconnectionFeesSwasco_Step_'.\count(\explode("*", $txDTO->customerJourney)));
             $txDTO = $stepHandler->run($txDTO);

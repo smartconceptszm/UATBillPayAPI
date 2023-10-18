@@ -12,7 +12,8 @@ class Step_SendReceiptViaSMS extends EfectivoPipelineContract
 {
 
    public function __construct(
-      private SMSTxDTO $smsTxDTO, private SMSService $smsService)
+      private SMSService $smsService,
+      private SMSTxDTO $smsTxDTO)
    {}
 
    protected function stepProcess(BaseDTO $momoDTO)

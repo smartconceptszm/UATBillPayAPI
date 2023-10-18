@@ -8,7 +8,7 @@ use Exception;
 class StepService_GetAmount 
 {
 
-   public function handle(BaseDTO $txDTO):string
+   public function handle(BaseDTO $txDTO):array
    {
       $subscriberInput = \str_replace("ZMW", "", $txDTO->subscriberInput);
       $subscriberInput = \str_replace("ZMK", "", $txDTO->subscriberInput);
@@ -26,7 +26,7 @@ class StepService_GetAmount
                && !(\in_array($txDTO->mobileNumber, $testMSISDN))) {
          throw new Exception("InvalidAmount", 1);
       }
-      return $subscriberInput;
+      return [$subscriberInput, $amount];
    }
     
 }

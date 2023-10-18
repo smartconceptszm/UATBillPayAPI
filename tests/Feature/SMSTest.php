@@ -79,7 +79,6 @@ class SMSTest extends TestCase
                 'error'=>''
             ],
 
-            'menu' => 'PayBill',
             'menuNo' => '1',
             'step' => '4',
             'subMenu' => '',
@@ -96,9 +95,7 @@ class SMSTest extends TestCase
     
             'cleaned' => 'NO',
             'error' => '',
-            'created_at' => '',
-            'menuProcessed'=>false,
-            'stepProcessed'=>false
+            'created_at' => ''
         ];
 
         $smsSender = new SMSTheReceipt();

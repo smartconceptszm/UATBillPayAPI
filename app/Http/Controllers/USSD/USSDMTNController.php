@@ -21,7 +21,7 @@ class USSDMTNController extends USSDController
                 $mtnParams['urlPrefix'] = $this->getUrlPrefix($request);
                 $mtnParams['clean'] = $request->input('clean','');
                 $mtnParams['mnoName'] = 'MTN';
-                $mtnParams['mno_id'] = $this->getMNO($mtnParams['mnoName']); 
+                $mtnParams['mno_id'] = $this->getMnoId($mtnParams['mnoName']); 
                 $this->theDTO=$this->theDTO->fromArray($mtnParams);
             //Process the Request
             $this->theDTO = $this->theService->handle($this->theDTO);

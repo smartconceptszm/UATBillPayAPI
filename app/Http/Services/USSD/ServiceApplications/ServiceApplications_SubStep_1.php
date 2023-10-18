@@ -18,7 +18,6 @@ class ServiceApplications_SubStep_1 extends EfectivoPipelineWithBreakContract
    {
 
       if(\count(\explode("*", $txDTO->customerJourney)) == 1){
-         $txDTO->stepProcessed = true;
          try {
                $utilityServiceTypes = $this->serviceTypeService->findAll(['client_id'=>$txDTO->client_id]);
                $stringMenu = "Select application:\n";

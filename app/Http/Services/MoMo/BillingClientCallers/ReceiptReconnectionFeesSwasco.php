@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
 
-class PostReconnectionSwasco implements IReceiptPayment
+class ReceiptReconnectionFeesSwasco implements IReceiptPayment
 {
 
     public function __construct(

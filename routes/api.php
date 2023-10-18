@@ -83,14 +83,11 @@ Route::group(['middleware' => 'mode'], function (){
          Route::post('paymentsreviewbatch', [\App\Http\Controllers\Payments\PaymentFailedBatchController::class, 'store']);
          Route::get('paymentsessions', [\App\Http\Controllers\Payments\PaymentSessionController::class, 'index']);
 
-         Route::group(['middleware' => 'sms'], function (){
-            Route::post('receipts', [\App\Http\Controllers\Payments\PaymentReceiptController::class, 'store']);
-            Route::put('receipts/{id}', [\App\Http\Controllers\Payments\PaymentReceiptController::class, 'update']);
-            Route::put('paymentreceipts/{id}', [\App\Http\Controllers\Payments\PaymentWithReceiptToDeliverController::class, 'update']);
-            Route::put('failedpayments/{id}', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'update']);
-            Route::post('paymentstomanuallypost', [\App\Http\Controllers\Payments\PaymentManualPostController::class, 'store']);
-         });
-
+         Route::post('receipts', [\App\Http\Controllers\Payments\PaymentReceiptController::class, 'store']);
+         Route::put('receipts/{id}', [\App\Http\Controllers\Payments\PaymentReceiptController::class, 'update']);
+         Route::put('paymentreceipts/{id}', [\App\Http\Controllers\Payments\PaymentWithReceiptToDeliverController::class, 'update']);
+         Route::put('failedpayments/{id}', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'update']);
+         Route::post('paymentstomanuallypost', [\App\Http\Controllers\Payments\PaymentManualPostController::class, 'store']);
          Route::post('batchpaymentreceipts', [\App\Http\Controllers\Payments\BatchPaymentReceiptController::class, 'store']);
 
          Route::controller(\App\Http\Controllers\Payments\PaymentController::class)->group(function () {
@@ -101,7 +98,6 @@ Route::group(['middleware' => 'mode'], function (){
             Route::put('/payments/{id}', 'update');
          });
       //
-
       //Complaint
          Route::get('complaintsdashboard', [\App\Http\Controllers\CRM\ComplaintDashboardController::class, 'index']);
          Route::get('complaintsofclient', [\App\Http\Controllers\CRM\ComplaintsOfClientController::class, 'index']);

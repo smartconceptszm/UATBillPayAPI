@@ -10,14 +10,10 @@ use Exception;
 class BuyUnits_Step_1
 {
 
-   private $checkPaymentsEnabled;
-   private $accountNoMenu;
-   public function __construct(StepService_CheckPaymentsEnabled $checkPaymentsEnabled,
-      StepService_AccountNoMenu $accountNoMenu)
-   {
-      $this->checkPaymentsEnabled=$checkPaymentsEnabled;
-      $this->accountNoMenu=$accountNoMenu;
-   }
+   public function __construct(
+      private StepService_CheckPaymentsEnabled $checkPaymentsEnabled,
+      private StepService_AccountNoMenu $accountNoMenu)
+   {}
 
    public function run(BaseDTO $txDTO)
    {

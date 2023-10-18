@@ -47,7 +47,7 @@ class PaymentToReviewService
             ->join('sessions as s','p.session_id','=','s.id')
             ->join('mnos as m','s.mno_id','=','m.id')
             ->join('clients as c','s.client_id','=','c.id')
-            ->select('p.*','s.menu','s.sessionId','s.customerJourney',
+            ->select('p.*','s.sessionId','s.customerJourney',
                         'c.code as clientCode','c.urlPrefix',
                                  'm.name as mnoName')
             ->where('p.id', '=', $id)

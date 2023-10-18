@@ -125,15 +125,15 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
 								]);
 			});
 
-			$this->app->singleton('PostPaymentSwasco', function () {
-				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\PostPaymentSwasco::class);
+			$this->app->singleton('ReceiptPaymentSwasco', function () {
+				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPaymentSwasco::class);
 			});
 
-			$this->app->singleton('PostReconnectionSwasco', function () {
-				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\PostReconnectionSwasco::class);
+			$this->app->singleton('ReceiptReconnectionFeesSwasco', function () {
+				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptReconnectionFeesSwasco::class);
 			});
-			$this->app->singleton('PostVacuumTankerSwasco', function () {
-				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\PostVacuumTankerSwasco::class);
+			$this->app->singleton('ReceiptVacuumTankerSwasco', function () {
+				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptVacuumTankerSwasco::class);
 			});
 		//
 
@@ -179,7 +179,7 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
 			
 			'Complaint_swasco',
 			
-			'swasco','PostPaymentSwasco','PostReconnectionSwasco','PostVacuumTankerSwasco',
+			'swasco','ReceiptPaymentSwasco','ReceiptReconnectionFeesSwasco','ReceiptVacuumTankerSwasco',
 			
       ];
 

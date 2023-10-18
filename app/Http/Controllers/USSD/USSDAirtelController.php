@@ -20,7 +20,7 @@ class USSDAirtelController extends USSDController
             $airtelParams['mobileNumber']=$request->input('MSISDN');
             $airtelParams['urlPrefix']=$this->getUrlPrefix($request);
             $airtelParams['mnoName'] = 'AIRTEL';
-            $airtelParams['mno_id'] = $this->getMNO($airtelParams['mnoName']); 
+            $airtelParams['mno_id'] = $this->getMnoId($airtelParams['mnoName']); 
             $this->theDTO = $this->theDTO->fromArray($airtelParams);
          //Process the Request
          $this->theDTO = $this->theService->handle($this->theDTO);

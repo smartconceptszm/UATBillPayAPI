@@ -7,6 +7,7 @@ use App\Http\Services\MoMo\Utility\Step_UpdateTransaction;
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\MoMo\Utility\Step_LogStatus;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\MoMoDTO;
@@ -20,7 +21,7 @@ class PaymentWithReceiptToDeliverService
       private MoMoDTO $momoDTO)
    {}
 
-   public function update(array $data, string $id):object|null{
+   public function update(string $id):string{
       try {
          $thePayment = $this->paymentToReviewService->findById($id);
          $momoDTO = $this->momoDTO->fromArray(\get_object_vars($thePayment));
@@ -31,9 +32,24 @@ class PaymentWithReceiptToDeliverService
                   "Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
                   "Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
                   "Acc: " . $momoDTO->accountNumber . "\n";
-               $momoDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
+               $momoDTO->receipt.="Date: " . Carbon::parse($momoDTO->updated_at)->format('d-M-Y'). "\n";
             }
             $user = Auth::user(); 
+
+            //Bind the SMS Clients
+               $smsClientKey = '';
+               if(!$smsClientKey && (\env('SMS_SEND_USE_MOCK') == "YES")){
+                  $smsClientKey = 'MockSMSDelivery';
+               }
+               if(!$smsClientKey && (\env(\strtoupper($momoDTO->urlPrefix).'_HAS_OWNSMS') == 'YES')){
+                  $smsClientKey = \strtoupper($momoDTO->urlPrefix).'SMS';
+               }
+               if(!$smsClientKey){
+                  $smsClientKey = \env('SMPP_CHANNEL');
+               }
+               App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClientKey);
+            //
+
             $momoDTO->user_id = $user->id;
             $momoDTO =  app(Pipeline::class)
                ->send($momoDTO)
@@ -49,6 +65,6 @@ class PaymentWithReceiptToDeliverService
       } catch (Exception $e) {
          throw new Exception($e->getMessage());
       }
-      return $momoDTO;
+      return $momoDTO->receipt;
    }
 }

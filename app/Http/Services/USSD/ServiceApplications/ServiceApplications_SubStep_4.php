@@ -28,7 +28,6 @@ class ServiceApplications_SubStep_4 extends EfectivoPipelineWithBreakContract
    {
 
       if(\count(\explode("*", $txDTO->customerJourney)) == 4){
-         $txDTO->stepProcessed=true;
          try {
             $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
             $theServiceType = $this->serviceTypes->findOneBy([

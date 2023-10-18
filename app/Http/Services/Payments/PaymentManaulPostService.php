@@ -34,7 +34,8 @@ class PaymentManaulPostService
             }
          }  
          //Bind the Services
-            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$momoDTO->urlPrefix);
+            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$momoDTO->urlPrefix;
+            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
          //
          $user = Auth::user(); 
          $momoDTO->user_id = $user->id;

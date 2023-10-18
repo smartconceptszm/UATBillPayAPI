@@ -12,6 +12,7 @@ return new class extends Migration
     */
    public function up(): void
    {
+      
       Schema::create('surveys', function (Blueprint $table) {
          $table->id();
          $table->unsignedBigInteger('client_id')->notNullable();
@@ -20,6 +21,7 @@ return new class extends Migration
          $table->enum('isActive',['YES','NO'])->default('NO')->notNullable();
          $table->timestamps();
       });
+
    }
 
    /**

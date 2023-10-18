@@ -13,74 +13,64 @@ use Exception;
 class GetCustomerAccount 
 {
 
-    public function __construct(
-        private IBillingClient $billingClient)
-    {}
+	public function __construct(
+		private IBillingClient $billingClient)
+	{}
 
-    public function handle(BaseDTO $txDTO):array
-    {
+	public function handle(BaseDTO $txDTO):array
+	{
 
-        try {
-            $arrAccount=[];
-            if (\env('USE_BILLING_MOCK')=="YES"){
-                return [
-                            "accountNumber" => $txDTO->accountNumber,
-                            "name" => \strtoupper($txDTO->urlPrefix)." Customer",
-                            "address" => "No. 1, Street 1, ".\strtoupper($txDTO->urlPrefix),
-                            "district" => \strtoupper($txDTO->urlPrefix),
-                            "mobileNumber" => "260761028631",
-                            "balance" => \number_format(100, 2, '.', ','),
-                    ]; 
-            }
+		try {
+			$customer = Cache::get($txDTO->urlPrefix.$txDTO->accountNumber);
+			if($customer){
+				$customer = \json_decode($customer,true);
+				$district = $customer['district'];
+			}else{
+				$customer = $this->billingClient->getAccountDetails($txDTO->accountNumber);
+				Cache::put($txDTO->urlPrefix.$txDTO->accountNumber, 
+							\json_encode($customer), 
+							Carbon::now()->addMinutes(intval(\env('CUSTOMER_ACCOUNT_CACHE'))));
+				Cache::forget($txDTO->urlPrefix.'_BillingErrorCount');
+				$district = $customer['district'];
+			}
+		} catch (Exception $e) {
 
-            $customer = Cache::get($txDTO->urlPrefix.$txDTO->accountNumber);
-            if($customer){
-                return \json_decode($customer,true);
-            }
-
-            $arrAccount = $this->billingClient->getAccountDetails($txDTO->accountNumber);
-            
-            Cache::put($txDTO->urlPrefix.$txDTO->accountNumber, 
-                    \json_encode($arrAccount), 
-                    Carbon::now()->addMinutes(intval(\env('CUSTOMER_ACCOUNT_CACHE'))));
-            Cache::forget($txDTO->urlPrefix.'_BillingErrorCount');
-
-        } catch (Exception $e) {
-            if($e->getCode()==1){
-                throw new Exception("Customer account not found", 1);
-            }else{
-                $billingServiceErrorCount = (int)Cache::get($txDTO->urlPrefix.'_BillingErrorCount');
-                if($billingServiceErrorCount){
-                    if (($billingServiceErrorCount+1) < (int)\env('BILLING_ERROR_THRESHOLD')) {
-                        Cache::increment($txDTO->urlPrefix.'_BillingErrorCount');
-                    }else{
-                        //Send Notification here
-                            $clientMobileNumbers = \explode("*",$txDTO->testMSISDN);
-                            $adminMobileNumbers = \explode("*",\env('APP_ADMIN_MSISDN'));
-                            $adminMobileNumbers=\array_merge($adminMobileNumbers,$clientMobileNumbers);
-                            $arrSMSes=[];
-                            foreach ($adminMobileNumbers as $key => $mobileNumber) {
-                                $arrSMSes[$key]['mobileNumber']=$mobileNumber;
-                                $arrSMSes[$key]['type']="NOTIFICATION";
-                                $arrSMSes[$key]['urlPrefix']=$txDTO->urlPrefix;
-                                $arrSMSes[$key]['message']=\strtoupper($txDTO->urlPrefix).
-                                        " billing system is currently offline - please check the service.";
-                            }
-                            Queue::later(Carbon::now()->addSeconds(1), 
-                                            new SendSMSesJob($arrSMSes));
-                        //
-                        Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1, 
-                                            Carbon::now()->addMinutes((int)env('BILLING_ERROR_CACHE')));
-                    }
-                }else{
-                    Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1,
-                                        Carbon::now()->addMinutes((int)env('BILLING_ERROR_CACHE')));
-                }
-                throw new Exception($e->getMessage(), 2);
-            }   
-        }
-        return $arrAccount;
-        
-    }
+			if($e->getCode()==1){
+					throw new Exception("Customer account not found", 1);
+			}else{
+				$billingServiceErrorCount = (int)Cache::get($txDTO->urlPrefix.'_BillingErrorCount');
+				if($billingServiceErrorCount){
+					if (($billingServiceErrorCount+1) < (int)\env('BILLING_ERROR_THRESHOLD')) {
+						Cache::increment($txDTO->urlPrefix.'_BillingErrorCount');
+					}else{
+						//Send Notification here
+								$clientMobileNumbers = \explode("*",$txDTO->testMSISDN);
+								$adminMobileNumbers = \explode("*",\env('APP_ADMIN_MSISDN'));
+								$adminMobileNumbers=\array_merge($adminMobileNumbers,$clientMobileNumbers);
+								$arrSMSes=[];
+								foreach ($adminMobileNumbers as $key => $mobileNumber) {
+									$arrSMSes[$key]['mobileNumber']=$mobileNumber;
+									$arrSMSes[$key]['type']="NOTIFICATION";
+									$arrSMSes[$key]['urlPrefix']=$txDTO->urlPrefix;
+									$arrSMSes[$key]['message']=\strtoupper($txDTO->urlPrefix).
+												" billing system is currently offline - please check the service.";
+								}
+								Queue::later(Carbon::now()->addSeconds(1), 
+													new SendSMSesJob($arrSMSes));
+						//
+						Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1, 
+													Carbon::now()->addMinutes((int)env('BILLING_ERROR_CACHE')));
+					}
+				}else{
+					Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1,
+												Carbon::now()->addMinutes((int)env('BILLING_ERROR_CACHE')));
+				}
+				throw new Exception($e->getMessage(), 2);
+			}   
+			
+		}
+		return [$customer, $district];
+		
+	}
     
 }

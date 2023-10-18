@@ -26,24 +26,24 @@ class StepService_CheckPaymentsEnabled
                      ]);
 
       if ($mnoMoMo->momoActive != 'YES'){
-         $response['responseText'] = "Payment for ".\strtoupper($txDTO->urlPrefix).
-                  " Water bills via " . $txDTO->mnoName . " Mobile Money will be launched soon!" . "\n" .
+         $response['responseText'] = "Payments to ".\strtoupper($txDTO->urlPrefix).
+                  " via " . $txDTO->mnoName . " Mobile Money will be launched soon!" . "\n" .
                   "Thank you for your patience.";
          $response['enabled'] = false;
+         return $response;
       }
 
       if($mnoMoMo->momoMode == 'DOWN'){
          $response['responseText'] = $mnoMoMo->modeMessage;
          $response['enabled'] = false;
+         return $response;
       }
 
       if (\env('APP_ENV') != 'Production'){
-         $testMSISDN = \explode("*", 
-                              \env('APP_TEST_MSISDN')."*".
-                              $txDTO->testMSISDN);
+         $testMSISDN = \explode("*", \env('APP_ADMIN_MSISDN')."*".$txDTO->testMSISDN);
          if (!\in_array($txDTO->mobileNumber, $testMSISDN)){
-            $response['responseText'] = "Payment for ".\strtoupper($txDTO->urlPrefix).
-                  " Water bills via " . $txDTO->mnoName . " Mobile Money will be launched soon!" . "\n" .
+            $response['responseText'] = "Payments to ".\strtoupper($txDTO->urlPrefix).
+                  " via " . $txDTO->mnoName . " Mobile Money will be launched soon!" . "\n" .
                   "Thank you for your patience.";
             $response['enabled'] = false;
          }

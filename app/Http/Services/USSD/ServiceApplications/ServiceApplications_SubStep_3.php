@@ -22,11 +22,10 @@ class ServiceApplications_SubStep_3 extends EfectivoPipelineWithBreakContract
    {
 
       if(\count(\explode("*", $txDTO->customerJourney)) == 3){
-         $txDTO->stepProcessed = true;
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
             $txDTO->accountNumber = $txDTO->subscriberInput;
-            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
+            [$txDTO->customer, $txDTO->district] = $this->getCustomerAccount->handle($txDTO);
             $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
             $theServiceType = $this->serviceTypes->findOneBy([
                         'client_id'=>$txDTO->client_id,
