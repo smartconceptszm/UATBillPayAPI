@@ -2,11 +2,9 @@
 
 namespace App\Providers;
 
-//Laravel Dependancies
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class MazabukaServiceProvider extends ServiceProvider implements DeferrableProvider
+class MazabukaServiceProvider extends ServiceProvider 
 {
 
 	/**
@@ -95,30 +93,6 @@ class MazabukaServiceProvider extends ServiceProvider implements DeferrableProvi
 		//
   
     }
-
-       /**
-   * Get the services provided by the provider.
-   *
-   * @return array
-   */
-   public function provides()
-   {
-
-      return [
-
-			'PayMarketLevy','PayMarketLevy_Step_1','PayMarketLevy_Step_2',
-			'PayMarketLevy_Step_3','PayMarketLevy_Step_4',
-			'PayMarketLevy_Step_5',
-
-			'PayPropertyRates','PayPropertyRates_Step_1','PayPropertyRates_Step_2',
-			'PayPropertyRates_Step_3','PayPropertyRates_Step_4',
-			'PayPropertyRates_Step_5',
-
-			'mazabuka','PostPaymentMazabuka',
-			
-      ];
-
-   }
 
     /**
      * Bootstrap services.

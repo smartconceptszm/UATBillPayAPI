@@ -2,11 +2,9 @@
 
 namespace App\Providers;
 
-//Laravel Dependancies
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class SwascoServiceProvider extends ServiceProvider implements DeferrableProvider
+class SwascoServiceProvider extends ServiceProvider
 {
 
 	/**
@@ -150,40 +148,6 @@ class SwascoServiceProvider extends ServiceProvider implements DeferrableProvide
 		//
   
     }
-
-       /**
-   * Get the services provided by the provider.
-   *
-   * @return array
-   */
-   public function provides()
-   {
-
-      return [
-
-			'SwascoUpdateMobile','SwascoUpdateMobile_Step_1','SwascoUpdateMobile_Step_2',
-			'SwascoUpdateMobile_Step_3','SwascoUpdateMobile_Step_4',
-
-			'ReconnectionFeesSwasco','ReconnectionFeesSwasco_Step_2','ReconnectionFeesSwasco_Step_3',
-			'ReconnectionFeesSwasco_Step_4','ReconnectionFeesSwasco_Step_5',
-			'ReconnectionFeesSwasco_Step_6',
-
-			'VacuumTankerSwasco','VacuumTankerSwasco_Step_2','VacuumTankerSwasco_Step_3',
-			'VacuumTankerSwasco_Step_4','VacuumTankerSwasco_Step_5',
-			'VacuumTankerSwasco_Step_6',
-
-			'Survey','Survey_Step_1','Survey_Step_2','Survey_Step_3','Survey_Step_5',
-			'Survey_swasco',
-
-			'SWASCOSMS',
-			
-			'Complaint_swasco',
-			
-			'swasco','ReceiptPaymentSwasco','ReceiptReconnectionFeesSwasco','ReceiptVacuumTankerSwasco',
-			
-      ];
-
-   }
 
     /**
      * Bootstrap services.

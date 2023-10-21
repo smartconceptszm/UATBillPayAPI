@@ -16,7 +16,7 @@ class UpdateDetails implements IUSSDMenu
       if ($txDTO->error == '') {
          try {
             if (\count(\explode("*", $txDTO->customerJourney)) == 2) {
-               $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$txDTO->urlPrefix;
+               $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$txDTO->billingClient;
                App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
             }
             if (\count(\explode("*", $txDTO->customerJourney)) == 4) {

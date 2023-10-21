@@ -2,25 +2,9 @@
 
 namespace App\Providers;
 
-//Service Applications Responses Handlers
-use App\Http\Services\USSD\ServiceApplications\ClientCallers\ServiceApplication_Local;
-
-//Faults/Complaints Handlers
-use App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local;
-
-//Customer Updates Handlers
-use App\Http\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Local;
-
-//Billing Clients
-
-//USSD Menu Services
-use App\Http\Services\USSD\Menus\ServiceApplications;
-
-//Laravel Dependancies
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class ChambeshiServiceProvider extends ServiceProvider implements DeferrableProvider
+class ChambeshiServiceProvider extends ServiceProvider
 {
 
    /**
@@ -31,50 +15,26 @@ class ChambeshiServiceProvider extends ServiceProvider implements DeferrableProv
 
       //USSD Menu Option Handlers
          $this->app->singleton('ServiceApplications', function () {
-            return new ServiceApplications();
+            return $this->app->make(\App\Http\Services\USSD\Menus\ServiceApplications::class);
          });
       //
 
       //Complaint Handlers
          $this->app->singleton('Complaint_chambeshi', function () {
-               return new Complaint_Local( 
-                  new \App\Http\Services\CRM\ComplaintService(
-                     new \App\Models\Complaint()
-                  )
-               );
+            return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local::class);
          });
       //
 
       //Customer Updates Handlers
          $this->app->singleton('Updates_chambeshi', function () {
-            return new UpdateDetails_Local(
-                        new \App\Http\Services\CRM\CustomerFieldUpdateDetailService(                     
-                           new \App\Models\CustomerFieldUpdateDetail()
-                        ),
-                  new \App\Http\Services\CRM\CustomerFieldUpdateService(
-                           new \App\Models\CustomerFieldUpdate()
-                        ),
-                  new \App\Http\Services\MenuConfigs\CustomerFieldService(
-                           new \App\Models\CustomerField()
-                        )
-               );
+            return $this->app->make(\App\Http\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Local::class);
          });
       //
 
       //Service Application Handlers
          $this->app->singleton('ServiceApplications_chambeshi', function () {
-               return new ServiceApplication_Local(
-                     new \App\Http\Services\CRM\ServiceApplicationDetailService(
-                        new \App\Models\ServiceApplicationDetail()
-                     ),
-                     new \App\Http\Services\MenuConfigs\ServiceTypeDetailService(
-                        new \App\Models\ServiceTypeDetail()
-                     ),
-                     new \App\Http\Services\CRM\ServiceApplicationService(
-                           new \App\Models\ServiceApplication()
-                        )
-                     );
-            });
+            return $this->app->make(\App\Http\Services\USSD\ServiceApplications\ClientCallers\ServiceApplication_Local::class);
+         });
       //
 
       //Billing Clients			
@@ -83,22 +43,6 @@ class ChambeshiServiceProvider extends ServiceProvider implements DeferrableProv
 			});
 		//
       
-   }
-
-   /**
-   * Get the services provided by the provider.
-   *
-   * @return array
-   */
-   public function provides()
-   {
-
-      return [
-         'ServiceApplications','Complaint_chambeshi','Updates_chambeshi',
-         'ServiceApplications_chambeshi',
-         'chambeshi',
-      ];
-
    }
 
    /**

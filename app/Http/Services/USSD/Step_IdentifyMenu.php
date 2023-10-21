@@ -45,6 +45,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
             }
          }
       }
+
       App::bind(\App\Http\Services\USSD\Menus\IUSSDMenu::class,$txDTO->handler);
       return $txDTO;
       
@@ -60,11 +61,12 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
 
       if(\count(\explode("*", $txDTO->subscriberInput))>1){
          $txDTO = $this->handleShortcut($txDTO, $selectedMenu);
-      }else{
-         $txDTO->menu_id = $selectedMenu->id; 
+      }else{ 
+         $txDTO->billingClient = $selectedMenu->billingClient; 
+         $txDTO->isPayment = $selectedMenu->isPayment;
+         $txDTO->menuPrompt = $selectedMenu->prompt;
          $txDTO->handler = $selectedMenu->handler; 
-         $txDTO->menuPrompt = $selectedMenu->prompt; 
-         $txDTO->isPayment = $selectedMenu->isPayment; 
+         $txDTO->menu_id = $selectedMenu->id; 
       }
 
       $ussdSession = $this->sessionService->create($txDTO->toSessionData());
@@ -89,10 +91,11 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                               'isActive' => "YES"
                            ]);
          if($selectedMenu){
-            $txDTO->menu_id = $selectedMenu->id; 
+            $txDTO->billingClient = $selectedMenu->billingClient; 
+            $txDTO->isPayment = $selectedMenu->isPayment;
+            $txDTO->menuPrompt = $selectedMenu->prompt;
             $txDTO->handler = $selectedMenu->handler; 
-            $txDTO->menuPrompt = $selectedMenu->prompt; 
-            $txDTO->isPayment = $selectedMenu->isPayment; 
+            $txDTO->menu_id = $selectedMenu->id; 
             if($selectedMenu->isPayment == 'YES'){
                $momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
                if(!$momoPaymentStatus['enabled']){
@@ -139,7 +142,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
 
       $currentMenu = $this->clientMenuService->findById($txDTO->menu_id);
 
-      if($currentMenu->isParent == 'YES'){
+      if($currentMenu->handler == 'ParentMenu'){
          $selectedMenu = $this->clientMenuService->findOneBy([
                         'order' => $txDTO->subscriberInput,
                         'client_id' => $txDTO->client_id,
@@ -149,14 +152,17 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
          if(!$selectedMenu){
             throw new Exception("Invalid Menu Item number", 1);
          }
-         $txDTO->menu_id = $selectedMenu->id; 
+         $txDTO->billingClient = $selectedMenu->billingClient; 
+         $txDTO->isPayment = $selectedMenu->isPayment;
+         $txDTO->menuPrompt = $selectedMenu->prompt;
          $txDTO->handler = $selectedMenu->handler; 
-         $txDTO->menuPrompt = $selectedMenu->prompt; 
-         $txDTO->isPayment = $selectedMenu->isPayment; 
+         $txDTO->menu_id = $selectedMenu->id;
       }else{
-         $txDTO->isPayment = $currentMenu->isPayment; 
-         $txDTO->menuPrompt = $currentMenu->prompt; 
-         $txDTO->handler = $currentMenu->handler;
+         $txDTO->billingClient = $currentMenu->billingClient; 
+         $txDTO->isPayment = $currentMenu->isPayment;
+         $txDTO->menuPrompt = $currentMenu->prompt;
+         $txDTO->handler = $currentMenu->handler; 
+         $txDTO->menu_id = $currentMenu->id; 
       }
 
       $this->handleBack = \json_decode(Cache::get($txDTO->sessionId."handleBack",''),true);
@@ -212,11 +218,11 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                'client_id' => $txDTO->client_id,
                'parent_id' => 0
             ]);
-            $txDTO->menu_id = $selectedMenu->id; 
+            $txDTO->billingClient = $selectedMenu->billingClient; 
+            $txDTO->isPayment = $selectedMenu->isPayment;
+            $txDTO->menuPrompt = $selectedMenu->prompt;
             $txDTO->handler = $selectedMenu->handler; 
-            $txDTO->menuPrompt = $selectedMenu->prompt; 
-            $txDTO->isPayment = $selectedMenu->isPayment; 
-            $txDTO->customerJourney='';
+            $txDTO->menu_id = $selectedMenu->id;
          }
       }else{
          $txDTO->subscriberInput = \env(\strtoupper($txDTO->urlPrefix).'_USSD_SHORT_CODE');
@@ -224,10 +230,11 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                                  'client_id' => $txDTO->client_id,
                                  'parent_id' => 0
                               ]);
-         $txDTO->menu_id = $selectedMenu->id; 
+         $txDTO->billingClient = $selectedMenu->billingClient; 
+         $txDTO->isPayment = $selectedMenu->isPayment;
+         $txDTO->menuPrompt = $selectedMenu->prompt;
          $txDTO->handler = $selectedMenu->handler; 
-         $txDTO->menuPrompt = $selectedMenu->prompt; 
-         $txDTO->isPayment = $selectedMenu->isPayment; 
+         $txDTO->menu_id = $selectedMenu->id;
          $txDTO->customerJourney = '';
       }
       return $txDTO;

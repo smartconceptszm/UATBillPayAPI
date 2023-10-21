@@ -30,6 +30,7 @@ class MoMoDTO extends BaseDTO
 
    public $customerJourney;   
    public $clientSurcharge;
+   public $billingClient;
    public $mnoResponse;
    public $clientCode;
    public $testMSISDN;

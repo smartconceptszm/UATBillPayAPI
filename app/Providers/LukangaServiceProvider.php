@@ -2,11 +2,9 @@
 
 namespace App\Providers;
 
-//Laravel Dependancies
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class LukangaServiceProvider extends ServiceProvider implements DeferrableProvider
+class LukangaServiceProvider extends ServiceProvider
 {
 
    /**
@@ -14,6 +12,7 @@ class LukangaServiceProvider extends ServiceProvider implements DeferrableProvid
     */
    public function register(): void
    {
+
 
       //USSD Menu Option Handlers
 
@@ -56,22 +55,6 @@ class LukangaServiceProvider extends ServiceProvider implements DeferrableProvid
          });
       //
       
-   }
-
-   /**
-   * Get the services provided by the provider.
-   *
-   * @return array
-   */
-   public function provides()
-   {
-
-      return [
-
-         'lukanga','Complaint_lukanga','Updates_lukanga','PostaymentLukanga'
-
-      ];
-
    }
 
    /**

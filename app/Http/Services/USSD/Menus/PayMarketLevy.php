@@ -15,7 +15,7 @@ class PayMarketLevy implements IUSSDMenu
 
       try {     
          if (\count(\explode("*", $txDTO->customerJourney)) == 3) {
-            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$txDTO->urlPrefix;
+            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$txDTO->billingClient;
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
          }
          $stepHandler = App::make('PayMarketLevy_Step_'.\count(\explode("*", $txDTO->customerJourney)));

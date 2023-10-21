@@ -2,10 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
-class AppServiceProvider extends ServiceProvider implements DeferrableProvider
+class AppServiceProvider extends ServiceProvider
 {
 
    /**
@@ -15,8 +14,8 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
    {
 
       //Menu Home
-         $this->app->singleton('Home', function () {
-            return $this->app->make(\App\Http\Services\USSD\Menus\Home::class);
+         $this->app->singleton('ParentMenu', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\ParentMenu::class);
          });
       //
 
@@ -69,6 +68,9 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
       //Menu CheckBalance
          $this->app->singleton('CheckBalance', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\CheckBalance::class);
+         });
+         $this->app->bind('CheckBalanceComplex', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\CheckBalanceComplex::class);
          });
          //Menu Step Handlers
             $this->app->singleton('CheckBalance_Step_1', function () {
@@ -204,49 +206,6 @@ class AppServiceProvider extends ServiceProvider implements DeferrableProvider
 			});
       //
       
-   }
-
-   /**
-   * Get the services provided by the provider.
-   *
-   * @return array
-   */
-   public function provides()
-   {
-
-      return [
-
-         'Home',
-         
-         'PayBill','PayBill_Step_1','PayBill_Step_2','PayBill_Step_3',
-         'PayBill_Step_4','PayBill_Step_5',
-
-         'BuyUnits','BuyUnits_Step_1','BuyUnits_Step_2','BuyUnits_Step_3',
-         'BuyUnits_Step_4','BuyUnits_Step_5',
-
-			'CheckBalance','CheckBalance_Step_1','CheckBalance_Step_2',
-         'CheckBalance_Step_3','CheckBalance_Step_4', 
-
-         'FaultsComplaints','FaultsComplaints_Step_1','FaultsComplaints_Step_2',
-         'FaultsComplaints_Step_3','FaultsComplaints_Step_4',
-         'FaultsComplaints_Step_5','FaultsComplaints_Step_6',
-         
-         'UpdateDetails', 'UpdateDetails_Step_1', 'UpdateDetails_Step_2',
-         'UpdateDetails_Step_3','UpdateDetails_Step_4',
-         'UpdateDetails_Step_5','UpdateDetails_Step_6',
-      
-			'BillingMock','MockReceipting',
-
-         'InvalidConfirmation','MaintenanceMode','InvalidAccount',
-         'InvalidAmount','ClientBlocked','InvalidInput',
-         'SystemError','MoMoOffline','NoError',
-
-         'MoMoMock','ZAMTEL','AIRTEL','MTN',
-
-         'MTNDeliverySMS','MockSMSDelivery','ZAMTELSMS','KANNEL'
-
-      ];
-
    }
 
    /**

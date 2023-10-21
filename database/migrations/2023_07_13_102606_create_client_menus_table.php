@@ -18,10 +18,10 @@ return new class extends Migration
          $table->integer("order")->notNullable();
          $table->string('prompt',50)->notNullable();
          $table->string('handler',50)->notNullable();
+         $table->string('billingClient',50)->nullable();
          $table->string('description',150)->nullable();
-         $table->enum('isParent',['YES','NO'])->default('NO')->notNullable();
          $table->enum('isPayment',['YES','NO'])->default('NO')->notNullable();
-         $table->string('postPaymentHandler',50)->nullable();
+         $table->string('receiptingHandler',50)->nullable();
          $table->enum('isDefault',['YES','NO'])->default('NO')->notNullable();
          $table->enum('isActive',['YES','NO'])->default('NO')->notNullable();
          $table->timestamps();

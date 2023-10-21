@@ -837,8 +837,8 @@ class Container implements ArrayAccess, ContainerContract
         if (isset($this->bindings[$abstract])) {
             return $this->bindings[$abstract]['concrete'];
         }
-
         return $abstract;
+        
     }
 
     /**
