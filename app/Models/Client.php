@@ -10,7 +10,7 @@ class Client extends Model
    use HasFactory;
 
    protected $fillable=[
-      'code','shortName','urlPrefix', 'name','balance',
+      'shortCode','shortName','urlPrefix', 'name','balance',
       'smsPayMode','surcharge','mode','testMSISDN', 'status'
    ];
 

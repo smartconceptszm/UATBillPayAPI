@@ -64,9 +64,9 @@ class FaultsComplaints_Step_5
                            'session_id'=>$txDTO->id
                         ];
          $caseNumber = $this->complaintClient->create($complaintData);
-         $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".
-                                 $caseNumber; 
+         $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".$caseNumber; 
          $txDTO->status='COMPLETED'; 
+         
       } catch (Exception $e) {
          $txDTO->error = 'At complaints step 5. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';

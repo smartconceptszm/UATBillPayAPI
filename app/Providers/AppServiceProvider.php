@@ -205,6 +205,12 @@ class AppServiceProvider extends ServiceProvider
             return $this->app->make(\App\Http\Services\External\SMSClients\Kannel::class);
 			});
       //
+
+      //Scheduled Task Classes
+         $this->app->bind(RetryFailedTrasactions::class, function () {
+            return $this->app->make(\App\Http\ScheduledTasks\RetryFailedTrasactions::class);
+         });
+      //
       
    }
 

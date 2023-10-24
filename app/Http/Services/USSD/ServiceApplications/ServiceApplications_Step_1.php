@@ -2,19 +2,18 @@
 
 namespace App\Http\Services\USSD\ServiceApplications;
 
-use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\Services\MenuConfigs\ServiceTypeService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
-class ServiceApplications_SubStep_1 extends EfectivoPipelineWithBreakContract
+class ServiceApplications_Step_1
 {
 
    public function __construct(
       private ServiceTypeService $serviceTypeService)
    {}
 
-   protected function stepProcess(BaseDTO $txDTO)
+   public function run(BaseDTO $txDTO)
    {
 
       if(\count(\explode("*", $txDTO->customerJourney)) == 1){

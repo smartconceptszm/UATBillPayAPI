@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\MoMo;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\BaseDTO;
@@ -15,7 +16,7 @@ class ReConfirmMoMoPayment
 
       try {
          for ($i = 0; $i < (int)\env('PAYMENT_REVIEW_THRESHOLD'); $i++) {
-            $momoDTO =  app(Pipeline::class)
+            $momoDTO = App::make(Pipeline::class)
                      ->send($momoDTO)
                      ->through(
                         [
@@ -38,15 +39,15 @@ class ReConfirmMoMoPayment
             }
          }
          $momoDTO->status = 'REVIEWED';
-         $momoDTO =  app(Pipeline::class)
-            ->send($momoDTO)
-            ->through(
-               [
-                  \App\Http\Services\MoMo\Utility\Step_UpdateTransaction::class,  
-                  \App\Http\Services\MoMo\Utility\Step_LogStatus::class 
-               ]
-            )
-            ->thenReturn();
+         $momoDTO =  App::make(Pipeline::class)
+                     ->send($momoDTO)
+                     ->through(
+                        [
+                           \App\Http\Services\MoMo\Utility\Step_UpdateTransaction::class,  
+                           \App\Http\Services\MoMo\Utility\Step_LogStatus::class 
+                        ]
+                     )
+                     ->thenReturn();
       } catch (Exception $e){
          Log::error("At re-confirm payment job. " . $e->getMessage() . ' - Session: ' . $momoDTO->sessionId);
       }

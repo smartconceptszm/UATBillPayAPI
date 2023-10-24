@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\MoMo;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -14,7 +15,7 @@ class ConfirmMoMoPayment
 
       try {
          
-         $momoDTO =  app(Pipeline::class)
+         $momoDTO =  App::make(Pipeline::class)
                ->send($momoDTO)
                ->through(
                   [

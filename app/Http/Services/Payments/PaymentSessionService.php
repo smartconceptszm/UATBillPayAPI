@@ -29,10 +29,9 @@ class PaymentSessionService
             $records = $records->where('s.accountNumber', '=', $dto->accountNumber);
          }
          if(\property_exists($dto,'mobileNumber') && $dto->accountNumber){
-            $records = $records->orWhere('s.mobileNumber', '=', $dto->mobileNumber);
+            $records = $records->where('s.mobileNumber', '=', $dto->mobileNumber);
          }
-         $records = $records->get();
-         return $records->all();
+         return $records->get()->all();
       } catch (Exception $e) {
          throw new Exception($e->getMessage());
       }

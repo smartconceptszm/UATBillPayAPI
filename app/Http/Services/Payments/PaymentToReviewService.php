@@ -44,14 +44,14 @@ class PaymentToReviewService
 
       try {
          return DB::table('payments as p')
-            ->join('sessions as s','p.session_id','=','s.id')
-            ->join('mnos as m','s.mno_id','=','m.id')
-            ->join('clients as c','s.client_id','=','c.id')
-            ->select('p.*','s.sessionId','s.customerJourney',
-                        'c.code as clientCode','c.urlPrefix',
-                                 'm.name as mnoName')
-            ->where('p.id', '=', $id)
-            ->first();
+                     ->join('sessions as s','p.session_id','=','s.id')
+                     ->join('mnos as m','s.mno_id','=','m.id') 
+                     ->join('client_menus as cm','p.menu_id','=','cm.id')
+                     ->join('clients as c','s.client_id','=','c.id')
+                     ->select('p.*','s.sessionId','s.customerJourney','c.shortCode',
+                                 'cm.billingClient','c.urlPrefix','m.name as mnoName')
+                     ->where('p.id', '=', $id)
+                     ->first();
       } catch (Exception $e) {
          throw new Exception($e->getMessage());
       } 

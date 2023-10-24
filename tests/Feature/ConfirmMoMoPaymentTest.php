@@ -31,7 +31,7 @@ class ConfirmMoMoPaymentTest extends TestCase
                'surchargeAmount' => 0,
                'transactionId' => "D231011T133742A1101000166",
                "paymentStatus" => 'SUBMITTED',
-               'clientCode' => 'LgWSSC',
+               'shortCode' => '2106',
                'session_id' => 35634,
 
                'clientSurcharge' => 'NO',

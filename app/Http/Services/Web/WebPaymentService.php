@@ -58,7 +58,7 @@ class WebPaymentService
    {
       $client = $this->clientService->findOneBy(['urlPrefix'=>$momoDTO->urlPrefix]);
       $momoDTO->client_id = $client->id;
-      $momoDTO->clientCode = $client->code;
+      $momoDTO->shortCode = $client->shortCode;
       $momoDTO->testMSISDN = $client->testMSISDN;
       $momoDTO->clientSurcharge = $client->surcharge;
       if($client->mode != 'UP'){

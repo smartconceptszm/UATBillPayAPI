@@ -70,7 +70,7 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 					try {
 						$momoDTO = $this->addShotcutMessage->handle($momoDTO);
 					} catch (Exception $e) {
-						Log::error('('.$momoDTO->clientCode.'). '.$e->getMessage().
+						Log::error('('.$momoDTO->urlPrefix.'). '.$e->getMessage().
 							'- Session: '.$momoDTO['sessionId'].' - Phone: '.$momoDTO->mobileNumber);
 					}
 				}

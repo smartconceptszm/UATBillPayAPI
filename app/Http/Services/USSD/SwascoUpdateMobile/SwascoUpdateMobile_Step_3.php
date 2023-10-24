@@ -15,7 +15,7 @@ class SwascoUpdateMobile_Step_3
       private IBillingClient $billingClient)
    {} 
 
-   protected function stepProcess(BaseDTO $txDTO)
+   public function run(BaseDTO $txDTO)
    {
       
       try {

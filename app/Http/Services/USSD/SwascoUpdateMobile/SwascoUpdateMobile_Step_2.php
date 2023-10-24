@@ -22,10 +22,8 @@ class SwascoUpdateMobile_Step_2
          [$txDTO->customer, $txDTO->district] = $this->getCustomerAccount->handle($txDTO);
          $txDTO->response = "Update Mobile on:\n". 
          "Acc: ".$txDTO->subscriberInput."\n".
-         "Name: ".$txDTO->customer['name']."\n". 
-         "Addr: ".$txDTO->customer['address']."\n". 
+         "Name: ".$txDTO->customer['name']."\n\n". 
          "Current Mobile: ".$txDTO->customer['mobileNumber']."\n\n".
-
          "Enter the new Mobile No. e.g (095xxxxxxx)";
 
       } catch (Exception $e) {

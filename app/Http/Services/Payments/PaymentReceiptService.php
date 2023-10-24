@@ -37,13 +37,13 @@ class PaymentReceiptService
             throw new Exception("Payment not yet confirmed!");
          }  
          //Bind the Services
-            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$momoDTO->urlPrefix;
+            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$momoDTO->billingClient;
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
          //
          $user = Auth::user(); 
          $momoDTO->user_id = $user->id;
          $momoDTO->error = "";
-         $momoDTO =  app(Pipeline::class)
+         $momoDTO =  App::make(Pipeline::class)
                         ->send($momoDTO)
                         ->through(
                            [
@@ -78,16 +78,16 @@ class PaymentReceiptService
                   "Acc: " . $momoDTO->accountNumber . "\n";
             $momoDTO->receipt .= "Date: " . Carbon::now()->format('d-M-Y') . "\n";
          //
-         $momoDTO =  app(Pipeline::class)
-            ->send($momoDTO)
-            ->through(
-               [
-                  Step_SendReceiptViaSMS::class,
-                  Step_UpdateTransaction::class,  
-                  Step_LogStatus::class 
-               ]
-            )
-            ->thenReturn();
+         $momoDTO = App::make(Pipeline::class)
+                     ->send($momoDTO)
+                     ->through(
+                        [
+                           Step_SendReceiptViaSMS::class,
+                           Step_UpdateTransaction::class,  
+                           Step_LogStatus::class 
+                        ]
+                     )
+                     ->thenReturn();
       } catch (Exception $e) {
          throw new Exception($e->getMessage());
       }

@@ -25,7 +25,7 @@ class InitiateMoMoPaymentTest extends TestCase
                "paymentAmount" => 6.50,
                'session_id' => 35634,
                'urlPrefix' => 'lukanga',
-               'clientCode' => 'LgWSSC',
+               'shortCode' => '2106',
                'mnoName' => 'AIRTEL',
                "district" => 'KABWE',
                'channel' => 'USSD',

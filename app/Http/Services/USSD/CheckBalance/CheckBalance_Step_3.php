@@ -28,14 +28,18 @@ class CheckBalance_Step_3
                                  'client_id' => $txDTO->client_id,
                                  'isPayment' => "YES",
                                  'isDefault' => "YES",
-                                 'isParent' => "NO",
                                  'isActive' => "YES"
                               ]);
-            $txDTO->customerJourney = $arrCustomerJourney[0]."*".$selectedMenu->order;
-            $txDTO->subscriberInput = $arrCustomerJourney[2];
-            $txDTO->menu_id = $selectedMenu->id;
-            $txDTO->response = "Enter Amount :\n";
-            $txDTO->status = 'INITIATED';
+            if($selectedMenu->handler != 'Parent'){
+               $txDTO->customerJourney = $arrCustomerJourney[0]."*".$selectedMenu->order;
+               $txDTO->subscriberInput = $arrCustomerJourney[2];
+               $txDTO->menu_id = $selectedMenu->id;
+               $txDTO->response = "Enter Amount :\n";
+               $txDTO->status = 'INITIATED';
+            }else{
+               $txDTO->response = " Dial *".$arrCustomerJourney[0]."# and choose to pay!";
+               $txDTO->lastResponse = true;
+            }
             return $txDTO;
          }
          if($txDTO->subscriberInput == '0'){

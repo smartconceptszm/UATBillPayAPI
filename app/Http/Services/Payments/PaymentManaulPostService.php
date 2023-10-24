@@ -41,7 +41,7 @@ class PaymentManaulPostService
          $momoDTO->user_id = $user->id;
          $momoDTO->mnoTransactionId = $data['mnoTransactionId'];
          $momoDTO->error = "";
-         $momoDTO = app(Pipeline::class)
+         $momoDTO = App::make(Pipeline::class)
                   ->send($momoDTO)
                   ->through(
                      [
