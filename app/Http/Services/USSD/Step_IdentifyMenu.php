@@ -56,7 +56,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
 
       $selectedMenu = $this->clientMenuService->findOneBy([
                               'client_id' => $txDTO->client_id,
-                              'parent_id' => 0
+                              'parent_id' =>'0'
                            ]);
 
       if(\count(\explode("*", $txDTO->subscriberInput))>1){

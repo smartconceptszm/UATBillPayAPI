@@ -6,7 +6,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use App\Http\ScheduledTasks\RetryFailedTrasactions;
 use App\Http\ScheduledTasks\ClearFailedJobs;
 use Illuminate\Console\Scheduling\Schedule;
-
+use Illuminate\Support\Facades\App;
 
 
 class Kernel extends ConsoleKernel
@@ -22,7 +22,7 @@ class Kernel extends ConsoleKernel
         })->timezone('Africa/Lusaka')->dailyAt("00:30");
 
         $schedule->call(function () {
-            new RetryFailedTrasactions;
+            App::make(RetryFailedTrasactions::class);
         })->timezone('Africa/Lusaka')->dailyAt("01:00");
 
     }

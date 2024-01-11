@@ -23,7 +23,7 @@ class PaymentTransactionService
             ->select('p.id','p.created_at','p.transactionId','p.accountNumber','p.district','p.mobileNumber',
                      'p.receiptAmount','p.receiptNumber','m.prompt as paymentType','p.paymentStatus',
                      'mnos.name as mno','p.mnoTransactionId','p.channel','p.error')
-            ->whereIn('p.paymentStatus',['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
+            //->whereIn('p.paymentStatus',['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
             ->where('p.client_id', '=', $dto->client_id)
             ->orderByDesc('p.created_at');
          if($dto->dateFrom && $dto->dateTo){

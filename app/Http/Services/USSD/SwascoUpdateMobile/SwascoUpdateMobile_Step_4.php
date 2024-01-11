@@ -7,7 +7,7 @@ use App\Http\DTOs\BaseDTO;
 class SwascoUpdateMobile_Step_4
 {
 
-   protected function stepProcess(BaseDTO $txDTO)
+   public function run(BaseDTO $txDTO)
    {
 
       if (\count(\explode("*", $txDTO->customerJourney)) > 3) {

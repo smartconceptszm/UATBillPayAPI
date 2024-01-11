@@ -2,26 +2,19 @@
 
 use Tests\TestCase;
 
+use App\Http\Services\External\BillingClients\Chambeshi\ChambeshiAccountService;
+
 class UtilityTest extends TestCase
 {
 
-    public function _testTheJob()
+    public function _testChambeshi()
     {   
 
-        // $transactions[]=[
-        //                     'id'=>'7395',
-        //                     'errorMessage'=>'Error on get transaction status'
-        //                 ];
+        $getAccount = new ChambeshiAccountService(new \App\Models\ChambeshiAccount());
 
-        // $theJob = new BatchReviewPaymentJob($transactions);
-        // $response = $theJob->handle(new \App\Http\BillpayServices\Internal\ReviewTransaction());
-        // $this->assertTrue($response==true);
+        $customer = $getAccount->findOneBy(['AR_Acc' => 'CHL1002']);
 
-    }
-
-
-    public function _testTheCode()
-    {   
+        $this->assertTrue($customer['AR_Acc'] == 'CHL1002');
 
     }
 

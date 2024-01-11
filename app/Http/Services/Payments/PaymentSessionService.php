@@ -2,17 +2,14 @@
 
 namespace App\Http\Services\Payments;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
 class PaymentSessionService
 {
 
-   public function findAll(array $criteria=null):array|null{
+   public function findAll(array $criteria = null):array|null{
       try {
-         $user = Auth::user(); 
-         $criteria['client_id'] = $user->client_id;
          $dto = (object)$criteria;
          $records = DB::table('sessions as s')
             ->join('mnos','s.mno_id','=','mnos.id')
@@ -29,10 +26,10 @@ class PaymentSessionService
             $records = $records->where('s.accountNumber', '=', $dto->accountNumber);
          }
          if(\property_exists($dto,'mobileNumber') && $dto->accountNumber){
-            $records = $records->orWhere('s.mobileNumber', '=', $dto->mobileNumber);
+            $records = $records->where('s.mobileNumber', '=', $dto->mobileNumber);
          }
-         $records = $records->get();
-         return $records->all();
+         $records = $records->orderByDesc('s.created_at');
+         return $records->get()->all();
       } catch (Exception $e) {
          throw new Exception($e->getMessage());
       }

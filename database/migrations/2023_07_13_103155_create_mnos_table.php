@@ -12,7 +12,7 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('mnos', function (Blueprint $table) {
-         $table->id();
+         $table->uuid('id')->primary();
          $table->string('name')->unique()->notNullable();
          $table->string('colour')->nullable();
          $table->string('contactName')->nullable();

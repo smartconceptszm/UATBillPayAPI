@@ -10,8 +10,7 @@ class SMSBulkController extends Controller
 {
 
 	private $validationRules = [
-							'mobileNumbers' => 'required|string',
-							'description' => 'required|string',
+							'mobileNumbers' => 'required',
 							'client_id' => 'required|string',
 							'message' => 'required|string'
 						];

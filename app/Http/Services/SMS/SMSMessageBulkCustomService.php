@@ -4,7 +4,6 @@ namespace App\Http\Services\SMS;
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Auth;
-use App\Http\DTOs\SMSTxDTO;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Models\BulkMessage;
@@ -60,19 +59,18 @@ class SMSMessageBulkCustomService
          $user = Auth::user(); 
          $data['type'] = 'BULKCUSTOM';
          $data['user_id'] = $user->id;
-         $bulkSMS = $this->createService->handle($this->model,$data);
+         $bulkSMS = $this->model->create($data);
          $chunkedArr = \array_chunk($data['mobileNumbers'],15,false);
          foreach ($chunkedArr as $mobileNumbersArr) {
             $arrSMSes=[];
             foreach ($mobileNumbersArr as $key => $value) {
-               $dto = new SMSTxDTO();
-               $arrSMSes[$key]= $dto->fromArray([
+               $arrSMSes[$key]= [
                                  'client_id'=>$data['client_id'],
-                                 'mobileNumber'=>'26'.$value,
-                                 'message'=>$data['message'],
+                                 'mobileNumber'=>$value['mobileNumber'],
+                                 'message'=>$value['message'],
                                  'bulk_id'=>$bulkSMS->id,
                                  'type'=>$bulkSMS->type
-                           ]);
+                           ];
             }
             Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes, $user->urlPrefix));
          }

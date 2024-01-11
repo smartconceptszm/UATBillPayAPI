@@ -29,7 +29,7 @@ class PaymentManaulPostService
             throw new Exception("Payment appears receipted! Receipt number ".$momoDTO->receiptNumber);
          }
          if($momoDTO->mnoTransactionId != ''){
-            if($momoDTO->mnoTransactionId != $data['mnoTransactionId']){
+            if($momoDTO->mnoTransactionId == $data['mnoTransactionId']){
                throw new Exception($momoDTO->mnoName ." transaction Id ".$data['mnoTransactionId']. " already captured.");
             }
          }  
@@ -37,11 +37,24 @@ class PaymentManaulPostService
             $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$momoDTO->urlPrefix;
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
          //
+         //Bind the SMS Clients
+            $smsClientKey = '';
+            if(!$smsClientKey && (\env('SMS_SEND_USE_MOCK') == "YES")){
+               $smsClientKey = 'MockSMSDelivery';
+            }
+            if(!$smsClientKey && (\env(\strtoupper($momoDTO->urlPrefix).'_HAS_OWNSMS') == 'YES')){
+               $smsClientKey = \strtoupper($momoDTO->urlPrefix).'SMS';
+            }
+            if(!$smsClientKey){
+               $smsClientKey = \env('SMPP_CHANNEL');
+            }
+            App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClientKey);
+         //
          $user = Auth::user(); 
          $momoDTO->user_id = $user->id;
          $momoDTO->mnoTransactionId = $data['mnoTransactionId'];
          $momoDTO->error = "";
-         $momoDTO = app(Pipeline::class)
+         $momoDTO = App::make(Pipeline::class)
                   ->send($momoDTO)
                   ->through(
                      [

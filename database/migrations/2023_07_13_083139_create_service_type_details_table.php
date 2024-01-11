@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('service_type_details', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('service_type_id')->notNullable();
+            $table->uuid('id')->primary();
+            $table->uuid('service_type_id')->notNullable();
             $table->string('name',50)->unique()->notNullable();
             $table->enum('type',['MOBILE','NATIONALID','GENERAL'])->default('GENERAL')->notNullable();
             $table->string('prompt',150)->nullable();

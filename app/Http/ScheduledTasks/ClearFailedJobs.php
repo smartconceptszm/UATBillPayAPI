@@ -14,7 +14,7 @@ class ClearFailedJobs
 		try {
 			DB::table('failed_jobs')->delete();
 		} catch (\Exception $e) {
-			Log::error("In RetryFailedTrasactions, scheduled task: " . $e->getMessage());
+			Log::error("In ClearFailedJobs, scheduled task: " . $e->getMessage());
 		}
 
 	}

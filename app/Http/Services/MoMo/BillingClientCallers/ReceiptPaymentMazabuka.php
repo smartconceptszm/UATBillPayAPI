@@ -23,7 +23,7 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
 			$receiptingParams = [ 
 										'account' => $momoDTO->accountNumber,
 										'amount' => $momoDTO->receiptAmount,
-										'mobileNumber"'=> $momoDTO->mobileNumber,
+										'mobileNumber'=> $momoDTO->mobileNumber,
 										'referenceNumber' => $momoDTO->reference,
 									];
 			$billingResponse = $this->billingClient->postPayment($receiptingParams);

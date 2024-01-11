@@ -12,8 +12,8 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('clients', function (Blueprint $table) {
-         $table->id();
-         $table->string('code',10)->unique()->notNullable();
+         $table->uuid('id')->primary();
+         $table->string('shortCode',10)->nullable();
          $table->string('shortName',25)->unique()->notNullable();
          $table->string('urlPrefix',25)->unique()->notNullable();
          $table->string('name',50)->unique()->notNullable();

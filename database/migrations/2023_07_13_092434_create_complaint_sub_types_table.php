@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
       Schema::create('complaint_sub_types', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger('complaint_type_id')->notNullable();
-         $table->string('code',3)->notNullable();
-         $table->string('name',50)->notNullable();
-         $table->unsignedTinyInteger('order')->notNullable();
-         $table->enum('requiresDetails',['YES','NO'])->default('NO');
-         $table->enum('detailType',['MOBILE','READING','METER','PAYMENTMODE','APPLICATION'])->nullable();
-         $table->string('prompt',150)->nullable();
-         $table->timestamps();
-         $table->unique(['complaint_type_id','code'],'subtype_code');
-         $table->unique(['complaint_type_id', 'order'],'subtype_order');
+        $table->uuid('id')->primary();
+        $table->uuid('complaint_type_id')->notNullable();
+        $table->string('code',3)->notNullable();
+        $table->string('name',50)->notNullable();
+        $table->unsignedTinyInteger('order')->notNullable();
+        $table->enum('requiresDetails',['YES','NO'])->default('NO');
+        $table->enum('detailType',['MOBILE','READING','METER','PAYMENTMODE','APPLICATION'])->nullable();
+        $table->string('prompt',150)->nullable();
+        $table->timestamps();
+        $table->unique(['complaint_type_id','code'],'subtype_code');
+        $table->unique(['complaint_type_id', 'order'],'subtype_order');
       });
     }
 

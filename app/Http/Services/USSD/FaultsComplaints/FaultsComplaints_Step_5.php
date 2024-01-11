@@ -27,7 +27,8 @@ class FaultsComplaints_Step_5
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->accountNumber = $txDTO->subscriberInput;
          try {
-            [$txDTO->customer, $txDTO->district] = $this->getCustomerAccount->handle($txDTO);
+            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
+            $txDTO->district = $txDTO->customer['district'];
          } catch (\Throwable $e) {
             if($e->getCode()==1){
                $txDTO->errorType = 'InvalidAccount';
@@ -64,9 +65,9 @@ class FaultsComplaints_Step_5
                            'session_id'=>$txDTO->id
                         ];
          $caseNumber = $this->complaintClient->create($complaintData);
-         $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".
-                                 $caseNumber; 
+         $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".$caseNumber; 
          $txDTO->status='COMPLETED'; 
+         
       } catch (Exception $e) {
          $txDTO->error = 'At complaints step 5. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';

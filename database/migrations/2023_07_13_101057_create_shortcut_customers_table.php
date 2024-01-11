@@ -13,12 +13,12 @@ return new class extends Migration
    {
 
       Schema::create('shortcut_customers', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger('client_id')->notNullable();
+         $table->uuid('id')->primary();
+         $table->uuid('client_id')->notNullable();
          $table->string('mobileNumber',12)->notNullable();
-         $table->string('accountNumber',20)->notNullable();
-         $table->unique(['client_id','accountNumber', 'mobileNumber'],'accountNumber_mobileNumber');
+         $table->string('accountNumber',50)->notNullable();
          $table->timestamps();
+         $table->unique(['client_id','accountNumber', 'mobileNumber'],'accountNumber_mobileNumber');
       });
    }
 

@@ -51,16 +51,16 @@ class PaymentWithReceiptToDeliverService
             //
 
             $momoDTO->user_id = $user->id;
-            $momoDTO =  app(Pipeline::class)
-               ->send($momoDTO)
-               ->through(
-                  [
-                     Step_SendReceiptViaSMS::class,
-                     Step_UpdateTransaction::class,  
-                     Step_LogStatus::class 
-                  ]
-               )
-               ->thenReturn();
+            $momoDTO = App::make(Pipeline::class)
+                        ->send($momoDTO)
+                        ->through(
+                           [
+                              Step_SendReceiptViaSMS::class,
+                              Step_UpdateTransaction::class,  
+                              Step_LogStatus::class 
+                           ]
+                        )
+                        ->thenReturn();
          }
       } catch (Exception $e) {
          throw new Exception($e->getMessage());

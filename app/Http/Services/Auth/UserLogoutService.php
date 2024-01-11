@@ -9,9 +9,9 @@ class UserLogoutService
 {
 
 	/**
-	 * Inavlidate the JWT for login user.
+	 * Invalidate the JWT for login user.
 	 */
-	public function delete(string $id):bool
+	public function delete():bool
 	{
 
 		try {

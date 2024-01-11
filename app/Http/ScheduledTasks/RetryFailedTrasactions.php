@@ -1,14 +1,17 @@
 <?php
 namespace App\Http\ScheduledTasks;
 
-use App\Jobs\ReConfirmMoMoPaymentJob;
-use Illuminate\Support\Facades\Queue;
+use App\Http\Services\Payments\PaymentFailedService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 
 class RetryFailedTrasactions 
 {
+
+	public function __construct(
+		private PaymentFailedService $failedPaymentService) 	
+	{}
 
 	public function __invoke()
 	{
@@ -43,7 +46,7 @@ class RetryFailedTrasactions
 
 			$transactions = \json_decode($providerErrors, true);
 			foreach ($transactions as $transaction) {
-				Queue::later(Carbon::now()->addSeconds(1), new ReConfirmMoMoPaymentJob(new \App\Http\DTOs\BaseDTO()));
+				$this->failedPaymentService->update($transaction['id']);
 			}
 		} catch (\Exception $e) {
 			Log::error("In RetryFailedTrasactions, scheduled task: " . $e->getMessage());

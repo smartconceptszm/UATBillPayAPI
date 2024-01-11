@@ -12,9 +12,9 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('user_groups', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger("user_id")->notNullable();
-         $table->unsignedBigInteger("group_id")->notNullable();
+         $table->uuid('id')->primary();
+         $table->uuid("user_id")->notNullable();
+         $table->uuid("group_id")->notNullable();
          $table->timestamps();
       });
    }

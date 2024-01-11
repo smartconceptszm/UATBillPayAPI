@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
 
-class ReceiptReconnectionFeesSwasco implements IReceiptPayment
+class ReceiptReconnectionSwasco implements IReceiptPayment
 {
 
     public function __construct(
@@ -24,7 +24,7 @@ class ReceiptReconnectionFeesSwasco implements IReceiptPayment
 											'paymentType'=>$paymentType,
 											'account' => $momoDTO->accountNumber,
 											'amount' => $momoDTO->receiptAmount,
-											'mobileNumber"'=> $momoDTO->mobileNumber,
+											'mobileNumber'=> $momoDTO->mobileNumber,
 											'referenceNumber' => $swascoTransactionRef,
 									];
 			$billingResponse=$this->billingClient->postPayment($receiptingParams);

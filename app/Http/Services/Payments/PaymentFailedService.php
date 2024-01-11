@@ -62,7 +62,7 @@ class PaymentFailedService
 
    }
 
-   public function update(string $id):object{
+   public function update(string $id):string{
 
       try {
          $thePayment = $this->paymentToReviewService->findById($id);
@@ -72,14 +72,11 @@ class PaymentFailedService
          $momoDTO->error = "";
          Queue::later(Carbon::now()->addMinutes((int)\env('PAYMENT_REVIEW_DELAY')),
                                                 new ReConfirmMoMoPaymentJob($momoDTO));
-         $response = (object)[
-                           'data' => 'Payment of ZMW '.$momoDTO->paymentAmount." on Account ".
-                                 $momoDTO->accountNumber." submitted for review. Check status after a short while"      
-                     ];
+         return 'Payment of ZMW '.$momoDTO->paymentAmount." on Account ".
+                        $momoDTO->accountNumber." submitted for review. Check status after a short while";
       } catch (Exception $e) {
          throw new Exception($e->getMessage());
       }
-      return $response;
       
    }
 

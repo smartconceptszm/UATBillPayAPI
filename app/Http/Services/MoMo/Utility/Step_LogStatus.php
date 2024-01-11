@@ -15,7 +15,7 @@ class Step_LogStatus extends EfectivoPipelineContract
 		
 		try {
 			if($momoDTO->error==''){
-				$logMessage='('.$momoDTO->clientCode.'). Payment Status: '.
+				$logMessage='('.$momoDTO->urlPrefix.'). Payment Status: '.
 									$momoDTO->paymentStatus." (via ".$momoDTO->mnoName."). ";
 				if($momoDTO->paymentStatus=='RECEIPTED' || 
 					$momoDTO->paymentStatus=='RECEIPT DELIVERED')
@@ -27,15 +27,15 @@ class Step_LogStatus extends EfectivoPipelineContract
 				Log::info($logMessage);
 				if($momoDTO->sms){
 					if($momoDTO->sms['status'] == 'DELIVERED'){
-							Log::info('('.$momoDTO->clientCode.') '.'SMS Notification SENT. Session: '.
+							Log::info('('.$momoDTO->urlPrefix.') '.'SMS Notification SENT. Session: '.
 											$momoDTO->sessionId.' - Phone: '.$momoDTO->mobileNumber); 
 					}else{
-							Log::error('('.$momoDTO->clientCode.') SMS Notification NOT SENT. Details: '.$momoDTO->sms['error'].
+							Log::error('('.$momoDTO->urlPrefix.') SMS Notification NOT SENT. Details: '.$momoDTO->sms['error'].
 								'. Queued for re-try. Session: '.$momoDTO->sessionId.' - Phone: '.$momoDTO->mobileNumber); 
 					}
 				}
 			}else{
-				Log::error('('.$momoDTO->clientCode.'). '.$momoDTO->error.' Payment Status: '
+				Log::error('('.$momoDTO->urlPrefix.'). '.$momoDTO->error.' Payment Status: '
 					.$momoDTO->paymentStatus.' (via '.$momoDTO->mnoName.'). Transaction ID = '.$momoDTO->transactionId.
 					'- Session: '.$momoDTO->sessionId.'- Channel: '.$momoDTO->channel.' - Phone: '.$momoDTO->mobileNumber);
 			}

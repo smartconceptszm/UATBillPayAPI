@@ -26,13 +26,13 @@ class UssdDTO extends BaseDTO
    public $testMSISDN;
    public $menuPrompt;
    public $created_at;
-   public $clientCode;
    public $urlPrefix;
    public $sessionId;
    public $client_id;
    public $reference;
    public $errorType;
    public $isPayment;
+   public $shortCode;
    public $customer;
    public $district;
    public $response;

@@ -12,14 +12,14 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('service_applications', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger('client_id')->notNullable();
-         $table->unsignedBigInteger('service_type_id')->notNullable();
+         $table->uuid('id')->primary();
+         $table->uuid('client_id')->notNullable();
+         $table->uuid('service_type_id')->notNullable();
          $table->string('caseNumber',50)->unique()->nullable();
          $table->string('mobileNumber',12)->notNullable();
          $table->string('accountNumber',20)->nullable();
          $table->enum('status',['SUBMITTED','ASSIGNED','CLOSED'])->default('SUBMITTED')->notNullable();
-         $table->unsignedBigInteger('assignedBy')->nullable();
+         $table->uuid('assignedBy')->nullable();
          $table->string('assignedTo')->nullable();
          $table->string('resolution')->nullable();
          $table->string('comments')->nullable();

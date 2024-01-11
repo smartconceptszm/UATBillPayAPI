@@ -15,25 +15,25 @@ class InitiateMoMoPaymentTest extends TestCase
       $momoService = new InitiateMoMoPayment();
 
       App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,'MoMoMock');
-
       $momoDTO = new MoMoDTO();
       $momoDTO = $momoDTO->fromArray(
          [
-               "customerJourney" => "2106*1*1101000166*6.50*1",
+               "customerJourney" => "5757*1*LIV0003066*16.00*1",
                "mobileNumber" => "260977787659",
-               'accountNumber' => '1101000166',
-               "paymentAmount" => 6.50,
-               'session_id' => 35634,
-               'urlPrefix' => 'lukanga',
-               'clientCode' => 'LgWSSC',
+               'accountNumber' => 'LIV0003066',
+               "paymentAmount" => 16.00,
+               'session_id' => 35720,
+               'urlPrefix' => 'swasco',
+               'shortCode' => '5757',
                'mnoName' => 'AIRTEL',
-               "district" => 'KABWE',
+               "district" => 'LIVINGSTONE',
+               'billingClient' => 'swasco',
                'channel' => 'USSD',
                "menu_id" => 1,
-               "client_id" => 2,
+               "client_id" => 3,
+               'sessionId' => '100002205',
                "mno_id" => 1
          ]);
-      
       $response = $momoService->handle($momoDTO);
       $this->assertTrue($response->paymentStatus == 'SUBMITTED');
       

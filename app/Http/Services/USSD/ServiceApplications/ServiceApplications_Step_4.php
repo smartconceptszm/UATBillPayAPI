@@ -3,7 +3,6 @@
 namespace App\Http\Services\USSD\ServiceApplications;
 
 use App\Http\Services\USSD\ServiceApplications\ClientCallers\IServiceApplicationClient;
-use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
 use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
 use App\Http\Services\MenuConfigs\ServiceTypeService;
@@ -14,7 +13,7 @@ use App\Jobs\SendSMSesJob;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
-class ServiceApplications_SubStep_4 extends EfectivoPipelineWithBreakContract
+class ServiceApplications_Step_4
 {
 
    public function __construct(
@@ -24,7 +23,7 @@ class ServiceApplications_SubStep_4 extends EfectivoPipelineWithBreakContract
       private ServiceTypeService $serviceTypes)
    {} 
 
-   protected function stepProcess(BaseDTO $txDTO)
+   public function run(BaseDTO $txDTO)
    {
 
       if(\count(\explode("*", $txDTO->customerJourney)) == 4){

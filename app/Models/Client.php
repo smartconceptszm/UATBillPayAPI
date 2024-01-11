@@ -3,14 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class Client extends Model
 {
-   use HasFactory;
+   use HasFactory, HasUuids;
 
    protected $fillable=[
-      'code','shortName','urlPrefix', 'name','balance',
+      'shortCode','shortName','urlPrefix', 'name','balance',
       'smsPayMode','surcharge','mode','testMSISDN', 'status'
    ];
 

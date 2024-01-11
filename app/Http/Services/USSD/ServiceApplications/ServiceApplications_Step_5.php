@@ -2,13 +2,12 @@
 
 namespace App\Http\Services\USSD\ServiceApplications;
 
-use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\DTOs\BaseDTO;
 
-class ServiceApplications_SubStep_5 extends EfectivoPipelineWithBreakContract
+class ServiceApplications_Step_5
 {
 
-   protected function stepProcess(BaseDTO $txDTO)
+   public function run(BaseDTO $txDTO)
    {
 
       if (\count(\explode("*", $txDTO->customerJourney)) > 4) {

@@ -54,9 +54,6 @@ class PaymentService
 
       try {
          foreach ($data as $key => $value) {
-            if($value == '' && $key != 'error'){
-                  unset($data[$key]);
-            } 
             if($key == 'id'){
                unset($data['id']);
             }

@@ -12,7 +12,7 @@ class SurveyQuestionController extends Controller
    protected $validationRules = [
                               'survey_id' => 'required',
                               'prompt' => 'required|string',
-                              'order' => 'required|string'
+                              'order' => 'required'
                            ];
 	public function __construct(
 		private SurveyQuestionService $theService)

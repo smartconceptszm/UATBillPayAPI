@@ -106,11 +106,7 @@ class SwascoServiceProvider extends ServiceProvider
 
 		//SMS Clients
 			$this->app->singleton('SWASCOSMS', function () {
-				return $this->app->make( \App\Http\Services\External\SMSClients\SwascoSMS::class,[
-											\env('SWASCO_SMS_BASE_URL'),
-											env('SWASCO_SMS_APIKEY'),
-											env('SWASCO_SMS_SENDER_ID'),
-										]);
+				return $this->app->make( \App\Http\Services\External\SMSClients\SwascoSMS::class);
 			});
 		//
 
@@ -127,9 +123,10 @@ class SwascoServiceProvider extends ServiceProvider
 				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPaymentSwasco::class);
 			});
 
-			$this->app->singleton('ReceiptReconnectionFeesSwasco', function () {
-				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptReconnectionFeesSwasco::class);
+			$this->app->singleton('ReceiptReconnectionSwasco', function () {
+				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptReconnectionSwasco::class);
 			});
+			
 			$this->app->singleton('ReceiptVacuumTankerSwasco', function () {
 				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptVacuumTankerSwasco::class);
 			});

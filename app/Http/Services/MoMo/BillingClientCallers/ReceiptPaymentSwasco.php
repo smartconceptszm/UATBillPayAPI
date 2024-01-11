@@ -48,7 +48,7 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 				'paymentType'=>$paymentType,
 				'account' => $momoDTO->accountNumber,
 				'amount' => $momoDTO->receiptAmount,
-				'mobileNumber"'=> $momoDTO->mobileNumber,
+				'mobileNumber'=> $momoDTO->mobileNumber,
 				'referenceNumber' => $swascoTransactionRef,
 		];
 
@@ -70,7 +70,7 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 					try {
 						$momoDTO = $this->addShotcutMessage->handle($momoDTO);
 					} catch (Exception $e) {
-						Log::error('('.$momoDTO->clientCode.'). '.$e->getMessage().
+						Log::error('('.$momoDTO->urlPrefix.'). '.$e->getMessage().
 							'- Session: '.$momoDTO['sessionId'].' - Phone: '.$momoDTO->mobileNumber);
 					}
 				}

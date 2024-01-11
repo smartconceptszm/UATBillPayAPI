@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Services\Auth\UserLogoutService;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class UserLogoutController  extends Controller
 {
@@ -17,11 +16,11 @@ class UserLogoutController  extends Controller
    	/**
 	 * Remove the specified resource from storage.
 	 */
-	public function destroy(string $id)
+	public function destroy()
 	{
 		
 		try {
-			$this->response['data'] = $this->theService->delete($id);
+			$this->response['data'] = $this->theService->delete();
 		} catch (\Exception $e) {
 			$this->response['status']['code'] = 500;
 			$this->response['status']['message'] = $e->getMessage();

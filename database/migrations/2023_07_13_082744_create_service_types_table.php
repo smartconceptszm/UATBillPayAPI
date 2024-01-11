@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('service_types', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('client_id')->notNullable();
-            $table->unsignedBigInteger('code')->notNullable();
+            $table->uuid('id')->primary();
+            $table->uuid('client_id')->notNullable();
+            $table->uuid('code')->notNullable();
             $table->string('name',50)->notNullable();
             $table->unsignedTinyInteger('order')->notNullable();
             $table->enum('onExistingAccount',['YES','NO'])->default('NO')->notNullable();

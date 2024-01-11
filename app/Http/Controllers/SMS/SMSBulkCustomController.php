@@ -10,9 +10,8 @@ class SMSBulkCustomController extends Controller
 {
 
 	private $validationRules=[
-		'description' => 'required|string',
-		'client_id' => 'required',
-		'messages' => 'required|string'
+		'mobileNumbers' => 'required',
+		'client_id' => 'required'
 	];
 
 	public function __construct(

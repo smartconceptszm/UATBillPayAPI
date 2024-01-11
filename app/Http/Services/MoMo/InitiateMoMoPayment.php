@@ -2,8 +2,11 @@
 
 namespace App\Http\Services\MoMo;
 
-use App\Http\DTOs\MoMoDTO;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Pipeline\Pipeline;
+use App\Http\DTOs\MoMoDTO;
+use Exception;
 
 class InitiateMoMoPayment
 {
@@ -12,20 +15,27 @@ class InitiateMoMoPayment
    {
       
       //Process the request
-      $momoDTO  =  app(Pipeline::class)
-      ->send($momoDTO)
-      ->through(
-         [
-            \App\Http\Services\MoMo\InitiatePaymentSteps\Step_GetPaymentAmounts::class,
-            \App\Http\Services\MoMo\InitiatePaymentSteps\Step_CreatePaymentRecord::class,
-            \App\Http\Services\MoMo\InitiatePaymentSteps\Step_SendMoMoRequest::class, 
-            \App\Http\Services\MoMo\InitiatePaymentSteps\Step_DispatchConfirmationJob::class,
-            \App\Http\Services\MoMo\Utility\Step_UpdateTransaction::class,  
-            \App\Http\Services\MoMo\Utility\Step_LogStatus::class 
-         ]
-      )
-      ->thenReturn();
+      try {
+         $momoDTO  =  App::make(Pipeline::class)
+         ->send($momoDTO)
+         ->through(
+            [
+               \App\Http\Services\MoMo\InitiatePaymentSteps\Step_GetPaymentAmounts::class,
+               \App\Http\Services\MoMo\InitiatePaymentSteps\Step_CreatePaymentRecord::class,
+               \App\Http\Services\MoMo\InitiatePaymentSteps\Step_SendMoMoRequest::class, 
+               \App\Http\Services\MoMo\InitiatePaymentSteps\Step_DispatchConfirmationJob::class,
+               \App\Http\Services\MoMo\Utility\Step_UpdateTransaction::class,  
+               \App\Http\Services\MoMo\Utility\Step_LogStatus::class 
+            ]
+         )
+         ->thenReturn();
+      } catch (Exception $e) {
+         $momoDTO->error='At get initiate payment pipeline. '.$e->getMessage();
+         Log::info($momoDTO->error);
+      }
+
       return $momoDTO;
+      
    }
 
 }

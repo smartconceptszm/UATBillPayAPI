@@ -27,14 +27,14 @@ class RequestLoggerMiddleware
       $txParams = $request->ussdParams;
       if($txParams){
          if($txParams['error']==''){
-               Log::info('('.$txParams['clientCode'].') '.
+               Log::info('('.$txParams['urlPrefix'].') '.
                            'Request Cycle completed: Session id: '.
                               $txParams['sessionId'].' - Phone: '.
                               $txParams['mobileNumber'].' - Journey: '.
                               $txParams['customerJourney']
                            );
          }else{
-               Log::error('('.$txParams['clientCode'].') '.
+               Log::error('('.$txParams['urlPrefix'].') '.
                               $txParams['error'].'. - Session id: '.
                               $txParams['sessionId'].' - Phone: '.
                               $txParams['mobileNumber'].' - Journey: '.

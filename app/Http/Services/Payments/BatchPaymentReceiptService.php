@@ -27,8 +27,7 @@ class BatchPaymentReceiptService
                $records = $records->whereDate('p.created_at', '>=', $dto->dateFrom)
                                  ->whereDate('p.created_at', '<=', $dto->dateTo);
          }
-         $records = $records->get();
-         $records = $records->all();
+         $records = $records->get()->all();
          if (\sizeof($records) > 0) {
             $chunkedArr = \array_chunk($records,5,false);
             foreach ($chunkedArr as $value) {

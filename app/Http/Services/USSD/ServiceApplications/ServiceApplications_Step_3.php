@@ -2,14 +2,13 @@
 
 namespace App\Http\Services\USSD\ServiceApplications;
 
-use App\Http\Services\Contracts\EfectivoPipelineWithBreakContract;
 use App\Http\Services\External\BillingClients\GetCustomerAccount;
 use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
 use App\Http\Services\MenuConfigs\ServiceTypeService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
-class ServiceApplications_SubStep_3 extends EfectivoPipelineWithBreakContract
+class ServiceApplications_Step_3
 {
 
    public function __construct(
@@ -18,14 +17,15 @@ class ServiceApplications_SubStep_3 extends EfectivoPipelineWithBreakContract
       protected ServiceTypeService $serviceTypes)
    {}
 
-   protected function stepProcess(BaseDTO $txDTO)
+   public function run(BaseDTO $txDTO)
    {
 
       if(\count(\explode("*", $txDTO->customerJourney)) == 3){
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
             $txDTO->accountNumber = $txDTO->subscriberInput;
-            [$txDTO->customer, $txDTO->district] = $this->getCustomerAccount->handle($txDTO);
+            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
+            $txDTO->district = $txDTO->customer['district'];
             $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
             $theServiceType = $this->serviceTypes->findOneBy([
                         'client_id'=>$txDTO->client_id,

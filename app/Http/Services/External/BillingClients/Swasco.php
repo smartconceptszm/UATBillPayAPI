@@ -203,6 +203,7 @@ class Swasco implements IBillingClient
                   $fullURL = $this->baseURL . "navision/payments/bills";
                   break;
          }
+         
          $apiResponse = Http::timeout($this->swascoReceiptingTimeout)
                ->withHeaders([
                   'Content-Type' => 'application/json',
@@ -210,9 +211,9 @@ class Swasco implements IBillingClient
                ])
                ->post($fullURL, [
                   'accountNumber' => $postParams['account'],
-                  'amount' => $postParams['amount'],
+                  'amount' => (string)$postParams['amount'],
                   "mobileNumber" => $postParams['mobileNumber'],
-                  "referenceNumber" => $postParams['reference'],
+                  "referenceNumber" => $postParams['referenceNumber'],
                   "paymentType" => $postParams['paymentType']
                ]);
          if ($apiResponse->status() == 200) {
@@ -245,7 +246,7 @@ class Swasco implements IBillingClient
                ->post($fullURL, [
                   'accountNumber' => $postParams['accountNumber'],
                   'complaintCode' => $postParams['complaintCode'],
-                  "mobileNumber" => $postParams['phoneNumber']
+                  "mobileNumber" => $postParams['mobileNumber']
                ]);
 
          if ($apiResponse->status() == 200) {
@@ -281,8 +282,8 @@ class Swasco implements IBillingClient
                ])
                ->post($fullURL, [
                   'accountNumber' => $postParams['accountNumber'],
-                  'mobileNumber' => $postParams['phoneNumber'],
-                  'newMobileNumber' => $postParams['newMobileNo'],
+                  'mobileNumber' => $postParams['mobileNumber'],
+                  'newMobileNumber' => $postParams['newMobileNumber'],
                ]);
          if ($apiResponse->status() == 200) {
                $apiResponse = $apiResponse->json();

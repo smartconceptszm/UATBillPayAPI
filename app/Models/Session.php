@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class Session extends Model
 {
-   use HasFactory;
+
+   use HasFactory, HasUuids;
 
    protected $fillable=[
       'client_id','sessionId','menu_id','mno_id', 'mobileNumber','accountNumber',

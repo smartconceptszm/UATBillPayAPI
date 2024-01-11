@@ -27,7 +27,7 @@ class ReceiptVacuumTankerSwasco implements IReceiptPayment
 				'paymentType'=>'12',
 				'account' => $momoDTO->accountNumber,
 				'amount' => $momoDTO->receiptAmount,
-				'mobileNumber"'=> $momoDTO->mobileNumber,
+				'mobileNumber'=> $momoDTO->mobileNumber,
 				'referenceNumber' => $momoDTO->reference,
 		];
 
