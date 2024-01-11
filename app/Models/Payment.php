@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class Payment extends Model
 {
-   use HasFactory;
+
+   use HasFactory, HasUuids;
 
    protected $fillable=[
       'client_id','session_id','mno_id','menu_id', 'mobileNumber','accountNumber',

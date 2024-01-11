@@ -12,9 +12,9 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('service_application_details', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger('service_application_id')->notNullable();
-         $table->unsignedBigInteger('service_type_detail_id')->notNullable();
+         $table->uuid('id')->primary();
+         $table->uuid('service_application_id')->notNullable();
+         $table->uuid('service_type_detail_id')->notNullable();
          $table->string('value')->nullable();
          $table->timestamps();
       });

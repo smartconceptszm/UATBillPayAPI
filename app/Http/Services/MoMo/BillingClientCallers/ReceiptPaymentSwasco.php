@@ -48,7 +48,7 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 				'paymentType'=>$paymentType,
 				'account' => $momoDTO->accountNumber,
 				'amount' => $momoDTO->receiptAmount,
-				'mobileNumber"'=> $momoDTO->mobileNumber,
+				'mobileNumber'=> $momoDTO->mobileNumber,
 				'referenceNumber' => $swascoTransactionRef,
 		];
 

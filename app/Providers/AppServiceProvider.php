@@ -168,6 +168,9 @@ class AppServiceProvider extends ServiceProvider
          $this->app->singleton('InvalidInput', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidInput::class);
          });
+         $this->app->singleton('InvalidSurveyResponse', function () {
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidSurveyResponse::class);
+         });
          $this->app->singleton('SystemError', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\SystemError::class);
          });

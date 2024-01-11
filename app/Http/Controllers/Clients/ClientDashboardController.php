@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Clients;
 
 use App\Http\Services\Clients\ClientDashboardService;
+use Illuminate\Contracts\Auth\Authenticatable;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -16,11 +17,15 @@ class ClientDashboardController extends Controller
    /**
     * Display a listing of the resource.
    */
-   public function index(Request $request)
+   public function index(Request $request, Authenticatable $user)
    {
 
       try {
-         $this->response['data']=$this->theService->findAll($request->all());
+         $criteria = $request->all();
+         if(!$criteria['client_id']){
+            $criteria['client_id'] = $user->client_id;
+         }
+         $this->response['data']=$this->theService->findAll($criteria);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

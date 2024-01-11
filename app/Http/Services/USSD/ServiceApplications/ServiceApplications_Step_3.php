@@ -24,7 +24,8 @@ class ServiceApplications_Step_3
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
             $txDTO->accountNumber = $txDTO->subscriberInput;
-            [$txDTO->customer, $txDTO->district] = $this->getCustomerAccount->handle($txDTO);
+            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
+            $txDTO->district = $txDTO->customer['district'];
             $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
             $theServiceType = $this->serviceTypes->findOneBy([
                         'client_id'=>$txDTO->client_id,

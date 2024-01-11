@@ -24,6 +24,7 @@ class USSDAirtelController extends USSDController
             $this->theDTO = $this->theDTO->fromArray($airtelParams);
          //Process the Request
          $this->theDTO = $this->theService->handle($this->theDTO);
+
       } catch (\Throwable $e) {
          $this->theDTO->error = 'Error: At Airtel controller level. '.$e->getMessage();
          $this->theDTO->response = \env('ERROR_MESSAGE');

@@ -12,9 +12,9 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('client_menus', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger("client_id")->notNullable();
-         $table->unsignedBigInteger("parent_id")->notNullable()->default(0);
+         $table->uuid('id')->primary();
+         $table->uuid("client_id")->notNullable();
+         $table->uuid("parent_id")->notNullable()->default(0);
          $table->integer("order")->notNullable();
          $table->string('prompt',50)->notNullable();
          $table->string('handler',50)->notNullable();

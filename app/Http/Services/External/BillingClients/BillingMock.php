@@ -35,4 +35,11 @@ class BillingMock implements IBillingClient
       return $response;
    }
 
+   public function postComplaint(array $postParams): String {
+
+      $response="COMPLAINT:".\rand(1000,100000);
+      return $response;
+
+   }
+
 }

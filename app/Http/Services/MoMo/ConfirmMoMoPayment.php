@@ -3,6 +3,7 @@
 namespace App\Http\Services\MoMo;
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -31,6 +32,7 @@ class ConfirmMoMoPayment
                ->thenReturn();
       } catch (Exception $e) {
          $momoDTO->error='At get confirm payment pipeline. '.$e->getMessage();
+         Log::info($momoDTO->error);
       }
 
       return $momoDTO;

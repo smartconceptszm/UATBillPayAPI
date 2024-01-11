@@ -3,15 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class SurveyEntry extends Model
 {
-   use HasFactory;
+
+   use HasFactory, HasUuids;
 
    protected $fillable=[
-      'client_id','survey_id','caseNumber', 'mobileNumber','accountNumber',
-      'status','assignedBy','assignedTo','resolution','comments'
+      'survey_id','caseNumber','mobileNumber','accountNumber',
+      'district', 'status','assignedBy','assignedTo','resolution','comments'
    ];
 
    protected $casts = [

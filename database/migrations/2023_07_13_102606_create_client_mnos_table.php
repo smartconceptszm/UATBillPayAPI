@@ -12,14 +12,14 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('client_mnos', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger("client_id")->notNullable();
-         $table->unsignedBigInteger("mno_id")->notNullable();
+         $table->uuid('id')->primary();
+         $table->uuid("client_id")->notNullable();
+         $table->uuid("mno_id")->notNullable();
+         $table->float('smsCharge',10,2)->default(0);
          $table->enum('momoActive',['YES','NO'])->default('NO')->notNullable();
          $table->float('momoCommission',10,2)->default(0);
-         $table->float('smsCharge',10,2)->default(0);
-         $table->string('modeMessage',155)->nullable();
          $table->enum('momoMode',['UP','DOWN'])->default('UP')->notNullable();
+         $table->string('modeMessage',155)->nullable();
          $table->timestamps();
       });
    }

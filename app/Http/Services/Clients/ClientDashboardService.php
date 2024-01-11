@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\Clients;
 
-use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Exception;
@@ -14,8 +14,6 @@ class ClientDashboardService
    {
       
       try {
-         $user = Auth::user(); 
-         $criteria['client_id'] = $user->client_id;
          $dto = (object)$criteria;
          //Get all in Date Range
             $thePayments = DB::table('payments as p')
@@ -66,7 +64,6 @@ class ClientDashboardService
                ->orderBy('dayOfTx')
                ->get();
          //
-         
          // Get collection over last one year
             $theDateFrom = Carbon::parse($dto->dateFrom);
             $startDate  = $theDateFrom->subYear(1);

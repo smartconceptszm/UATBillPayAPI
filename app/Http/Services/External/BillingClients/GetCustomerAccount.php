@@ -24,14 +24,12 @@ class GetCustomerAccount
 			$customer = Cache::get($txDTO->urlPrefix.$txDTO->accountNumber);
 			if($customer){
 				$customer = \json_decode($customer,true);
-				$district = $customer['district'];
 			}else{
 				$customer = $this->billingClient->getAccountDetails($txDTO->accountNumber);
 				Cache::put($txDTO->urlPrefix.$txDTO->accountNumber, 
 							\json_encode($customer), 
 							Carbon::now()->addMinutes(intval(\env('CUSTOMER_ACCOUNT_CACHE'))));
 				Cache::forget($txDTO->urlPrefix.'_BillingErrorCount');
-				$district = $customer['district'];
 			}
 		} catch (Exception $e) {
 
@@ -67,9 +65,8 @@ class GetCustomerAccount
 				}
 				throw new Exception($e->getMessage(), 2);
 			}   
-			
 		}
-		return [$customer, $district];
+		return $customer;
 		
 	}
     

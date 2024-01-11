@@ -115,6 +115,7 @@ class UserLogin implements UserProvider
 	 */
 	public function retrieveByCredentials(array $credentials)
 	{
+
 		if (empty($credentials) ||
 			(count($credentials) === 1 &&
 			array_key_exists('password', $credentials))) {
@@ -129,9 +130,10 @@ class UserLogin implements UserProvider
 						->where([['u.username', '=', $credentials['username']]])
 						->where([['u.status', '=', 'ACTIVE']])
 						->select('u.id','u.client_id','u.username','u.password','u.fullnames',
-										'u.email','r.name as name','c.name as client','c.urlPrefix')
-						->get();
+										'u.email','r.name as name','c.name as client','c.urlPrefix');
 
+		// $queryString = $query->toSql();
+		$query = $query->get();
 		if(\count($query)>0){
 			$arrRights = $query->map(function($row){return $row->name;});
 			$user = new User;

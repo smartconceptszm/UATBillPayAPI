@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class ShortcutCustomer extends Model
 {
-   use HasFactory;
+
+   use HasFactory, HasUuids;
 
    protected $table = "shortcut_customers";
 

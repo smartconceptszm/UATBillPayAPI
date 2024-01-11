@@ -54,7 +54,7 @@ class ReConfirmMoMoPaymentJob extends BaseJob
          App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClient);
       //
       //Handle Job Service
-         $reConfirmMoMoPayment->handle($this->txDTO);
+         $reConfirmMoMoPayment->handle($this->momoDTO);
    }
     
 }

@@ -24,7 +24,7 @@ class USSDController extends Controller
 		return $clientUrlPrefix;
 	}
 
-	protected function getMnoId(string $mnoName):int
+	protected function getMnoId(string $mnoName):string
 	{
 
 		$mno = $this->mnoService->findOneBy(['name'=>$mnoName]);               

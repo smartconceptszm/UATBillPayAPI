@@ -45,7 +45,7 @@ class Survey_Step_5
                               'survey_question_list_type_id' => $surveyQuestion->survey_question_list_type_id,
                               'order' => $txDTO->subscriberInput
                            ]);
-            if($listItem->id){
+            if($listItem){
                $surveyResponses[$order] = $listItem->value;
             }else{
                throw new Exception("Invalid list item selection", 1);
@@ -59,7 +59,8 @@ class Survey_Step_5
                                              ]);
          
          if(\count($surveyQuestions) == (\count($surveyResponses))){
-            [$txDTO->customer, $txDTO->district] = $this->getCustomerAccount->handle($txDTO);
+            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
+            $txDTO->district = $txDTO->customer['district'];
             $txDTO->subscriberInput = \implode(";",\array_values($surveyResponses));
             $surveyResponseData = [
                                     'accountNumber' => $txDTO->accountNumber,
@@ -99,7 +100,8 @@ class Survey_Step_5
 
       } catch (Exception $e) {
          if($e->getCode() == 1){
-            $txDTO->errorType = 'InvalidInput';
+            $txDTO->errorType = 'InvalidSurveyResponse';
+            Cache::forget($txDTO->sessionId."SurveyResponses");
          }else{
             $txDTO->errorType = 'SystemError';
          }

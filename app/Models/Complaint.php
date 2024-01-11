@@ -3,11 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class Complaint extends Model
 {
-   use HasFactory;
+   use HasFactory, HasUuids;
 
    protected $fillable=[
       'complaint_subtype_id','client_id','session_id','caseNumber', 'mobileNumber','accountNumber',

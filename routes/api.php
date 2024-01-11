@@ -27,6 +27,7 @@ Route::get('/', function () use ($router) {
    }
 });
 
+
 Route::group(['middleware' => 'mode'], function (){
    //USSD ROUTES
       Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
@@ -74,21 +75,24 @@ Route::group(['middleware' => 'mode'], function (){
    //
 
    Route::group(['middleware' => 'auth'], function (){
-
       //Payment Transactions Related Routes
+         Route::get('maindashboard', [\App\Http\Controllers\Clients\MainDashboardController::class, 'index']);
          Route::get('clientdashboard', [\App\Http\Controllers\Clients\ClientDashboardController::class, 'index']);
          Route::get('paymenttransactions', [\App\Http\Controllers\Payments\PaymentTransactionController::class, 'index']);
-         Route::get('paymentsnotreceipted', [\App\Http\Controllers\Payments\PaymentNotReceiptedController::class, 'index']);
-         Route::get('failedpayments', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'index']);
-         Route::post('paymentsreviewbatch', [\App\Http\Controllers\Payments\PaymentFailedBatchController::class, 'store']);
-         Route::get('paymentsessions', [\App\Http\Controllers\Payments\PaymentSessionController::class, 'index']);
 
+         Route::get('paymentsnotreceipted', [\App\Http\Controllers\Payments\PaymentNotReceiptedController::class, 'index']);
          Route::post('receipts', [\App\Http\Controllers\Payments\PaymentReceiptController::class, 'store']);
          Route::put('receipts/{id}', [\App\Http\Controllers\Payments\PaymentReceiptController::class, 'update']);
          Route::put('paymentreceipts/{id}', [\App\Http\Controllers\Payments\PaymentWithReceiptToDeliverController::class, 'update']);
-         Route::put('failedpayments/{id}', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'update']);
-         Route::post('paymentstomanuallypost', [\App\Http\Controllers\Payments\PaymentManualPostController::class, 'store']);
          Route::post('batchpaymentreceipts', [\App\Http\Controllers\Payments\BatchPaymentReceiptController::class, 'store']);
+
+         Route::get('failedpayments', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'index']);
+         Route::put('failedpayments/{id}', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'update']);
+         Route::post('paymentsreviewbatch', [\App\Http\Controllers\Payments\PaymentFailedBatchController::class, 'store']);
+         
+         Route::get('paymentsessions', [\App\Http\Controllers\Payments\PaymentSessionController::class, 'index']);
+
+         Route::post('paymentstomanuallypost', [\App\Http\Controllers\Payments\PaymentManualPostController::class, 'store']);
 
          Route::controller(\App\Http\Controllers\Payments\PaymentController::class)->group(function () {
             Route::get('/payments/findoneby', 'findOneBy');
@@ -96,6 +100,42 @@ Route::group(['middleware' => 'mode'], function (){
             Route::get('/payments', 'index');
             Route::post('/payments', 'store');
             Route::put('/payments/{id}', 'update');
+         });
+      //
+      //Clients
+         Route::controller(\App\Http\Controllers\Clients\ClientController::class)->group(function () {
+            Route::get('/clients/findoneby', 'findOneBy');
+            Route::put('/clients/{id}', 'update');
+            Route::get('/clients/{id}', 'show');
+            Route::post('/clients', 'store');
+            Route::get('/clients', 'index');
+         });
+      //
+      //Menus
+         Route::controller(\App\Http\Controllers\Clients\ClientMenuController::class)->group(function () {
+            Route::get('/clientmenus/findoneby', 'findOneBy');
+            Route::put('/clientmenus/{id}', 'update');
+            Route::get('/clientmenus/{id}', 'show');
+            Route::post('/clientmenus', 'store');
+            Route::get('/clientmenus', 'index');
+         });
+      //
+      //MNOs
+         Route::controller(\App\Http\Controllers\Clients\MNOController::class)->group(function () {
+            Route::get('/mnos/findoneby', 'findOneBy');
+            Route::put('/mnos/{id}', 'update');
+            Route::get('/mnos/{id}', 'show');
+            Route::post('/mnos', 'store');
+            Route::get('/mnos', 'index');
+         });
+      //
+      //MNOs
+         Route::controller(\App\Http\Controllers\Clients\ClientMnoController::class)->group(function () {
+            Route::get('/clientmnos/findoneby', 'findOneBy');
+            Route::put('/clientmnos/{id}', 'update');
+            Route::get('/clientmnos/{id}', 'show');
+            Route::post('/clientmnos', 'store');
+            Route::get('/clientmnos', 'index');
          });
       //
       //Complaint
@@ -132,6 +172,8 @@ Route::group(['middleware' => 'mode'], function (){
          Route::get('smsdashboard', [\App\Http\Controllers\SMS\SMSDashboardController::class, 'index']);
          Route::get('smses', [\App\Http\Controllers\SMS\SMSesOfClientController::class, 'index']);
          Route::post('messages', [\App\Http\Controllers\SMS\MessageController::class, 'store']);
+         Route::post('messages/bulk', [\App\Http\Controllers\SMS\SMSBulkController::class, 'store']);
+         Route::post('messages/bulkcustom', [\App\Http\Controllers\SMS\SMSBulkCustomController::class, 'store']);
       //
       //Surveys
          Route::get('activesurveyquestions', [\App\Http\Controllers\CRM\ActiveSurveyQuestionsController::class, 'index']);
@@ -176,11 +218,12 @@ Route::group(['middleware' => 'mode'], function (){
             Route::get('/sessions/{id}', 'show');
          });
       //
-      // RBAC ROUTES
+      // RBAC ROUTES 
          Route::get('usersofclient', [\App\Http\Controllers\Auth\UsersOfClientController::class, 'index']);      
          Route::get('groupsofuser/{id}', [\App\Http\Controllers\Auth\GroupsOfUserController::class, 'index']);
          Route::get('groupsofclient/{id}', [\App\Http\Controllers\Auth\GroupsOfClientController::class, 'index']);
          Route::get('rightsofgroup/{id}', [\App\Http\Controllers\Auth\RightsOfGroupController::class, 'index']);
+         Route::get('rightsofuser', [\App\Http\Controllers\Auth\RightsOfUserController::class, 'index']);
 
          Route::controller(\App\Http\Controllers\Auth\UserController::class)->group(function () {
             Route::get('/users/findoneby', 'findOneBy');
@@ -225,6 +268,8 @@ Route::group(['middleware' => 'mode'], function (){
             Route::post('/grouprights', 'store');
             Route::get('/grouprights', 'index');
          });
+
+         Route::delete('/logout', [\App\Http\Controllers\Auth\UserLogoutController::class,'destroy']);
       //
 
    });

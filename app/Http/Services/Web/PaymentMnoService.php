@@ -16,6 +16,8 @@ class PaymentMnoService
                   ->join('mnos as m','cm.mno_id','=','m.id')
                   ->select('cm.*','m.name','m.colour',)
                   ->where('cm.client_id', '=', $client_id)
+                  ->where('cm.momoActive', '=', 'YES')
+                  ->where('cm.momoMode', '=', 'UP')
                   ->get()->all();
          return $records;
       } catch (\Throwable $e) {

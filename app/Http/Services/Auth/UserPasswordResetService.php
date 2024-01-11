@@ -24,7 +24,6 @@ class UserPasswordResetService
       try {
          $user = $this->userService->findOneBy($data);
          if($user){
-            $loggedInUser = Auth::user();
             $resetPIN = Str::random(6);
             $smses =[[
                      'mobileNumber' => $user->mobileNumber,
@@ -32,7 +31,7 @@ class UserPasswordResetService
                      'type' => "NOTIFICATION",
                   ]];
             Cache::put($user->username.'.'.$user->mobileNumber,$resetPIN, Carbon::now()->addMinutes(intval(\env('PASSWORD_RESET'))));
-            Queue::later(Carbon::now()->addSeconds(1),new SendSMSesJob($smses,$loggedInUser->urlPrefix));
+            Queue::later(Carbon::now()->addSeconds(1),new SendSMSesJob($smses));
          }else{
             throw new Exception("Invalid username");
          }

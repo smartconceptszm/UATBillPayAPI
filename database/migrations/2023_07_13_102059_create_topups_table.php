@@ -12,8 +12,8 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('topups', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger("client_id")->notNullable();
+         $table->uuid('id')->primary();
+         $table->uuid("client_id")->notNullable();
          $table->float('amount',10,2)->default(0);
          $table->enum('approval_status',['PENDING','APPROVED','REJECTED'])->default('PENDING')->notNullable();
          $table->unsignedBigInteger('initiatedBy')->notNullable();

@@ -12,11 +12,11 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('bulk_messages', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger("client_id")->notNullable();
-         $table->unsignedBigInteger("user_id")->notNullable();
-         $table->string('sourceFile')->nullable();
-         $table->string('description')->nullable();
+         $table->uuid('id')->primary();
+         $table->uuid("client_id")->notNullable();
+         $table->uuid("user_id")->notNullable();
+         $table->json('mobileNumbers')->nullable();
+         $table->string('message')->nullable();
          $table->enum('type',['BULK','BULKCUSTOM'])->default('BULK')->notNullable();
          $table->timestamps();
      });

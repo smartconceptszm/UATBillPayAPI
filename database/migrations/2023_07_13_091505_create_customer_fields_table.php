@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
       Schema::create('customer_fields', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger('client_id')->notNullable();
+         $table->uuid('id')->primary();
+         $table->uuid('client_id')->notNullable();
          $table->string('name',50)->notNullable();
          $table->enum('type',['MOBILE','GENERAL'])->default('GENERAL')->notNullable();
          $table->unsignedTinyInteger('order')->notNullable();

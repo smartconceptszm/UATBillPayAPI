@@ -35,7 +35,8 @@ class PayPropertyRates_Step_3
       }
          
       try {
-         [$txDTO->customer, $txDTO->district] = $this->getCustomerAccount->handle($txDTO);
+         $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
+         $txDTO->district = $txDTO->customer['district'];
       } catch (Exception $e) {
          if($e->getCode()==1){
             $txDTO->errorType = 'InvalidAccount';

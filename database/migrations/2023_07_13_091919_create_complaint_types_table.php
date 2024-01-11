@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
       Schema::create('complaint_types', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger('client_id')->notNullable();
+         $table->uuid('id')->primary();
+         $table->uuid('client_id')->notNullable();
          $table->string('code',2)->notNullable();
          $table->string('name',50)->notNullable();
          $table->unsignedTinyInteger('order')->notNullable();

@@ -93,6 +93,24 @@ return [
          // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
       ],
 
+      'sqlsrvchambeshi' => [
+         'driver' => 'sqlsrv',
+         'url' => env('DATABASE_URL'),
+         'host' => env('DB_HOST_CHAMBESHI', 'localhost'),
+         'port' => env('DB_PORT_CHAMBESHI', '2220'),
+         'database' => env('DB_DATABASE_CHAMBESHI', 'forge'),
+         'username' => env('DB_USERNAME_CHAMBESHI', 'forge'),
+         'password' => env('DB_PASSWORD_CHAMBESHI', ''),
+         'charset' => 'utf8',
+         'prefix' => '',
+         'prefix_indexes' => true,
+         'options' => [
+            'tds_version' => '8',
+         ],
+         'encrypt' => env('DB_ENCRYPT_CHAMBESHI', 'yes'),
+         'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'true'),
+      ],
+
    ],
 
    /*

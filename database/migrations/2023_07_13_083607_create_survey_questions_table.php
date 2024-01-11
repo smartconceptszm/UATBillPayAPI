@@ -14,12 +14,12 @@ return new class extends Migration
 	{
 
 		Schema::create('survey_questions', function (Blueprint $table) {
-			$table->id();
-			$table->unsignedBigInteger('survey_id')->notNullable();
-			$table->unsignedTinyInteger('order')->notNullable();
+			$table->uuid('id')->primary();
+			$table->uuid('survey_id')->notNullable();
+			$table->uuid('order')->notNullable();
 			$table->string('prompt',150)->notNullable();
 			$table->enum('type',['MOBILE','LIST','DATE','NATIONALID','ONEWORD','GENERAL'])->default('GENERAL')->notNullable();
-			$table->unsignedBigInteger('survey_question_list_type_id')->nullable();
+			$table->uuid('survey_question_list_type_id')->nullable();
 			$table->unique(['survey_id', 'order'],'survey_question_order');
 			$table->timestamps();
 		});

@@ -12,9 +12,9 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('survey_entry_details', function (Blueprint $table) {
-         $table->id();
-         $table->unsignedBigInteger('survey_entry_id')->notNullable();
-         $table->unsignedBigInteger('survey_question_id')->notNullable();
+         $table->uuid('id')->primary();
+         $table->uuid('survey_entry_id')->notNullable();
+         $table->uuid('survey_question_id')->notNullable();
          $table->string('answer')->notNullable();
          $table->timestamps();
       });

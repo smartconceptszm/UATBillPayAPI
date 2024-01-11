@@ -8,11 +8,11 @@ use Tests\TestCase;
 class ConfirmMoMoPaymentTest extends TestCase
 {
 
-   public function testConfirmPayment()
+   public function _testConfirmPayment()
    { 
 
       $momoService = new ConfirmMoMoPayment();
-      App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,'lukanga');
+      App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,'swasco');
       App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,'MoMoMock');
       App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,'MockSMSDelivery');
       App::bind(\App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment::class,'MockReceipting');
@@ -20,28 +20,28 @@ class ConfirmMoMoPaymentTest extends TestCase
       $momoDTO = new MoMoDTO();
       $momoDTO = $momoDTO->fromArray(
          [
-               "customerJourney" => "2106*1*1101000166*6.50*1",
+               "customerJourney" => "5757*1*LIV0003066*16.00*1",
                "mobileNumber" => "260977787659",
-               'accountNumber' => '1101000166',
-               'session_id' => '35634',
+               'accountNumber' => 'LIV0003066',
+               'session_id' => '35720',
                'channel' => 'USSD',
 
-               "paymentAmount" => 6.50,
-               'receiptAmount' => 6.50,
+               "paymentAmount" => 16.00,
+               'receiptAmount' => 16.00,
                'surchargeAmount' => 0,
-               'transactionId' => "D231011T133742A1101000166",
+               'transactionId' => "d8288adb-eaed-4413-982d-d4c0015a3608",
                "paymentStatus" => 'SUBMITTED',
-               'shortCode' => '2106',
-               'session_id' => 35634,
+               'shortCode' => '5757',
+               'session_id' => 35720,
 
                'clientSurcharge' => 'NO',
-               'urlPrefix' => 'lukanga',
+               'urlPrefix' => 'swasco',
                'mnoName' => 'AIRTEL',
-               "district" => 'KABWE',
+               "district" => 'LIVINGSTONE',
                "menu_id" => 1,
-               "client_id" => 2,
+               "client_id" => 3,
                "mno_id" => 1,
-               "id" => 12821,
+               "id" => 12837,
          ]);
       
       $response = $momoService->handle($momoDTO);

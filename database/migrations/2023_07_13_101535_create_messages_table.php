@@ -13,13 +13,13 @@ return new class extends Migration
    {
 
       Schema::create('messages', function (Blueprint $table) {
-         $table->id();
+         $table->uuid('id')->primary();
          $table->string('mobileNumber',12)->notNullable();
          $table->string('accountNumber',20)->nullable();
          $table->string('message',160)->notNullable();
-         $table->unsignedBigInteger("mno_id")->notNullable();
-         $table->unsignedBigInteger("client_id")->notNullable();
-         $table->unsignedBigInteger('bulk_id')->nullable();
+         $table->uuid("mno_id")->notNullable();
+         $table->uuid("client_id")->notNullable();
+         $table->uuid('bulk_id')->nullable();
          $table->string('transaction_id',50)->nullable();
          $table->float('amount',10,2)->default(0);
          $table->enum('type',['RECEIPT','SINGLE','BULK','BULKCUSTOM','NOTIFICATION'])->default('RECEIPT')->notNullable();
