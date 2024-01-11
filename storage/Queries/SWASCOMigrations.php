@@ -235,7 +235,7 @@
 
 //
 
-//Users groups
+//Users groups   DONE
    UPDATE `swascoussd`.`user_groups` SET uuidKey = (SELECT uuid());
 
    INSERT INTO `billpay_production`.`user_groups` 
@@ -247,28 +247,17 @@
          JOIN `swascoussd`.`groups` AS `g` ON `g`.`id` = `ug`.`group_id`
          JOIN `swascoussd`.`users` AS `u1` ON `u1`.`id` = `ug`.`user_id`
          JOIN  `billpay_production`.`users`  AS `u2` ON `u2`.`username` = `u1`.`username`
-//
 
-//Users groups
-   UPDATE `swascoussd`.`user_groups` SET uuidKey = (SELECT uuid());
+         
 
-   INSERT INTO `billpay_production`.`user_groups` 
-                  (`id`,`user_id`,`group_id`,`created_at`,`updated_at`) 
 
-   SELECT `ug`.`uuidKey` AS `id`, `u2`.`id` AS `user_id`, `g`.`uuidKey` AS `group_id`,
-            `ug`.`created_at`,`ug`.`updated_at`
-   FROM `swascoussd`.`user_groups` AS `ug` 
-         JOIN `swascoussd`.`groups` AS `g` ON `g`.`id` = `ug`.`group_id`
-         JOIN `swascoussd`.`users` AS `u1` ON `u1`.`id` = `ug`.`user_id`
-         JOIN  `billpay_production`.`users`  AS `u2` ON `u2`.`username` = `u1`.`username`
-//
+      INSERT INTO `billpay_production`.`user_groups` 
+      (`id`,`user_id`,`group_id`,`created_at`,`updated_at`) 
+      
+      SELECT (SELECT uuid()) AS `id`, `id` AS `user_id`, 'fe77dfd2-77b5-11ee-b8ce-fec6e52a2330' AS `group_id`,
+         `created_at`,`updated_at`
+      FROM `billpay_production`.`users`
 
-//Group Rights
-   INSERT INTO `billpay_production`.`group_rights` 
-                  (`id`,`group_id`,`right_id`) 
-
-   SELECT uuid(), 'fe777b46-77b5-11ee-b8ce-fec6e52a2330' AS `group_id`, `id` AS `right_id`
-   FROM `billpay_production`.`rights` 
 //
 
 //Shortcut Customers

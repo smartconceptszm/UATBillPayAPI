@@ -1,0 +1,32 @@
+1951  cd swascomis/
+ 1952  ls -al
+ 1953  cd ..
+ 1954  ls -al
+ 1955  sudo chmod 777 swascomis/
+ 1956  ls -al
+ 1957  cd swascomis/
+ 1958  sudo rm -rf asset-manifest.json avatars/ favicon.ico index.html manifest.json static/
+ 1959  ls -al
+ 1960  cd ..
+ 1961  sudo chmod -R 755 swascomis/
+
+
+1692  chmod -R 775 storage
+ 1693  sudo chown -R $USER:www-data storage
+ 1694  chmod -R 775 storage
+
+
+ rsync -e "ssh -i SCLUSSDAPPSVRKeys.pem" -av /Users/brownkasaro/Desktop/OneDrive/sites/swascoadmin/build/* ubuntu@18.170.236.29:/var/www/html/swascomis
+
+
+ rsync -e "ssh -i SCLUSSDAPPSVRKeys.pem" -av ubuntu@18.170.236.29:/home/ubuntu/swascoussd_backup.sql /Users/brownkasaro/Downloads/ 
+
+
+
+ mariadb
+ 1863  mariadb -uroot -p1NV3R1T4S
+ 1864  mysqldump -u root -p swascoussd > swascoussd_backup.sql;
+
+ 1856  cd /var/www/swasco/
+ 1857  sudo chown -R $USER:www-data storage/
+ 1858  sudo chmod -R 775 storage/

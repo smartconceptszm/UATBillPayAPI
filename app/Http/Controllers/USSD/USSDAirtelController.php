@@ -14,10 +14,19 @@ class USSDAirtelController extends USSDController
       try {
          //Parse RequestParameters
             //"GET /lukanga/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=2106&SESSION_ID=16745872760811617&IS_NEW_REQUEST=1 HTTP/1.1" 200 5 "-" "Java/1.8.0_211"
-            $airtelParams['subscriberInput']=\strtoupper($request->input('SUBSCRIBER_INPUT'));
-            $airtelParams['isNewRequest']=$request->input('IS_NEW_REQUEST');
-            $airtelParams['sessionId']=$request->input('SESSION_ID');
-            $airtelParams['mobileNumber']=$request->input('MSISDN');
+            
+            //"GET /swasco/airtel?SUBSCRIBER_INPUT=5757&LANGUAGE=en&SESSION_ID=16318751934311429&MOBILE_NUMBER=260972116857&
+            //IS_NEW_REQUEST=1&USSD_MESSAGE=&SEQUENCE=&END_OF_SESSION=&FRA=&SERVICE_KEY
+            
+            $requestParams = $request->all();
+            $airtelParams['subscriberInput']=\strtoupper($requestParams['SUBSCRIBER_INPUT']);
+            $airtelParams['isNewRequest']=$requestParams['IS_NEW_REQUEST'];
+            $airtelParams['sessionId']=$requestParams['SESSION_ID'];
+            if(\array_key_exists('MSISDN',$requestParams)){
+               $airtelParams['mobileNumber']=$requestParams['MSISDN'];
+            }else{
+               $airtelParams['mobileNumber']=$requestParams['MOBILE_NUMBER'];
+            }
             $airtelParams['urlPrefix']=$this->getUrlPrefix($request);
             $airtelParams['mnoName'] = 'AIRTEL';
             $airtelParams['mno_id'] = $this->getMnoId($airtelParams['mnoName']); 
