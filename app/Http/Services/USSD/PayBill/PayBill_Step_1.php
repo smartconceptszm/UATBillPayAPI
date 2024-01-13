@@ -23,12 +23,16 @@ class PayBill_Step_1
          if($momoPaymentStatus['enabled']){
             $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix);
          }else{
-            $txDTO->response = $momoPaymentStatus['responseText'];
-            $txDTO->lastResponse = true;
+            throw new Exception($momoPaymentStatus['responseText'], 1);
          }
       } catch (Exception $e) {
-         $txDTO->error = 'Pay bill sub step 1. '.$e->getMessage();
-         $txDTO->errorType = 'SystemError';
+         if($e->getCode() == 1) {
+            $txDTO->error = $e->getMessage();
+            $txDTO->errorType = 'MoMoNotActivated';
+         }else{
+            $txDTO->error = 'Pay bill sub step 1. '.$e->getMessage();
+            $txDTO->errorType = 'SystemError';
+         }
       }
       return $txDTO;
       

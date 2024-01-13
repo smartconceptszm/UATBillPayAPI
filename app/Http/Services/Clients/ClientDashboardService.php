@@ -24,8 +24,11 @@ class ClientDashboardService
                   ['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                ->where('p.client_id', '=', $dto->client_id)
                ->whereDate('p.created_at', '>=', $dto->dateFrom)
-               ->whereDate('p.created_at', '<=', $dto->dateTo)
-               ->get();
+               ->whereDate('p.created_at', '<=', $dto->dateTo);
+            // $theSQLQuery = $thePayments->toSql();
+            // $theBindings = $thePayments-> getBindings();
+            // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
+            $thePayments = $thePayments->get();
 
             $groupedData = $thePayments->groupBy('district');
             $byDistrict=[];

@@ -36,12 +36,19 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                $txDTO = $this->existingSession($txDTO);
             }
          } catch (Exception $e) {
-            if($e->getCode() == 1){
-               $txDTO->error = $e->getMessage();
-               $txDTO->errorType = 'InvalidInput';
-            }else{
-               $txDTO->error = 'At identify menu. '.$e->getMessage();
-               $txDTO->errorType = 'SystemError';
+            switch ($e->getCode()) {
+               case 1:
+                  $txDTO->error = $e->getMessage();
+                  $txDTO->errorType = 'InvalidInput';
+                  break;
+               case 2:
+                  $txDTO->error = $e->getMessage();
+                  $txDTO->errorType = 'MoMoNotActivated';
+                  break;
+               default:
+                  $txDTO->error = 'At identify menu. '.$e->getMessage();
+                  $txDTO->errorType = 'SystemError';
+                  break;
             }
          }
       }
@@ -58,19 +65,16 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                               'client_id' => $txDTO->client_id,
                               'parent_id' =>'0'
                            ]);
-
-      if(\count(\explode("*", $txDTO->subscriberInput))>1){
-         $txDTO = $this->handleShortcut($txDTO, $selectedMenu);
-      }else{ 
-         $txDTO->billingClient = $selectedMenu->billingClient; 
-         $txDTO->isPayment = $selectedMenu->isPayment;
-         $txDTO->menuPrompt = $selectedMenu->prompt;
-         $txDTO->handler = $selectedMenu->handler; 
-         $txDTO->menu_id = $selectedMenu->id; 
-      }
-
+      $txDTO->billingClient = $selectedMenu->billingClient; 
+      $txDTO->isPayment = $selectedMenu->isPayment;
+      $txDTO->menuPrompt = $selectedMenu->prompt;
+      $txDTO->handler = $selectedMenu->handler; 
+      $txDTO->menu_id = $selectedMenu->id; 
       $ussdSession = $this->sessionService->create($txDTO->toSessionData());
       $txDTO->id = $ussdSession->id;
+      if(\count(\explode("*", $txDTO->subscriberInput))>1){
+         $txDTO = $this->handleShortcut($txDTO, $selectedMenu);
+      }
       return $txDTO;
 
    }
@@ -83,9 +87,9 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                      'mobileNumber' => $txDTO->mobileNumber,
                      'client_id' => $txDTO->client_id
                   ]);
-      if ($customer->accountNumber) { 
+      if ($customer) { 
          $selectedMenu = $this->clientMenuService->findOneBy([
-                              'order' => $txDTO->$arrInputs[1],
+                              'order' => $arrInputs[1],
                               'client_id' => $txDTO->client_id,
                               'parent_id' => $homeMenu->id,
                               'isActive' => "YES"
@@ -99,9 +103,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
             if($selectedMenu->isPayment == 'YES'){
                $momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
                if(!$momoPaymentStatus['enabled']){
-                  $txDTO->response = $momoPaymentStatus['responseText'];
-                  $txDTO->lastResponse= true;
-                  return $txDTO;
+                  throw new Exception($momoPaymentStatus['responseText'], 2);
                }
             }
             if (\count($arrInputs) == 2) {
@@ -111,6 +113,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
             }
             if (\count($arrInputs) == 3) {
                $txDTO->subscriberInput = $arrInputs[2];
+               $txDTO->accountNumber = $customer->accountNumber;
                $txDTO->customerJourney = $arrInputs[0] . "*" . $arrInputs[1] . "*" . $customer->accountNumber;
                return $txDTO;
             }
@@ -118,6 +121,11 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
       }
       $txDTO->subscriberInput = $arrInputs[0];
       $txDTO->customerJourney = '';
+      $txDTO->billingClient = $homeMenu->billingClient; 
+      $txDTO->isPayment = $homeMenu->isPayment;
+      $txDTO->menuPrompt = $homeMenu->prompt;
+      $txDTO->handler = $homeMenu->handler; 
+      $txDTO->menu_id = $homeMenu->id; 
       return $txDTO;
        
    }

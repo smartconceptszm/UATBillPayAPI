@@ -21,12 +21,16 @@ class PayBusLevy_Step_1
          if($momoPaymentStatus['enabled']){
             $txDTO->response = "Enter the Vehicle registration number and fleet number:\n";
          }else{
-            $txDTO->response = $momoPaymentStatus['responseText'];
-            $txDTO->lastResponse= true;
+            throw new Exception($momoPaymentStatus['responseText'], 1);
          }
       } catch (Exception $e) {
-         $txDTO->error = 'Pay Bus levy step 1. '.$e->getMessage();
-         $txDTO->errorType = 'SystemError';
+         if($e->getCode() == 1) {
+            $txDTO->error = $e->getMessage();
+            $txDTO->errorType = 'MoMoNotActivated';
+         }else{
+            $txDTO->error = 'Pay Bus levy step 1. '.$e->getMessage();
+            $txDTO->errorType = 'SystemError';
+         }
       }
       return $txDTO;
       

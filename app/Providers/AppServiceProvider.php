@@ -174,8 +174,8 @@ class AppServiceProvider extends ServiceProvider
          $this->app->singleton('SystemError', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\SystemError::class);
          });
-         $this->app->singleton('MoMoOffline', function () {
-            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\MoMoOffline::class);
+         $this->app->singleton('MoMoNotActivated', function () {
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\MoMoNotActivated::class);
          });
       //
 

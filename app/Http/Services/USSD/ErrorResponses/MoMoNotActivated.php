@@ -5,16 +5,17 @@ namespace App\Http\Services\USSD\ErrorResponses;
 use App\Http\Services\USSD\ErrorResponses\IErrorResponse;
 use App\Http\DTOs\BaseDTO;
 
-class MoMoOffline implements IErrorResponse
+class MoMoNotActivated implements IErrorResponse
 {
 
 	public function handle(BaseDTO $txDTO):BaseDTO
 	{
 
 		try {    
+			$txDTO->response = $txDTO->error;
 			$txDTO->lastResponse = true;
 		} catch (\Throwable $e) {
-			$txDTO->error = 'At Generate momo offline response. '.$e->getMessage();
+			$txDTO->error = 'At Generate momo Not Activated response. '.$e->getMessage();
 		}
 		return $txDTO;
 		

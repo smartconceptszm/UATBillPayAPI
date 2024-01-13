@@ -22,11 +22,14 @@
          SET `mnoId`='0fd6f718-730b-11ee-b8ce-fec6e52a2330'
          WHERE `id`>0 AND `mno_id`=2;
 
-         //MTN
+         //ZAMTEL
             UPDATE `sessions` 
             SET `mnoId`='0fd6f90c-730b-11ee-b8ce-fec6e52a2330'
             WHERE `id`>0 AND `mno_id`=3;
    //
+
+
+
    //Step 3 Introduce a field 'menuId' datatype to 'varchar'
       //Update the menuId field with keys for each of the Client_menus from the migrated (billpay_production.client_menus')client_menus table 
          
@@ -64,7 +67,7 @@
             `mobileNumber`, `accountNumber`,`district`,`paymentAmount`,
             `status`,`error`,`created_at`,`updated_at`) 
                      
-      SELECT `S1`.`uuidKey` AS `id`, `S1`.`client_id`, `S1`.`mnoId` AS `mno_id`,`S1`.`menuId` AS `menu_id`,
+      SELECT `S1`.`uuidKey` AS `id`, '39d62460-7303-11ee-b8ce-fec6e52a2330', `S1`.`mnoId` AS `mno_id`,`S1`.`menuId` AS `menu_id`,
                `S1`.`sessionId`, `S1`.`subscriberInput` AS `customerJourney`,
                `S1`.`mobileNumber`,
                `S1`.`accountNo` AS `accountNumber`,`S1`.`district`, 
@@ -89,7 +92,7 @@
       uuid(),`S1`.`client_id`,`S1`.`id` AS `session_id`,`S1`.`mno_id`,`S1`.`menu_id`,
       `S1`.`mobileNumber`,`S1`.`accountNumber`,`S1`.`district`,`S2`.`mnoTransactionId`,
       `S1`.`paymentAmount`, `S1`.`paymentAmount` AS `receiptAmount`, `S2`.`transactionId`, 
-      `S2`.`receiptNo` AS `receiptNumber`,`S2`.`receipt` AS `receipt`,
+      `S2`.`receiptNo` AS `receiptNumber`,`S2`.`receipt`,
       'USSD' AS `channel`,`S2`.`paymentStatus`, `S1`.`status`,`S1`.`error`,
       `S1`.`created_at`,`S1`.`updated_at`
    FROM `billpay_production`.`sessions` AS `S1`
@@ -97,7 +100,11 @@
    WHERE
       `S1`.`menu_id` IN ('8a2d6998-7306-11ee-b8ce-fec6e52a2330') 
             AND `S1`.`paymentAmount` > 0  AND `S1`.`accountNumber` IS NOT NULL
+
 //
+
+
+
 
 //Groups/Roles Table
 
@@ -122,20 +129,24 @@
             `created_at`,`updated_at`
    FROM `efectivobillpay`.`users` where `mobileNumber` IS NOT NULL
 
+
 //
 
 //Users groups
-   UPDATE `efectivobillpay`.`user_groups` SET uuidKey = (SELECT uuid());
+
+
 
    INSERT INTO `billpay_production`.`user_groups` 
-                  (`id`,`user_id`,`group_id`,`created_at`,`updated_at`) 
+   (`id`,`user_id`,`group_id`,`created_at`,`updated_at`) 
+   
+   SELECT (SELECT uuid()) AS `id`, `id` AS `user_id`, 'c6a3b4bc-805e-11ee-b045-d310d7089dfe' AS `group_id`,
+      `created_at`,`updated_at`
 
-   SELECT `ug`.`uuidKey` AS `id`, `u2`.`id` AS `user_id`, `g`.`uuidKey` AS `group_id`,
-            `ug`.`created_at`,`ug`.`updated_at`
-   FROM `efectivobillpay`.`user_groups` AS `ug` 
-         JOIN `efectivobillpay`.`groups` AS `g` ON `g`.`id` = `ug`.`group_id`
-         JOIN `efectivobillpay`.`users` AS `u1` ON `u1`.`id` = `ug`.`user_id`
-         JOIN  `billpay_production`.`users`  AS `u2` ON `u2`.`username` = `u1`.`username`
+   FROM `billpay_production`.`users` 
+   WHERE `client_id` = '39d62460-7303-11ee-b8ce-fec6e52a2330'
+
+
+
 //
 
 //Group Rights

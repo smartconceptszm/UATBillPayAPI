@@ -15,8 +15,8 @@ return new class extends Migration
       Schema::create('sessions', function (Blueprint $table) {
          $table->uuid('id')->primary();
          $table->uuid('client_id')->notNullable();
-         $table->uuid('mno_id')->nullable();
-         $table->uuid('menu_id')->nullable();
+         $table->uuid('mno_id')->notNullable();
+         $table->uuid('menu_id')->notNullable();
          $table->string('sessionId',50)->notNullable();
          $table->text('customerJourney')->nullable();
          $table->string('mobileNumber',12)->notNullable();

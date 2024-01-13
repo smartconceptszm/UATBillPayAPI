@@ -24,9 +24,7 @@ class ParentMenu implements IUSSDMenu
 				if($txDTO->isPayment=='YES'){
 					$momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
 					if(!$momoPaymentStatus['enabled']){
-						$txDTO->response = $momoPaymentStatus['responseText'];
-						$txDTO->lastResponse = true;
-						return $txDTO;
+						throw new Exception($momoPaymentStatus['responseText'], 1);
 					}
 				}
 				$menus = $this->clientMenuService->findAll([
@@ -41,8 +39,13 @@ class ParentMenu implements IUSSDMenu
 				$prompt .= "\n";
 				$txDTO->response = $prompt;
 			} catch (Exception $e) {
-					$txDTO->error = 'At handle new session. '.$e->getMessage();
+				if($e->getCode() == 1) {
+					$txDTO->error = $e->getMessage();
+					$txDTO->errorType = 'MoMoNotActivated';
+				}else{
+					$txDTO->error = 'At handle parent menu. '.$e->getMessage();
 					$txDTO->errorType = 'SystemError';
+				}
 			}  
 		} 
 		return $txDTO;

@@ -14,7 +14,7 @@ return new class extends Migration
       Schema::create('payments', function (Blueprint $table) {
          $table->uuid('id')->primary();
          $table->uuid('client_id')->notNullable();
-         $table->uuid('session_id')->nullable();
+         $table->uuid('session_id')->notNullable();
          $table->uuid('mno_id')->notNullable();
          $table->uuid('menu_id')->notNullable();
          $table->string('mobileNumber',12)->notNullable();

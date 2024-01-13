@@ -78,13 +78,8 @@ class CheckBalance_Step_3
          $txDTO->error = 'Invalid selection';
          $txDTO->errorType= "InvalidInput";
       } catch (Exception $e) {
-         if($e->getCode() == 1){
-            $txDTO->error = $e->getMessage();
-            $txDTO->errorType = 'MoMoOffline';
-         }else{
-            $txDTO->error = 'At check balance step 3. '.$e->getMessage();
-            $txDTO->errorType = 'SystemError';
-         }
+         $txDTO->error = 'At check balance step 3. '.$e->getMessage();
+         $txDTO->errorType = 'SystemError';
       }
       return $txDTO;
    }
