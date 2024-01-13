@@ -194,3 +194,25 @@ FROM `swascoussd`.`sessions` AS `S1`
          `AccountNo` AS `accountNumber`, `created_at`,`updated_at`
    FROM `swascoussd`.`customers`
 //
+
+
+
+INSERT INTO `billpay_production`.`users` 
+   (`id`,`client_id`,`username`,`password`,`fullnames`,`mobileNumber`,`email`,`status`) 
+
+   SELECT '9b0d773c-2ecd-485d-8862-b4a6d741178f' AS `id`, 
+            '39d5f26a-7303-11ee-b8ce-fec6e52a2330' AS `client_id`,
+            'brown' AS`username`,
+            '$2y$10$a1LDaF9UudtM/g2GhdLlEOzN5OWMUnhcUHpt.M719L5bE7CBxtG5e' AS `password`,
+            'Brown Kasaro' AS `fullnames`,
+            '260977787659' AS `mobileNumber`,
+            'brown.kasaro@gmail.com' AS `email`,
+            'brown.kasaro@gmail.com' AS `status`
+
+
+   INSERT INTO `billpay_production`.`user_groups` 
+   (`id`,`user_id`,`group_id`) 
+   
+   SELECT (SELECT uuid()) AS `id`, 
+   '9b0d773c-2ecd-485d-8862-b4a6d741178f' AS `user_id`, 
+   '3272de4a-ae16-11ee-819f-02da41b4c6c1' AS `group_id`

@@ -31,12 +31,13 @@ class LukangaServiceProvider extends ServiceProvider
                                           'trace' => 1,
                                           'connection_timeout' => \env('LUKANGA_SOAP_CONNECTION_TIMEOUT')
                                        ]),
-                              \env('LUKANGA_SOAP_USERNAME'),
-                              \env('LUKANGA_SOAP_PASSWORD'),
-                              \env('LUKANGA_SOAP_TOKEN'),
-                              \env('LUKANGA_SOAP_OPERATOR')
-                           );
+                     \env('LUKANGA_SOAP_USERNAME'),
+                     \env('LUKANGA_SOAP_PASSWORD'),
+                     \env('LUKANGA_SOAP_TOKEN'),
+                     \env('LUKANGA_SOAP_OPERATOR')
+                  );
          });
+
          $this->app->singleton('ReceiptPaymentLukanga', function () {
             return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPaymentLukanga::class);
          });

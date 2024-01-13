@@ -6,6 +6,7 @@ abstract class BaseDTO
 {
    
    public $id;
+   public $exitPipeline = false;
    public $validationRules;
    
    public function toArray(): array

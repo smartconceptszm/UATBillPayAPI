@@ -9,6 +9,9 @@ abstract class EfectivoPipelineContract
 
     public function handle(BaseDTO $txDTO, Closure $next)
     {
+        if($txDTO->exitPipeline){
+            return $txDTO;
+        }
         return $next($this->stepProcess($txDTO));
     }
     protected abstract function stepProcess(BaseDTO $txDTO);

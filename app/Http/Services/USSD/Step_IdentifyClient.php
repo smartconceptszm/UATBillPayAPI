@@ -27,13 +27,15 @@ class Step_IdentifyClient extends EfectivoPipelineContract
             
             if($client->mode != 'UP'){
                $txDTO->error = 'System in Maintenance Mode';
-               $txDTO->errorType = "MaintenanceMode";
-               return $txDTO;
+               $txDTO->response = \env('MODE_MESSAGE');
+               $txDTO->exitPipeline = true;
+               $txDTO->lastResponse = true;
             }
             if($client->status != 'ACTIVE'){
+               $txDTO->response=\env('BLOCKED_MESSAGE')." ".\strtoupper($txDTO->urlPrefix);
                $txDTO->error = 'Client is blocked';
-               $txDTO->errorType = "ClientBlocked";
-               return $txDTO;
+               $txDTO->lastResponse = true;
+               $txDTO->exitPipeline = true;
             }
          } catch (Exception $e) {
             $txDTO->error = 'At identify client step. '.$e->getMessage();

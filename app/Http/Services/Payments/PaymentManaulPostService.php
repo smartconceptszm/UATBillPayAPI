@@ -65,9 +65,16 @@ class PaymentManaulPostService
                      ]
                   )
                   ->thenReturn();
-         $response = (object)[
+         if($momoDTO->error==''){
+            $response = (object)[
                      'data' => $momoDTO->receipt   
                ];
+         }else{
+            $response = (object)[
+               'data' => $momoDTO->error   
+         ];
+         }
+
       } catch (Exception $e) {
          throw new Exception($e->getMessage());
       }

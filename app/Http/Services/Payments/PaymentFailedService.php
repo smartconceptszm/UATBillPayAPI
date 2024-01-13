@@ -3,11 +3,11 @@
 namespace App\Http\Services\Payments;
 
 use App\Http\Services\Payments\PaymentToReviewService;
-use Illuminate\Support\Facades\Queue;
-use App\Jobs\ReConfirmMoMoPaymentJob;
+use App\Http\Services\Clients\ClientMenuService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
+use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\MoMoDTO;
 use Exception;
 
@@ -16,6 +16,7 @@ class PaymentFailedService
 
    public function __construct(
       private PaymentToReviewService $paymentToReviewService,
+      private ClientMenuService $clientMenuService,
       private MoMoDTO $momoDTO)
    {}
 
@@ -70,10 +71,66 @@ class PaymentFailedService
          $user = Auth::user(); 
          $momoDTO->user_id = $user->id;
          $momoDTO->error = "";
-         Queue::later(Carbon::now()->addMinutes((int)\env('PAYMENT_REVIEW_DELAY')),
-                                                new ReConfirmMoMoPaymentJob($momoDTO));
-         return 'Payment of ZMW '.$momoDTO->paymentAmount." on Account ".
-                        $momoDTO->accountNumber." submitted for review. Check status after a short while";
+
+         //Bind the MoMoClient
+            $momoClient = $momoDTO->mnoName;
+            if(\env("MOBILEMONEY_USE_MOCK") == 'YES'){
+               $momoClient = 'MoMoMock';
+            }
+            App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,$momoClient);
+         //
+
+         //Bind the billing client
+            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$momoDTO->billingClient;
+            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
+         //
+   
+         //Bind Receipting Handler
+            $theMenu = $this->clientMenuService->findById($momoDTO->menu_id);
+            $receiptingHandler = $theMenu->receiptingHandler;
+            if (\env('USE_RECEIPTING_MOCK') == "YES"){
+               $receiptingHandler = "MockReceipting";
+            }
+            App::bind(\App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment::class,$receiptingHandler);
+         //
+   
+         //Bind the SMS Client
+            $smsClient = '';
+            if(!$smsClient && (\env('SMS_SEND_USE_MOCK') == "YES")){
+                  $smsClient = 'MockSMSDelivery';
+            }
+            if(!$smsClient && \env($momoDTO->mnoName.'_HAS_FREESMS') == "YES"){
+                  $smsClient = $momoDTO->mnoName.'DeliverySMS';
+            }
+            if(!$smsClient && (\env(\strtoupper($momoDTO->urlPrefix).'_HAS_OWNSMS') == 'YES')){
+                  $smsClient = \strtoupper($momoDTO->urlPrefix).'SMS';
+            }
+            if(!$smsClient){
+                  $smsClient = \env('SMPP_CHANNEL');
+            }
+            App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClient);
+         //
+         
+         //Reconfirm/Review the payment Transaction
+            $momoDTO =  App::make(Pipeline::class)
+                  ->send($momoDTO)
+                  ->through(
+                     [
+                        \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
+                        \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
+                        \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
+                        \App\Http\Services\MoMo\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
+                        \App\Http\Services\MoMo\Utility\Step_UpdateTransaction::class,  
+                        \App\Http\Services\MoMo\Utility\Step_LogStatus::class 
+                     ]
+                  )
+                  ->thenReturn();
+            if($momoDTO->error==''){
+               $logMessage = $momoDTO->receipt;
+            }else{
+               $logMessage = $momoDTO->error;
+            }
+            return $logMessage;
       } catch (Exception $e) {
          throw new Exception($e->getMessage());
       }
