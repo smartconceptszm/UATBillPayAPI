@@ -19,7 +19,11 @@ class UserService
    public function findAll(array $criteria = null):array|null
    {
       try {
-         return $this->model->where($criteria)->get()->all();
+         if($criteria){
+            return $this->model->where($criteria)->get()->all();
+         }else{
+            return $this->model->get()->all();
+         }
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

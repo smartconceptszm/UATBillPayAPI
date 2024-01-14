@@ -15,7 +15,11 @@ class ClientMenuService
    public function findAll(array $criteria = null):array|null
    {
       try {
-         return $this->model->where($criteria)->orderBy('order')->get()->all();
+         if($criteria){
+            return $this->model->where($criteria)->orderBy('order')->get()->all();
+         }else{
+            return $this->model->get()->all();
+         }
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
