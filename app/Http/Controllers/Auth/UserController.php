@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Services\Auth\UserService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -29,6 +30,7 @@ class UserController extends Controller
 	{
 
 		try {
+			Log::info('(EFECTIVO)  '.\json_encode($request->all()));
 			$this->response['data'] = $this->theService->findAll($request->all());
 		} catch (\Throwable $e) {
 				$this->response['status']['code'] = 500;
@@ -95,6 +97,7 @@ class UserController extends Controller
 	{
 
 		try {
+
 			$this->response['data'] = $this->theService->update($request->all(),$id);
 		} catch (\Exception $e) {
 			$this->response['status']['code'] = 500;
