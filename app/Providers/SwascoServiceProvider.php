@@ -106,7 +106,7 @@ class SwascoServiceProvider extends ServiceProvider
 
 		//SMS Clients
 			$this->app->singleton('SWASCOSMS', function () {
-				return $this->app->make( \App\Http\Services\External\SMSClients\SwascoSMS::class);
+				return $this->app->make(\App\Http\Services\External\SMSClients\SwascoSMS::class);
 			});
 		//
 

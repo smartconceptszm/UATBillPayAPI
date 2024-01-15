@@ -210,7 +210,7 @@ class AppServiceProvider extends ServiceProvider
       //
 
       //Scheduled Task Classes
-         $this->app->bind(RetryFailedTrasactions::class, function () {
+         $this->app->bind('RetryFailedTrasactions', function () {
             return $this->app->make(\App\Http\ScheduledTasks\RetryFailedTrasactions::class);
          });
       //

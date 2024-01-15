@@ -2,6 +2,8 @@
 
 namespace App\Http\Services\External\BillingClients;
 
+
+use App\Http\Services\External\BillingClients\LukangaSoapService;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use App\Http\Services\Utility\XMLtoArrayParser;
 use Illuminate\Support\Facades\Cache;
@@ -9,17 +11,17 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use Exception;
 
-class Lukanga implements IBillingClient
+class LukangaOld implements IBillingClient
 {
 
-    private XMLtoArrayParser $xmlToArrayParser;
-    private $lukangaSoapService;
-    private string $soapUserName;
-    private string $soapPassword;
-    private string $soapToken;
-    private string $operator;
-
-    public function __construct()
+    public function __construct(
+        private XMLtoArrayParser $xmlToArrayParser,
+        private LukangaSoapService $lukangaSoapService,
+        private string $soapUserName, 
+        private string $soapPassword,
+        private string $soapToken, 
+        private string $operator,
+        )
     {}
 
     public function getAccountDetails(string $accountNumber): array
@@ -28,8 +30,6 @@ class Lukanga implements IBillingClient
         $response = [];
 
         try {
-
-            $this->setConfigs();
 
             if(!(\strlen($accountNumber)==10 || \strlen($accountNumber)==11)){
                 throw new Exception("Invalid Account Number",1);
@@ -142,7 +142,6 @@ class Lukanga implements IBillingClient
             ];
 
         try {
-            $this->setConfigs();
             $cashierNo = \env('LUKANGA_'.'soapCashierNo_'.$postParams['mnoName']);
             $receiptingParams=[ 
                 'functionName' => 'updatepreceipts',
@@ -207,29 +206,5 @@ class Lukanga implements IBillingClient
 
         return $response;
     }
-
-
-    private function setConfigs()
-    {
-       
-        $wsdlPath = \env("LUKANGA_BASE_URL").\env("LUKANGA_wsdl_URI");
-        $soapOptions =  [
-                                'exceptions' => true,
-                                'cache_wsdl' => WSDL_CACHE_BOTH,
-                                'soap_version' => SOAP_1_1,
-                                'trace' => 1,
-                                'connection_timeout' => \env('LUKANGA_SOAP_CONNECTION_TIMEOUT')
-                            ];
-        $this->lukangaSoapService = new \SoapClient($wsdlPath,$soapOptions);
-        $this->lukangaSoapService->__setLocation(\env("LUKANGA_BASE_URL"));
-
-        $this->soapUserName = \env('LUKANGA_SOAP_USERNAME');
-        $this->soapPassword = \env('LUKANGA_SOAP_PASSWORD');
-        $this->soapToken = \env('LUKANGA_SOAP_TOKEN');
-        $this->operator = \env('LUKANGA_SOAP_OPERATOR');
-        $this->xmlToArrayParser = new XMLtoArrayParser();
-        
-    }
-
 
 }

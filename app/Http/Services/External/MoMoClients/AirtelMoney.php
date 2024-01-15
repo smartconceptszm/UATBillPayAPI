@@ -77,6 +77,7 @@ class AirtelMoney implements IMoMoClient
                throw new Exception("Error on collect funds. Response status details not available.", 2);
             }
          } else {
+            
             throw new Exception("Error on collect funds. Airtel Money responded with Status Code " . 
                                     $airtelResponse->status().".", 2);
          }

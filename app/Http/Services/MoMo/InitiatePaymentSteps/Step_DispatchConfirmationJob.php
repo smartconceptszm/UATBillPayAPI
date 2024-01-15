@@ -23,13 +23,13 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
                (int)\env($momoDTO->mnoName.'_PAYSTATUS_CHECK')),
                                     new ConfirmMoMoPaymentJob($momoDTO));
          }else if($momoDTO->mnoResponse){
-            if((\strpos($momoDTO->mnoResponse['error'],'on collect funds'))
-                     || (\strpos($momoDTO->mnoResponse['error'],"Status Code"))
-                     || (\strpos($momoDTO->mnoResponse['error'],'API Get Token error')))
+            if((\strpos($momoDTO->error,'on collect funds'))
+                     || (\strpos($momoDTO->error,"Status Code"))
+                     || (\strpos($momoDTO->error,'API Get Token error')))
             {
                Queue::later(Carbon::now()->addMinutes((int)\env('PAYMENT_REVIEW_DELAY')),
                            new ReConfirmMoMoPaymentJob($momoDTO));
-               if(\strlen($momoDTO->mnoResponse['error'])>65){
+               if(\strlen($momoDTO->error)>65){
                      $momoDTO->error="Error on collect funds. ".$momoDTO->mnoName. " not reachable.";
                }
             }

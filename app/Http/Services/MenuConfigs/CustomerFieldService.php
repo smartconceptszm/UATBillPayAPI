@@ -15,11 +15,7 @@ class CustomerFieldService
    public function findAll(array $criteria = null):array|null
    {
       try {
-         if($criteria){
-            return $this->model->where($criteria)->get()->all();
-         }else{
-            return $this->model->get()->all();
-         }
+         return $this->model->where($criteria)->get()->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

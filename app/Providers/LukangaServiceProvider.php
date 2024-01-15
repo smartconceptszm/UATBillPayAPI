@@ -20,27 +20,32 @@ class LukangaServiceProvider extends ServiceProvider
 
       //Billing Clients
          $this->app->singleton('lukanga', function () {
-            return new \App\Http\Services\External\BillingClients\Lukanga(
-                  new \App\Http\Services\Utility\XMLtoArrayParser(),
-                  new \App\Http\Services\External\BillingClients\LukangaSoapService(
-                              \env('LUKANGA_BASE_URL').\env('LUKANGA_WSDL_URI'),
-                                       [
-                                          'exceptions' => true,
-                                          'cache_wsdl' => WSDL_CACHE_BOTH,
-                                          'soap_version' => SOAP_1_1,
-                                          'trace' => 1,
-                                          'connection_timeout' => \env('LUKANGA_SOAP_CONNECTION_TIMEOUT')
-                                       ]),
-                     \env('LUKANGA_SOAP_USERNAME'),
-                     \env('LUKANGA_SOAP_PASSWORD'),
-                     \env('LUKANGA_SOAP_TOKEN'),
-                     \env('LUKANGA_SOAP_OPERATOR')
-                  );
+            return new \App\Http\Services\External\BillingClients\Lukanga();
          });
 
          $this->app->singleton('ReceiptPaymentLukanga', function () {
             return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPaymentLukanga::class);
          });
+
+
+         // $this->app->singleton('lukanga', function () {
+         //    return new \App\Http\Services\External\BillingClients\Lukanga(
+         //          new \App\Http\Services\Utility\XMLtoArrayParser(),
+         //          new \App\Http\Services\External\BillingClients\LukangaSoapService(
+         //                      \env('LUKANGA_BASE_URL').\env('LUKANGA_WSDL_URI'),
+         //                               [
+         //                                  'exceptions' => true,
+         //                                  'cache_wsdl' => WSDL_CACHE_BOTH,
+         //                                  'soap_version' => SOAP_1_1,
+         //                                  'trace' => 1,
+         //                                  'connection_timeout' => \env('LUKANGA_SOAP_CONNECTION_TIMEOUT')
+         //                               ]),
+         //             \env('LUKANGA_SOAP_USERNAME'),
+         //             \env('LUKANGA_SOAP_PASSWORD'),
+         //             \env('LUKANGA_SOAP_TOKEN'),
+         //             \env('LUKANGA_SOAP_OPERATOR')
+         //          );
+         // });
          
       //
       

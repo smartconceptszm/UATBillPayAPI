@@ -81,7 +81,7 @@ class Swasco implements IBillingClient
       "LIV"=>"LIVINGSTONE",
       "MAG"=>"MAGOYE",
       "MAZ"=>"MAZABUKA",
-      "MAB"=>"MAAMBA",
+      "MAM"=>"MAAMBA",
       "MBL"=>"MBABALA",
       "MUN"=>"MUNYUMBWE",
       "MZE"=>"MONZE",

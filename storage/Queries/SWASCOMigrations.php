@@ -67,7 +67,7 @@
          UPDATE `sessions` SET district = "LIVINGSTONE" WHERE `id`>0 and SUBSTRING(`swascoAccountNo`, 1, 3)='LIV';
          UPDATE `sessions` SET district = "MAGOYE" WHERE `id`>0 and SUBSTRING(`swascoAccountNo`, 1, 3)='MAG';
          UPDATE `sessions`  SET district = "MAZABUKA" WHERE `id`>0 and SUBSTRING(`swascoAccountNo`, 1, 3)='MAZ';
-         UPDATE `sessions` SET district = "MAAMBA" WHERE `id`>0 and SUBSTRING(`swascoAccountNo`, 1, 3)='MAB';
+         UPDATE `billpay_production` SET district = "MAAMBA" WHERE `client_id` = '39d6269a-7303-11ee-b8ce-fec6e52a2330' and SUBSTRING(`accountNumber`, 1, 3)='MAM';
          UPDATE `sessions`  SET district = "MBABALA"  WHERE `id`>0 and SUBSTRING(`swascoAccountNo`, 1, 3)='MBL';
          UPDATE `sessions` SET district = "MUNYUMBWE"  WHERE `id`>0 and SUBSTRING(`swascoAccountNo`, 1, 3)='MUN';
          UPDATE `sessions` SET district = "MONZE"  WHERE `id`>0 and SUBSTRING(`swascoAccountNo`, 1, 3)='MZE';

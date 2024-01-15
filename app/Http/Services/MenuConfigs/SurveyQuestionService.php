@@ -15,11 +15,7 @@ class SurveyQuestionService
    public function findAll(array $criteria = null):array|null
    {
       try {
-         if($criteria){
-            return $this->model->where($criteria)->orderBy('order')->get()->all();
-         }else{
-            return $this->model->orderBy('order')->get()->all();
-         }
+         return $this->model->where($criteria)->orderBy('order')->get()->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
