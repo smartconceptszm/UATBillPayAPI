@@ -48,7 +48,7 @@ class ReceiptPaymentLukanga implements IReceiptPayment
 				$momoDTO->receipt = $this->formatReceipt($momoDTO->receiptNumber
 												,$momoDTO->receiptAmount,$momoDTO->accountNumber);
 		}else{
-				$momoDTO['error'] = "At post payment. ".$billingResponse['error'];
+				$momoDTO->error = "At post payment. ".$billingResponse['error'];
 		}
 		return $momoDTO;
 		
