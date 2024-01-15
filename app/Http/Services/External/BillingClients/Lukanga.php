@@ -143,7 +143,8 @@ class Lukanga implements IBillingClient
 
         try {
             $this->setConfigs();
-            $cashierNo = \env('LUKANGA_'.'soapCashierNo_'.$postParams['mnoName']);
+            $cashierNo = \env('LUKANGA_'.'SOAP_CASHIER_NO_'.$postParams['mnoName']);
+            
             $receiptingParams=[ 
                 'functionName' => 'updatepreceipts',
                 'rdusername' => $this->soapUserName,
