@@ -60,7 +60,9 @@ class SMSMessageBulkCustomService
          $data['type'] = 'BULKCUSTOM';
          $data['user_id'] = $user->id;
          $bulkSMS = $this->model->create($data);
+
          $chunkedArr = \array_chunk($data['mobileNumbers'],15,false);
+         
          foreach ($chunkedArr as $mobileNumbersArr) {
             $arrSMSes=[];
             foreach ($mobileNumbersArr as $key => $value) {

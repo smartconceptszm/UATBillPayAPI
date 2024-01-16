@@ -44,7 +44,7 @@ class SendSMSesJob extends BaseJob
       foreach ($this->arrSMSes as $smsData) {
          $smsService->send($smsTxDTO->fromArray($smsData));
          if($smsData['type'] != "RECEIPT"){
-            $client = $clientService->findById($smsData['id']);
+            $client = $clientService->findById($smsData['client_id']);
             Log::info('('.$client->urlPrefix.') '.
                            'SMS Message Dispatched: Phone: '.
                               $smsData['mobileNumber'].' - :Type '.
