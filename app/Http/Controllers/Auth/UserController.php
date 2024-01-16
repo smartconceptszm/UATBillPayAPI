@@ -30,8 +30,8 @@ class UserController extends Controller
 	{
 
 		try {
-			Log::info('(EFECTIVO)  '.\json_encode($request->all()));
-			$this->response['data'] = $this->theService->findAll($request->all());
+			Log::info('(EFECTIVO)  '.\json_encode($request->query()));
+			$this->response['data'] = $this->theService->findAll($request->query());
 		} catch (\Throwable $e) {
 				$this->response['status']['code'] = 500;
 				$this->response['status']['message'] = $e->getMessage();
