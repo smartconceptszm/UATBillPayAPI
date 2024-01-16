@@ -20,11 +20,9 @@ class RemoveUriFromRequestParameters
     {
 
         $requestUrlArr = \explode("/",$request->url());
-        $uri = $requestUrlArr[\count($requestUrlArr)-1];
+        $uri = "/".$requestUrlArr[\count($requestUrlArr)-1];
         $requestParameters = $request->all();
-        Log::info('(EFECTIVO middleware Request URI:) '.$uri);
-        Log::info('(EFECTIVO middleware Params 1:) '.\json_encode($requestParameters));
-        if(\key_exists($uri,$requestParameters) && substr($uri,0,1) == "/"){
+        if(\key_exists($uri,$requestParameters)){
             unset($request[$uri]);
             Log::info('(EFECTIVO params at middleware 2:) '.\json_encode($request->query()));
         }
