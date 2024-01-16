@@ -72,7 +72,7 @@ class SMSMessageBulkService
                                  'type'=>$bulkSMS->type
                            ];
             }
-            Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes, $user->urlPrefix));
+            Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes,''));
          }
          return (object)["description" => "Messages successfully submitted"];
       } catch (Exception $e) {
