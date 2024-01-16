@@ -24,7 +24,6 @@ class RemoveUriFromRequestParameters
         $requestParameters = $request->all();
         if(\key_exists($uri,$requestParameters)){
             unset($request[$uri]);
-            Log::info('(EFECTIVO params at middleware 2:) '.\json_encode($request->query()));
         }
         return $next($request);
         

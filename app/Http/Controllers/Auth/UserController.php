@@ -30,7 +30,6 @@ class UserController extends Controller
 	{
 
 		try {
-			// Log::info('(EFECTIVO querry params)  '.\json_encode($request->query()));
 			$this->response['data'] = $this->theService->findAll($request->query());
 		} catch (\Throwable $e) {
 				$this->response['status']['code'] = 500;
