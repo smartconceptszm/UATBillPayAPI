@@ -19,11 +19,10 @@ class RemoveUriFromRequestParameters
     public function handle($request, Closure $next)
     {
 
-        $requestUrlArr = \explode("/",$request->url());
-        $uri = "/".$requestUrlArr[\count($requestUrlArr)-1];
+        $theURIKey='/'.$request->path();
         $requestParameters = $request->all();
-        if(\key_exists($uri,$requestParameters)){
-            unset($request[$uri]);
+        if(\key_exists($theURIKey,$requestParameters)){
+            unset($request[$theURIKey]);
         }
         return $next($request);
         
