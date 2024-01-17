@@ -22,7 +22,7 @@ class StepService_AddShotcutMessage
 							'client_id'=>$momoDTO->client_id,
 							'mobileNumber'=>$momoDTO->mobileNumber
 						]);
-			if ($customer->count() == 0) {
+			if ($customer) {
 				//Create Record
 				$this->shortcutCustomerService->create([
 						'client_id'=> $momoDTO->client_id,
