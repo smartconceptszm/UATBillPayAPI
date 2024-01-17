@@ -86,7 +86,7 @@ class SMSService
          $client = $this->clientService->findById($dto->client_id);
          $dto->urlPrefix = $client->urlPrefix;
       }else{
-         $client = $this->clientService->findOneBy($dto->urlPrefix);
+         $client = $this->clientService->findOneBy(['shortName'=>$dto->shortName]);
          $dto->client_id = $client->id;
       }
       $dto->smsPayMode = $client->smsPayMode;

@@ -47,11 +47,12 @@ class GetCustomerAccount
 								$adminMobileNumbers=\array_merge($adminMobileNumbers,$clientMobileNumbers);
 								$arrSMSes=[];
 								foreach ($adminMobileNumbers as $key => $mobileNumber) {
-									$arrSMSes[$key]['mobileNumber']=$mobileNumber;
-									$arrSMSes[$key]['type']="NOTIFICATION";
-									$arrSMSes[$key]['urlPrefix']=$txDTO->urlPrefix;
 									$arrSMSes[$key]['message']=\strtoupper($txDTO->urlPrefix).
 												" billing system is currently offline - please check the service.";
+									$arrSMSes[$key]['urlPrefix']=$txDTO->urlPrefix;
+									$arrSMSes[$key]['mobileNumber']=$mobileNumber;
+									$arrSMSes[$key]['client_id']=$txDTO->client_id;
+									$arrSMSes[$key]['type']="NOTIFICATION";
 								}
 								Queue::later(Carbon::now()->addSeconds(1), 
 													new SendSMSesJob($arrSMSes));

@@ -79,7 +79,7 @@ class HttpCallErrorsLogger
                   $adminMobileNumbers = \explode("*",\env('APP_ADMIN_MSISDN'));
                   $arrSMSes=[];
                   foreach ($adminMobileNumbers as $key => $mobileNumber) {
-                        $arrSMSes[$key]['clientShortName']="SCL";
+                        $arrSMSes[$key]['shortName']="SCL";
                         $arrSMSes[$key]['mobileNumber']=$mobileNumber;
                         $arrSMSes[$key]['message']="Http calls to ".$errorType
                                                    ." have failed over 5 times in the last ".
