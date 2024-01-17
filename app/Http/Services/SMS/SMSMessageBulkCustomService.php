@@ -40,7 +40,7 @@ class SMSMessageBulkCustomService
    public function findById(string $id) : object|null {
       try {
          return $this->model->findOrFail($id);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -48,7 +48,7 @@ class SMSMessageBulkCustomService
    public function findOneBy(array $criteria) : object|null {
       try {
          return $this->model->where($criteria)->first();
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -77,7 +77,7 @@ class SMSMessageBulkCustomService
             Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes,''));
          }
          return (object)["description" => "Messages successfully submitted"];
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 
@@ -102,7 +102,7 @@ class SMSMessageBulkCustomService
             $record->save();
          }
          return $record;
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 
@@ -111,7 +111,7 @@ class SMSMessageBulkCustomService
    public function delete(string $id) : bool{
       try {
          return $this->model->where('id', $id)->delete();
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 

@@ -15,7 +15,7 @@ class ReconnectionFeesSwasco_Step_3
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->accountNumber =  $txDTO->subscriberInput;
          $txDTO->response = "Enter Amount :\n";
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->errorType = 'SystemError';
          $txDTO->error='At pay reconnection fees step 3. '.$e->getMessage();
       }

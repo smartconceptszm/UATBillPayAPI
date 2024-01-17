@@ -25,7 +25,7 @@ class SessionsOfClientSummaryService
 										->orderBy('mno', 'asc')
 										->get();
 			return $records->all();
-		} catch (Exception $e) {
+		} catch (\Throwable $e) {
 			throw new Exception($e->getMessage());
 		} 
 

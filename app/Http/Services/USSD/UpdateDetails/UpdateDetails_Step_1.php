@@ -18,7 +18,7 @@ class UpdateDetails_Step_1
       
       try {
          $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->error = 'Update details step 1. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }

@@ -27,7 +27,7 @@ class GroupService
    public function findById(string $id) : object|null {
       try {
          return $this->model->findOrFail($id);
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -35,7 +35,7 @@ class GroupService
    public function findOneBy(array $criteria) : object|null {
       try {
          return $this->model->where($criteria)->first();
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -50,7 +50,7 @@ class GroupService
          $user = Auth::user(); 
          $data['client_id'] = $user->client_id;
         return $this->model->create($data);
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -74,7 +74,7 @@ class GroupService
             $record->save();
          }
          return $record;
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 
@@ -90,7 +90,7 @@ class GroupService
          }
 
          return $this->model->where('id', $id)->delete();
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }

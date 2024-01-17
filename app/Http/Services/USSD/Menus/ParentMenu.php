@@ -38,7 +38,7 @@ class ParentMenu implements IUSSDMenu
 				}
 				$prompt .= "\n";
 				$txDTO->response = $prompt;
-			} catch (Exception $e) {
+			} catch (\Throwable $e) {
 				if($e->getCode() == 1) {
 					$txDTO->error = $e->getMessage();
 					$txDTO->errorType = 'MoMoNotActivated';

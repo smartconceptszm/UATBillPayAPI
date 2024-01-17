@@ -27,7 +27,7 @@ class FaultsComplaints implements IUSSDMenu
             }
             $stepHandler = App::make('FaultsComplaints_Step_'.\count(\explode("*", $txDTO->customerJourney)));
             $txDTO = $stepHandler->run($txDTO);
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             $txDTO->error = 'At handle faults and complaints menu. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';
          }

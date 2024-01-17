@@ -21,7 +21,7 @@ class ReconnectionFeesSwasco implements IUSSDMenu
             }
             $stepHandler = App::make('ReconnectionFeesSwasco_Step_'.\count(\explode("*", $txDTO->customerJourney)));
             $txDTO = $stepHandler->run($txDTO);
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             $txDTO->error='At pay reconnection fees menu. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';
          }

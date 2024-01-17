@@ -13,7 +13,7 @@ class XMLtoArrayParser
 			$xml = \simplexml_load_string($xmlData, "SimpleXMLElement", LIBXML_NOCDATA);
 			$json = \json_encode($xml);
 			return \json_decode($json,TRUE);
-		} catch (Exception $e) {
+		} catch (\Throwable $e) {
 			throw new Exception("XML Parsing error: ".$e->getMessage());
 		}
 	}

@@ -38,7 +38,7 @@ class BatchPaymentReceiptService
          } else {
             return (object)['data' => 'No records found!'];
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 

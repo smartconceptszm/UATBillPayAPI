@@ -21,7 +21,7 @@ class Step_UpdateTransaction extends EfectivoPipelineContract
          if($momoDTO->id){
             $this->paymentService->update($momoDTO->toPaymentData(),$momoDTO->id);
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $momoDTO->error='At updating payment record. '.$e->getMessage();
       }
       return $momoDTO;

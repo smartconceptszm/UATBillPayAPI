@@ -69,7 +69,7 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 				if ((($momoDTO->mobileNumber == $customer['mobileNumber']) && ($momoDTO->channel == 'USSD'))){
 					try {
 						$momoDTO = $this->addShotcutMessage->handle($momoDTO);
-					} catch (Exception $e) {
+					} catch (\Throwable $e) {
 						Log::error('('.$momoDTO->urlPrefix.'). '.$e->getMessage().
 							'- Session: '.$momoDTO->sessionId.' - Phone: '.$momoDTO->mobileNumber);
 					}

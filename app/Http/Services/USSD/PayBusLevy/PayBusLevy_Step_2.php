@@ -15,7 +15,7 @@ class PayBusLevy_Step_2
          $txDTO->reference = $txDTO->subscriberInput;
          $txDTO->accountNumber = $txDTO->mobileNumber;
          $txDTO->response = "Enter Amount :\n";
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->error = 'Pay Bus levy step 2. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }

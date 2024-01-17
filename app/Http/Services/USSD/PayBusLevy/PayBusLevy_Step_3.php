@@ -24,7 +24,7 @@ class PayBusLevy_Step_3
          [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
          $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
          $txDTO->reference = $arrCustomerJourney[2];
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode()==1){
             $txDTO->errorType = 'InvalidAmount';
          }else{

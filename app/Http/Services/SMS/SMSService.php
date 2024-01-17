@@ -48,13 +48,13 @@ class SMSService
                $this->clientService->update(['balance'=>$dto->balance],$dto->client_id);
             }
             DB::commit();
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             DB::rollBack();
             throw new Exception($e->getMessage());
          }
          $dto->status = $sms->status;
          $dto->id = $sms->id;
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $dto->error = $e->getMessage();
          }else{
@@ -73,7 +73,7 @@ class SMSService
          foreach ($arrSMSes as $smsData) {
             $this->send($this->smsTxDTO->fromArray($smsData));
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          # code...
       }
 

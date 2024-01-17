@@ -45,7 +45,7 @@ class CheckBalance_Step_2
 				$txDTO->response .= "2. Payments history\n";
 				$txDTO->response .= "0. Back";  
 				$txDTO->status = 'COMPLETED';
-			} catch (Exception $e) {
+			} catch (\Throwable $e) {
 					$txDTO->error = 'At check balance step 2. '.$e->getMessage();
 					$txDTO->errorType = 'SystemError';
 			}

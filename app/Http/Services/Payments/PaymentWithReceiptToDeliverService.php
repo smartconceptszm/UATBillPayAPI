@@ -62,7 +62,7 @@ class PaymentWithReceiptToDeliverService
                         )
                         ->thenReturn();
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
       return $momoDTO->receipt;

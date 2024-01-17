@@ -28,7 +28,7 @@ class UpdateDetails_Step_3
                   }));
          $customerField = $customerField[0];  
          $txDTO->response = $customerField->prompt;
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = 'InvalidInput';
          }else{

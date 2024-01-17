@@ -33,7 +33,7 @@ class Step_SendReceiptViaSMS extends EfectivoPipelineContract
                $momoDTO->paymentStatus = "RECEIPT DELIVERED";
             }
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $momoDTO->error='At receipt via sms. '.$e->getMessage();
       }
       return $momoDTO;

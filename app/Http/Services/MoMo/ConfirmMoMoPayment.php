@@ -30,7 +30,7 @@ class ConfirmMoMoPayment
                   ]
                )
                ->thenReturn();
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $momoDTO->error='At get confirm payment pipeline. '.$e->getMessage();
          Log::info($momoDTO->error);
       }

@@ -23,7 +23,7 @@ class UpdateDetails_Swasco implements IUpdateDetailsClient
                      "phoneNumber" => $detailsData['mobileNumber'],
                      'newMobileNo' => $detailsData['updates'][1]
                   ]);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception('At post updated customer details. '.$e->getMessage());
       }                                             
 

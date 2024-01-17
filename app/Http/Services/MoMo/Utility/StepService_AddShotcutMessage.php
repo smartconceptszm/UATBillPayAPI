@@ -34,7 +34,7 @@ class StepService_AddShotcutMessage
 			$arrCustomerJourney= \explode("*", $momoDTO->customerJourney);
 			$momoDTO->receipt .= "Dial *".$arrCustomerJourney[0]."*".
 										$arrCustomerJourney[1]."*(amount)# to pay";
-		} catch (Exception $e) {
+		} catch (\Throwable $e) {
 			throw new Exception("Shotcut message not added! ".$e->getMessage());
 		}
 		return $momoDTO;

@@ -21,7 +21,7 @@ class SwascoUpdateMobile implements IUSSDMenu
             }
             $stepHandler = App::make('SwascoUpdateMobile_Step_'.\count(\explode("*", $txDTO->customerJourney)));
             $txDTO = $stepHandler->run($txDTO);
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             $txDTO->error = 'At handle customer field update menu. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';
          }

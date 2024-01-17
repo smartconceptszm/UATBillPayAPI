@@ -34,7 +34,7 @@ class WebPaymentController extends Controller
 
       try {
          $this->response['data'] = $theService->getCustomer($accountNumber, $this->urlPrefix);
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
       }
@@ -55,7 +55,7 @@ class WebPaymentController extends Controller
          $params['urlPrefix'] = $this->urlPrefix;
          $params['channel'] = 'WEBSITE';
          $this->response['data'] = $theService->initiateWebPayement($params);
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
       }

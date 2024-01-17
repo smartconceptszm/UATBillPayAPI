@@ -34,7 +34,7 @@ class PaymentToReviewService
                }
             )->values();
          return $providerErrors->all();
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       } 
 
@@ -52,7 +52,7 @@ class PaymentToReviewService
                                  'cm.billingClient','c.urlPrefix','m.name as mnoName')
                      ->where('p.id', '=', $id)
                      ->first();
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       } 
 

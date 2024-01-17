@@ -40,7 +40,7 @@ class ServiceApplications_Step_3
                      }));
             $applicationQuestion = $applicationQuestion[0];  
             $txDTO->response = $applicationQuestion->prompt;
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             if($e->getCode() == 1){
                $txDTO->errorType = 'InvalidAccount';
             }else{

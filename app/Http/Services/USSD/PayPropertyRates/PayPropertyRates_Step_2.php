@@ -15,7 +15,7 @@ class PayPropertyRates_Step_2
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->accountNumber = $txDTO->subscriberInput;
          $txDTO->response = "Enter Amount :\n";
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->error = 'Pay property rates sub step 2. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }

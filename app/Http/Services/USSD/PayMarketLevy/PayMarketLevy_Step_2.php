@@ -15,7 +15,7 @@ class PayMarketLevy_Step_2
          $txDTO->reference = $txDTO->subscriberInput;
          $txDTO->accountNumber = $txDTO->mobileNumber;
          $txDTO->response = "Enter Amount :\n";
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->error = 'Pay market levy step 2. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }

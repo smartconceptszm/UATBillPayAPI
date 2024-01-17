@@ -35,7 +35,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
             }else{
                $txDTO = $this->existingSession($txDTO);
             }
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             switch ($e->getCode()) {
                case 1:
                   $txDTO->error = $e->getMessage();

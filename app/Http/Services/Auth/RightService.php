@@ -24,7 +24,7 @@ public function findAll(array $criteria = null):array|null
 public function findById(string $id) : object|null {
    try {
       return $this->model->findOrFail($id);
-   } catch (\Exception $e) {
+   } catch (\Throwable $e) {
       throw new Exception($e->getMessage());
    }
 }
@@ -32,7 +32,7 @@ public function findById(string $id) : object|null {
 public function findOneBy(array $criteria) : object|null {
    try {
       return $this->model->where($criteria)->first();
-   } catch (\Exception $e) {
+   } catch (\Throwable $e) {
       throw new Exception($e->getMessage());
    }
 }
@@ -45,7 +45,7 @@ public function create(array $data) : object|null {
          }
       }
      return $this->model->create($data);
-   } catch (\Exception $e) {
+   } catch (\Throwable $e) {
       throw new Exception($e->getMessage());
    }
 }
@@ -69,7 +69,7 @@ public function update(array $data, string $id) : object|null {
          $record->save();
       }
       return $record;
-   } catch (\Exception $e) {
+   } catch (\Throwable $e) {
       throw new Exception($e->getMessage());
    }
 
@@ -78,7 +78,7 @@ public function update(array $data, string $id) : object|null {
 public function delete(string $id) : bool{
    try {
       return $this->model->where('id', $id)->delete();
-   } catch (\Exception $e) {
+   } catch (\Throwable $e) {
       throw new Exception($e->getMessage());
    }
 

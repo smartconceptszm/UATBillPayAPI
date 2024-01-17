@@ -13,7 +13,7 @@ class VacuumTankerSwasco_Step_3
       
       try {
          $txDTO->response = "Enter Amount :\n";
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->errorType = 'SystemError';
          $txDTO->error='At pay for vacuum tanker step 3. '.$e->getMessage();
       }

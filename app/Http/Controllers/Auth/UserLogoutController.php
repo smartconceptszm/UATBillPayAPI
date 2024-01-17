@@ -21,7 +21,7 @@ class UserLogoutController  extends Controller
 		
 		try {
 			$this->response['data'] = $this->theService->delete();
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			$this->response['status']['code'] = 500;
 			$this->response['status']['message'] = $e->getMessage();
 		}

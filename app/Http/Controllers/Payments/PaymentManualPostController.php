@@ -27,7 +27,7 @@ class PaymentManualPostController extends Controller
          $response = $this->theService->create($request->all());
          $this->response['data'] = $response->data;
 
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
       }

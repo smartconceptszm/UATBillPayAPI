@@ -77,7 +77,7 @@ class CheckBalance_Step_3
          $txDTO->accountNumber = $arrCustomerJourney[2];
          $txDTO->error = 'Invalid selection';
          $txDTO->errorType= "InvalidInput";
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->error = 'At check balance step 3. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }

@@ -24,7 +24,7 @@ class BuyUnits_Step_3
 
       try {
          [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode()==1){
             $txDTO->errorType = 'InvalidAmount';
          }else{
@@ -37,7 +37,7 @@ class BuyUnits_Step_3
       try {
          $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
          $txDTO->district = $txDTO->customer['district'];
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
             if($e->getCode()==1){
                $txDTO->errorType = 'InvalidAccount';
             }else{

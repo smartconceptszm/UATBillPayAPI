@@ -39,7 +39,7 @@ class PaymentFailedBatchService
          $response = (object)[
                               'data' => \count($thePayments).' payments submitted for review. Check status after a while'      
                            ];
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
       return $response;

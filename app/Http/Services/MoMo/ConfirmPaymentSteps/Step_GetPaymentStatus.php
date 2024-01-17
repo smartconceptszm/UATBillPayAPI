@@ -28,7 +28,7 @@ class Step_GetPaymentStatus extends EfectivoPipelineContract
                $momoDTO->error = $momoDTO->mnoName." response: PENDING";
             }
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $momoDTO->error='At get payment status pipeline step. '.$e->getMessage();
       }
       return  $momoDTO;

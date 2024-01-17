@@ -57,7 +57,7 @@ class Lukanga implements IBillingClient
 
             try {
                 $customerBalance = $this->xmlToArrayParser->handle($apiResponse->promunResponse);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 throw new Exception("Error extracting (getdebtbal) XML response. Details: ".$e->getMessage(),2);
             }
 
@@ -100,7 +100,7 @@ class Lukanga implements IBillingClient
 
             try {
                 $theCustomer = $this->xmlToArrayParser->handle($apiResponse->promunResponse);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 throw new Exception("Error extracting (getdebstatic) XML response. Details: ".$e->getMessage(),2);
             }
 
@@ -118,7 +118,7 @@ class Lukanga implements IBillingClient
                 "balance" => \number_format($theBalance, 2, '.', ','),
             ];
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($e->getCode() == 1) {
                 throw new Exception($e->getMessage(), 1);
             } 
@@ -168,7 +168,7 @@ class Lukanga implements IBillingClient
             
             try {
                 $theReceipt = $this->xmlToArrayParser->handle($apiResponse->promunResponse);
-            } catch (Exception $e) {
+            } catch (\Throwable $e) {
                 Log::error(' Lukanga Billing Client (updatepreceipts  for account number '.$postParams['account'].'): '.$apiResponse->promunError);
                 throw new Exception(" Lukanga Billing Client (XML response extraction) error. Details: ".$e->getMessage(),1);
             }
@@ -186,7 +186,7 @@ class Lukanga implements IBillingClient
             Cache::put('lukanga_balance_'.$postParams['account'],\json_encode($cacheValues), 
                 Carbon::now()->addMinutes($cacheTTL));
 
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             if ($e->getCode() == 1) {
                 $response['error']=$e->getMessage();
             } else{

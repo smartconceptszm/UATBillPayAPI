@@ -49,7 +49,7 @@ class Survey_Local implements ISurveyClient
                                     ]);
             }
             DB::commit();
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             DB::rollBack();
             throw new Exception($e->getMessage());
          }
@@ -62,7 +62,7 @@ class Survey_Local implements ISurveyClient
          //                   'type' => 'NOTIFICATION',
          //                ]);
 
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception('Error at  create survey entry. '.$e->getMessage());
       }
       return  $response;                                            

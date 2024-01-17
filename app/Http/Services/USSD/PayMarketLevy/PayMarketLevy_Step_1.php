@@ -23,7 +23,7 @@ class PayMarketLevy_Step_1
          }else{
             throw new Exception($momoPaymentStatus['responseText'], 1);
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode() == 1) {
             $txDTO->error = $e->getMessage();
             $txDTO->errorType = 'MoMoNotActivated';

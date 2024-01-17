@@ -16,7 +16,7 @@ class VacuumTankerSwasco_Step_2
          $txDTO->customer['accountNumber'] = '320008';
          $txDTO->customer['name'] = 'Vacuum Tanker Pit Emptying';
          $txDTO->response = "Enter Physical Address:\n";
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode()==1){
             $txDTO->errorType = "InvalidInput";
          }else{

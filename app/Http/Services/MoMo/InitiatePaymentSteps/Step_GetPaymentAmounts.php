@@ -24,7 +24,7 @@ class Step_GetPaymentAmounts extends EfectivoPipelineContract
             $momoDTO->receiptAmount = $calculatedAmounts['receiptAmount'];
             $momoDTO->paymentAmount = $calculatedAmounts['paymentAmount'];
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $momoDTO->error='At Calculate Payment Amounts. '.$e->getMessage();
       }
       return $momoDTO;

@@ -24,7 +24,7 @@ class UpdateDetails implements IUSSDMenu
             }
             $stepHandler = App::make('UpdateDetails_Step_'.\count(\explode("*", $txDTO->customerJourney)));
             $txDTO = $stepHandler->run($txDTO);
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             $txDTO->error = 'At handle customer field update menu. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';
          }

@@ -27,7 +27,7 @@ class ComplaintSubTypeService
    public function findById(string $id) : object|null {
       try {
          return $this->model->findOrFail($id);
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -35,7 +35,7 @@ class ComplaintSubTypeService
    public function findOneBy(array $criteria) : object|null {
       try {
          return $this->model->where($criteria)->first();
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -48,7 +48,7 @@ class ComplaintSubTypeService
             }
          }
         return $this->model->create($data);
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -72,7 +72,7 @@ class ComplaintSubTypeService
             $record->save();
          }
          return $record;
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 
@@ -87,7 +87,7 @@ class ComplaintSubTypeService
          }else{
             return $this->model->where('id', $id)->delete();
          }
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 

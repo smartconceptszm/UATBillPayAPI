@@ -29,7 +29,7 @@ class InitiateMoMoPayment
             ]
          )
          ->thenReturn();
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $momoDTO->error='At get initiate payment pipeline. '.$e->getMessage();
          Log::info($momoDTO->error);
       }

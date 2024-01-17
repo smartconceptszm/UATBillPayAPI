@@ -24,7 +24,7 @@ class PayBill_Step_3
 
       try {
          [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode()==1){
             $txDTO->errorType = 'InvalidAmount';
          }else{

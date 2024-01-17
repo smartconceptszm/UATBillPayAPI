@@ -46,7 +46,7 @@ class ServiceApplications_Step_2
                $txDTO->subscriberInput = " - ";
             }
 
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             if($e->getCode()==1){
                $txDTO->errorType = "InvalidInput";
             }else{

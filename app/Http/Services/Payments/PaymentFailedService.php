@@ -57,7 +57,7 @@ class PaymentFailedService
                'providerErrors' => $providerErrors,
             ];
 
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 
@@ -131,7 +131,7 @@ class PaymentFailedService
                $logMessage = $momoDTO->error;
             }
             return $logMessage;
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
       

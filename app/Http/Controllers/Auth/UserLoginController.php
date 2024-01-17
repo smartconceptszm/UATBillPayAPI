@@ -22,7 +22,7 @@ class UserLoginController  extends Controller
          $this->validate($request, $this->dto->validationRules);
          $this->dto = $this->dto->fromArray($request->all());
          $this->response['data'] = $this->theService->create($this->dto);
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
       }

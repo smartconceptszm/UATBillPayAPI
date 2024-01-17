@@ -34,7 +34,7 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
                }
             }
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $momoDTO->error='At dispatching confirmation job. '.$e->getMessage();
       }
       return $momoDTO;

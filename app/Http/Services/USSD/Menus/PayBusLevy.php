@@ -20,7 +20,7 @@ class PayBusLevy implements IUSSDMenu
          }
          $stepHandler = App::make('PayBusLevy_Step_'.\count(\explode("*", $txDTO->customerJourney)));
          $txDTO = $stepHandler->run($txDTO);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->error = 'At Bus levy steps. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }

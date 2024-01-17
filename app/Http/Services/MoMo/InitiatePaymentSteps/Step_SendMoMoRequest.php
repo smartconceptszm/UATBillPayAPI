@@ -25,7 +25,7 @@ class Step_SendMoMoRequest extends EfectivoPipelineContract
             $momoDTO->error = $mnoResponse->error;
             $momoDTO->mnoResponse = $mnoResponse;
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $momoDTO->error='At send momo request. '.$e->getMessage();
       }
       return $momoDTO;

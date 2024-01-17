@@ -30,7 +30,7 @@ class PaymentSessionService
          }
          $records = $records->orderByDesc('s.created_at');
          return $records->get()->all();
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 

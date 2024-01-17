@@ -24,7 +24,7 @@ class ClientService
    public function findById(string $id) : object|null {
       try {
          return $this->model->findOrFail($id);
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -32,7 +32,7 @@ class ClientService
    public function findOneBy(array $criteria) : object|null {
       try {
          return $this->model->where($criteria)->first();
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -45,7 +45,7 @@ class ClientService
             }
          }
         return $this->model->create($data);
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -68,7 +68,7 @@ class ClientService
             $record->save();
          }
          return $record;
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 
@@ -77,7 +77,7 @@ class ClientService
    public function delete(string $id) : bool{
       try {
          return $this->model->where('id', $id)->delete();
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 

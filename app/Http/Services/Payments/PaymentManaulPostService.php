@@ -75,7 +75,7 @@ class PaymentManaulPostService
          ];
          }
 
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
       return $response;

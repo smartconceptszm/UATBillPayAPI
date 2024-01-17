@@ -31,7 +31,7 @@ class WebPaymentService
                                              'urlPrefix'=>$urlPrefix
                                           ]);
          return $this->getCustomerAccount->handle($momoDTO);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 
@@ -46,7 +46,7 @@ class WebPaymentService
          $momoDTO = $this->getMNO($momoDTO);
          Queue::later(Carbon::now()->addSeconds((int)\env($momoDTO->mnoName.
                      '_SUBMIT_PAYMENT')), new InitiateMoMoPaymentJob($momoDTO));
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
       return \strtoupper($momoDTO->urlPrefix)." Payment request submitted to ".$momoDTO->mnoName.
@@ -77,7 +77,7 @@ class WebPaymentService
          $mno = $this->mnoService->findById($momoDTO->mno_id);               
          $momoDTO->mnoName = $mno->name;
          return $momoDTO;
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 

@@ -26,7 +26,7 @@ class MessageService
 			$data['user_id'] = $user->id;
 			Queue::later(Carbon::now()->addSeconds(1),new SendSMSesJob([$data],$user->urlPrefix));
          return 'Message submitted';
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 
@@ -44,7 +44,7 @@ class MessageService
    public function findById(string $id) : object|null {
       try {
          return $this->model->findOrFail($id);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -52,7 +52,7 @@ class MessageService
    public function findOneBy(array $criteria) : object|null {
       try {
          return $this->model->where($criteria)->first();
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -65,7 +65,7 @@ class MessageService
             }
          }
         return $this->model->create($data);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -89,7 +89,7 @@ class MessageService
             $record->save();
          }
          return $record;
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 
@@ -98,7 +98,7 @@ class MessageService
    public function delete(string $id) : bool{
       try {
          return $this->model->where('id', $id)->delete();
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 

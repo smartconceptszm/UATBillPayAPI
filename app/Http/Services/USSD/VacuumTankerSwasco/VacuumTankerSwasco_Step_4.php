@@ -20,7 +20,7 @@ class VacuumTankerSwasco_Step_4
          $customerJourney = \explode("*", $txDTO->customerJourney);
          try {
             [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             if($e->getCode()==1){
                $txDTO->errorType = 'InvalidAmount';
             }else{
@@ -36,7 +36,7 @@ class VacuumTankerSwasco_Step_4
          $txDTO->response .= "\nEnter\n" .
                               "1. Confirm\n" .
                               "0. Back";    
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->errorType = 'SystemError';
          $txDTO->error = "At pay for vacuum tanker step 4: ".$e->getMessage();
       }

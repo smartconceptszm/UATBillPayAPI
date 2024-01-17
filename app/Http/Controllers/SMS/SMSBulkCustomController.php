@@ -32,7 +32,7 @@ class SMSBulkCustomController extends Controller
 			$this->validate($request, $this->validationRules);
 			$this->response['data'] = $this->theService->create($request->all());
 
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			$this->response['status']['code'] = 500;
 			$this->response['status']['message'] = $e->getMessage();
 		}

@@ -25,7 +25,7 @@ class Step_SaveSession extends EfectivoPipelineContract
 			}
 			$txDTO->error = $txDTO->error? \substr($txDTO->error,0,255):'';
 			$this->sessionService->update($txDTO->toSessionData(),$txDTO->id);
-		} catch (Exception $e) {
+		} catch (\Throwable $e) {
 			$txDTO->error='At save session. '.$e->getMessage();
 			if(!$txDTO->error){
 				$txDTO->response = \env('ERROR_MESSAGE');

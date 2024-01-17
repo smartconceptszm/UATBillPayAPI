@@ -37,7 +37,7 @@ class Step_IdentifyClient extends EfectivoPipelineContract
                $txDTO->lastResponse = true;
                $txDTO->exitPipeline = true;
             }
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             $txDTO->error = 'At identify client step. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';
          }

@@ -48,7 +48,7 @@ class ReConfirmMoMoPayment
                         ]
                      )
                      ->thenReturn();
-      } catch (Exception $e){
+      } catch (\Throwable $e){
          Log::error("At re-confirm payment job. " . $e->getMessage() . ' - Session: ' . $momoDTO->sessionId);
       }
       return $momoDTO;

@@ -39,7 +39,7 @@ class Step_LogStatus extends EfectivoPipelineContract
 					.$momoDTO->paymentStatus.' (via '.$momoDTO->mnoName.'). Transaction ID = '.$momoDTO->transactionId.
 					'- Session: '.$momoDTO->sessionId.'- Channel: '.$momoDTO->channel.' - Phone: '.$momoDTO->mobileNumber);
 			}
-		} catch (Exception $e) {
+		} catch (\Throwable $e) {
 			$momoDTO->error='At logging transaction. '.$e->getMessage();
 		}
 

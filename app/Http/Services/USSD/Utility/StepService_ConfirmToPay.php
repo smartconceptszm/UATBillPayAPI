@@ -24,7 +24,7 @@ class StepService_ConfirmToPay
             }
             throw new Exception("Invalid confirmation", 1);
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode()==1){
             $txDTO->errorType = 'InvalidConfirmation';
          }else{

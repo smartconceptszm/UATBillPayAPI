@@ -27,7 +27,7 @@ class Step_CheckReceiptStatus extends EfectivoPipelineContract
 					$momoDTO->error = 'Payment already receipted - Session: '.$momoDTO->sessionId; 
 				}
 			}
-		} catch (Exception $e) {
+		} catch (\Throwable $e) {
 			$momoDTO->error='At check payment receipt status. '.$e->getMessage();
 		}
 		return $momoDTO;

@@ -37,7 +37,7 @@ class UpdateDetails_Step_2
                         ]);                    
          Cache::put($txDTO->sessionId."handleBack",$cacheValue, 
                Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = 'InvalidAccount';
          }else{

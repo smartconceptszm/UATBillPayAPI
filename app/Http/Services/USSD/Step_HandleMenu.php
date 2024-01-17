@@ -36,7 +36,7 @@ class Step_HandleMenu extends EfectivoPipelineContract
 				}
 				$txDTO = $this->ussdMenu->handle($txDTO);   
 			}
-		} catch (Exception $e) {
+		} catch (\Throwable $e) {
 			$txDTO->error = 'At handle menu option. '.$e->getMessage();
 			$txDTO->errorType = 'SystemError';
 		}

@@ -20,7 +20,7 @@ class PayMarketLevy implements IUSSDMenu
          }
          $stepHandler = App::make('PayMarketLevy_Step_'.\count(\explode("*", $txDTO->customerJourney)));
          $txDTO = $stepHandler->run($txDTO);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->error = 'At market levy steps. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }

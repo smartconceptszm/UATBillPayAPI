@@ -28,7 +28,7 @@ class UserService
    public function findById(string $id) : object|null {
       try {
          return $this->model->findOrFail($id);
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -36,7 +36,7 @@ class UserService
    public function findOneBy(array $criteria) : object|null {
       try {
          return $this->model->where($criteria)->first();
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -69,12 +69,12 @@ class UserService
                   );
             }
             DB::commit();
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
                DB::rollBack();
                throw new Exception($e->getMessage());
          }
         return $user;
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 
@@ -109,7 +109,7 @@ class UserService
             $record->save();
          }
          return $record;
-      } catch (\Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
 

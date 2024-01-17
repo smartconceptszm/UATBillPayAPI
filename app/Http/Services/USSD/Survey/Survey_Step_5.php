@@ -98,7 +98,7 @@ class Survey_Step_5
             $txDTO->customerJourney =\implode("*", $arrCustomerJourney);
          }
 
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = 'InvalidSurveyResponse';
             Cache::forget($txDTO->sessionId."SurveyResponses");

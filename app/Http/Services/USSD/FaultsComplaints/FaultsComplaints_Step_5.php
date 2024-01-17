@@ -68,7 +68,7 @@ class FaultsComplaints_Step_5
          $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".$caseNumber; 
          $txDTO->status='COMPLETED'; 
          
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->error = 'At complaints step 5. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }                                             

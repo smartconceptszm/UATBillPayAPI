@@ -34,7 +34,7 @@ class FaultsComplaints_Step_4
                   ]); 
          $txDTO->subscriberInput = $this->validateInput->handle($theSubType->detailType,$txDTO->subscriberInput);
          $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = 'InvalidInput';
          }else{

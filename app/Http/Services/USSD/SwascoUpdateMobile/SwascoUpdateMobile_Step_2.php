@@ -27,7 +27,7 @@ class SwascoUpdateMobile_Step_2
          "Current Mobile: ".$txDTO->customer['mobileNumber']."\n\n".
          "Enter the new Mobile No. e.g (095xxxxxxx)";
 
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = 'InvalidAccount';
          }else{

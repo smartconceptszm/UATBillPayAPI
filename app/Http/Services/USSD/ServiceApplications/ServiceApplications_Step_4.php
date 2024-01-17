@@ -74,7 +74,7 @@ class ServiceApplications_Step_4
                                              \array_pop($arrCustomerJourney);
                $txDTO->customerJourney =\implode("*", $arrCustomerJourney);
             }
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             if($e->getCode() == 1){
                $txDTO->errorType = 'InvalidInput';
             }else{

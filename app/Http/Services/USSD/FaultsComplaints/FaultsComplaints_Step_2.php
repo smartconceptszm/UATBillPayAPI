@@ -38,7 +38,7 @@ class FaultsComplaints_Step_2
          }else{
             throw new Exception("Complaint sub types not found", 1);
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = "InvalidInput";
          }else{

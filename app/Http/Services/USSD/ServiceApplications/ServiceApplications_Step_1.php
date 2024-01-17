@@ -24,7 +24,7 @@ class ServiceApplications_Step_1
                   $stringMenu.=$utilityService->order.'. '.$utilityService->name."\n";
                }
                $txDTO->response=$stringMenu; 
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
                $txDTO->error='At service application step 1. '.$e->getMessage();
                $txDTO->errorType = 'SystemError';
          }

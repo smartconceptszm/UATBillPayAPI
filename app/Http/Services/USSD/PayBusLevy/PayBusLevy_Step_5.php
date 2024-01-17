@@ -15,7 +15,7 @@ class PayBusLevy_Step_5
             $txDTO->error="Duplicated request from ".$txDTO->mnoName.
                                     " with input: ".$txDTO->subscriberInput; 
             $txDTO->errorType = 'SystemError';
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             $txDTO->error = 'Bus levy step 5. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';
          }

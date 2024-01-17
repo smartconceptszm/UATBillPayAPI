@@ -21,7 +21,7 @@ class ReconnectionFeesSwasco_Step_4
       try{
          try {
             [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             if($e->getCode()==1){
                $txDTO->errorType = 'InvalidAmount';
             }else{
@@ -33,7 +33,7 @@ class ReconnectionFeesSwasco_Step_4
          try {
             $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
             $txDTO->district = $txDTO->customer['district'];
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             if($e->getCode() == 1){
                $txDTO->errorType = 'InvalidAccount';
             }else{
@@ -49,7 +49,7 @@ class ReconnectionFeesSwasco_Step_4
          $txDTO->response .= "\nEnter\n" .
                               "1. Confirm\n" .
                               "0. Back";    
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->errorType = 'SystemError';
          $txDTO->error = "At pay reconnection fees step 4: ".$e->getMessage();
       }

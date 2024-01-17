@@ -38,11 +38,11 @@ class UpdateDetails_Local implements IUpdateDetailsClient
                      ]);
                }
                DB::commit();
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
                DB::rollBack();
                throw new Exception($e->getMessage());
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception('Error at  Cupdate details local. '.$e->getMessage());
       }
       return $updateTicket->caseNumber;                                           

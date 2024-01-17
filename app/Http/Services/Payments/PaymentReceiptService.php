@@ -77,7 +77,7 @@ class PaymentReceiptService
                            ]
                         )
                         ->thenReturn();
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
       return $momoDTO;
@@ -126,7 +126,7 @@ class PaymentReceiptService
                         ]
                      )
                      ->thenReturn();
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
       return $momoDTO;

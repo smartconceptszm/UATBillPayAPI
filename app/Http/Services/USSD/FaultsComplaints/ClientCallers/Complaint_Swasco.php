@@ -22,7 +22,7 @@ class Complaint_Swasco implements IComplaintClient
                               'complaintCode' => $complaintData['complaintCode'],
                               'mobileNumber' => $complaintData['mobileNumber']
                            ]);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception('At Post customer complaint. '.$e->getMessage());
       }                                             
 

@@ -50,7 +50,7 @@ class Survey_Step_3
          }else{
             throw new Exception("No active surveys", 2);
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = 'InvalidInput';
          }else{

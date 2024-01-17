@@ -23,7 +23,7 @@ class Step_CreatePaymentRecord extends EfectivoPipelineContract
             $momoDTO->id = $payment->status;
             $momoDTO->id = $payment->id;
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if(\substr($e->getMessage(),0,8) == "SQLSTATE"){
             $momoDTO->error = 'Duplicate initiate payment job. Session_id = '.$momoDTO->session_id.". Details: ".$e->getMessage();
          }else{

@@ -31,7 +31,7 @@ class GetCustomerAccount
 							Carbon::now()->addMinutes(intval(\env('CUSTOMER_ACCOUNT_CACHE'))));
 				Cache::forget($txDTO->urlPrefix.'_BillingErrorCount');
 			}
-		} catch (Exception $e) {
+		} catch (\Throwable $e) {
 
 			if($e->getCode()==1){
 					throw new Exception("Customer account not found", 1);

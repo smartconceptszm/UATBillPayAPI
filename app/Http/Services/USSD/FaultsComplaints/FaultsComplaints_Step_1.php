@@ -23,7 +23,7 @@ class FaultsComplaints_Step_1
             $stringMenu.=$complaintType->order.'. '.$complaintType->name."\n";
          }
          $txDTO->response=$stringMenu; 
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->error='At complaints step 1. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }

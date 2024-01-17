@@ -43,11 +43,11 @@ class ServiceApplication_Local implements IServiceApplicationClient
                                     ]);
             }
             DB::commit();
-         } catch (Exception $e) {
+         } catch (\Throwable $e) {
             DB::rollBack();
             throw new Exception($e->getMessage());
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          throw new Exception('Error at  service application. '.$e->getMessage());
       }
       return $serviceTicket->caseNumber;                                             

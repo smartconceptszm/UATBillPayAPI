@@ -17,7 +17,7 @@ class UserLogoutService
 		try {
 			Auth::logout();
 			return true;
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			throw new Exception($e->getMessage());
 		}
 

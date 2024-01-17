@@ -26,7 +26,7 @@ class Step_DispatchReConfirmationJob extends EfectivoPipelineContract
          }else{
             $momoDTO->status = "REVIEWED";
          }
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $momoDTO->error='At dispatching confirmation job. '.$e->getMessage();
       }
       return $momoDTO;

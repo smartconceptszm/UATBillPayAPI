@@ -31,7 +31,7 @@ class SwascoUpdateMobile_Step_3
          $txDTO->lastResponse = true;
          $txDTO->status='COMPLETED';
 
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = 'InvalidInput';
          }else{

@@ -45,7 +45,7 @@ class FaultsComplaints_Step_3
             $txDTO->subscriberInput = " - ";
          }
 
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = "InvalidInput";
          }else{

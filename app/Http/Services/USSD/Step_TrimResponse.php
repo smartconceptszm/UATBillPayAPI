@@ -21,7 +21,7 @@ class Step_TrimResponse extends EfectivoPipelineContract
 				}else{
 					Cache::forget($txDTO->sessionId."handleNext");
 				}
-			} catch (Exception $e) {
+			} catch (\Throwable $e) {
 				$txDTO->error = 'At trim response. '.$e->getMessage();
 				$txDTO->errorType = 'SystemError';
 			}

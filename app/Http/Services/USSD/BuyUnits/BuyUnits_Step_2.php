@@ -15,7 +15,7 @@ class BuyUnits_Step_2
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->accountNumber = $txDTO->subscriberInput;
          $txDTO->response = "Enter Amount :\n";
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->error = 'Buy units sub step 2. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }

@@ -46,7 +46,7 @@ class SurveyEntryController extends Controller
 			//validate incoming request 
 			$this->validate($request, $this->validationRules);
 			$this->response['data'] = $this->theService->create($request->all());
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			$this->response['status']['code'] = 500;
 			$this->response['status']['message'] = $e->getMessage();
 		}
@@ -62,7 +62,7 @@ class SurveyEntryController extends Controller
 
 		try {
 			$this->response['data'] = $this->theService->findById($id);
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 				$this->response['status']['code'] = 500;
 				$this->response['status']['message'] = $e->getMessage();
 		}
@@ -78,7 +78,7 @@ class SurveyEntryController extends Controller
 
 		try {
 			$this->response['data'] = $this->theService->findOneBy($request->all());
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			$this->response['status']['code'] = 500;
 			$this->response['status']['message'] = $e->getMessage();
 		}
@@ -94,7 +94,7 @@ class SurveyEntryController extends Controller
 
 		try {
 			$this->response['data'] = $this->theService->update($request->all(),$id);
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			$this->response['status']['code'] = 500;
 			$this->response['status']['message'] = $e->getMessage();
 		}
@@ -110,7 +110,7 @@ class SurveyEntryController extends Controller
 		
 		try {
 			$this->response['data'] = $this->theService->delete($id);
-		} catch (\Exception $e) {
+		} catch (\Throwable $e) {
 			$this->response['status']['code'] = 500;
 			$this->response['status']['message'] = $e->getMessage();
 		}

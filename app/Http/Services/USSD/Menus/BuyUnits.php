@@ -20,7 +20,7 @@ class BuyUnits implements IUSSDMenu
          }
          $stepHandler = App::make('BuyUnits_Step_'.\count(\explode("*", $txDTO->customerJourney)));
          $txDTO = $stepHandler->run($txDTO);
-      } catch (Exception $e) {
+      } catch (\Throwable $e) {
          $txDTO->error = 'At buy units sub steps. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';
       }
