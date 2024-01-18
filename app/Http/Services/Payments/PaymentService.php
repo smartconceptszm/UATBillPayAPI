@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Payments;
 
+use Illuminate\Support\Facades\Log;
 use App\Models\Payment;
 use Exception;
 
@@ -59,11 +60,15 @@ class PaymentService
             }
          }
          $record = $this->model->findOrFail($id);
-         $theKeys = \array_keys($record->attributesToArray());
+         Log::info('(PUT Parameters): Attributes'.\json_encode($data));
          foreach ($data as $key => $value) {
-            if(\key_exists($key,$theKeys)){
-               $record->$key = $value;
+            if(\strpos($key,'\/')){
+               unset($data[$key]);
             }
+         }
+         Log::info('(UPDATE Parameters): Attributes'.\json_encode($data));
+         foreach ($data as $key => $value) {
+            $record->$key = $value;
          }
          if($record->isDirty()){
             $record->save();
