@@ -62,7 +62,7 @@ class PaymentService
          $record = $this->model->findOrFail($id);
          Log::info('(PUT Parameters): Attributes'.\json_encode($data));
          foreach ($data as $key => $value) {
-            if(\strpos($key,'\/')){
+            if(\substr($key,0,2)=='\/'){
                unset($data[$key]);
             }
          }
