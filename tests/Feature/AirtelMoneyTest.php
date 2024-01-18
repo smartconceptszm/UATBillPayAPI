@@ -39,4 +39,13 @@ class AirtelMoneyTest extends TestCase
         //""
     }
 
+    public function _testGenTransactionId()
+    {   
+
+        $airtelClient=new AirtelMoney();
+        $response = $airtelClient->getTransactionId("1101000166");
+        $this->assertTrue(\strlen($response)==25);
+
+    }
+
 }

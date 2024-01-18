@@ -10,7 +10,7 @@ class ZamtelKwachaTest extends TestCase
     {   
 
         $zamtelClient=new ZamtelKwacha();
-        $response = $zamtelClient->requestPayment();
+        $response = $zamtelClient->requestPayment((object)[]);
         $this->assertTrue($response['status']=="SUCCESS");
 
     }
@@ -30,7 +30,7 @@ class ZamtelKwachaTest extends TestCase
                 'clientSecret'=>\env($strClientName.'_ZAMTEL_PASSWORD')
             ];
         $zamtelClient=new ZamtelKwacha();
-        $response = $zamtelClient->confirmPayment($momoParams);
+        $response = $zamtelClient->confirmPayment((object)$momoParams);
         $this->assertTrue($response['status']=="SUCCESS");
 
     }

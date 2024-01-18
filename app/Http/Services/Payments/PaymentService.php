@@ -59,8 +59,11 @@ class PaymentService
             }
          }
          $record = $this->model->findOrFail($id);
+         $theKeys = \array_keys($record->attributesToArray());
          foreach ($data as $key => $value) {
-            $record->$key = $value;
+            if(\key_exists($key,$theKeys)){
+               $record->$key = $value;
+            }
          }
          if($record->isDirty()){
             $record->save();

@@ -19,7 +19,7 @@ class AirtelMoney implements IMoMoClient
          ];
 
       try {
-         $mainResponse['transactionId'] = $this->getTransactionId($dto);
+         $mainResponse['transactionId'] = $this->getTransactionId($dto->accountNumber);
          $configs = $this->getConfigs($dto->urlPrefix);
          $apiToken = $this->getToken($configs);
          $token = $apiToken['access_token'];
@@ -243,7 +243,33 @@ class AirtelMoney implements IMoMoClient
       return $response;
    }
 
-   private function getTransactionId(object $dto): string
+   private function getTransactionId(string $accountNumber): string
+   {
+
+      $theDate = "D".\date('ymd');
+      $theTime = "T".\date('His');
+      $theAccount = "A".$accountNumber;
+      $transactionId = $theAccount.$theDate.$theTime;
+      if(\strlen($transactionId) > 25){
+         $theAccount = \substr($theAccount,0,25-strlen($theDate.$theTime));
+         $transactionId = $theAccount.$theDate.$theTime;
+      }
+      if(\strlen($transactionId ) < 25){
+         $arrLetters=['A','B','C','D','E','F','G','H',
+                  'I','J','K','L','M','N','O','P',
+                  'Q','R','S','T','U','V','W','X',
+                  'Y','Z'];
+         $lenToAdd = 25-\strlen($transactionId );
+         $strToApend = '';
+         for ($i=0; $i < $lenToAdd; $i++) { 
+            $strToApend .= $arrLetters[\rand(0,25)];
+         }
+         $transactionId = $theAccount.$theDate.$theTime;
+      }
+      return $transactionId;
+   }
+
+   private function getTransactionIdOld(object $dto): string
    {
       $transactionId = "D".\date('ymd')."T".
                \date('His')."A".$dto->accountNumber;

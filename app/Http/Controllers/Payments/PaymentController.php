@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Payments;
 
 use App\Http\Services\Payments\PaymentService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -93,6 +94,8 @@ class PaymentController extends Controller
    {
 
       try {
+         Log::info('(Put Parameters): Attributes'.\json_encode($request->all()).' The id:'.$id.
+                     'the URI: /'.$request->path());
          $this->response['data'] = $this->theService->update($request->all(),$id);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;

@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Support\Facades\Log;
 use Closure;
 
 class RemoveUriFromRequestParameters
