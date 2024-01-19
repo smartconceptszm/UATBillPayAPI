@@ -60,13 +60,13 @@ class PaymentService
             }
          }
          $record = $this->model->findOrFail($id);
-         Log::info('(PUT Parameters): Attributes'.\json_encode($data));
+         // Log::info('(PUT Parameters): Attributes'.\json_encode($data));
          foreach ($data as $key => $value) {
             if(\substr($key,0,2)=='\/'){
                unset($data[$key]);
             }
          }
-         Log::info('(UPDATE Parameters): Attributes'.\json_encode($data));
+         // Log::info('(UPDATE Parameters): Attributes'.\json_encode($data));
          foreach ($data as $key => $value) {
             $record->$key = $value;
          }
