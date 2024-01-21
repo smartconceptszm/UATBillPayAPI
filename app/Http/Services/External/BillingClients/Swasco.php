@@ -163,7 +163,7 @@ class Swasco implements IBillingClient
          } elseif ($e->getCode() == 1) {
                throw new Exception($e->getMessage(), 1);
          } else {
-               throw new Exception("Error executing 'Get Account Details': " . $e->getMessage(), 1);
+               throw new Exception("Error executing 'Get Account Details': " . $e->getMessage(), 3);
          }
       }
 

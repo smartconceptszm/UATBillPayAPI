@@ -51,7 +51,7 @@ class WebPaymentController extends Controller
       try {
          //validate incoming request 
          $this->validate($request, $this->validationRules);
-         $params = $request->all();
+         $params = $this->getParameters($request);
          $params['urlPrefix'] = $this->urlPrefix;
          $params['channel'] = 'WEBSITE';
          $this->response['data'] = $theService->initiateWebPayement($params);

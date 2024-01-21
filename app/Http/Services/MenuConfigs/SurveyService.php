@@ -63,14 +63,8 @@ class SurveyService
    public function update(array $data, string $id) : object|null {
 
       try {
-         foreach ($data as $key => $value) {
-            if($value == '' && $key != 'error'){
-                  unset($data[$key]);
-            } 
-            if($key == 'id'){
-               unset($data['id']);
-            }
-            if($key == 'isActive' && $value == 'YES'){
+         if(\key_exists('isActive',$data)){
+            if( $data['isActive'] == 'YES'){
                $activeSurvey = $this->findOneBy(['isActive' => 'YES']);
                if($activeSurvey){
                   $activeRecord = $this->model->findOrFail($activeSurvey->id);
@@ -79,6 +73,7 @@ class SurveyService
                }
             }
          }
+         unset($data['id']);
          $record = $this->model->findOrFail($id);
          foreach ($data as $key => $value) {
             $record->$key = $value;

@@ -20,7 +20,7 @@ class PaymentFailedController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->theService->findAll($request->all());
+         $this->response['data'] =  $this->theService->findAll($request->query());
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

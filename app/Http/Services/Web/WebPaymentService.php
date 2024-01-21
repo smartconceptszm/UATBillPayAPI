@@ -7,6 +7,7 @@ USE App\Http\Services\Clients\ClientService;
 USE App\Http\Services\Clients\MnoService;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\InitiateMoMoPaymentJob;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\MoMoDTO;
 use Exception;
@@ -46,6 +47,14 @@ class WebPaymentService
          $momoDTO = $this->getMNO($momoDTO);
          Queue::later(Carbon::now()->addSeconds((int)\env($momoDTO->mnoName.
                      '_SUBMIT_PAYMENT')), new InitiateMoMoPaymentJob($momoDTO));
+
+         Log::info('('.$momoDTO->urlPrefix.') '.
+            'Web payment initiated: Phone: '.
+               $momoDTO->mobileNumber.' - Account Number: '.
+               $momoDTO->accountNumber.' - Amount: '.
+               $momoDTO->paymentAmount
+            );
+
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

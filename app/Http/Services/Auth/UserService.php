@@ -93,14 +93,7 @@ class UserService
                throw new Exception("Logged in user cannot be de-activated!", 1);
             }
          }
-         foreach ($data as $key => $value) {
-            if($value == '' && $key != 'error'){
-                  unset($data[$key]);
-            } 
-            if($key == 'id'){
-               unset($data['id']);
-            }
-         }
+         unset($data['id']);
          $record = $this->model->findOrFail($id);
          foreach ($data as $key => $value) {
             $record->$key = $value;

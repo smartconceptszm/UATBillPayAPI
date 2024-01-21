@@ -18,7 +18,7 @@ class USSDAirtelController extends USSDController
             //"GET /swasco/airtel?SUBSCRIBER_INPUT=5757&LANGUAGE=en&SESSION_ID=16318751934311429&MOBILE_NUMBER=260972116857&
             //IS_NEW_REQUEST=1&USSD_MESSAGE=&SEQUENCE=&END_OF_SESSION=&FRA=&SERVICE_KEY
             
-            $requestParams = $request->all();
+            $requestParams = $this->getParameters($request);
             $airtelParams['subscriberInput']=\strtoupper($requestParams['SUBSCRIBER_INPUT']);
             $airtelParams['isNewRequest']=$requestParams['IS_NEW_REQUEST'];
             $airtelParams['sessionId']=$requestParams['SESSION_ID'];

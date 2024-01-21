@@ -20,12 +20,14 @@ abstract class BaseDTO
 
    public function fromArray(array $values ): BaseDTO
    {
+
       foreach ($values as $key => $value) {
          if (\property_exists($this, $key)) {
                $this->$key = $value;
          }
       }
       return $this;
+      
    }
 
 }

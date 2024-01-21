@@ -20,7 +20,7 @@ class SMSesOfClientController extends Controller
    {
 
       try {
-         $params = $request->all();
+         $params = $this->getParameters($request);
          $this->response['data'] = $this->theService->findAll($params);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;

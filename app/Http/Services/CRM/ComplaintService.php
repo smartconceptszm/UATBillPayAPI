@@ -55,14 +55,7 @@ class ComplaintService
    public function update(array $data, string $id) : object|null {
 
       try {
-         foreach ($data as $key => $value) {
-            if($value == '' && $key != 'error'){
-                  unset($data[$key]);
-            } 
-            if($key == 'id'){
-               unset($data['id']);
-            }
-         }
+         unset($data['id']);
          $user = Auth::user(); 
          $data['assignedTo'] = $user->id;
          $data['assignedBy'] = $user->id;

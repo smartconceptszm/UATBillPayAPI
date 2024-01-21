@@ -21,7 +21,7 @@ class PaymentSessionController extends Controller
    {
 
       try {
-         $parameters = $request->all();
+         $parameters = $this->getParameters($request);
          if(!$parameters['client_id']){
             $parameters['client_id'] = $user->client_id;
          }

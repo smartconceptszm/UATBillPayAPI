@@ -21,7 +21,7 @@ class ClientDashboardController extends Controller
    {
 
       try {
-         $criteria = $request->all();
+         $criteria = $this->getParameters($request);
          if(!$criteria['client_id']){
             $criteria['client_id'] = $user->client_id;
          }

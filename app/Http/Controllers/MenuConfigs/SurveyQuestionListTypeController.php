@@ -23,7 +23,7 @@ class SurveyQuestionListTypeController extends Controller
 	{
 
 		try {
-			$this->response['data'] = $this->theService->findAll($request->all());
+			$this->response['data'] =  $this->theService->findAll($request->query());
 		} catch (\Throwable $e) {
 				$this->response['status']['code'] = 500;
 				$this->response['status']['message'] = $e->getMessage();
@@ -41,7 +41,7 @@ class SurveyQuestionListTypeController extends Controller
 		try {
 			//validate incoming request 
 			$this->validate($request, $this->validationRules);
-			$this->response['data'] = $this->theService->create($request->all());
+			$this->response['data'] = $this->theService->create($this->getParameters($request));
 		} catch (\Throwable $e) {
 			$this->response['status']['code'] = 500;
 			$this->response['status']['message'] = $e->getMessage();
@@ -73,7 +73,7 @@ class SurveyQuestionListTypeController extends Controller
 	{
 
 		try {
-			$this->response['data'] = $this->theService->findOneBy($request->all());
+			$this->response['data'] = $this->theService->findOneBy($this->getParameters($request));
 		} catch (\Throwable $e) {
 			$this->response['status']['code'] = 500;
 			$this->response['status']['message'] = $e->getMessage();
@@ -89,7 +89,7 @@ class SurveyQuestionListTypeController extends Controller
 	{
 
 		try {
-			$this->response['data'] = $this->theService->update($request->all(),$id);
+			$this->response['data'] = $this->theService->update($this->getParameters($request),$id);
 		} catch (\Throwable $e) {
 			$this->response['status']['code'] = 500;
 			$this->response['status']['message'] = $e->getMessage();

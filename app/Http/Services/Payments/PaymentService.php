@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\Payments;
 
-use Illuminate\Support\Facades\Log;
 use App\Models\Payment;
 use Exception;
 
@@ -54,19 +53,8 @@ class PaymentService
    public function update(array $data, string $id) : object|null {
 
       try {
-         foreach ($data as $key => $value) {
-            if($key == 'id'){
-               unset($data['id']);
-            }
-         }
+         unset($data['id']);
          $record = $this->model->findOrFail($id);
-         // Log::info('(PUT Parameters): Attributes'.\json_encode($data));
-         foreach ($data as $key => $value) {
-            if(\substr($key,0,2)=='\/'){
-               unset($data[$key]);
-            }
-         }
-         // Log::info('(UPDATE Parameters): Attributes'.\json_encode($data));
          foreach ($data as $key => $value) {
             $record->$key = $value;
          }

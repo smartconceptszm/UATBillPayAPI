@@ -24,7 +24,7 @@ class PaymentManualPostController extends Controller
       try {
          //validate incoming request 
          $this->validate($request, $this->validationRules);
-         $response = $this->theService->create($request->all());
+         $response = $this->theService->create($this->getParameters($request));
          $this->response['data'] = $response->data;
 
       } catch (\Throwable $e) {

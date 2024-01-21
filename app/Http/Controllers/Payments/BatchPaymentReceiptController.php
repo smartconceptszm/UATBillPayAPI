@@ -22,7 +22,7 @@ class BatchPaymentReceiptController extends Controller
 
       try {
          $this->validate($request, $this->validationRules);
-         $response = $this->theService->create($request->all());
+         $response = $this->theService->create($this->getParameters($request));
          $this->response['data'] = $response->data;
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;

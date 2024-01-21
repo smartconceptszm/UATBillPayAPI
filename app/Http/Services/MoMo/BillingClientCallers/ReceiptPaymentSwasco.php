@@ -29,7 +29,6 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 		//Trimmed to 20 cause of constraint on API
 		$swascoTransactionRef = \strlen($momoDTO->sessionId) > 20 ? 
 												\substr($momoDTO->sessionId, 0, 20) : $momoDTO->sessionId;
-		
 		$customer = \json_decode(Cache::get($momoDTO->urlPrefix.
 												$momoDTO->accountNumber,\json_encode([])), true);
 		if($customer){
@@ -53,7 +52,7 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 		];
 
 		$billingResponse=$this->billingClient->postPayment($receiptingParams);
-		
+
 		if($billingResponse['status']=='SUCCESS'){
 				$momoDTO->receiptNumber = $billingResponse['receiptNumber'];
 				$momoDTO->paymentStatus = "RECEIPTED";
@@ -66,15 +65,16 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 					$momoDTO->receipt.="Bal: ZMW ". $newBalance . "\n";
 				}
 				$momoDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
-				if ((($momoDTO->mobileNumber == $customer['mobileNumber']) && ($momoDTO->channel == 'USSD'))){
-					try {
-						$momoDTO = $this->addShotcutMessage->handle($momoDTO);
-					} catch (\Throwable $e) {
-						Log::error('('.$momoDTO->urlPrefix.'). '.$e->getMessage().
-							'- Session: '.$momoDTO->sessionId.' - Phone: '.$momoDTO->mobileNumber);
+				if(\key_exists('mobileNumber',$customer)){
+					if ((($momoDTO->mobileNumber == $customer['mobileNumber']) && ($momoDTO->channel == 'USSD'))){
+						try {
+							$momoDTO = $this->addShotcutMessage->handle($momoDTO);
+						} catch (\Throwable $e) {
+							Log::error('('.$momoDTO->urlPrefix.'). '.$e->getMessage().
+								'- Session: '.$momoDTO->sessionId.' - Phone: '.$momoDTO->mobileNumber);
+						}
 					}
 				}
-
 		}else{
 				$momoDTO->error = "At post payment. ".$billingResponse['error'];
 		}

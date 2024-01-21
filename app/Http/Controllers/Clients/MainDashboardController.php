@@ -21,7 +21,7 @@ class MainDashboardController extends Controller
    {
 
       try {
-         $criteria = $request->all();
+         $criteria = $this->getParameters($request);
          $this->response['data']=$this->theService->findAll($criteria);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;

@@ -26,6 +26,7 @@ class UssdDTO extends BaseDTO
    public $testMSISDN;
    public $menuPrompt;
    public $created_at;
+   public $updated_at;
    public $urlPrefix;
    public $sessionId;
    public $client_id;

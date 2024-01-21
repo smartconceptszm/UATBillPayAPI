@@ -17,6 +17,8 @@ class MoMoDTO extends BaseDTO
    public $paymentStatus;
    public $mobileNumber;
    public $session_id;
+   public $created_at;
+   public $updated_at;
    public $client_id;
    public $reference;
    public $district;

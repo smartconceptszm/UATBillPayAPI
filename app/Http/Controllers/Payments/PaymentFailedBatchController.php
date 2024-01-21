@@ -24,7 +24,7 @@ class PaymentFailedBatchController extends Controller
       try {
          //validate incoming request 
          $this->validate($request, $this->validationRules);
-         $newBatch = $this->theService->create($request->all());
+         $newBatch = $this->theService->create($this->getParameters($request));
          $this->response['data'] = $newBatch->data;
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;

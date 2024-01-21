@@ -22,7 +22,7 @@ class MessageController extends Controller
 
       try {
          $this->validate($request, $this->validationRules);
-         $this->response['data'] = $this->theService->send($request->all());
+         $this->response['data'] = $this->theService->send($this->getParameters($request));
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

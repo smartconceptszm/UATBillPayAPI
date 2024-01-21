@@ -26,7 +26,7 @@ class SMSBulkController extends Controller
 	 */
 	public function index(Request  $request){
 		try {
-			$this->response['data'] = $this->theService->findAll($request->all());
+			$this->response['data'] =  $this->theService->findAll($request->query());
 		} catch (\Throwable $e) {
 			$this->response['status']['code']=500;
 			$this->response['status']['message']=$e->getMessage();
@@ -46,7 +46,7 @@ class SMSBulkController extends Controller
 		try {
 			//validate incoming request 
 			$this->validate($request, $this->validationRules);
-			$this->response['data'] = $this->theService->create($request->all());
+			$this->response['data'] = $this->theService->create($this->getParameters($request));
 		} catch (\Throwable $e) {
 			$this->response['status']['code']=500;
 			$this->response['status']['message']=$e->getMessage();
