@@ -9,51 +9,37 @@ namespace App\Http\DTOs;
  * @property string $error
  */
 
-class UssdDTO extends BaseDTO
+class WebDTO extends BaseDTO
 {
    
    public $clientSurcharge;
-   public $subscriberInput;
-   public $fireMoMoRequest;
-   public $customerJourney;
    public $billingClient;
    public $accountNumber;
    public $paymentAmount;
-   public $lastResponse;
-   public $isNewRequest;
    public $mobileNumber;
    public $testMSISDN;
-   public $menuPrompt;
    public $created_at;
    public $updated_at;
    public $urlPrefix;
    public $sessionId;
    public $client_id;
    public $reference;
-   public $errorType;
    public $isPayment;
-   public $shortCode;
-   public $customer;
-   public $district;
-   public $response;
    public $mnoName;
    public $handler;
+   public $channel;
    public $menu_id;
    public $mno_id;
    public $status = 'INITIATED';
-   public $clean;
    public $error;
 
    public function toSessionData():array{
       return [
-            'customerJourney'=>$this->customerJourney, 
             'accountNumber'=>$this->accountNumber,
             'paymentAmount'=>$this->paymentAmount,
             'mobileNumber'=>$this->mobileNumber,
             'sessionId'=>$this->sessionId,
             'client_id'=>$this->client_id,
-            'district'=>$this->district,
-            'response'=>$this->response,
             'menu_id'=>$this->menu_id,
             'status'=>$this->status,
             'mno_id'=>$this->mno_id,

@@ -4,12 +4,15 @@ namespace App\Http\Services\Web;
 
 use App\Http\Services\External\BillingClients\GetCustomerAccount;
 USE App\Http\Services\Clients\ClientService;
+USE App\Http\Services\USSD\SessionService;
 USE App\Http\Services\Clients\MnoService;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\InitiateMoMoPaymentJob;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\MoMoDTO;
+use App\Http\DTOs\WebDTO;
+
 use Exception;
 
 class WebPaymentService
@@ -17,9 +20,11 @@ class WebPaymentService
 
    public function __construct(
       private GetCustomerAccount $getCustomerAccount,
+      private SessionService $sessionService,
       private ClientService $clientService,
       private MnoService $mnoService,
-      private MoMoDTO $moMoDTO
+      private MoMoDTO $moMoDTO,
+      private WebDTO $webDTO,
    )
    {}
 
@@ -42,9 +47,15 @@ class WebPaymentService
    {
 
       try {
-         $momoDTO = $this->moMoDTO->fromArray($params);
-         $momoDTO = $this->getClient($momoDTO);
-         $momoDTO = $this->getMNO($momoDTO);
+
+         $webDTO = $this->webDTO->fromArray($params);
+         $webDTO->sessionId = 'WEB.'.$webDTO->accountNumber.'D'.\date('ymd').'T'.\date('His');
+         $webDTO = $this->getClient($webDTO);
+         $webDTO = $this->getMNO($webDTO);
+         $session = $this->sessionService->create($webDTO->toSessionData());
+         $momoDTO = $this->moMoDTO->fromArray($webDTO->toArray());
+         $momoDTO->session_id = $session->id;
+         
          Queue::later(Carbon::now()->addSeconds((int)\env($momoDTO->mnoName.
                      '_SUBMIT_PAYMENT')), new InitiateMoMoPaymentJob($momoDTO));
 
@@ -63,29 +74,29 @@ class WebPaymentService
 
    }
 
-   private function getClient(MoMoDTO $momoDTO) : MoMoDTO
+   private function getClient(WebDTO $webDTO) : WebDTO
    {
-      $client = $this->clientService->findOneBy(['urlPrefix'=>$momoDTO->urlPrefix]);
-      $momoDTO->client_id = $client->id;
-      $momoDTO->shortCode = $client->shortCode;
-      $momoDTO->testMSISDN = $client->testMSISDN;
-      $momoDTO->clientSurcharge = $client->surcharge;
+      $client = $this->clientService->findOneBy(['urlPrefix'=>$webDTO->urlPrefix]);
+      $webDTO->client_id = $client->id;
+      $webDTO->shortCode = $client->shortCode;
+      $webDTO->testMSISDN = $client->testMSISDN;
+      $webDTO->clientSurcharge = $client->surcharge;
       if($client->mode != 'UP'){
          throw new Exception(\env('MODE_MESSAGE'));
       }
       if($client->status != 'ACTIVE'){
-         throw new Exception(\env('BLOCKED_MESSAGE')." ".strtoupper($momoDTO->urlPrefix));
+         throw new Exception(\env('BLOCKED_MESSAGE')." ".strtoupper($webDTO->urlPrefix));
       }
-      return $momoDTO;
+      return $webDTO;
    }
 
-   private function getMNO(MoMoDTO $momoDTO) : MoMoDTO
+   private function getMNO(WebDTO $webDTO) : WebDTO
    {
 
       try {
-         $mno = $this->mnoService->findById($momoDTO->mno_id);               
-         $momoDTO->mnoName = $mno->name;
-         return $momoDTO;
+         $mno = $this->mnoService->findById($webDTO->mno_id);               
+         $webDTO->mnoName = $mno->name;
+         return $webDTO;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
