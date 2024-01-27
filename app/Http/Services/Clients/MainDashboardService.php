@@ -28,11 +28,10 @@ class MainDashboardService
                      ->join('mnos as m','p.mno_id','=','m.id')
                      ->select('p.id','p.district','p.receiptAmount',
                                        'm.name as mno','m.colour')
-                     ->whereIn('p.paymentStatus', 
-                        ['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                      ->where('p.client_id', '=', $activeClient->id)
-                     ->whereDate('p.created_at', '>=', $dto->dateFrom)
-                     ->whereDate('p.created_at', '<=', $dto->dateTo)
+                     ->whereBetween(DB::raw('DATE(p.created_at)'), [$dto->dateFrom, $dto->dateTo])
+                     ->whereIn('p.paymentStatus', 
+                              ['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                      ->get();
                   $groupedData = $thePayments->groupBy('mno');
                   $byMNO=[];

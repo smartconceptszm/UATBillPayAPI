@@ -23,8 +23,7 @@ class SMSDashboardService
                ->select('sms.*','m.name as mno','m.colour')
                ->where('sms.status', '=', 'DELIVERED')
                ->where('sms.client_id', '=', $dto->client_id)
-               ->whereDate('sms.created_at', '>=', $dto->dateFrom)
-               ->whereDate('sms.created_at', '<=', $dto->dateTo)
+               ->whereBetween(DB::raw('DATE(sms.created_at)'), [$dto->dateFrom,$dto->dateTo])
                ->get();
             $groupedData = $theSMSs->groupBy('type');
             $byType=[];
@@ -55,8 +54,7 @@ class SMSDashboardService
                                     COUNT(sms.id) AS noOfSMSs'))
                ->where('sms.status', '=', 'DELIVERED')
                ->where('sms.client_id', '=', $dto->client_id)
-               ->whereDate('sms.created_at', '>=', $firstDayOfCurrentMonth)
-               ->whereDate('sms.created_at', '<=', $theDateTo)
+               ->whereBetween(DB::raw('DATE(sms.created_at)'), [$firstDayOfCurrentMonth, $theDateTo])
                ->groupBy('dayOfSMS')
                ->orderBy('dayOfSMS')
                ->get();

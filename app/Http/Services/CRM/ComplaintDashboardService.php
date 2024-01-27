@@ -24,8 +24,7 @@ class ComplaintDashboardService
                ->select('c.*','cst.code as subTypeCode','cst.name as subTypeName',
                            'ct.code as typeCode','ct.name as typeName')
                ->where('c.client_id', '=', $dto->client_id)
-               ->whereDate('c.created_at', '>=', $dto->dateFrom)
-               ->whereDate('c.created_at', '<=', $dto->dateTo)
+               ->whereBetween(DB::raw('DATE(c.created_at)'), [$dto->dateFrom, $dto->dateTo])
                ->get();
 
             $groupedData = $theComplaints->groupBy('typeName');
@@ -54,8 +53,7 @@ class ComplaintDashboardService
                ->select(DB::raw('dayofmonth(c.created_at) as dayOfComplaint,
                                     COUNT(c.id) AS noOfComplaints'))
                ->where('c.client_id', '=', $dto->client_id)
-               ->whereDate('c.created_at', '>=', $firstDayOfCurrentMonth)
-               ->whereDate('c.created_at', '<=', $theDateTo)
+               ->whereBetween(DB::raw('DATE(c.created_at)'), [$firstDayOfCurrentMonth, $theDateTo])
                ->groupBy('dayOfComplaint')
                ->orderBy('dayOfComplaint')
                ->get();

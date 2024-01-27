@@ -20,8 +20,8 @@ class ReceiptVacuumTankerSwasco implements IReceiptPayment
 
 		//Trimmed to 20 cause of constraint on API
 		$arrCustomerJourney = \explode("*", $momoDTO->customerJourney);
-		$momoDTO->reference = \strlen($arrCustomerJourney[2]) > 20 ? 
-												\substr($arrCustomerJourney[2], 0, 20) : $arrCustomerJourney[2];
+		$momoDTO->reference = \strlen($arrCustomerJourney[3]) > 20 ? 
+												\substr($arrCustomerJourney[3], 0, 20) : $arrCustomerJourney[3];
 												
 		$receiptingParams=[ 
 				'paymentType'=>'12',

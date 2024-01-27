@@ -25,8 +25,7 @@ class SMSMessageBulkService
                  ->select('*')
                  ->where('m.client_id', '=', $dto->client_id);
          if($dto->dateFrom && $dto->dateTo){
-             $records =$records->whereDate('m.created_at', '>=', $dto->dateFrom)
-                                 ->whereDate('m.created_at', '<=', $dto->dateTo);
+             $records =$records->whereBetween(DB::raw('DATE(m.created_at)'), [$dto->dateFrom, $dto->dateTo]);
          }
          $records = $records->get();
          return $records->all();

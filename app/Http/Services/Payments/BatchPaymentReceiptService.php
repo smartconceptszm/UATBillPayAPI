@@ -21,12 +21,11 @@ class BatchPaymentReceiptService
          $dto = (object)$data;
          $records = DB::table('payments as p')
                   ->select('id')
-                  ->whereIn('p.paymentStatus', ['RECEIPTED'])
                   ->where('p.client_id', '=', $dto->client_id);
          if($dto->dateFrom && $dto->dateTo){
-               $records = $records->whereDate('p.created_at', '>=', $dto->dateFrom)
-                                 ->whereDate('p.created_at', '<=', $dto->dateTo);
+            $records = $records->whereBetween(DB::raw('DATE(p.created_at)'),[$dto->dateFrom,$dto->dateTo]);
          }
+         $records = $records->whereIn('p.paymentStatus', ['RECEIPTED']);
          $records = $records->get()->all();
          if (\sizeof($records) > 0) {
             $chunkedArr = \array_chunk($records,5,false);

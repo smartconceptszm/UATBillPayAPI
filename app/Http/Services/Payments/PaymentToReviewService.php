@@ -18,8 +18,7 @@ class PaymentToReviewService
             ->whereIn('p.paymentStatus', ['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED'])
             ->where('p.client_id', '=', $dto->client_id);
          if($dto->dateFrom && $dto->dateTo){
-            $records =$records->whereDate('p.created_at', '>=', $dto->dateFrom)
-                                 ->whereDate('p.created_at', '<=', $dto->dateTo);
+            $records =$records->whereBetween(DB::raw('DATE(p.created_at)'), [$dto->dateFrom, $dto->dateTo]);
          }
          $records =$records->get();
          $providerErrors = $records->filter(

@@ -16,8 +16,7 @@ class SessionsOfClientService
                   ->select('*')
                   ->where('s.client_id', '=', $dto->client_id);
          if($dto->from && $dto->to){
-               $records =$records->whereDate('s.created_at', '>=', $dto->from)
-                                 ->whereDate('s.created_at', '<=', $dto->to);
+               $records =$records->whereBetween(DB::raw('DATE(s.created_at)'), [$dto->from, $dto->to]);
          }
          $records =$records->get();
          return $records->all();

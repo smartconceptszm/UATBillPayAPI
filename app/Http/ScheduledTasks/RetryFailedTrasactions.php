@@ -27,8 +27,7 @@ class RetryFailedTrasactions
 			$query = DB::table('payments')
 					->select('id', 'error')
 					->whereIn('paymentStatus', ['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED'])
-					->whereDate('created_at', '>=', $from)
-					->whereDate('created_at', '<=', $to)
+					->whereBetween(DB::raw('DATE(created_at)'), [$from, $to])
 					->get();
 			$providerErrors = $query->filter(
 						function ($item) {

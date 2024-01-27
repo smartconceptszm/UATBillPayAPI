@@ -19,16 +19,19 @@ class PaymentSessionService
                      's.customerJourney','s.status','m.prompt as paymentType','p.id','p.transactionId',
                      'p.district','p.receiptAmount','p.receiptNumber','p.paymentStatus',
                      'mnos.name as mno','p.mnoTransactionId',
-                     'p.channel','p.error')
-            ->where('m.isPayment','=', 'YES')
-            ->where('s.client_id', '=', $dto->client_id);
+                     'p.channel','p.error');
          if($dto->accountNumber){
             $records = $records->where('s.accountNumber', '=', $dto->accountNumber);
          }
          if(\property_exists($dto,'mobileNumber') && $dto->accountNumber){
             $records = $records->where('s.mobileNumber', '=', $dto->mobileNumber);
          }
-         $records = $records->orderByDesc('s.created_at');
+         $records = $records->where('s.client_id', '=', $dto->client_id)
+                              ->where('m.isPayment','=', 'YES')
+                              ->orderByDesc('s.created_at');
+         // $theSQLQuery = $records->toSql();
+         // $theBindings = $records-> getBindings();
+         // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
          return $records->get()->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

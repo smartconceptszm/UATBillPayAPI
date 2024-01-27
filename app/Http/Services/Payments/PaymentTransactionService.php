@@ -24,13 +24,14 @@ class PaymentTransactionService
                      'p.receiptAmount','p.receiptNumber','m.prompt as paymentType','p.paymentStatus',
                      'mnos.name as mno','p.mnoTransactionId','p.channel','p.error')
             //->whereIn('p.paymentStatus',['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
-            ->where('p.client_id', '=', $dto->client_id)
-            ->orderByDesc('p.created_at');
+            ->where('p.client_id', '=', $dto->client_id);
          if($dto->dateFrom && $dto->dateTo){
-            $records = $records->whereDate('p.created_at', '>=', $dto->dateFrom)
-                              ->whereDate('p.created_at', '<=', $dto->dateTo);
+            $records = $records->whereBetween(DB::raw('DATE(p.created_at)'), [$dto->dateFrom, $dto->dateTo]);
          }
-         $records = $records->get();
+         // $theSQLQuery = $records->toSql();
+         // $theBindings = $records-> getBindings();
+         // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
+         $records = $records->orderByDesc('p.created_at')->get();
          return $records->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

@@ -21,8 +21,7 @@ class SMSesOfClientService
             ->where('client_id', '=', $dto->client_id)
             ->orderByDesc('created_at');
          if($dto->dateFrom && $dto->dateTo){
-            $records = $records->whereDate('created_at', '>=', $dto->dateFrom)
-                              ->whereDate('created_at', '<=', $dto->dateTo);
+            $records = $records->whereBetween(DB::raw('DATE(created_at)'), [$dto->dateFrom, $dto->dateTo]);
          }
          $records = $records->get();
          return $records->all();

@@ -24,14 +24,12 @@ class PaymentNotReceiptedService
                            'p.receiptAmount','p.paymentAmount','p.transactionId','p.district',
                            'm.prompt as paymentType','p.mnoTransactionId',
                            'mnos.name as mno','p.paymentStatus','p.channel','p.error')
-                  ->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED','RECEIPTED'])
                   ->where('p.client_id', '=', $dto->client_id)
                   ->orderByDesc('p.created_at');
          if($dto->dateFrom && $dto->dateTo){
-               $records =$records->whereDate('p.created_at', '>=', $dto->dateFrom)
-                                 ->whereDate('p.created_at', '<=', $dto->dateTo);
+               $records =$records->whereBetween(DB::raw('DATE(p.created_at)'),[$dto->dateFrom, $dto->dateTo]);
          }
-         $records = $records->get();
+         $records = $records->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED','RECEIPTED'])->get();
          return $records->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

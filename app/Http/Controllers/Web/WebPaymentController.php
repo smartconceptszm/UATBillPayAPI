@@ -12,7 +12,6 @@ class WebPaymentController extends Controller
 
    private $urlPrefix;
    private $validationRules = [
-      'accountNumber' => 'required|string',
       'mobileNumber' => 'required|string',
       'paymentAmount' => 'required',
       'mno_id' => 'required',

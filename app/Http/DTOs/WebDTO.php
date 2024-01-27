@@ -12,6 +12,7 @@ namespace App\Http\DTOs;
 class WebDTO extends BaseDTO
 {
    
+   public $subscriberInput;
    public $clientSurcharge;
    public $billingClient;
    public $accountNumber;

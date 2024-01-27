@@ -67,7 +67,7 @@ Route::group(['middleware' => 'mode'], function (){
       Route::post('/passwordreset', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'store']);
       Route::put('/passwordreset/{id}', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'update']);
 
-   //Web Payment Routes
+   //Web Payment Routes - SWASCO
       Route::get('/webpayments/swasco/paymentmenus', [\App\Http\Controllers\Web\PaymentMenuController::class, 'index']);
       Route::get('/webpayments/swasco/customers/{accountNumber}', [\App\Http\Controllers\Web\WebPaymentController::class, 'show']);
       Route::get('/webpayments/swasco/momos', [\App\Http\Controllers\Web\PaymentMnoController::class, 'index']);

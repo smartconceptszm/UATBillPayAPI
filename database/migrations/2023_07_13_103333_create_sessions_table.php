@@ -29,6 +29,9 @@ return new class extends Migration
          $table->text('error')->nullable();
          $table->timestamps();
          $table->unique(['sessionId', 'mobileNumber'],'session_mobileNumber');
+         $table->index(['mno_id']);
+         $table->index(['menu_id']);
+         $table->index(['created_at']);
       });
 
    }

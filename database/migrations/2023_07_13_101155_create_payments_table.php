@@ -18,7 +18,7 @@ return new class extends Migration
          $table->uuid('mno_id')->notNullable();
          $table->uuid('menu_id')->notNullable();
          $table->string('mobileNumber',12)->notNullable();
-         $table->string('accountNumber',50)->notNullable();
+         $table->string('accountNumber',50)->nullable();
          $table->string('district',50)->nullable();
          $table->string('reference',160)->nullable();
          $table->string('mnoTransactionId',30)->nullable();            
@@ -39,8 +39,13 @@ return new class extends Migration
          $table->text('error')->nullable();
          $table->uuid('user_id')->nullable();
          $table->timestamps();
-         $table->unique(['session_id', 'mobileNumber'],'session_mobileNumber');
-         $table->index(['client_id', 'paymentStatus', 'created_at']);
+         $table->index(['accountNumber']);
+         $table->index(['client_id']);
+         $table->index(['session_id']);
+         $table->index(['mno_id']);
+         $table->index(['menu_id']);
+         $table->index(['created_at']);
+         $table->index(['paymentStatus']);
       });
    }
 

@@ -30,8 +30,7 @@ class ComplaintsOfClientService
             // ->where('s.menu', '=', 'FaultsComplaints')
             ->where('c.client_id', '=', $dto->client_id);
          if($dto->dateFrom && $dto->dateTo){
-            $records = $records->whereDate('c.created_at', '>=', $dto->dateFrom)
-                              ->whereDate('c.created_at', '<=', $dto->dateTo);
+            $records = $records->whereBetween(DB::raw('DATE(c.created_at)'), [$dto->dateFrom, $dto->dateTo]);
          }
          return $records->get()->all();
       } catch (\Throwable $e) {
