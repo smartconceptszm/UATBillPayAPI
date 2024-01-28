@@ -39,7 +39,7 @@ class FireMoMoRequestMiddleware
             if($ussdParams['fireMoMoRequest']){
                 $momoDTO =  $this->momoDTO->fromUssdData($ussdParams);
                 Queue::later(Carbon::now()->addSeconds((int)\env($momoDTO->mnoName.
-                                    '_SUBMIT_PAYMENT')), new InitiateMoMoPaymentJob($momoDTO),'','high');
+                                    '_SUBMIT_PAYMENT')), new InitiateMoMoPaymentJob($momoDTO));
             }
         }
         

@@ -17,6 +17,8 @@ class ComplaintsOfClientService
          $user = Auth::user(); 
          $criteria['client_id'] = $user->client_id;
          $dto = (object)$criteria;
+         $dto->dateFrom = $dto->dateFrom." 00:00:00";
+         $dto->dateTo = $dto->dateTo." 23:59:59";
          $records = DB::table('complaints as c')
             // ->join('sessions as s','c.session_id','=','s.id')
             // ->join('mnos as m','s.mno_id','=','m.id')
@@ -30,7 +32,7 @@ class ComplaintsOfClientService
             // ->where('s.menu', '=', 'FaultsComplaints')
             ->where('c.client_id', '=', $dto->client_id);
          if($dto->dateFrom && $dto->dateTo){
-            $records = $records->whereBetween(DB::raw('DATE(c.created_at)'), [$dto->dateFrom, $dto->dateTo]);
+            $records = $records->whereBetween('c.created_at', [$dto->dateFrom, $dto->dateTo]);
          }
          return $records->get()->all();
       } catch (\Throwable $e) {

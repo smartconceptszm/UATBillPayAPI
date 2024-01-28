@@ -13,12 +13,14 @@ class PaymentToReviewService
 
       try {
          $dto = (object)$criteria;
+         $dto->dateFrom = $dto->dateFrom." 00:00:00";
+         $dto->dateTo = $dto->dateTo." 23:59:59";
          $records = DB::table('payments as p')
             ->select('id', 'error')
             ->whereIn('p.paymentStatus', ['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED'])
             ->where('p.client_id', '=', $dto->client_id);
          if($dto->dateFrom && $dto->dateTo){
-            $records =$records->whereBetween(DB::raw('DATE(p.created_at)'), [$dto->dateFrom, $dto->dateTo]);
+            $records =$records->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo]);
          }
          $records =$records->get();
          $providerErrors = $records->filter(

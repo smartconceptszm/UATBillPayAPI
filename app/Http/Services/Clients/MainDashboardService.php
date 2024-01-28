@@ -19,6 +19,8 @@ class MainDashboardService
       
       try {
          $dto = (object)$criteria;
+         $dto->dateFrom = $dto->dateFrom." 00:00:00";
+         $dto->dateTo = $dto->dateTo." 23:59:59";
          $response=[];
          $activeClients = $this->clients->findAll(['status' => 'ACTIVE']);
          if($activeClients){
@@ -29,7 +31,7 @@ class MainDashboardService
                      ->select('p.id','p.district','p.receiptAmount',
                                        'm.name as mno','m.colour')
                      ->where('p.client_id', '=', $activeClient->id)
-                     ->whereBetween(DB::raw('DATE(p.created_at)'), [$dto->dateFrom, $dto->dateTo])
+                     ->whereBetween('created_at', [$dto->dateFrom, $dto->dateTo])
                      ->whereIn('p.paymentStatus', 
                               ['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                      ->get();

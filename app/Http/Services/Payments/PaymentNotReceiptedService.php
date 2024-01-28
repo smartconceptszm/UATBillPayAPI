@@ -16,6 +16,8 @@ class PaymentNotReceiptedService
          $user = Auth::user(); 
          $criteria['client_id'] = $user->client_id;
          $dto=(object)$criteria;
+         $dto->dateFrom = $dto->dateFrom." 00:00:00";
+         $dto->dateTo = $dto->dateTo." 23:59:59";
          $records = DB::table('payments as p')
                   ->join('sessions as s','p.session_id','=','s.id')
                   ->join('mnos','p.mno_id','=','mnos.id')
@@ -27,7 +29,7 @@ class PaymentNotReceiptedService
                   ->where('p.client_id', '=', $dto->client_id)
                   ->orderByDesc('p.created_at');
          if($dto->dateFrom && $dto->dateTo){
-               $records =$records->whereBetween(DB::raw('DATE(p.created_at)'),[$dto->dateFrom, $dto->dateTo]);
+               $records =$records->whereBetween('p.created_at',[$dto->dateFrom, $dto->dateTo]);
          }
          $records = $records->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED','RECEIPTED'])->get();
          return $records->all();

@@ -22,11 +22,13 @@ class SMSMessageBulkCustomService
 
       try {
          $dto = (object)$criteria;
+         $dto->dateFrom = $dto->dateFrom." 00:00:00";
+         $dto->dateTo = $dto->dateTo." 23:59:59";
          $records = DB::table('bulk_messages as m')
                  ->select('*')
                  ->where('m.client_id', '=', $dto->client_id);
          if($dto->dateFrom && $dto->dateTo){
-            $records =$records->whereBetween(DB::raw('DATE(m.created_at)'), [$dto->dateFrom, $dto->dateTo]);
+            $records =$records->whereBetween('m.created_at', [$dto->dateFrom, $dto->dateTo]);
          }
          $records = $records->get();
          return $records->all();
