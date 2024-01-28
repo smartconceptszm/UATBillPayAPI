@@ -22,8 +22,8 @@ class ClientDashboardService
                ->join('mnos as m','p.mno_id','=','m.id')
                ->select('p.id','p.district','p.receiptAmount',
                                  'm.name as mno','m.colour')
-               ->where('p.client_id', '=', $dto->client_id)
                ->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo])
+               ->where('p.client_id', '=', $dto->client_id)
                ->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED']);
             // $theSQLQuery = $thePayments->toSql();
             // $theBindings = $thePayments-> getBindings();
@@ -57,8 +57,8 @@ class ClientDashboardService
                ->select(DB::raw('dayofmonth(p.created_at) as dayOfTx,
                                     COUNT(p.id) AS noOfPayments,
                                        SUM(p.receiptAmount) as totalAmount'))
-               ->where('p.client_id', '=', $dto->client_id)
                ->whereBetween('p.created_at',  [$firstDayOfCurrentMonth, $theDateTo])
+               ->where('p.client_id', '=', $dto->client_id)
                ->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                ->groupBy('dayOfTx')
                ->orderBy('dayOfTx');
@@ -84,8 +84,8 @@ class ClientDashboardService
                ->select(DB::raw('SUM(p.receiptAmount) as totalAmount, 
                                     month(p.created_at) as monthOfTx,
                                     m.name as mno,m.colour'))
-               ->where('p.client_id', '=', $dto->client_id)
                ->whereBetween('p.created_at',  [$dateFrom, $dto->dateTo])
+               ->where('p.client_id', '=', $dto->client_id)
                ->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                ->groupBy('monthOfTx', 'mno', 'colour')
                ->orderBy('mno');

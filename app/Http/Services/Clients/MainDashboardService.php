@@ -28,10 +28,10 @@ class MainDashboardService
                //Get all in Date Range
                   $thePayments = DB::table('payments as p')
                      ->join('mnos as m','p.mno_id','=','m.id')
-                     ->select('p.id','p.district','p.receiptAmount',
+                     ->select('p.id','p.receiptAmount',
                                        'm.name as mno','m.colour')
+                     ->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo])
                      ->where('p.client_id', '=', $activeClient->id)
-                     ->whereBetween('created_at', [$dto->dateFrom, $dto->dateTo])
                      ->whereIn('p.paymentStatus', 
                               ['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                      ->get();
