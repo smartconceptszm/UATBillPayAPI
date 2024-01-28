@@ -24,12 +24,12 @@ class PaymentTransactionService
             ->join('client_menus as m','p.menu_id','=','m.id')
             ->select('p.id','p.created_at','p.transactionId','p.accountNumber','p.district','p.mobileNumber',
                      'p.receiptAmount','p.receiptNumber','m.prompt as paymentType','p.paymentStatus',
-                     'mnos.name as mno','p.mnoTransactionId','p.channel','p.error')
+                     'mnos.name as mno','p.mnoTransactionId','p.channel','p.error');
             //->whereIn('p.paymentStatus',['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
-            ->where('p.client_id', '=', $dto->client_id);
          if($dto->dateFrom && $dto->dateTo){
             $records = $records->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo]);
          }
+         $records = $records->where('p.client_id', '=', $dto->client_id);
          // $theSQLQuery = $records->toSql();
          // $theBindings = $records-> getBindings();
          // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);

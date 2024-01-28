@@ -15,10 +15,10 @@ class PaymentHistoryService
          $dto = (object)$criteria;
          $records = DB::table('payments')
                         ->select('id','created_at','accountNumber','mobileNumber','receiptAmount','receiptNumber')
-                        ->whereIn('paymentStatus',['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                         ->where('accountNumber', '=', $dto->accountNumber)
                         ->where('mobileNumber', '=', $dto->mobileNumber)
                         ->where('client_id', '=', $dto->client_id)
+                        ->whereIn('paymentStatus',['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                         ->orderByDesc('created_at')
                         ->limit($dto->limit)
                         ->get();

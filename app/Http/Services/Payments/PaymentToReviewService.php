@@ -16,13 +16,13 @@ class PaymentToReviewService
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
          $records = DB::table('payments as p')
-            ->select('id', 'error')
-            ->whereIn('p.paymentStatus', ['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED'])
-            ->where('p.client_id', '=', $dto->client_id);
+            ->select('id', 'error');
          if($dto->dateFrom && $dto->dateTo){
             $records =$records->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo]);
          }
-         $records =$records->get();
+         $records =$records->whereIn('p.paymentStatus', ['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED'])
+                           ->where('p.client_id', '=', $dto->client_id)
+                           ->get();
          $providerErrors = $records->filter(
                function ($item) {
                   if ((\strpos($item->error,"Status Code"))

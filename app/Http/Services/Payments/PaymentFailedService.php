@@ -34,13 +34,13 @@ class PaymentFailedService
                   ->select('p.id','p.created_at','p.mobileNumber','p.accountNumber','p.receiptNumber',
                            'p.receiptAmount','p.paymentAmount','p.transactionId','p.district',
                            'p.mnoTransactionId','mnos.name as mno','m.prompt as paymentType',
-                           'p.paymentStatus','p.error')
-                  ->where('p.client_id', '=', $dto->client_id);
+                           'p.paymentStatus','p.error');
          if($dto->dateFrom && $dto->dateTo){
             $records =$records->whereBetween('p.created_at',[$dto->dateFrom, $dto->dateTo]);
          }
-         $allFailed = $records->whereIn('p.paymentStatus', ['SUBMISSION FAILED','PAYMENT FAILED'])
-                                 ->orderByDesc('p.created_at');
+         $allFailed = $records->where('p.client_id', '=', $dto->client_id)
+                              ->whereIn('p.paymentStatus', ['SUBMISSION FAILED','PAYMENT FAILED'])
+                              ->orderByDesc('p.created_at');
          $allFailed = $records->get();
          $providerErrors = $allFailed->filter(
                function ($item) {
