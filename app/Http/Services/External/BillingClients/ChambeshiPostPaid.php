@@ -5,6 +5,7 @@ namespace App\Http\Services\External\BillingClients;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use App\Http\Services\External\BillingClients\Chambeshi\ChambeshiAccountService;
 use App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService;
+use Illuminate\Support\Facades\Log;
 
 use Exception;
 
@@ -46,6 +47,7 @@ class ChambeshiPostPaid implements IBillingClient
 
       
       } catch (\Throwable $e) {
+         Log::error(' CHAMBESHI Billing Client - Get Balance '.$e->getMessage());
          if ($e->getCode() == 2) {
                throw new Exception($e->getMessage(), 2);
          } elseif ($e->getCode() == 1) {
