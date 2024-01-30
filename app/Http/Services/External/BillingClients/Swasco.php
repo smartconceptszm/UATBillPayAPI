@@ -76,6 +76,7 @@ class Swasco implements IBillingClient
       "CHO"=>"CHOMA",
       "CHR"=>"CHIRUNDU",
       "GWE"=>"GWEMBE",
+      "ITT"=>"ITEZHITEZHI",
       "KAL"=>"KALOMO",
       "KAZ"=>"KAZUNGULA",
       "LIV"=>"LIVINGSTONE",
@@ -305,7 +306,12 @@ class Swasco implements IBillingClient
 
    public function getDistrict(String $code): string
    {
-      return $this->districts[$code];
+      if(\array_key_exists($code,$this->districts)){
+         return $this->districts[$code];
+      }else{
+         return "OTHER";
+      }
+      
    }
 
 
