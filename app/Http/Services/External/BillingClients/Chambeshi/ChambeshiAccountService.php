@@ -24,7 +24,7 @@ class ChambeshiAccountService
    public function findById(string $id) : object|null {
       try {
          return $this->model->findOrFail($id);
-      } catch (\Throwable $e) {
+      } catch (\Exception $e) {
          throw new Exception($e->getMessage());
       }
    }
@@ -32,7 +32,7 @@ class ChambeshiAccountService
    public function findOneBy(array $criteria) : object|null {
       try {
          return $this->model->where($criteria)->first();
-      } catch (\Throwable $e) {
+      } catch (\Exception $e) {
          throw new Exception($e->getMessage());
       }
    }

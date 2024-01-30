@@ -37,11 +37,32 @@ class ChambeshiServiceProvider extends ServiceProvider
          });
       //
 
-      //Billing Clients			
-			$this->app->singleton('chambeshi', function () {
-				return $this->app->make(\App\Http\Services\External\BillingClients\Chambeshi::class);
-			});
-		//
+      //Billing Clients	PostPaid		
+         $this->app->singleton('chambeshiPostPaid', function () {
+            return $this->app->make(\App\Http\Services\External\BillingClients\ChambeshiPostPaid::class);
+         });
+
+         $this->app->singleton('ReceiptPaymentChambeshi', function () {
+            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPaymentChambeshi::class);
+         });
+      //
+
+      //Billing Clients	PrePaid	
+         $this->app->singleton('chambeshiPrePaid', function () {
+            return $this->app->make(\App\Http\Services\External\BillingClients\ChambeshiPrePaid::class,
+                              [
+                                 'baseURL' => \env('CHAMBESHI_PREPAID_BASE_URL'),
+                                 'username' => \env('CHAMBESHI_PREPAID_USERNAME'),
+                                 'password' => \env('CHAMBESHI_PREPAID_PASSWORD')
+                              ]
+                        );
+         });
+
+         // $this->app->singleton('ReceiptPrePaidChambeshi', function () {
+         //    return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPrePaidChambeshi::class);
+         // });
+
+      //
       
    }
 

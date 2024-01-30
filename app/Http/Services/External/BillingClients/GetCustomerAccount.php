@@ -26,7 +26,7 @@ class GetCustomerAccount
 				$customer = \json_decode($customer,true);
 			}else{
 				$customer = $this->billingClient->getAccountDetails($txDTO->accountNumber);
-				Cache::put($txDTO->urlPrefix.$txDTO->accountNumber, 
+				Cache::put($txDTO->urlPrefix.$customer['accountNumber'], 
 							\json_encode($customer), 
 							Carbon::now()->addMinutes(intval(\env('CUSTOMER_ACCOUNT_CACHE'))));
 				Cache::forget($txDTO->urlPrefix.'_BillingErrorCount');

@@ -5,18 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ChambeshiAccount extends Model
+class ChambeshiPayment extends Model
 {
-   
-
-
    use HasFactory;
-   protected $primaryKey = 'AR_id';
+
    protected $connection;
-   protected $table = "SK_Sage_Account_ExtConII";
+   protected $table = "SmartConcept";
+   protected $fillable=[
+      'TxDate','Account', 'AccountName','Debt','AmountPaid','Phone#',
+      'ReceiptNo','Address','District','TransactDescript','Mobile Network'
+   ];
 
    protected $casts = [
-      'L_Cr_Date' => 'datetime:Y-m-d H:i:s'
+      'TxDate' => 'datetime:Y-m-d H:i:s'
    ];
 
    public $timestamps = false; 
@@ -24,5 +25,5 @@ class ChambeshiAccount extends Model
    public function __construct() {
       $this->connection = \env('CHAMBESHI_DB_CONNECTION');
    }
-  
+      
 }
