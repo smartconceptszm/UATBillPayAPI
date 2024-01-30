@@ -12,7 +12,7 @@ class ConfirmMoMoPaymentJob extends BaseJob
 {
 
    private $momoDTO;
-   public $timeout = 600;
+   // public $timeout = 600;
    public function __construct(BaseDTO $momoDTO)
    {
       $this->momoDTO = $momoDTO;
