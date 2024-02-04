@@ -12,7 +12,7 @@ class Session extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'client_id','sessionId','menu_id','mno_id', 'mobileNumber','accountNumber',
+      'client_id','sessionId','menu_id','mno_id', 'mobileNumber','accountNumber','meterNumber',
       'paymentAmount','district','customerJourney','response','status','error'
    ];
 

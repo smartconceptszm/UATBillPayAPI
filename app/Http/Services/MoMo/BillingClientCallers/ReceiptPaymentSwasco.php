@@ -23,28 +23,21 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 	public function handle(BaseDTO $momoDTO):BaseDTO
 	{
 
-		$paymentType = "1";
 		$newBalance = "0";
-		$customer=null;
 		//Trimmed to 20 cause of constraint on API
 		$swascoTransactionRef = \strlen($momoDTO->sessionId) > 20 ? 
 												\substr($momoDTO->sessionId, 0, 20) : $momoDTO->sessionId;
-		$customer = \json_decode(Cache::get($momoDTO->urlPrefix.
-												$momoDTO->accountNumber,\json_encode([])), true);
-		if($customer){
-				if(\key_exists('balance',$customer)){
-					$newBalance = (float)(\str_replace(",", "", $customer['balance'])) - 
-													(float)$momoDTO->receiptAmount;
-					$newBalance = \number_format($newBalance, 2, '.', ',');
-				}else{
-					$newBalance="0";
-				}
+
+		if(\key_exists('balance',$momoDTO->customer)){
+			$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+											(float)$momoDTO->receiptAmount;
+			$newBalance = \number_format($newBalance, 2, '.', ',');
 		}else{
-				$newBalance="0";
+			$newBalance="0";
 		}
 
 		$receiptingParams=[ 
-				'paymentType'=>$paymentType,
+				'paymentType'=>"1",
 				'account' => $momoDTO->accountNumber,
 				'amount' => $momoDTO->receiptAmount,
 				'mobileNumber'=> $momoDTO->mobileNumber,
@@ -58,15 +51,15 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 				$momoDTO->paymentStatus = "RECEIPTED";
 
 				$momoDTO->receipt = "Payment successful\n" .
-				"Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
+				"Rcpt No: " . $momoDTO->receiptNumber . "\n" .
 				"Amount: ZMW " . \number_format( $momoDTO->receiptAmount, 2, '.', ',') . "\n".
 				"Acc: " . $momoDTO->accountNumber . "\n";
 				if($newBalance != "0"){
 					$momoDTO->receipt.="Bal: ZMW ". $newBalance . "\n";
 				}
 				$momoDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
-				if(\key_exists('mobileNumber',$customer)){
-					if ((($momoDTO->mobileNumber == $customer['mobileNumber']) && ($momoDTO->channel == 'USSD'))){
+				if(\key_exists('mobileNumber',$momoDTO->customer)){
+					if ((($momoDTO->mobileNumber == $momoDTO->customer['mobileNumber']) && ($momoDTO->channel == 'USSD'))){
 						try {
 							$momoDTO = $this->addShotcutMessage->handle($momoDTO);
 						} catch (\Throwable $e) {

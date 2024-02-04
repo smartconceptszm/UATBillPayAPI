@@ -4,14 +4,12 @@ namespace App\Http\Services\MoMo\BillingClientCallers;
 
 use App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
 class ReceiptPaymentLukanga implements IReceiptPayment
 {
     private $newBalance;
-    private $customer;
     public function __construct( 
         private IBillingClient $billingClient)
     {}
@@ -20,54 +18,39 @@ class ReceiptPaymentLukanga implements IReceiptPayment
     {
         
 		$this->newBalance="0";
-		$this->customer = \json_decode(Cache::get($momoDTO->urlPrefix.
-									$momoDTO->accountNumber,\json_encode([])), true);
-		if($this->customer){
-				if(\key_exists('balance',$this->customer)){
-					$this->newBalance= (float)(\str_replace(",", "", $this->customer['balance'])) - 
-													(float)$momoDTO->receiptAmount;
-					$this->newBalance= \number_format($this->newBalance, 2, '.', ',');
-				}else{
-					$this->newBalance="0";
-				}
+		if(\key_exists('balance',$momoDTO->customer)){
+			$this->newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+											(float)$momoDTO->receiptAmount;
+			$this->newBalance = \number_format($this->newBalance, 2, '.', ',');
 		}else{
-				$this->newBalance="0";
+			$this->newBalance = "0";
 		}
+
 		$receiptingParams=[ 
 				'account' => $momoDTO->accountNumber,
 				'reference' => $momoDTO->mnoTransactionId,
 				'amount' => $momoDTO->receiptAmount,
 				'mnoName'=>$momoDTO->mnoName,
-				'balance' => $this->customer?(float)(\str_replace(",", "", $this->customer['balance'])):0
+				'balance' => $momoDTO->customer?(float)(\str_replace(",", "", $momoDTO->customer['balance'])):0
 		];
 
 		$billingResponse=$this->billingClient->postPayment($receiptingParams);
 		if($billingResponse['status']=='SUCCESS'){
 				$momoDTO->receiptNumber=$billingResponse['receiptNumber'];
 				$momoDTO->paymentStatus = 'RECEIPTED';
-				$momoDTO->receipt = $this->formatReceipt($momoDTO->receiptNumber
-												,$momoDTO->receiptAmount,$momoDTO->accountNumber);
+				$momoDTO->receipt = "Payment successful\n" .
+											"Rcpt No: " . $momoDTO->receiptNumber . "\n" .
+											"Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
+											"Acc: " . $momoDTO->accountNumber . "\n";
+											if($this->newBalance!="0"){
+												$momoDTO->receipt.="Bal: ZMW ".$this->newBalance . "\n";
+											}
+				$momoDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
 		}else{
 				$momoDTO->error = "At post payment. ".$billingResponse['error'];
 		}
 		return $momoDTO;
 		
     }
-
-	private function formatReceipt(string $receiptNumber, 
-					$receiptAmount, string $accountNumber ): string
-	{
-
-		$receipt = "Payment successful\n" .
-			"Rcpt No.: " . $receiptNumber . "\n" .
-			"Amount: ZMW " . \number_format($receiptAmount, 2, '.', ',') . "\n".
-			"Acc: " . $accountNumber . "\n";
-			if($this->newBalance!="0"){
-					$receipt.="Bal: ZMW ".$this->newBalance . "\n";
-			}
-		$receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
-		return $receipt;
-
-	}
 
 }

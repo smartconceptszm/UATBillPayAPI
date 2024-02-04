@@ -22,8 +22,7 @@ class CheckBalance_Step_2
 				$txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
 				$txDTO->accountNumber=$txDTO->subscriberInput;
 				try {
-					$txDTO->customer = $this->getCustomerAccount->handle($txDTO);
-					$txDTO->district = $txDTO->customer['district'];
+					$txDTO = $this->getCustomerAccount->handle($txDTO);
 				} catch (\Throwable $e) {
 						if($e->getCode()==1){
 							$txDTO->errorType = "InvalidAccount";
@@ -41,8 +40,8 @@ class CheckBalance_Step_2
 				$momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
 				if($momoPaymentStatus['enabled']){
 					$txDTO->response .= "1. To Pay Bill (via ".$txDTO->mnoName." Money)"."\n";
+					$txDTO->response .= "2. Payments history\n";
 				}
-				$txDTO->response .= "2. Payments history\n";
 				$txDTO->response .= "0. Back";  
 				$txDTO->status = 'COMPLETED';
 			} catch (\Throwable $e) {

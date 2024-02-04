@@ -33,7 +33,7 @@ class FaultsComplaints_Step_4
                      'order'=>$arrCustomerJourney[3]
                   ]); 
          $txDTO->subscriberInput = $this->validateInput->handle($theSubType->detailType,$txDTO->subscriberInput);
-         $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix);
+         $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = 'InvalidInput';

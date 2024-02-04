@@ -3,10 +3,10 @@
 namespace App\Http\Middleware;
 
 use Illuminate\Support\Facades\Queue;
-
+use Illuminate\Support\Facades\Cache;
 use App\Jobs\InitiateMoMoPaymentJob;
-use App\Http\DTOs\MoMoDTO;
 use Illuminate\Support\Carbon;
+use App\Http\DTOs\MoMoDTO;
 
 use Closure;
 
@@ -37,7 +37,11 @@ class FireMoMoRequestMiddleware
         $ussdParams = $request->ussdParams;
         if ($ussdParams) {
             if($ussdParams['fireMoMoRequest']){
+
                 $momoDTO =  $this->momoDTO->fromUssdData($ussdParams);
+                $momoDTO->customer = \json_decode(Cache::get($momoDTO->urlPrefix.
+                                $momoDTO->accountNumber,\json_encode([])), true);
+                                
                 Queue::later(Carbon::now()->addSeconds((int)\env($momoDTO->mnoName.
                                     '_SUBMIT_PAYMENT')), new InitiateMoMoPaymentJob($momoDTO));
             }

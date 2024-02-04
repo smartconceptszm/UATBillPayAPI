@@ -23,8 +23,7 @@ class Survey_Step_2
 
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->accountNumber = $txDTO->subscriberInput;
-         $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
-         $txDTO->district = $txDTO->customer['district'];
+         $txDTO = $this->getCustomerAccount->handle($txDTO);
          
          $txDTO->response = "Good ".$this->timeofDay().",\n". 
             $txDTO->customer['name']." (".$txDTO->subscriberInput.")\n". 

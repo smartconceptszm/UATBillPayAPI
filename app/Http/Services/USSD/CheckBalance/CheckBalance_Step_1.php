@@ -18,7 +18,7 @@ class CheckBalance_Step_1
 	{
 
 		try {
-			$txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix);
+			$txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
 		} catch (\Throwable $e) {
 			$txDTO->error = 'At check balance step 1. '.$e->getMessage();
 			$txDTO->errorType = 'SystemError';

@@ -17,17 +17,19 @@ class GetCustomerAccount
 		private IBillingClient $billingClient)
 	{}
 
-	public function handle(BaseDTO $txDTO):array
+	public function handle(BaseDTO $txDTO):BaseDTO
 	{
 
 		try {
-			$customer = Cache::get($txDTO->urlPrefix.$txDTO->accountNumber);
-			if($customer){
-				$customer = \json_decode($customer,true);
-			}else{
-				$customer = $this->billingClient->getAccountDetails($txDTO->accountNumber);
-				Cache::put($txDTO->urlPrefix.$customer['accountNumber'], 
-							\json_encode($customer), 
+			$txDTO->customer = \json_decode(Cache::get($txDTO->urlPrefix.
+                                $txDTO->accountNumber,\json_encode([])), true);
+			if(!$txDTO->customer){
+				$txDTO->customer = $this->billingClient->getAccountDetails($txDTO->accountNumber);
+				$txDTO->meterNumber = $txDTO->accountNumber;
+				$txDTO->accountNumber = $txDTO->customer['accountNumber'];
+				$txDTO->district = $txDTO->customer['district'];
+				Cache::put($txDTO->urlPrefix.$txDTO->accountNumber, 
+							\json_encode($txDTO->customer), 
 							Carbon::now()->addMinutes(intval(\env('CUSTOMER_ACCOUNT_CACHE'))));
 				Cache::forget($txDTO->urlPrefix.'_BillingErrorCount');
 			}
@@ -67,7 +69,7 @@ class GetCustomerAccount
 				throw new Exception($e->getMessage(), 2);
 			}   
 		}
-		return $customer;
+		return $txDTO;
 		
 	}
     

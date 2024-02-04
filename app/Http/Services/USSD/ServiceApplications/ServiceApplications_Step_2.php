@@ -32,7 +32,7 @@ class ServiceApplications_Step_2
                throw new Exception("Returned empty service type",1);
             } 
             if($theServiceType->onExistingAccount == 'YES'){
-               $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix);
+               $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
             }else{
                $serviceAppQuestions = $this->serviceTypeDetails->findAll([
                      'service_type_id'=>$theServiceType->id

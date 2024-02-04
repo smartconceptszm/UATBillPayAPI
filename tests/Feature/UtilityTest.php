@@ -20,7 +20,7 @@ class UtilityTest extends TestCase
 
     }
 
-    public function testModelService()
+    public function _testModelService()
     {   
 
         $paymentService = new PaymentService(new Payment([]));

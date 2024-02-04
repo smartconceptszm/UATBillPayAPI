@@ -22,6 +22,8 @@ class UssdDTO extends BaseDTO
    public $lastResponse;
    public $isNewRequest;
    public $mobileNumber;
+   public $meterNumber;
+   public $accountType;
    public $testMSISDN;
    public $menuPrompt;
    public $created_at;
@@ -50,6 +52,7 @@ class UssdDTO extends BaseDTO
             'accountNumber'=>$this->accountNumber,
             'paymentAmount'=>$this->paymentAmount,
             'mobileNumber'=>$this->mobileNumber,
+            'meterNumber'=>$this->meterNumber,
             'sessionId'=>$this->sessionId,
             'client_id'=>$this->client_id,
             'district'=>$this->district,

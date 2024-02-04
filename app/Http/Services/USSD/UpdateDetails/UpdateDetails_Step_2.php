@@ -21,8 +21,7 @@ class UpdateDetails_Step_2
       try {
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->accountNumber = $txDTO->subscriberInput;
-         $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
-         $txDTO->district = $txDTO->customer['district'];
+         $txDTO = $this->getCustomerAccount->handle($txDTO);
          $txDTO->response = "Update details on:\n". 
          "Acc: ".$txDTO->subscriberInput."\n".
          "Name: ".$txDTO->customer['name']."\n". 

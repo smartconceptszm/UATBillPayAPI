@@ -61,7 +61,6 @@ Route::group(['middleware' => 'mode'], function (){
             });
       //End of Dev ROUTES
    //End of USSD Routes
-
    //Auth
       Route::post('/login', [\App\Http\Controllers\Auth\UserLoginController::class,'store']);
       Route::post('/passwordreset', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'store']);
@@ -116,6 +115,7 @@ Route::group(['middleware' => 'mode'], function (){
             Route::get('/clientmenus/findoneby', 'findOneBy');
             Route::put('/clientmenus/{id}', 'update');
             Route::get('/clientmenus/{id}', 'show');
+            Route::get('/menusofclient/{id}', 'menusofclient');
             Route::post('/clientmenus', 'store');
             Route::get('/clientmenus', 'index');
          });

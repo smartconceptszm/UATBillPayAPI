@@ -40,8 +40,7 @@ class UpdateDetails_Step_4
          $txDTO->subscriberInput = $this->validateCRMInput->handle($customerField->type,$txDTO->subscriberInput);
          $capturedUpdates[$order] = $txDTO->subscriberInput;
          if(\count($customerFields) == (\count($capturedUpdates))){
-            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
-            $txDTO->district = $txDTO->customer['district'];
+            $txDTO = $this->getCustomerAccount->handle($txDTO);
             $txDTO->subscriberInput = \implode(";",\array_values($capturedUpdates));
             $customerFieldUpdate = [
                                        'accountNumber' => $txDTO->accountNumber,

@@ -19,6 +19,7 @@ class Step_IdentifyClient extends EfectivoPipelineContract
 
       if($txDTO->error == ''){ 
          try {
+            
             $client = $this->clientService->findOneBy(['urlPrefix'=>$txDTO->urlPrefix]);
             $txDTO->client_id = $client->id;
             $txDTO->clientCode = $client->code;
@@ -31,12 +32,14 @@ class Step_IdentifyClient extends EfectivoPipelineContract
                $txDTO->exitPipeline = true;
                $txDTO->lastResponse = true;
             }
+
             if($client->status != 'ACTIVE'){
                $txDTO->response=\env('BLOCKED_MESSAGE')." ".\strtoupper($txDTO->urlPrefix);
                $txDTO->error = 'Client is blocked';
                $txDTO->lastResponse = true;
                $txDTO->exitPipeline = true;
             }
+
          } catch (\Throwable $e) {
             $txDTO->error = 'At identify client step. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';

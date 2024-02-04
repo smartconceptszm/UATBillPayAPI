@@ -27,8 +27,7 @@ class FaultsComplaints_Step_5
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->accountNumber = $txDTO->subscriberInput;
          try {
-            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
-            $txDTO->district = $txDTO->customer['district'];
+            $txDTO = $this->getCustomerAccount->handle($txDTO);
          } catch (\Throwable $e) {
             if($e->getCode()==1){
                $txDTO->errorType = 'InvalidAccount';

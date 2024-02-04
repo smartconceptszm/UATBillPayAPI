@@ -28,7 +28,8 @@ class CheckBalance_Step_3
                                  'client_id' => $txDTO->client_id,
                                  'isPayment' => "YES",
                                  'isDefault' => "YES",
-                                 'isActive' => "YES"
+                                 'isActive' => "YES",
+                                 'accountType' => $txDTO->accountType
                               ]);
             if($selectedMenu->handler != 'Parent'){
                $txDTO->customerJourney = $arrCustomerJourney[0]."*".$selectedMenu->order;
@@ -45,7 +46,7 @@ class CheckBalance_Step_3
          if($txDTO->subscriberInput == '0'){
             $txDTO->customerJourney = $arrCustomerJourney[0];
             $txDTO->subscriberInput = $arrCustomerJourney[1];
-            $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix);
+            $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
             $txDTO->status = 'INITIATED';
             return $txDTO;
          }

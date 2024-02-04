@@ -11,8 +11,9 @@ use App\Jobs\BaseJob;
 class ConfirmMoMoPaymentJob extends BaseJob
 {
 
+   public $timeout = 600;
    private $momoDTO;
-   // public $timeout = 600;
+
    public function __construct(BaseDTO $momoDTO)
    {
       $this->momoDTO = $momoDTO;

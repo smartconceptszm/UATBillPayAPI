@@ -21,7 +21,7 @@ class BuyUnits_Step_1
       try {    
          $momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
          if($momoPaymentStatus['enabled']){
-            $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix);
+            $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
          }else{
             throw new Exception($momoPaymentStatus['responseText'], 1);
          }

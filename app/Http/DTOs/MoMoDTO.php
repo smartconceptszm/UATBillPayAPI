@@ -16,6 +16,9 @@ class MoMoDTO extends BaseDTO
    public $receiptNumber;
    public $paymentStatus;
    public $mobileNumber;
+   public $meterNumber;
+   public $tokenNumber;
+   public $accountType;
    public $session_id;
    public $created_at;
    public $updated_at;
@@ -67,6 +70,8 @@ class MoMoDTO extends BaseDTO
             'paymentStatus'=>$this->paymentStatus,
             'receiptNumber'=>$this->receiptNumber,
             'mobileNumber'=>$this->mobileNumber,
+            'meterNumber'=>$this->meterNumber,
+            'tokenNumber'=>$this->tokenNumber,
             'session_id'=>$this->session_id,
             'client_id'=>$this->client_id,         
             'reference'=>$this->reference,

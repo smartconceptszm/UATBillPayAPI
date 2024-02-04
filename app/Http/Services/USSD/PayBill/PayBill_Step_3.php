@@ -35,8 +35,7 @@ class PayBill_Step_3
       }
       
       try {
-         $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
-         $txDTO->district = $txDTO->customer['district'];
+         $txDTO = $this->getCustomerAccount->handle($txDTO);
       } catch (Exception$e) {
          if($e->getCode()==1){
             $txDTO->errorType = 'InvalidAccount';
@@ -70,6 +69,7 @@ class PayBill_Step_3
       $txDTO->response .= "Enter\n". 
                            "1. Confirm\n".
                            "0. Back";
+                           
       $cacheValue = \json_encode([
                'must'=>false,
                'steps'=>2,

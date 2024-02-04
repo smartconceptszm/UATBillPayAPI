@@ -14,7 +14,7 @@ class ClientMenu extends Model
 
    protected $fillable=[
       'client_id','parent_id','order','prompt','handler','billingClient', 'description',
-      'isParent','receiptingHandler','isDefault','isActive'
+      'isPayment','accountType','receiptingHandler','isDefault','isActive'
    ];
    
    protected $casts = [
@@ -23,8 +23,8 @@ class ClientMenu extends Model
    ];
 
    protected $attributes = [
+      'accountType'  => 'POST-PAID',
       'isPayment' => 'NO',
-      'isParent'  => 'NO',
       'isDefault' => 'NO',
       'isActive' => 'NO',
    ];

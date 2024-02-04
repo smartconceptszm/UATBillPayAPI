@@ -17,11 +17,11 @@ class ReceiptReconnectionSwasco implements IReceiptPayment
 
     public function handle(BaseDTO $momoDTO): BaseDTO
     {
-			$paymentType = "4";
+
 			$swascoTransactionRef = \strlen($momoDTO->sessionId) > 20 ? 
 													\substr($momoDTO->sessionId, 0, 20) : $momoDTO->sessionId;
 			$receiptingParams = [ 
-											'paymentType'=>$paymentType,
+											'paymentType'=>"4",
 											'account' => $momoDTO->accountNumber,
 											'amount' => $momoDTO->receiptAmount,
 											'mobileNumber'=> $momoDTO->mobileNumber,
@@ -30,18 +30,16 @@ class ReceiptReconnectionSwasco implements IReceiptPayment
 			$billingResponse=$this->billingClient->postPayment($receiptingParams);
 
 			if($billingResponse['status']=='SUCCESS'){
-					$momoDTO->receiptNumber = $billingResponse['receiptNumber'];
-					$momoDTO->paymentStatus = "RECEIPTED";
+				$momoDTO->receiptNumber = $billingResponse['receiptNumber'];
+				$momoDTO->paymentStatus = "RECEIPTED";
 
-					$receipt = "Payment successful\n" .
-					"Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
-					"Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
-					"Acc: " . $momoDTO->accountNumber . "\n";
-					$receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
-
-					$momoDTO->receipt = $receipt;
+				$momoDTO->receipt = "Payment successful\n" .
+											"Rcpt No: " . $momoDTO->receiptNumber . "\n" .
+											"Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
+											"Acc: " . $momoDTO->accountNumber . "\n".
+											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{
-					$momoDTO->error = "At post recoonection fee. ".$billingResponse['error'];
+				$momoDTO->error = "At post recoonection fee. ".$billingResponse['error'];
 			}
         
         return $momoDTO;

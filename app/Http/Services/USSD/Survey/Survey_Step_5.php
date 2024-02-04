@@ -59,8 +59,7 @@ class Survey_Step_5
                                              ]);
          
          if(\count($surveyQuestions) == (\count($surveyResponses))){
-            $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
-            $txDTO->district = $txDTO->customer['district'];
+            $txDTO = $this->getCustomerAccount->handle($txDTO);
             $txDTO->subscriberInput = \implode(";",\array_values($surveyResponses));
             $surveyResponseData = [
                                     'accountNumber' => $txDTO->accountNumber,

@@ -20,7 +20,7 @@ class Step_CreatePaymentRecord extends EfectivoPipelineContract
       try {
          if($momoDTO->error == ""){
             $payment = $this->paymentService->create($momoDTO->toPaymentData());
-            $momoDTO->created_at = $payment->created_at;
+            $momoDTO->created_at = $payment->created_at->toDateTimeString();
             $momoDTO->status = $payment->status;
             $momoDTO->id = $payment->id;
          }

@@ -35,13 +35,12 @@ class ReceiptVacuumTankerSwasco implements IReceiptPayment
 		if($billingResponse['status']=='SUCCESS'){
 				$momoDTO->receiptNumber = $billingResponse['receiptNumber'];
 				$momoDTO->paymentStatus = "RECEIPTED";
-				$receipt = "Payment successful\n" .
-							"Rcpt No.: " . $momoDTO->receiptNumber  . "\n" .
-							"Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
-							"Acc: " . $momoDTO->accountNumber . "\n";
-				$receipt.="Ref: " .\str_replace(\chr(47), "", $momoDTO->reference). "\n";
-				$receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
-				$momoDTO->receipt = $receipt;
+				$momoDTO->receipt = "Payment successful\n" .
+											"Rcpt No: " . $momoDTO->receiptNumber  . "\n" .
+											"Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
+											"Acc: " . $momoDTO->accountNumber . "\n".
+											"Ref: " .\str_replace(\chr(47), "", $momoDTO->reference). "\n".
+											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 		}else{
 				$momoDTO->error = "At post payment. ".$billingResponse['error'];
 		}

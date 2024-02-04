@@ -41,7 +41,7 @@ class FaultsComplaints_Step_3
             $txDTO->response = $theSubType->prompt;
          }else{
             $txDTO->customerJourney = $txDTO->customerJourney."*". $txDTO->subscriberInput;
-            $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix);
+            $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
             $txDTO->subscriberInput = " - ";
          }
 

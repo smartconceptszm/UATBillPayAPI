@@ -34,18 +34,17 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
 
 					$theMenu = $this->clientMenuService->findById($momoDTO->menu_id);
 
-					$receipt = "Payment successful\n" .
-					"Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
-					"Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n";
+					$momoDTO->receipt = "Payment successful\n" .
+									"Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
+									"Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n";
 					if($momoDTO->accountNumber){
-						$receipt .= "Acc: " . $momoDTO->accountNumber . "\n";
+						$momoDTO->receipt .= "Acc: " . $momoDTO->accountNumber . "\n";
 					}
 					if($momoDTO->reference){
-						$receipt .= "Ref: " . $momoDTO->reference . "\n";
+						$momoDTO->receipt .= "Ref: " . $momoDTO->reference . "\n";
 					}
-					$receipt .= "For: " . $theMenu->description. "\n";
-					$receipt .= "Date: " . Carbon::now()->format('d-M-Y') . "\n";
-					$momoDTO->receipt = $receipt;
+					$momoDTO->receipt .= "For: " . $theMenu->description. "\n".
+												"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{
 					$momoDTO->error = "At post recoonection fee. ".$billingResponse['error'];
 			}

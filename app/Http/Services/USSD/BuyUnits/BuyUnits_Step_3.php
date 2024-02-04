@@ -35,8 +35,7 @@ class BuyUnits_Step_3
       }
          
       try {
-         $txDTO->customer = $this->getCustomerAccount->handle($txDTO);
-         $txDTO->district = $txDTO->customer['district'];
+         $txDTO = $this->getCustomerAccount->handle($txDTO);
       } catch (\Throwable $e) {
             if($e->getCode()==1){
                $txDTO->errorType = 'InvalidAccount';
@@ -54,8 +53,9 @@ class BuyUnits_Step_3
    private function getResponse(BaseDTO $txDTO): BaseDTO
    {
 
-      $txDTO->response= "Buy UNITS for ZMW ".$txDTO->subscriberInput." into:\n";
-      $txDTO->response .= "Acc: ".$txDTO->accountNumber."\n".
+      $txDTO->response = "Buy UNITS for ZMW ".$txDTO->subscriberInput." into:\n".
+                  "Meter: ".$txDTO->meterNumber."\n".
+                  "Acc: ".$txDTO->accountNumber."\n".
                   "Name: ".$txDTO->customer['name']."\n";
       if($txDTO->clientSurcharge!='YES'){
          $txDTO->response .= "Addr: ".$txDTO->customer['address']."\n". 

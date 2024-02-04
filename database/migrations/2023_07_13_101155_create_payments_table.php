@@ -19,6 +19,7 @@ return new class extends Migration
          $table->uuid('menu_id')->notNullable();
          $table->string('mobileNumber',12)->notNullable();
          $table->string('accountNumber',50)->nullable();
+         $table->string('meterNumber',50)->nullable();
          $table->string('district',50)->nullable();
          $table->string('reference',160)->nullable();
          $table->string('mnoTransactionId',30)->nullable();            
@@ -27,11 +28,12 @@ return new class extends Migration
          $table->float('receiptAmount',10,2)->default(0);
          $table->string('transactionId',50)->nullable();
          $table->string('receiptNumber',30)->nullable();
+         $table->string('tokenNumber',30)->nullable();
          $table->string('receipt',255)->nullable();
          $table->enum('channel',['USSD','MOBILEAPP','BANKAPI', 'WEBSITE'])
                               ->default('USSD')->notNullable();
-         $table->enum('paymentStatus',['INITIATED','SUBMISSION FAILED','SUBMITTED',
-                              'PAYMENT FAILED','PAID | NOT RECEIPTED','RECEIPTED',
+         $table->enum('paymentStatus',['INITIATED','SUBMISSION FAILED','SUBMITTED','PAYMENT FAILED',
+                              'PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED',
                               'RECEIPT DELIVERED'])
                               ->default('INITIATED')->notNullable();
          $table->enum('status',['INITIATED','COMPLETED','FAILED','SUCCESSFUL','REVIEWED',
