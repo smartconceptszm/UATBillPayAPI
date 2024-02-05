@@ -23,17 +23,18 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 	public function handle(BaseDTO $momoDTO):BaseDTO
 	{
 
-		$newBalance = "0";
 		//Trimmed to 20 cause of constraint on API
 		$swascoTransactionRef = \strlen($momoDTO->sessionId) > 20 ? 
 												\substr($momoDTO->sessionId, 0, 20) : $momoDTO->sessionId;
-
-		if(\key_exists('balance',$momoDTO->customer)){
-			$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
-											(float)$momoDTO->receiptAmount;
-			$newBalance = \number_format($newBalance, 2, '.', ',');
-		}else{
-			$newBalance="0";
+		$newBalance = "0";
+		if($momoDTO->customer){
+			if(\key_exists('balance',$momoDTO->customer)){
+				$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+												(float)$momoDTO->receiptAmount;
+				$newBalance = \number_format($newBalance, 2, '.', ',');
+			}else{
+				$newBalance="0";
+			}
 		}
 
 		$receiptingParams=[ 
@@ -58,16 +59,21 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 					$momoDTO->receipt.="Bal: ZMW ". $newBalance . "\n";
 				}
 				$momoDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
-				if(\key_exists('mobileNumber',$momoDTO->customer)){
-					if ((($momoDTO->mobileNumber == $momoDTO->customer['mobileNumber']) && ($momoDTO->channel == 'USSD'))){
-						try {
-							$momoDTO = $this->addShotcutMessage->handle($momoDTO);
-						} catch (\Throwable $e) {
-							Log::error('('.$momoDTO->urlPrefix.'). '.$e->getMessage().
-								'- Session: '.$momoDTO->sessionId.' - Phone: '.$momoDTO->mobileNumber);
+
+				//Handle shortcut
+				if($momoDTO->customer){
+					if(\key_exists('mobileNumber',$momoDTO->customer)){
+						if ((($momoDTO->mobileNumber == $momoDTO->customer['mobileNumber']) && ($momoDTO->channel == 'USSD'))){
+							try {
+								$momoDTO = $this->addShotcutMessage->handle($momoDTO);
+							} catch (\Throwable $e) {
+								Log::error('('.$momoDTO->urlPrefix.'). '.$e->getMessage().
+									'- Session: '.$momoDTO->sessionId.' - Phone: '.$momoDTO->mobileNumber);
+							}
 						}
 					}
 				}
+
 		}else{
 				$momoDTO->error = "At post payment. ".$billingResponse['error'];
 		}

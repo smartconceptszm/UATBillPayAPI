@@ -21,9 +21,18 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 	public function handle(BaseDTO $momoDTO):BaseDTO
 	{
 
-		$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
-										(float)$momoDTO->receiptAmount;
-		$newBalance = \number_format($newBalance, 2, '.', ',');
+
+		$newBalance = "0";
+		if($momoDTO->customer){
+			if(\key_exists('balance',$momoDTO->customer)){
+				$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+								(float)$momoDTO->receiptAmount;
+				$newBalance = \number_format($newBalance, 2, '.', ',');
+			}else{
+				$newBalance="0";
+			}
+		}
+
 		$momoDTO->receiptNumber =  $momoDTO->accountNumber."_".date('YmdHis');
 
 		$receiptingParams=[

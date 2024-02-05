@@ -18,12 +18,14 @@ class ReceiptPaymentLukanga implements IReceiptPayment
     {
         
 		$this->newBalance="0";
-		if(\key_exists('balance',$momoDTO->customer)){
-			$this->newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
-											(float)$momoDTO->receiptAmount;
-			$this->newBalance = \number_format($this->newBalance, 2, '.', ',');
-		}else{
-			$this->newBalance = "0";
+		if($momoDTO->customer){
+			if(\key_exists('balance',$momoDTO->customer)){
+				$this->newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+												(float)$momoDTO->receiptAmount;
+				$this->newBalance = \number_format($this->newBalance, 2, '.', ',');
+			}else{
+				$this->newBalance = "0";
+			}
 		}
 
 		$receiptingParams=[ 
