@@ -11,14 +11,14 @@ class StepService_GetAmount
    public function handle(BaseDTO $txDTO):array
    {
       $subscriberInput = \str_replace("ZMW", "", $txDTO->subscriberInput);
-      $subscriberInput = \str_replace("ZMK", "", $txDTO->subscriberInput);
-      $subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-      $subscriberInput = \str_replace("K", "",$txDTO->subscriberInput);
-      $subscriberInput = \str_replace(",", "",$txDTO->subscriberInput);
-      $subscriberInput = number_format((float)$txDTO->subscriberInput, 2, '.', ',');
+      $subscriberInput = \str_replace("ZMK", "", $subscriberInput);
+      $subscriberInput = \str_replace(" ", "", $subscriberInput);
+      $subscriberInput = \str_replace("K", "",$subscriberInput);
+      $subscriberInput = \str_replace(",", "",$subscriberInput);
+      $subscriberInput = number_format((float)$subscriberInput, 2, '.', ',');
       $minPaymentAmount = (float)\env(\strtoupper($txDTO->urlPrefix).'_MIN_PAYMENT_AMOUNT');
       $maxPaymentAmount = (float)\env(\strtoupper($txDTO->urlPrefix).'_MAX_PAYMENT_AMOUNT');
-      $amount = (float)\str_replace(",", "",$txDTO->subscriberInput);
+      $amount = (float)\str_replace(",", "",$subscriberInput);
 
       $testMSISDN = \explode("*", \env('APP_ADMIN_MSISDN')."*".$txDTO->testMSISDN);
 

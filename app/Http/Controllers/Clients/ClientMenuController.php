@@ -13,7 +13,8 @@ class ClientMenuController extends Controller
                'client_id' => 'required',
                'order' => 'required',
                'prompt' => 'required',
-               'code' => 'required',
+               'handler' => 'required',
+               'billingClient' => 'required'
             ];
 	public function __construct(
 		private ClientMenuService $theService)

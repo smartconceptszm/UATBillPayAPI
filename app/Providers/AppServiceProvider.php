@@ -92,6 +92,9 @@ class AppServiceProvider extends ServiceProvider
          $this->app->singleton('FaultsComplaints', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\FaultsComplaints::class);
          });
+         $this->app->bind('FaultsComplaintsComplex', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\FaultsComplaintsComplex::class);
+         });
          //Menu Step Handlers
             $this->app->singleton('FaultsComplaints_Step_1', function () {
                return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\FaultsComplaints_Step_1::class);

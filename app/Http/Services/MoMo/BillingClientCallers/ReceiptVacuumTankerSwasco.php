@@ -18,21 +18,31 @@ class ReceiptVacuumTankerSwasco implements IReceiptPayment
 	public function handle(BaseDTO $momoDTO):BaseDTO
 	{
 
+		$momoDTO->accountNumber = '320008';
+		$momoDTO->customer['accountNumber'] = '320008';
+		$momoDTO->customer['name'] = 'Vacuum Tanker Pit Emptying';
 		//Trimmed to 20 cause of constraint on API
-		$arrCustomerJourney = \explode("*", $momoDTO->customerJourney);
-		$momoDTO->reference = \strlen($arrCustomerJourney[3]) > 20 ? 
-												\substr($arrCustomerJourney[3], 0, 20) : $arrCustomerJourney[3];
+		$referenceNumber ='';
+		if($momoDTO->reference){
+			$referenceNumber = \strlen($momoDTO->reference) > 20 ? 
+													\substr($momoDTO->reference, 0, 20) : $momoDTO->reference;
+		}else{
+			$arrCustomerJourney = \explode("*", $momoDTO->customerJourney);		
+			$referenceNumber = \strlen($arrCustomerJourney[3]) > 20 ? 
+													\substr($arrCustomerJourney[3], 0, 20) : $arrCustomerJourney[3];
+		}
+
 												
 		$receiptingParams=[ 
 				'paymentType'=>'12',
 				'account' => $momoDTO->accountNumber,
 				'amount' => $momoDTO->receiptAmount,
 				'mobileNumber'=> $momoDTO->mobileNumber,
-				'referenceNumber' => $momoDTO->reference,
+				'referenceNumber' => $referenceNumber,
 		];
 
 		$billingResponse=$this->billingClient->postPayment($receiptingParams);
-		if($billingResponse['status']=='SUCCESS'){
+		if($billingResponse['status'] == 'SUCCESS'){
 				$momoDTO->receiptNumber = $billingResponse['receiptNumber'];
 				$momoDTO->paymentStatus = "RECEIPTED";
 				$momoDTO->receipt = "Payment successful\n" .
