@@ -39,7 +39,7 @@ class StepService_CheckPaymentsEnabled
          return $response;
       }
 
-      if (\env('APP_ENV') != 'Production'){
+      if (\env('APP_ENV') != 'production'){
          $testMSISDN = \explode("*", \env('APP_ADMIN_MSISDN')."*".$txDTO->testMSISDN);
          if (!\in_array($txDTO->mobileNumber, $testMSISDN)){
             $response['responseText'] = "Payments to ".\strtoupper($txDTO->urlPrefix).
