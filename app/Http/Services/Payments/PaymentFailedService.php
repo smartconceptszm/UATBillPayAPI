@@ -44,10 +44,12 @@ class PaymentFailedService
          $allFailed = $records->get();
          $providerErrors = $allFailed->filter(
                function ($item) {
-                  if ((\strpos($item->error,"Status Code"))
-                        || (\strpos($item->error,"on get transaction status"))
-                        || (\strpos($item->error,"Get Token error"))
-                        || (\strpos($item->error,"on collect funds"))) 
+                  if (
+                        ((\strpos($item->error,"Status Code")) || (\strpos($item->error,"on get transaction status")) 
+                           || (\strpos($item->error,"Token error")) || (\strpos($item->error,"on collect funds")))
+                        ||
+                        ($item->paymentStatus == "SUBMISSION FAILED")   
+                     ) 
                   {
                         return $item;
                   }

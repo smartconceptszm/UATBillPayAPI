@@ -23,8 +23,6 @@ class SMSTxDTO extends BaseDTO
    public $type = 'SINGLE';
    public $error;
 
-   public $mnoResponse;
-
    public $validationRules=[
       'mobileNumber' => 'required|string|size:12',
       'client_id' => 'required|string',

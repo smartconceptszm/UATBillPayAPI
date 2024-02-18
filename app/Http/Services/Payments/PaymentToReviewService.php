@@ -16,7 +16,7 @@ class PaymentToReviewService
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
          $records = DB::table('payments as p')
-            ->select('id', 'error');
+            ->select('id','paymentStatus', 'error');
          if($dto->dateFrom && $dto->dateTo){
             $records =$records->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo]);
          }
@@ -25,10 +25,14 @@ class PaymentToReviewService
                            ->get();
          $providerErrors = $records->filter(
                function ($item) {
-                  if ((\strpos($item->error,"Status Code"))
+                  if (
+                        (\strpos($item->error,"Status Code"))
                         || (\strpos($item->error,"on get transaction status"))
-                        || (\strpos($item->error,"Get Token error"))
-                        || (\strpos($item->error,"on collect funds"))) 
+                        || (\strpos($item->error,"Token error"))
+                        || (\strpos($item->error,"on collect funds"))
+                        || ($item->paymentStatus == "SUBMITTED")
+                        || ($item->paymentStatus == "SUBMISSION FAILED")
+                     ) 
                   {
                         return $item;
                   }

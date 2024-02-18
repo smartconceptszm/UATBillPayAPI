@@ -67,17 +67,24 @@ class AirtelMoney implements IMoMoClient
                         }
                   }
                   if($mainResponse['status'] != "SUBMITTED"){
-                        throw new Exception("Error on collect funds. Response data not available.", 2);
+                     throw new Exception("Error on collect funds. Response data not available.", 2);
                   }
                }else{
-                  $errorMessage = "Error on collect funds. Airtel responded with Status Code ".$airtelResponse['status']['code'].".";
+                  $message = "Airtel responded with Status Code ".$airtelResponse['status']['code'].".";
+                  if(\array_key_exists('response_code', $airtelResponse['status'])){
+                     $message = $this->getErrorMessage($airtelResponse['status']['response_code']);
+                  }else{
+                     if (\array_key_exists('message', $airtelResponse['status'])){
+                        $message = "Airtel response: ".$airtelResponse['status']['message'];
+                     }
+                  }
+                  $errorMessage = "Error on collect funds. ".$message;
                   throw new Exception($errorMessage, 2);
                }
             }else{
                throw new Exception("Error on collect funds. Response status details not available.", 2);
             }
          } else {
-            
             throw new Exception("Error on collect funds. Airtel Money responded with Status Code " . 
                                     $airtelResponse->status().".", 2);
          }
@@ -128,9 +135,6 @@ class AirtelMoney implements IMoMoClient
                                  }else{
                                        if (\array_key_exists('message', $apiResponse['data']['transaction'])) {
                                           $errorMessage = "Airtel response: ".$apiResponse['data']['transaction']['message'];
-                                          if(\strlen($errorMessage)>110){
-                                             $errorMessage = "Airtel response: Customer has insufficient funds (or entered incorrect PIN) to complete this transaction.";
-                                          }
                                        }else{
                                           $errorMessage = "Error on get transaction status. Airtel response: ".$apiResponse["data"]["transaction"]["status"].".";
                                        }
@@ -145,44 +149,7 @@ class AirtelMoney implements IMoMoClient
                   } else {
                      $errorMessage = "Error on get transaction status. Airtel responded with Status Code ".$apiResponse['status']['code'].".";
                      if(\array_key_exists("response_code",$apiResponse['status'])){
-                        switch ($apiResponse['status']['response_code']) {
-                           case 'DP00800001000':
-                              $errorMessage = "Airtel response: Transaction ID not found.";
-                              break;
-                           case 'DP00800001002':
-                              $errorMessage = "Airtel response: Incorrect Pin has been entered.";
-                              break;
-                           case 'DP00800001003':
-                              $errorMessage = "Airtel response: Withdrawal amount limit exceeded.";
-                              break;
-                           case 'DP00800001004':
-                              $errorMessage = "Airtel response: Invalid Amount.";
-                              break;
-                           case 'DP00800001005':
-                              $errorMessage = "Airtel response: User didn't enter the pin.";
-                              break;
-                           case 'DP00800001006':
-                              $errorMessage = "Airtel response: Transaction in pending state/pin not entered.";
-                              break;
-                           case 'DP00800001007':
-                              $errorMessage = "Airtel response: Customer has insufficient funds to complete this transaction.";
-                              break;
-                           case 'DP00800001008':
-                              $errorMessage = "Airtel response: The transaction was refused.";
-                              break;
-                           case 'DP00800001009':
-                              $errorMessage = "Airtel response: The transaction was refused.";
-                              break;
-                           case 'DP00800001010':
-                              $errorMessage = "Airtel response: Transaction not permitted to Payee.";
-                              break;
-                           case 'DP00800001024':
-                              $errorMessage = "Error on get transaction status. The transaction was timed out.";
-                              break;
-                           case 'DP00800001025':
-                              $errorMessage = "Airtel response: The transaction was not found.";
-                              break;
-                        }
+                        $errorMessage = "Error on get transaction status. ".$this->getErrorMessage($apiResponse['status']['response_code']);
                      }
                      throw new Exception($errorMessage, 2);
                   }
@@ -269,25 +236,54 @@ class AirtelMoney implements IMoMoClient
       return $transactionId;
    }
 
-   private function getTransactionIdOld(object $dto): string
+   private function getErrorMessage(String $errorCode): string
    {
-      $transactionId = "D".\date('ymd')."T".
-               \date('His')."A".$dto->accountNumber;
-      if(\strlen($transactionId) > 25){
-         $transactionId = "D".\date('ymd')."T".
-                        \date('His')."A".\substr($dto->accountNumber,-10);
+      $errorMessage = "Not reachable";
+      switch ($errorCode) {
+         case 'DP00800001000':
+            $errorMessage = "Airtel response: The transaction is still processing and is in ambiguous state.";
+            break;
+         case 'DP00800001002':
+            $errorMessage = "Airtel response: Incorrect Pin has been entered.";
+            break;
+         case 'DP00800001003':
+            $errorMessage = "Airtel response: Withdrawal amount limit exceeded.";
+            break;
+         case 'DP00800001004':
+            $errorMessage = "Airtel response: Invalid Amount.";
+            break;
+         case 'DP00800001005':
+            $errorMessage = "Airtel response: User didn't enter the pin.";
+            break;
+         case 'DP00800001006':
+            $errorMessage = "Airtel response: Transaction in pending state/pin not entered.";
+            break;
+         case 'DP00800001007':
+            $errorMessage = "Airtel response: Customer has insufficient funds to complete this transaction.";
+            break;
+         case 'DP00800001008':
+            $errorMessage = "Airtel response: The transaction was refused.";
+            break;
+         case 'DP00800001009':
+            $errorMessage = "Airtel response: The transaction was refused.";
+            break;
+         case 'DP00800001010':
+            $errorMessage = "Airtel response: Transaction not permitted to Payee.";
+            break;
+         case 'DP00800001024':
+            $errorMessage = "Error on get transaction status. The transaction was timed out.";
+            break;
+         case 'DP00800001025':
+            $errorMessage = "Airtel response: The transaction was not found.";
+            break;
+         case 'DP00800001026':
+            $errorMessage = "Airtel response: X-signature and payload did not match";
+            break;
+         case 'DP00800001026':
+            $errorMessage = "Airtel response: Transaction has been expired";
+            break;
       }
-      if(\strlen($transactionId ) < 25){
-         $arrLetters=['A','B','C','D','E','F','G','H',
-                  'I','J','K','L','M','N','O','P',
-                  'Q','R','S','T','U','V','W','X',
-                  'Y','Z'];
-         $lenToAdd = 25-\strlen($transactionId );
-         for ($i=0; $i < $lenToAdd; $i++) { 
-            $transactionId .= $arrLetters[\rand(0,25)];
-         }
-      }
-      return $transactionId;
+      return $errorMessage;
    }
 
    private function getConfigs(string $urlPrefix):array

@@ -23,10 +23,6 @@ class Step_GetPaymentStatus extends EfectivoPipelineContract
             $momoDTO->mnoTransactionId = $mnoResponse->mnoTransactionId;
             $momoDTO->paymentStatus = $mnoResponse->status;
             $momoDTO->error = $mnoResponse->error;
-            $momoDTO->mnoResponse = $mnoResponse;
-            if (\strpos($momoDTO->error,'PENDING')){
-               $momoDTO->error = $momoDTO->mnoName." response: PENDING";
-            }
          }
       } catch (\Throwable $e) {
          $momoDTO->error='At get payment status pipeline step. '.$e->getMessage();

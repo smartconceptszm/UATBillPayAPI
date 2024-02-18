@@ -23,7 +23,6 @@ class Step_SendMoMoRequest extends EfectivoPipelineContract
             $momoDTO->transactionId = $mnoResponse->transactionId;
             $momoDTO->paymentStatus = $mnoResponse->status;
             $momoDTO->error = $mnoResponse->error;
-            $momoDTO->mnoResponse = $mnoResponse;
          }
       } catch (\Throwable $e) {
          $momoDTO->error='At send momo request. '.$e->getMessage();

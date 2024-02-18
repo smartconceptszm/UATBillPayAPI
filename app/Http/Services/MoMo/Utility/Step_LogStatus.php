@@ -22,7 +22,7 @@ class Step_LogStatus extends EfectivoPipelineContract
 				{
 					$logMessage.='DETAILS: '.$momoDTO->receipt;
 				}
-				$logMessage.='Transaction ID = '.$momoDTO->transactionId. '. - Session: '.$momoDTO->sessionId.
+				$logMessage.=' Transaction ID = '.$momoDTO->transactionId. '. - Session: '.$momoDTO->sessionId.
 				'. - Channel: '.$momoDTO->channel.' - Phone: '.$momoDTO->mobileNumber;
 				Log::info($logMessage);
 				if($momoDTO->sms){

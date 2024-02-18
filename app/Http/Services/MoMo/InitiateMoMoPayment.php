@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\MoMoDTO;
-use Exception;
 
 class InitiateMoMoPayment
 {

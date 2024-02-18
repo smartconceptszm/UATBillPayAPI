@@ -16,10 +16,7 @@ class Step_DispatchReConfirmationJob extends EfectivoPipelineContract
    {
 
       try {
-         if((\strpos($momoDTO->error,'on get transaction status'))
-            || (\strpos($momoDTO->error,"Status Code"))
-            || (\strpos($momoDTO->error,'API Get Token error')))
-         {
+         if( $momoDTO->paymentStatus == "PAYMENT FAILED"){
             $momoDTO->status = "COMPLETED";
             Queue::later(Carbon::now()->addMinutes((int)\env('PAYMENT_REVIEW_DELAY'))
                                                 ,new ReConfirmMoMoPaymentJob($momoDTO));

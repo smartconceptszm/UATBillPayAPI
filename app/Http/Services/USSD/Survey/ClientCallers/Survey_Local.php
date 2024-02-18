@@ -54,13 +54,13 @@ class Survey_Local implements ISurveyClient
             throw new Exception($e->getMessage());
          }
          $response = "Thank you for participating in the survey. Reference number: ".$surveyTicket->caseNumber;
-         // $this->sendSMSNotification([
-         //                   'mobileNumber' => $surveyData['mobileNumber'],
-         //                   'client_id' => $surveyData['client_id'],
-         //                   'urlPrefix' => $surveyData['urlPrefix'],
-         //                   'message' => $response,
-         //                   'type' => 'NOTIFICATION',
-         //                ]);
+         $this->sendSMSNotification([
+                           'mobileNumber' => $surveyData['mobileNumber'],
+                           'client_id' => $surveyData['client_id'],
+                           'urlPrefix' => $surveyData['urlPrefix'],
+                           'message' => $response,
+                           'type' => 'NOTIFICATION',
+                        ]);
 
       } catch (\Throwable $e) {
          throw new Exception('Error at  create survey entry. '.$e->getMessage());

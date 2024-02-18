@@ -129,14 +129,19 @@ Route::group(['middleware' => 'mode'], function (){
             Route::get('/mnos', 'index');
          });
       //
-      //MNOs
+      //Client MNOs
          Route::controller(\App\Http\Controllers\Clients\ClientMnoController::class)->group(function () {
-            Route::get('/clientmnos/findoneby', 'findOneBy');
+            Route::get('/  /findoneby', 'findOneBy');
             Route::put('/clientmnos/{id}', 'update');
             Route::get('/clientmnos/{id}', 'show');
             Route::post('/clientmnos', 'store');
             Route::get('/clientmnos', 'index');
          });
+
+         Route::controller(\App\Http\Controllers\Clients\MnosOfClientController::class)->group(function () {
+            Route::get('/mnosofclient/{id}', 'index');
+         });
+
       //
       //Complaint
          Route::get('complaintsdashboard', [\App\Http\Controllers\CRM\ComplaintDashboardController::class, 'index']);
@@ -213,7 +218,7 @@ Route::group(['middleware' => 'mode'], function (){
 
       //
       //Sessions 
-         Route::controller(\App\Http\Controllers\SessionController::class)->group(function () {
+         Route::controller(\App\Http\Controllers\USSD\SessionController::class)->group(function () {
             Route::get('/sessions', 'index');
             Route::get('/sessions/{id}', 'show');
          });

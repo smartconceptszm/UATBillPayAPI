@@ -33,7 +33,7 @@ class StepService_AddShotcutMessage
 			//Notify customer about Shortcut
 			$arrCustomerJourney= \explode("*", $momoDTO->customerJourney);
 			$momoDTO->receipt .= "Dial *".$arrCustomerJourney[0]."*".
-										$arrCustomerJourney[1]."*(amount)# to pay";
+										$arrCustomerJourney[1]."*(amount)# to pay.". "\n";
 		} catch (\Throwable $e) {
 			throw new Exception("Shotcut message not added! ".$e->getMessage());
 		}

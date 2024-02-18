@@ -34,6 +34,25 @@ class ClientMnoController extends Controller
 
    }
 
+
+   /**
+    * Display the specified resources.
+   */
+  public function mnosofclient(Request $request, string $id)
+  {
+
+     try {
+        $this->response['data'] = $this->theService->findAll(['client_id'=>$id]);
+     } catch (\Throwable $e) {
+           $this->response['status']['code'] = 500;
+           $this->response['status']['message'] = $e->getMessage();
+     }
+     return response()->json($this->response);
+
+  }
+
+
+
    /**
     * Store a newly created resource in storage.
       */
@@ -70,7 +89,7 @@ class ClientMnoController extends Controller
 
    /**
     * Display one resource.
-      */
+   */
    public function findOneBy(Request $request)
    {
 
@@ -82,7 +101,7 @@ class ClientMnoController extends Controller
       }
       return response()->json($this->response);
 
-   }
+   } 
 
    /**
     * Update the specified resource in storage.

@@ -26,6 +26,7 @@ class UserPasswordResetService
          if($user){
             $resetPIN = Str::random(6);
             $smses =[[
+                     'client_id' => $user->client_id,
                      'mobileNumber' => $user->mobileNumber,
                      'message' => $resetPIN,
                      'type' => "NOTIFICATION",

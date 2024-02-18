@@ -16,6 +16,7 @@ class ReConfirmMoMoPayment
 
       try {
          for ($i = 0; $i < (int)\env('PAYMENT_REVIEW_THRESHOLD'); $i++) {
+            $momoDTO->error = '';
             $momoDTO = App::make(Pipeline::class)
                      ->send($momoDTO)
                      ->through(
@@ -28,9 +29,12 @@ class ReConfirmMoMoPayment
                      )
                      ->thenReturn();
             if($momoDTO->paymentStatus == "PAYMENT FAILED"){
-               if(!((\strpos($momoDTO->error,'on get transaction status'))
-                  || (\strpos($momoDTO->error,'API Get Token error'))
-                  || (\strpos($momoDTO->error,"Status Code"))))
+               if(!(
+                     (\strpos($momoDTO->error,'on get transaction status'))
+                     || (\strpos($momoDTO->error,'Token error'))
+                     || (\strpos($momoDTO->error,"Status Code"))
+                     || (\strpos($momoDTO->error,"on collect funds"))
+                  ))
                {
                   break;
                }

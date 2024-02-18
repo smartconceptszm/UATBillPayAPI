@@ -41,7 +41,7 @@ class SendSMSesJob extends BaseJob
    public function handle(SMSService $smsService, SMSTxDTO $smsTxDTO, ClientService $clientService )
    {
 
-      foreach ($this->arrSMSes as $smsData) {
+      foreach ($this->arrSMSes as $key=>$smsData) {
          $smsService->send($smsTxDTO->fromArray($smsData));
          if($smsData['type'] != "RECEIPT"){
             $client = $clientService->findById($smsData['client_id']);

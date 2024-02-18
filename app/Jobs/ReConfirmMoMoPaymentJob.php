@@ -5,11 +5,14 @@ namespace App\Jobs;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\MoMo\ReConfirmMoMoPayment;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\BaseDTO;
 use App\Jobs\BaseJob;
 
 class ReConfirmMoMoPaymentJob extends BaseJob
 {
+
+   // public $timeout = 600;
 
    public function __construct(private BaseDTO $momoDTO)
    {}
@@ -58,7 +61,11 @@ class ReConfirmMoMoPaymentJob extends BaseJob
       //
       
       //Handle Job Service
+         Log::info('('.$this->momoDTO->urlPrefix.') Reconfirmation job launched. Transaction ID = '.$this->momoDTO->transactionId.
+                     '- Channel: '.$this->momoDTO->channel.' - Phone: '.$this->momoDTO->mobileNumber);
+                     
          $reConfirmMoMoPayment->handle($this->momoDTO);
+         
    }
     
 }

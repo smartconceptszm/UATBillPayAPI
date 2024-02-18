@@ -49,6 +49,7 @@ class ClientService
          throw new Exception($e->getMessage());
       }
    }
+   
    public function update(array $data, string $id) : object|null {
 
       try {
