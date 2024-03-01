@@ -34,7 +34,7 @@ Route::group(['middleware' => 'mode'], function (){
       Route::get('/zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
       Route::get('/mtn',[\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
       //DEV ROUTES to Simulate /clientPrefix/mno
-            Route::group(['prefix' => '/chambeshi'], function (){
+            Route::group(['prefix' => '/swasco'], function (){
                Route::get('/zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
                Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
                Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
@@ -44,16 +44,18 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
                Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
             });
+            Route::group(['prefix' => '/chambeshi'], function (){
+               Route::get('/zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
+               Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
+               Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
+            });
+
             Route::group(['prefix' => '/mulonga'], function (){
                Route::get('/zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
                Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
                Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
             });
-            Route::group(['prefix' => '/swasco'], function (){
-               Route::get('/zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
-               Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
-               Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
-            });
+
             Route::group(['prefix' => '/mazabuka'], function (){
                Route::get('/zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
                Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);

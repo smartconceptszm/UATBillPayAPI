@@ -136,7 +136,7 @@ class Swasco implements IBillingClient
                throw new Exception("Invalid Account Number",1);
          }
 
-         $fullURL = $this->baseURL . "navision/customers/" . $accountNumber;
+         $fullURL = $this->baseURL . "navision/customers/".\rawurlencode($accountNumber);
          $apiResponse = Http::timeout($this->swascoTimeout)->withHeaders([
                'Content-Type' => 'application/json',
                'Accept' => '*/*'

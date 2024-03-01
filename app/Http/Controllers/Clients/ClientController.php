@@ -10,7 +10,6 @@ class ClientController extends Controller
 {
 
    protected  $validationRules=[
-                  'code' => 'required|string|unique:clients',
                   'name' => 'required|string|unique:clients',
                   'shortName' => 'required|string|unique:clients',
                   'urlPrefix' => 'required|string|unique:clients'

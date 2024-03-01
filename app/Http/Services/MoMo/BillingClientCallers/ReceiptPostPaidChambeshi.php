@@ -58,10 +58,11 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 											"Rcpt No: " . $momoDTO->receiptNumber . "\n" .
 											"Amount: ZMW " . \number_format( $momoDTO->receiptAmount, 2, '.', ',') . "\n".
 											"Acc: " . $momoDTO->accountNumber . "\n";
-				if($newBalance != "0"){
-					$momoDTO->receipt.="Bal: ZMW ". $newBalance . "\n";
-				}
 				$momoDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
+				// if($newBalance != "0"){
+				// 	$momoDTO->receipt.="Bal: ZMW ". $newBalance . "\n";
+				// }
+				$momoDTO->receipt.="Balance update within 48 hrs.";
 		}else{
 				$momoDTO->error = "At post payment. ".$billingResponse['error'];
 		}
