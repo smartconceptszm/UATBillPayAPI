@@ -21,7 +21,7 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
             $momoDTO = $this->receiptPayment->handle($momoDTO);
          }
       } catch (\Throwable $e) {
-         $momoDTO->error='At post payment pipeline. '.$e->getMessage();
+         $momoDTO->error='At post payment step. '.$e->getMessage();
       }
       return  $momoDTO;
       

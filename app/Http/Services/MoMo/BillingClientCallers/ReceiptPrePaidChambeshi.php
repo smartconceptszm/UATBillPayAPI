@@ -4,8 +4,6 @@ namespace App\Http\Services\MoMo\BillingClientCallers;
 
 use App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -28,7 +26,11 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 							(float)$momoDTO->receiptAmount;
 				$newBalance = \number_format($newBalance, 2, '.', ',');
 			}else{
-				$newBalance="0";
+				$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->accountNumber);
+							$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+							(float)$momoDTO->receiptAmount;
+				$newBalance = \number_format($newBalance, 2, '.', ',');
+
 			}
 		}
 

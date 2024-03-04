@@ -29,7 +29,10 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 								(float)$momoDTO->receiptAmount;
 				$newBalance = \number_format($newBalance, 2, '.', ',');
 			}else{
-				$newBalance="0";
+				$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->accountNumber);
+				$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+							(float)$momoDTO->receiptAmount;
+				$newBalance = \number_format($newBalance, 2, '.', ',');
 			}
 		}
 

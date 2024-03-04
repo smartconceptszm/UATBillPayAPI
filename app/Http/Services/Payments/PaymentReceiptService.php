@@ -36,7 +36,7 @@ class PaymentReceiptService
             throw new Exception("Payment appears receipted! Receipt number ".$momoDTO->receiptNumber);
          }
          if($momoDTO->mnoTransactionId == ''){
-            throw new Exception("Payment not yet confirmed!");
+            throw new Exception("MNO transaction Id is null. Payment not yet confirmed!");
          }  
          //Bind the Billing Client
             $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$momoDTO->billingClient;
