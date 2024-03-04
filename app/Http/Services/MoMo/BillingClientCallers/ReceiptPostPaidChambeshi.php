@@ -31,8 +31,8 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 			}else{
 				$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->accountNumber);
 				$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
-							(float)$momoDTO->receiptAmount;
-				$newBalance = \number_format($newBalance, 2, '.', ',');
+						(float)$momoDTO->receiptAmount;
+			$newBalance = \number_format($newBalance, 2, '.', ',');
 			}
 		}
 
@@ -54,7 +54,7 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
        ];
 
 		$billingResponse=$this->billingClient->postPayment($receiptingParams);
-		
+	
 		if($billingResponse['status']=='SUCCESS'){
 				$momoDTO->paymentStatus = "RECEIPTED";
 				$momoDTO->receipt = "Payment successful\n" .
@@ -69,6 +69,7 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 		}else{
 				$momoDTO->error = "At post payment. ".$billingResponse['error'];
 		}
+
 		return $momoDTO;
 
 	}

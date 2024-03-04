@@ -31,7 +31,7 @@ abstract class Chambeshi
    public function postPayment(Array $postParams): Array 
    {
 
-      $response=[
+      $response = [
          'status'=>'FAILED',
          'receiptNumber'=>'',
          'error'=>''
@@ -46,10 +46,8 @@ abstract class Chambeshi
             $response['error'] = "Unable to create payment Record";
          }
       } catch (\Exception $e) {
-
-         throw new Exception($e->getMessage());
+         $response['error'] = "Unable to create payment Record: " .$e->getMessage();
       }
-
       return $response;
      
    }

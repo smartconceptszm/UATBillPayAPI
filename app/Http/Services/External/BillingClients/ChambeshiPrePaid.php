@@ -103,7 +103,7 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
          }
 
       } catch (Exception $e) {
-         throw new Exception("Error executing 'Error Getting Token': " . $e->getMessage());
+         $response['error'] = "Error executing 'Error Getting Token': " . $e->getMessage();
       }
 
       return $response;
