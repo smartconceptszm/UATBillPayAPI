@@ -71,8 +71,8 @@ class PaymentFailedService
       try {
          $thePayment = $this->paymentToReviewService->findById($id);
          $momoDTO = $this->momoDTO->fromArray(\get_object_vars($thePayment));
-         $user = Auth::user(); 
-         $momoDTO->user_id = $user->id;
+         // $user = Auth::user(); 
+         // $momoDTO->user_id = $user->id;
          $momoDTO->error = "";
 
          //Bind the MoMoClient

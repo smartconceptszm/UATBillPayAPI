@@ -20,19 +20,12 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 	{
 
 		$newBalance = "0";
-		if($momoDTO->customer){
-			if(\key_exists('balance',$momoDTO->customer)){
-				$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
-							(float)$momoDTO->receiptAmount;
-				$newBalance = \number_format($newBalance, 2, '.', ',');
-			}else{
-				$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->accountNumber);
-							$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
-							(float)$momoDTO->receiptAmount;
-				$newBalance = \number_format($newBalance, 2, '.', ',');
-
-			}
+		if(!$momoDTO->customer){
+			$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->accountNumber);
 		}
+		$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+				(float)$momoDTO->receiptAmount;
+		$newBalance = \number_format($newBalance, 2, '.', ',');
 
 		$momoDTO->receiptNumber =  $momoDTO->accountNumber."_".date('YmdHis');
 	
