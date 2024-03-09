@@ -50,8 +50,7 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
                   $response['district'] = $this->getDistrict(\trim($apiResponse['result']['customer_number']));
                   $response['mobileNumber'] = "";
                   $response['balance'] = \number_format((float)$apiResponse['result']['debt_total'], 2, '.', ',');
-               }
-               else{
+               }else{
                   throw new Exception($apiResponse['reason'], 1); 
                }
          } else {

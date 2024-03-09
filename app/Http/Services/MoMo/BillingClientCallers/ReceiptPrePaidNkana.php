@@ -32,9 +32,6 @@ class ReceiptPrePaidNkana implements IReceiptPayment
 			$momoDTO->paymentStatus = "PAID | NO TOKEN";
 			//$momoDTO->receiptNumber =  date('YmdHis').Str::random(6); //receiptNumber = transactionid in Nkana PrePaid Billing Client
 			$momoDTO->receiptNumber =  now()->timestamp.Str::random(6);
-			$momoDTO->receiptNumber =  now()->timestamp.Str::random(6);
-			$momoDTO->receiptNumber =  now()->timestamp.Str::random(6);
-			$momoDTO->receiptNumber =  now()->timestamp.Str::random(6);
 			$tokenParams = [
 							"meterNumber"=> $momoDTO->meterNumber,
 							"paymentAmount" => $momoDTO->receiptAmount,

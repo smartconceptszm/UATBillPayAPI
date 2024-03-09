@@ -10,12 +10,12 @@ class BillingClientTest extends TestCase
     //  */
 
 
-    public function _testGetAccountDetails()
+    public function testGetAccountDetails()
     {   
 
-        $billingClient = \app('lukanga');
-        $response=$billingClient->getAccountDetails('1100000001');
-        $this->assertTrue($response['accountNumber'] == "1100000001");
+        $billingClient = \app('chambeshiPrePaid');
+        $response=$billingClient->getAccountDetails('0166000000009');
+        $this->assertTrue($response['accountNumber'] == "0166000000009");
 
     }
 
