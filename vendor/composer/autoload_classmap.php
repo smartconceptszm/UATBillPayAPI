@@ -184,6 +184,7 @@ return array(
     'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptPaymentSwasco' => $baseDir . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptPaymentSwasco.php',
     'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptPostPaidChambeshi' => $baseDir . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptPostPaidChambeshi.php',
     'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptPrePaidChambeshi' => $baseDir . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptPrePaidChambeshi.php',
+    'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptPrePaidNkana' => $baseDir . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptPrePaidNkana.php',
     'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptReconnectionSwasco' => $baseDir . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptReconnectionSwasco.php',
     'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptVacuumTankerSwasco' => $baseDir . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptVacuumTankerSwasco.php',
     'App\\Http\\Services\\MoMo\\ConfirmMoMoPayment' => $baseDir . '/app/Http/Services/MoMo/ConfirmMoMoPayment.php',

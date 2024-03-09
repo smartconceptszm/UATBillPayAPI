@@ -721,6 +721,7 @@ class ComposerStaticInit4e18f2a8200f24ce56abd683a0e3a523
         'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptPaymentSwasco' => __DIR__ . '/../..' . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptPaymentSwasco.php',
         'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptPostPaidChambeshi' => __DIR__ . '/../..' . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptPostPaidChambeshi.php',
         'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptPrePaidChambeshi' => __DIR__ . '/../..' . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptPrePaidChambeshi.php',
+        'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptPrePaidNkana' => __DIR__ . '/../..' . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptPrePaidNkana.php',
         'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptReconnectionSwasco' => __DIR__ . '/../..' . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptReconnectionSwasco.php',
         'App\\Http\\Services\\MoMo\\BillingClientCallers\\ReceiptVacuumTankerSwasco' => __DIR__ . '/../..' . '/app/Http/Services/MoMo/BillingClientCallers/ReceiptVacuumTankerSwasco.php',
         'App\\Http\\Services\\MoMo\\ConfirmMoMoPayment' => __DIR__ . '/../..' . '/app/Http/Services/MoMo/ConfirmMoMoPayment.php',
