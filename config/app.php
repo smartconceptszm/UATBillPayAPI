@@ -159,6 +159,7 @@ return [
         /*
          * Package Service Providers...
          */
+            App\Providers\NkanaServiceProvider::class,
             App\Providers\SwascoServiceProvider::class,
             App\Providers\LukangaServiceProvider::class,
             App\Providers\MazabukaServiceProvider::class,

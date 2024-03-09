@@ -50,6 +50,12 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
             });
 
+            Route::group(['prefix' => '/nkana'], function (){
+               Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
+               Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
+               Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
+            });
+
             Route::group(['prefix' => '/mulonga'], function (){
                Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
                Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);

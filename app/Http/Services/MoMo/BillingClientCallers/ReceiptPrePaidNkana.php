@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Http\Services\MoMo\BillingClientCallers;
+
+use App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment;
+use App\Http\Services\External\BillingClients\IBillingClient;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
+use App\Http\DTOs\BaseDTO;
+use Exception;
+
+
+class ReceiptPrePaidNkana implements IReceiptPayment
+{
+
+	public function __construct(
+		private IBillingClient $billingClient)
+	{}
+
+	public function handle(BaseDTO $momoDTO):BaseDTO
+	{
+
+		$newBalance = "0";
+		if(!$momoDTO->customer){
+			$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->meterNumber);
+		}
+		$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+				(float)$momoDTO->receiptAmount;
+		$newBalance = \number_format($newBalance, 2, '.', ',');
+		
+		if(!$momoDTO->tokenNumber){
+			$momoDTO->paymentStatus = "PAID | NO TOKEN";
+			//$momoDTO->receiptNumber =  date('YmdHis').Str::random(6); //receiptNumber = transactionid in Nkana PrePaid Billing Client
+			$momoDTO->receiptNumber =  now()->timestamp.Str::random(6);
+			$momoDTO->receiptNumber =  now()->timestamp.Str::random(6);
+			$momoDTO->receiptNumber =  now()->timestamp.Str::random(6);
+			$momoDTO->receiptNumber =  now()->timestamp.Str::random(6);
+			$tokenParams = [
+							"meterNumber"=> $momoDTO->meterNumber,
+							"paymentAmount" => $momoDTO->receiptAmount,
+							"transactionId" => $momoDTO->receiptNumber
+						];
+			$tokenResponse=$this->billingClient->generateToken($tokenParams);
+			if($tokenResponse['status']=='SUCCESS'){
+				$momoDTO->paymentStatus = "RECEIPTED";
+				$momoDTO->tokenNumber = $tokenResponse['tokenNumber'];
+				$momoDTO->receipt = "Payment successful\n" .
+				"Amount: ZMW " . \number_format( $momoDTO->receiptAmount, 2, '.', ',') . "\n".
+				"Meter No: " . $momoDTO->meterNumber . "\n" .
+				"Acc: " . $momoDTO->accountNumber . "\n".
+				"Token: ". $momoDTO->tokenNumber . "\n".
+				"Date: " . Carbon::now()->format('d-M-Y') . "\n";
+			}
+		}
+
+
+		return $momoDTO;
+
+	}
+
+}

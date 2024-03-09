@@ -32,6 +32,7 @@ class StepService_ConfirmToPay
          }
          $txDTO->error = $e->getMessage();
       }
+      
       return $txDTO;
         
     }

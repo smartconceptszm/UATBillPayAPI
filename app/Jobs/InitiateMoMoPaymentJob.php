@@ -10,7 +10,7 @@ use App\Jobs\BaseJob;
 class InitiateMoMoPaymentJob extends BaseJob
 {
 
-   // public $timeout = 600;
+   public $timeout = 600;
    private $momoDTO;
    public function __construct(BaseDTO $momoDTO)
    {
