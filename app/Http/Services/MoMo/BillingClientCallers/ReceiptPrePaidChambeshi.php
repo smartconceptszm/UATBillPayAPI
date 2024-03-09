@@ -21,7 +21,7 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 
 		$newBalance = "0";
 		if(!$momoDTO->customer){
-			$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->accountNumber);
+			$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->meterNumber);
 		}
 		$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
 				(float)$momoDTO->receiptAmount;
