@@ -46,7 +46,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                   $txDTO->errorType = 'MoMoNotActivated';
                   break;
                default:
-                  $txDTO->error = 'At identify menu. '.$e->getMessage();
+                  $txDTO->error = $e->getMessage();
                   $txDTO->errorType = 'SystemError';
                   break;
             }
@@ -198,9 +198,8 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
          }
          Cache::forget($txDTO->sessionId."responseNext");
       }else{
-         if($this->handleBack['must'] && $txDTO->subscriberInput !='0'){
+         if($this->handleBack['must']){
             $txDTO = $this->resetCustomerJourney($txDTO,$arrCustomerJourney);
-            throw new Exception("Only expected input is 0!", 1);
          }
       }
       return $txDTO;

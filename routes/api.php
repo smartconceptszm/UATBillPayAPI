@@ -85,6 +85,7 @@ Route::group(['middleware' => 'mode'], function (){
       //Payment Transactions Related Routes
          Route::get('maindashboard', [\App\Http\Controllers\Clients\MainDashboardController::class, 'index']);
          Route::get('clientdashboard', [\App\Http\Controllers\Clients\ClientDashboardController::class, 'index']);
+         Route::get('paymentstrends', [\App\Http\Controllers\Clients\ClientDashboardController::class, 'oneYearTrend']);
          Route::get('paymenttransactions', [\App\Http\Controllers\Payments\PaymentTransactionController::class, 'index']);
 
          Route::get('paymentsnotreceipted', [\App\Http\Controllers\Payments\PaymentNotReceiptedController::class, 'index']);

@@ -62,14 +62,17 @@ class Lukanga implements IBillingClient
             }
 
             $theBalance=0;
-            foreach ($customerBalance['items']['item'] as $billItem) {
-                if(\is_array($billItem)){
-                    $theBalance+=(float)$billItem['bmf-tot'];
-                }else{
-                    $theBalance+=(float)$customerBalance['items']['item']['bmf-tot'];
-                    break;
+            if($customerBalance['items']){
+                foreach ($customerBalance['items']['item'] as $billItem) {
+                    if(\is_array($billItem)){
+                        $theBalance+=(float)$billItem['bmf-tot'];
+                    }else{
+                        $theBalance+=(float)$customerBalance['items']['item']['bmf-tot'];
+                        break;
+                    }
                 }
             }
+
 
             //Account for un creditted receipts
             $cachedBalance = \json_decode(Cache::get('lukanga_balance_'.$accountNumber,\json_encode([])), true);

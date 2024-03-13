@@ -26,11 +26,11 @@ class AirtelMoneyTest extends TestCase
     {   
 
         $momoParams = (object)[
-                        'transactionId'=>'D230825T205027A1120000314',
-                        'accountNumber'=>'112000314',
-                        'paymentAmount'=>100,
-                        'mobileNumber'=>'260977182676',
-                        'urlPrefix'=>'lukanga'
+                        'transactionId'=>'ACH000519D240223T205639',
+                        'accountNumber'=>'CH000519',
+                        'paymentAmount'=>277.00,
+                        'mobileNumber'=>'260979545400',
+                        'urlPrefix'=>'swasco'
                     ];
 
         $airtelClient=new AirtelMoney();

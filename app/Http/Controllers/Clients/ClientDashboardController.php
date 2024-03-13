@@ -34,4 +34,21 @@ class ClientDashboardController extends Controller
 
    }
 
+   public function oneYearTrend(Request $request, Authenticatable $user)
+   {
+
+      try {
+         $criteria = $this->getParameters($request);
+         if(!$criteria['client_id']){
+            $criteria['client_id'] = $user->client_id;
+         }
+         $this->response['data']=$this->theService->findOneYearTrend($criteria);
+      } catch (\Throwable $e) {
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
+      }
+      return response()->json( $this->response);
+
+   }
+
 }

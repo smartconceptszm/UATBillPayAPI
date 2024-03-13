@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services\MoMo;
+namespace App\Http\Services\Web;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;

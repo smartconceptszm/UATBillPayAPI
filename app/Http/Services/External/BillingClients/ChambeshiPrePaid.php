@@ -32,7 +32,7 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
                         "user_name"=> $this->username,
                         "password" =>$this->password,
                         "meter_number" => $meterNumber,
-                        "total_paid" =>"30",
+                        "total_paid" =>"20.00",
                         "debt_percent" =>"50"
                      ];
 
@@ -43,15 +43,21 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
                   
          if ($apiResponse->status() == 200) {
                $apiResponse = $apiResponse->json();
-               if($apiResponse['result_code']  == 0){
-                  $response['accountNumber'] = $apiResponse['result']['customer_number'];
-                  $response['name'] = $apiResponse['result']['customer_name'];
-                  $response['address'] = $apiResponse['result']['customer_addr'];
-                  $response['district'] = $this->getDistrict(\trim($apiResponse['result']['customer_number']));
-                  $response['mobileNumber'] = "";
-                  $response['balance'] = \number_format((float)$apiResponse['result']['debt_total'], 2, '.', ',');
-               }else{
-                  throw new Exception($apiResponse['reason'], 1); 
+               switch ($apiResponse['result_code']) {
+                  case 0:
+                     $response['accountNumber'] = $apiResponse['result']['customer_number'];
+                     $response['name'] = $apiResponse['result']['customer_name'];
+                     $response['address'] = $apiResponse['result']['customer_addr'];
+                     $response['district'] = $this->getDistrict(\trim($apiResponse['result']['customer_number']));
+                     $response['mobileNumber'] = "";
+                     $response['balance'] = \number_format((float)$apiResponse['result']['debt_total'], 2, '.', ',');
+                     break;
+                  case 4:
+                     throw new Exception($apiResponse['reason'], 1); 
+                     break;
+                  default:
+                     throw new Exception($apiResponse['reason'], 2);
+                     break;
                }
          } else {
             throw new Exception("CHAMBESHI PrePaid Service responded with status code: " . $apiResponse->status(), 2);
@@ -62,7 +68,7 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
          } elseif ($e->getCode() == 1) {
                throw new Exception($e->getMessage(), 1);
          } else {
-               throw new Exception("Error executing 'Get PrePaid Account Details': " . $e->getMessage(), 3);
+               throw new Exception("Error executing 'Get PrePaid Account Details': " . $e->getMessage(), 2);
          }
       }
 

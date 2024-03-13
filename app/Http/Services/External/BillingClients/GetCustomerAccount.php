@@ -36,7 +36,7 @@ class GetCustomerAccount
 		} catch (\Throwable $e) {
 
 			if($e->getCode()==1){
-					throw new Exception("Customer account not found", 1);
+				throw new Exception($e->getMessage(), 1);
 			}else{
 				$billingServiceErrorCount = (int)Cache::get($txDTO->urlPrefix.'_BillingErrorCount');
 				if($billingServiceErrorCount){

@@ -15,11 +15,13 @@ class InvalidAccount implements IErrorResponse
    {
 
       try {    
+         // $txDTO->response = "Invalid ".\strtoupper($txDTO->urlPrefix).
+         //                       " account/meter number.";
+         // $txDTO->lastResponse = true;
          $txDTO->response = "Invalid ".\strtoupper($txDTO->urlPrefix).
-                              " account number.\n\n<<Enter 0 to go back>>\n";
-         $txDTO->error=$txDTO->response;  
-         if($txDTO->isPayment == 'YES')
-         {
+                              " account/meter number.\n\n<<Enter 0 to go back>>\n";
+
+         if($txDTO->isPayment == 'YES'){
             $theSteps=2;
          }else{
             $theSteps=1;

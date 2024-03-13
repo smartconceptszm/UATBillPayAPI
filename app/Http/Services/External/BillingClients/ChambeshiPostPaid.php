@@ -31,26 +31,28 @@ class ChambeshiPostPaid extends Chambeshi implements IBillingClient
       try {
 
          $customer = $this->chambeshiAccountService->findOneBy(['AR_Acc'=>$accountNumber]);
-         $district = $this->getDistrict(\trim($customer->AR_Acc));
-
-         $response = [
-                        "accountNumber" => \trim($customer->AR_Acc),
-                        "name"=>\trim($customer->AR_Acc_Name),
-                        "address"=>"",
-                        "district" => $district,
-                        "mobileNumber"=>"",
-                        "balance"=> \number_format((float)$customer->AR_Acc_Bal, 2, '.', ',')
-                     ];
-      
-      } catch (\Throwable $e) {
-         Log::error(' CHAMBESHI Billing Client - Get Balance '.$e->getMessage());
-         if ($e->getCode() == 2) {
-               throw new Exception($e->getMessage(), 2);
-         } elseif ($e->getCode() == 1) {
-               throw new Exception($e->getMessage(), 1);
-         } else {
-               throw new Exception("Error executing 'Get Account Details': " . $e->getMessage(), 1);
+         if($customer){
+            $district = $this->getDistrict(\trim($customer->AR_Acc));
+            $response = [
+                           "accountNumber" => \trim($customer->AR_Acc),
+                           "name"=>\trim($customer->AR_Acc_Name),
+                           "address"=>"",
+                           "district" => $district,
+                           "mobileNumber"=>"",
+                           "balance"=> \number_format((float)$customer->AR_Acc_Bal, 2, '.', ',')
+                        ];
+         }else{
+            throw new Exception("Invalid account number", 1);
          }
+
+      } catch (\Throwable $e) {
+
+         if ($e->getCode() == 1) {
+            throw new Exception($e->getMessage(), 1);
+         }else{
+            throw new Exception("Error executing 'Get Account Details': " . $e->getMessage(), 2);
+         }
+         
       }
 
       return $response;

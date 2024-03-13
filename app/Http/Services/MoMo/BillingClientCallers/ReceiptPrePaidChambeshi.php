@@ -62,11 +62,11 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 			if($billingResponse['status'] == 'SUCCESS'){
 				$momoDTO->paymentStatus = "RECEIPTED";
 				$momoDTO->receipt = "Payment successful\n" .
-							"Rcpt No: " . $momoDTO->receiptNumber . "\n" .
-							"Amount: ZMW " . \number_format( $momoDTO->receiptAmount, 2, '.', ',') . "\n".
-							"Acc: " . $momoDTO->accountNumber . "\n".
-							"Token: ". $momoDTO->tokenNumber . "\n".
-							"Date: " . Carbon::now()->format('d-M-Y') . "\n";
+											"Rcpt No: " . $momoDTO->receiptNumber . "\n" .
+											"Amount: ZMW " . \number_format( $momoDTO->receiptAmount, 2, '.', ',') . "\n".
+											"Acc: " . $momoDTO->accountNumber . "\n".
+											"Token: ". $momoDTO->tokenNumber . "\n".
+											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{
 				$momoDTO->error = "At post payment. ".$billingResponse['error'];
 			}

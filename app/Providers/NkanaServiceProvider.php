@@ -38,13 +38,18 @@ class NkanaServiceProvider extends ServiceProvider
       //
 
       //Billing Clients	PostPaid
-         // $this->app->singleton('nkanaPostPaid', function () {
-         //    return $this->app->make(\App\Http\Services\External\BillingClients\NkanaPostPaid::class);
-         // });
+         $this->app->singleton('nkanaPostPaid', function () {
+            return $this->app->make(\App\Http\Services\External\BillingClients\NkanaPostPaid::class,
+                       [
+                        'baseURL' => \env('NKANA_POSTPAID_BASE_URL'),
+                        'AuthenticationCode' => \env('NKANA_AuthenticationCode')
+                       ]
+                     );
+         });
 
-         // $this->app->singleton('ReceiptPostPaidNkana', function () {
-         //    return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPostPaidNkana::class);
-         // });
+         $this->app->singleton('ReceiptPostPaidNkana', function () {
+            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPostPaidNkana::class);
+         });
       //
 
       //Billing Clients	PrePaid

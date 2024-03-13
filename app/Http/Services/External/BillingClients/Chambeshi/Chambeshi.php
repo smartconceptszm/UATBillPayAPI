@@ -13,7 +13,7 @@ abstract class Chambeshi
       "ISO"=>"Isoka",
       "KAP"=>"Kaputa",
       "KCT"=>"Kasama Central Town",
-      "KHM"=>"Kasama Mulenga Hills",
+      "KMH"=>"Kasama Mulenga Hills",
       "LUW"=>"Luwingu",
       "MBA"=>"Mbala",
       "MPI"=>"Mpika", 

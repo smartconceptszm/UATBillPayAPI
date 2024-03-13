@@ -30,8 +30,8 @@ class ReceiptPrePaidNkana implements IReceiptPayment
 		
 		if(!$momoDTO->tokenNumber){
 			$momoDTO->paymentStatus = "PAID | NO TOKEN";
-			//$momoDTO->receiptNumber =  date('YmdHis').Str::random(6); //receiptNumber = transactionid in Nkana PrePaid Billing Client
-			$momoDTO->receiptNumber =  now()->timestamp.Str::random(6);
+			//receiptNumber = transactionid in Nkana PrePaid Billing Client
+			$momoDTO->receiptNumber =  now()->timestamp.Str::random(6); 
 			$tokenParams = [
 							"meterNumber"=> $momoDTO->meterNumber,
 							"paymentAmount" => $momoDTO->receiptAmount,
@@ -42,11 +42,11 @@ class ReceiptPrePaidNkana implements IReceiptPayment
 				$momoDTO->paymentStatus = "RECEIPTED";
 				$momoDTO->tokenNumber = $tokenResponse['tokenNumber'];
 				$momoDTO->receipt = "Payment successful\n" .
-				"Amount: ZMW " . \number_format( $momoDTO->receiptAmount, 2, '.', ',') . "\n".
-				"Meter No: " . $momoDTO->meterNumber . "\n" .
-				"Acc: " . $momoDTO->accountNumber . "\n".
-				"Token: ". $momoDTO->tokenNumber . "\n".
-				"Date: " . Carbon::now()->format('d-M-Y') . "\n";
+											"Amount: ZMW " . \number_format( $momoDTO->receiptAmount, 2, '.', ',') . "\n".
+											"Meter No: " . $momoDTO->meterNumber . "\n" .
+											"Acc: " . $momoDTO->accountNumber . "\n".
+											"Token: ". $momoDTO->tokenNumber . "\n".
+											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}
 		}
 
