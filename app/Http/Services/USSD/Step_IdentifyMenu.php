@@ -65,12 +65,16 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                               'client_id' => $txDTO->client_id,
                               'parent_id' =>'0'
                            ]);
+
       $txDTO->billingClient = $selectedMenu->billingClient; 
       $txDTO->accountType = $selectedMenu->accountType; 
       $txDTO->isPayment = $selectedMenu->isPayment;
       $txDTO->menuPrompt = $selectedMenu->prompt;
       $txDTO->handler = $selectedMenu->handler; 
       $txDTO->menu_id = $selectedMenu->id; 
+      if(!$txDTO->subscriberInput){
+         $txDTO->subscriberInput = \env(\strtoupper($txDTO->urlPrefix).'_USSD_SHORT_CODE');
+      }
       $ussdSession = $this->sessionService->create($txDTO->toSessionData());
       $txDTO->id = $ussdSession->id;
       if(\count(\explode("*", $txDTO->subscriberInput))>1){
