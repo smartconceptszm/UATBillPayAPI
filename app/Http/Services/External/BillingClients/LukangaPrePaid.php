@@ -119,7 +119,7 @@ class LukangaPrePaid implements IBillingClient
             if($apiResponseArray['errorcode']==0){
                 //Populate the Array with  Receipt data
                $response['status'] = "SUCCESS";
-               $response['tokenNumber'] = $apiResponseArray['tokenlist'];
+               $response['tokenNumber'] = \implode('-', \str_split($apiResponseArray['tokenlist'], 4));
                // $response['repaydebt'] = $apiResponseArray['repaydebt'];
                // $response['additionalfee'] = $apiResponseArray['additionalfee'];
                // $response['rechargeamount'] = $apiResponseArray['rechargeamount'];

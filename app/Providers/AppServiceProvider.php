@@ -65,6 +65,20 @@ class AppServiceProvider extends ServiceProvider
          //
       //
 
+      //Get last Token
+         $this->app->singleton('GetLastToken', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\GetLastToken::class);
+         });
+         //Menu Step Handlers
+            $this->app->singleton('GetLastToken_Step_1', function () {
+               return $this->app->make(\App\Http\Services\USSD\GetLastToken\GetLastToken_Step_1::class);
+            });
+            $this->app->singleton('GetLastToken_Step_2', function () {
+               return $this->app->make(\App\Http\Services\USSD\GetLastToken\GetLastToken_Step_2::class);
+            });
+         //
+      //
+
       //Menu CheckBalance
          $this->app->singleton('CheckBalance', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\CheckBalance::class);

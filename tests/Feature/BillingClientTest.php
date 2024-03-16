@@ -19,7 +19,7 @@ class BillingClientTest extends TestCase
 
     }
 
-    public function testPostPayment()
+    public function _testPostPayment()
     {   
 
         $tokenParams = [

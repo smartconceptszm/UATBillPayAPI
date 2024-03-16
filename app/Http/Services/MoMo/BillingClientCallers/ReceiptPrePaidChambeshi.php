@@ -19,16 +19,15 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 	public function handle(BaseDTO $momoDTO):BaseDTO
 	{
 
-		$newBalance = "0";
-		if(!$momoDTO->customer){
-			$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->meterNumber);
-		}
-		$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
-				(float)$momoDTO->receiptAmount;
-		$newBalance = \number_format($newBalance, 2, '.', ',');
+		// $newBalance = "0";
+		// if(!$momoDTO->customer){
+		// 	$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->meterNumber);
+		// }
+		// $newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+		// 		(float)$momoDTO->receiptAmount;
+		// $newBalance = \number_format($newBalance, 2, '.', ',');
 
-		$momoDTO->receiptNumber =  $momoDTO->accountNumber."_".date('YmdHis');
-	
+
 		if(!$momoDTO->tokenNumber){
 			$momoDTO->paymentStatus = "PAID | NO TOKEN";
 			$tokenParams = [
@@ -40,7 +39,10 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 			if($tokenResponse['status']=='SUCCESS'){
 				$momoDTO->tokenNumber = $tokenResponse['tokenNumber'];
 				$momoDTO->paymentStatus = "PAID | NOT RECEIPTED";
+			}else{
+				$momoDTO->error = $tokenResponse['error'];
 			}
+
 		}
 
 		if($momoDTO->tokenNumber && $momoDTO->paymentStatus == "PAID | NOT RECEIPTED"){
@@ -58,9 +60,12 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 					"TransactDescript"=> "2220 PREPAID. Token: ".$momoDTO->tokenNumber,
 					"Mobile Network" => $momoDTO->mnoName, 
 			];
+
 			$billingResponse=$this->billingClient->postPayment($receiptingParams);
+
 			if($billingResponse['status'] == 'SUCCESS'){
 				$momoDTO->paymentStatus = "RECEIPTED";
+
 				$momoDTO->receipt = "Payment successful\n" .
 											"Rcpt No: " . $momoDTO->receiptNumber . "\n" .
 											"Amount: ZMW " . \number_format( $momoDTO->receiptAmount, 2, '.', ',') . "\n".

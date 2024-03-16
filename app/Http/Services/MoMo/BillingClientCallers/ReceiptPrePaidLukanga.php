@@ -20,13 +20,13 @@ class ReceiptPrePaidLukanga implements IReceiptPayment
 	public function handle(BaseDTO $momoDTO):BaseDTO
 	{
 
-		$newBalance = "0";
-		if(!$momoDTO->customer){
-			$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->meterNumber);
-		}
-		$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
-				(float)$momoDTO->receiptAmount;
-		$newBalance = \number_format($newBalance, 2, '.', ',');
+		// $newBalance = "0";
+		// if(!$momoDTO->customer){
+		// 	$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->meterNumber);
+		// }
+		// $newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+		// 		(float)$momoDTO->receiptAmount;
+		// $newBalance = \number_format($newBalance, 2, '.', ',');
 		
 		if(!$momoDTO->tokenNumber){
 			$momoDTO->paymentStatus = "PAID | NO TOKEN";
@@ -47,7 +47,10 @@ class ReceiptPrePaidLukanga implements IReceiptPayment
 											"Acc: " . $momoDTO->accountNumber . "\n".
 											"Token: ". $momoDTO->tokenNumber . "\n".
 											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
+			}else{
+				$momoDTO->error = $tokenResponse['error'];
 			}
+
 		}
 
 

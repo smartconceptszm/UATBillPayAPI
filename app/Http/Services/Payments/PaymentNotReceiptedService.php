@@ -30,7 +30,7 @@ class PaymentNotReceiptedService
             $records =$records->whereBetween('p.created_at',[$dto->dateFrom, $dto->dateTo]);
          }
          $records = $records->where('p.client_id', '=', $dto->client_id)
-                              ->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED','RECEIPTED'])
+                              ->whereIn('p.paymentStatus', ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED'])
                               ->orderByDesc('p.created_at')->get();
          return $records->all();
       } catch (\Throwable $e) {

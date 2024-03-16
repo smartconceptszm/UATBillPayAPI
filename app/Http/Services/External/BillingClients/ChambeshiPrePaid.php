@@ -102,7 +102,7 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
                   $response['tokenNumber'] = $apiResponse['result']['token'];
                }
                else{
-                  throw new Exception($apiResponse['result']['reason'], 1); 
+                  throw new Exception($apiResponse['reason'], 1); 
                }
          } else {
             throw new Exception("CHAMBESHI PrePaid Service responded with status code: " . $apiResponse->status(), 2);

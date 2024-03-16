@@ -2,37 +2,24 @@
 
 use Tests\TestCase;
 
-use App\Http\Services\External\BillingClients\Chambeshi\ChambeshiAccountService;
-use App\Http\Services\Payments\PaymentService;
 Use App\Models\Payment;
 
 class UtilityTest extends TestCase
 {
 
-    public function _testChambeshi()
+    public function _testFunction()
     {   
 
-        $getAccount = new ChambeshiAccountService(new \App\Models\ChambeshiAccount());
+        $paymentHistoryService = new \App\Http\Services\Payments\PaymentHistoryService();
 
-        $customer = $getAccount->findOneBy(['AR_Acc' => 'CHL1002']);
+        $payment = $paymentHistoryService->getLatestToken(
+                            [
+                            'meterNumber' => "0120210638835",
+                            'client_id' => "39d62460-7303-11ee-b8ce-fec6e52a2330"
+                            ]
+                        );
 
-        $this->assertTrue($customer['AR_Acc'] == 'CHL1002');
-
-    }
-
-    public function _testModelService()
-    {   
-
-        $paymentService = new PaymentService(new Payment([]));
-        $response = $paymentService->update([
-                                                    'mnoTransactionId'=>'',
-                                                    'transactionId'=>'9999cc3e-9c1c-46b4-9254-1bc7ae913eb6',
-                                                    'payments/9999cc3e-9c1c-46b4-9254-1bc7ae913eb6'=>null,
-                                                    'paymentStatus'=>'PAYMENT FAILED'
-                                                ]
-                ,'9b0ccfd2-955c-4dcf-8d70-7c05024e937c');
-
-        $this->assertTrue($response->paymentStatus == 'PAYMENT FAIKLED');
+        $this->assertTrue(strlen($payment->receipt) == 24);
 
     }
 

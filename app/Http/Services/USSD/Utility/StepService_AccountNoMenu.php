@@ -13,7 +13,7 @@ class StepService_AccountNoMenu
             $menuItem = "Enter ".$client." Account Number in full";
         }else{
             $accountExamples = \env(\strtoupper($urlPrefix).'_PREPAID_EXAMPLE');
-            $menuItem = "Enter ".$client." Meter Number in full";
+            $menuItem = "Enter ".$client." Pre-Paid Meter Number in full";
         }
         $menuItem = $accountExamples? $menuItem." (for example: ".$accountExamples.")":$menuItem;
         $menuItem = $menuItem.":\n";

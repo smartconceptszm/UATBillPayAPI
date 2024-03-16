@@ -29,12 +29,23 @@ class PaymentReceiptService
       try {
          $thePayment = $this->paymentToReviewService->findById($data['id']);
          $momoDTO = $this->momoDTO->fromArray(\get_object_vars($thePayment));
-         if($momoDTO->paymentStatus != 'PAID | NOT RECEIPTED'){
-            throw new Exception("Unexpected payment status - ".$momoDTO->paymentStatus);
+
+         if($momoDTO->accountType == "POST-PAID"){
+            if($momoDTO->paymentStatus != 'PAID | NOT RECEIPTED' ){
+               throw new Exception("Unexpected payment status - ".$momoDTO->paymentStatus);
+            }
+            if($momoDTO->receiptNumber != ''){
+               throw new Exception("Payment appears receipted! Receipt number ".$momoDTO->receiptNumber);
+            }
+         }else{
+            if($momoDTO->paymentStatus != 'PAID | NO TOKEN' ){
+               throw new Exception("Unexpected payment status - ".$momoDTO->paymentStatus);
+            }
+            if($momoDTO->tokenNumber != ''){
+               throw new Exception("Token was already issued! Token number ".$momoDTO->tokenNumber);
+            }
          }
-         if($momoDTO->receiptNumber != ''){
-            throw new Exception("Payment appears receipted! Receipt number ".$momoDTO->receiptNumber);
-         }
+
          if($momoDTO->mnoTransactionId == ''){
             throw new Exception("MNO transaction Id is null. Payment not yet confirmed!");
          }  
@@ -42,6 +53,7 @@ class PaymentReceiptService
             $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$momoDTO->billingClient;
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
          //
+
          //Bind Receipting Handler
             $theMenu = $this->clientMenuService->findById($momoDTO->menu_id);
             $receiptingHandler = $theMenu->receiptingHandler;
@@ -50,6 +62,7 @@ class PaymentReceiptService
             }
             App::bind(\App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment::class,$receiptingHandler);
          //
+
          //Bind the SMS Clients
             $smsClientKey = '';
             if(!$smsClientKey && (\env('SMS_SEND_USE_MOCK') == "YES")){
@@ -64,7 +77,9 @@ class PaymentReceiptService
             App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClientKey);
          //
          $user = Auth::user(); 
-         $momoDTO->user_id = $user->id;
+         if($user){
+            $momoDTO->user_id = $user->id;
+         }
          $momoDTO->error = "";
          $momoDTO =  App::make(Pipeline::class)
                         ->send($momoDTO)
@@ -88,19 +103,37 @@ class PaymentReceiptService
       try {
          $thePayment = $this->paymentToReviewService->findById($id);
          $momoDTO = $this->momoDTO->fromArray(\get_object_vars($thePayment));
-         if($momoDTO->receiptNumber != ''){
-            throw new Exception("Payment already receipted! Receipt number ".$momoDTO->receiptNumber);
-         }
-         $momoDTO->receiptNumber = $data['receiptNumber'];
-         $momoDTO->paymentStatus = "RECEIPTED";
 
-         //consider a format receipt public method for each billing client
-            $momoDTO->receipt = "Payment successful\n" .
-                  "Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
-                  "Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
-                  "Acc: " . $momoDTO->accountNumber . "\n";
-            $momoDTO->receipt .= "Date: " . Carbon::now()->format('d-M-Y') . "\n";
-         //
+         if($momoDTO->accountType == "POST-PAID"){
+            if($momoDTO->receiptNumber != ''){
+               throw new Exception("Payment already receipted! Receipt number ".$momoDTO->receiptNumber);
+            }
+            $momoDTO->receiptNumber = $data['receiptNumber'];
+            $momoDTO->paymentStatus = "RECEIPTED";
+   
+            //consider a format receipt public method for each billing client
+               $momoDTO->receipt = "Payment successful\n" .
+                     "Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
+                     "Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
+                     "Acc: " . $momoDTO->accountNumber . "\n";
+               $momoDTO->receipt .= "Date: " . Carbon::now()->format('d-M-Y') . "\n";
+            //
+         }else{
+            if($momoDTO->tokenNumber != ''){
+               throw new Exception("Token already issued! Token number ".$momoDTO->tokenNumber);
+            }
+            $momoDTO->tokenNumber = $data['receiptNumber'];
+            $momoDTO->paymentStatus = "RECEIPTED";
+   
+            //consider a format receipt public method for each billing client
+               $momoDTO->receipt = "Payment successful\n" .
+                     "Amount: ZMW " . \number_format( $momoDTO->receiptAmount, 2, '.', ',') . "\n".
+                     "Meter No: " . $momoDTO->meterNumber . "\n" .
+                     "Acc: " . $momoDTO->accountNumber . "\n".
+                     "Token: ". $momoDTO->tokenNumber . "\n".
+                     "Date: " . Carbon::now()->format('d-M-Y') . "\n";
+            //
+         }
 
          //Bind the SMS Clients
             $smsClientKey = '';
