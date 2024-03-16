@@ -38,16 +38,16 @@ class FaultsComplaints_Step_5
             return $txDTO;
          }
          $theComplaint = $this->cTypeService->findOneBy([
-                        'order'=>$arrCustomerJourney[2],
+                        'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-3],
                         'client_id'=>$txDTO->client_id,
                      ]);
       
          $theSubType = $this->cSubTypeService->findOneBy([
                         'complaint_type_id'=>$theComplaint->id,
-                        'order'=>$arrCustomerJourney[3]
+                        'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-2]
                      ]); 
          if($theSubType->requiresDetails == 'YES'){
-            $complaintInfo = $arrCustomerJourney[4];
+            $complaintInfo = \end($arrCustomerJourney);
          }else{
             $complaintInfo = "";
          }

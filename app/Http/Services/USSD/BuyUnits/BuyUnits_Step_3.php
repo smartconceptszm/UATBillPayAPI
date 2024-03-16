@@ -23,6 +23,19 @@ class BuyUnits_Step_3
    {
 
       try {
+         $txDTO = $this->getCustomerAccount->handle($txDTO);
+      } catch (\Throwable $e) {
+            if($e->getCode()==1){
+               $txDTO->errorType = 'InvalidAccount';
+            }else{
+               $txDTO->errorType = 'SystemError';
+            }
+            $txDTO->error=$e->getMessage();
+            return $txDTO;
+      }
+
+      
+      try {
          [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
       } catch (\Throwable $e) {
          if($e->getCode()==1){
@@ -34,17 +47,7 @@ class BuyUnits_Step_3
          return $txDTO;
       }
          
-      try {
-         $txDTO = $this->getCustomerAccount->handle($txDTO);
-      } catch (\Throwable $e) {
-            if($e->getCode()==1){
-               $txDTO->errorType = 'InvalidAccount';
-            }else{
-               $txDTO->errorType = 'SystemError';
-            }
-            $txDTO->error=$e->getMessage();
-            return $txDTO;
-      }
+
       $txDTO = $this->getResponse($txDTO);
       return $txDTO;
       

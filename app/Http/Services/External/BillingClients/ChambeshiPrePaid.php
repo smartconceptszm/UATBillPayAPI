@@ -17,6 +17,7 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
          private string $username,
          private string $password,
          private string $passwordVend,
+         private string $debtBuffer,
          protected ChambeshiPaymentService $chambeshiPaymentService
       )
    {}
@@ -32,7 +33,7 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
                         "user_name"=> $this->username,
                         "password" =>$this->password,
                         "meter_number" => $meterNumber,
-                        "total_paid" =>"20.00",
+                        "total_paid" =>$this->debtBuffer,
                         "debt_percent" =>"50"
                      ];
 
@@ -50,7 +51,7 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
                      $response['address'] = $apiResponse['result']['customer_addr'];
                      $response['district'] = $this->getDistrict(\trim($apiResponse['result']['customer_number']));
                      $response['mobileNumber'] = "";
-                     $response['balance'] = \number_format((float)$apiResponse['result']['debt_total'], 2, '.', ',');
+                     $response['balance'] = \number_format((float)$apiResponse['result']['debt_total'] + (float)$apiResponse['result']['monthly_charge'], 2, '.', ',') ;
                      break;
                   case 4:
                      throw new Exception($apiResponse['reason'], 1); 
@@ -114,5 +115,6 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
       return $response;
  
    }
+
 
 }

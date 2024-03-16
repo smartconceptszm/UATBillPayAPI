@@ -13,11 +13,25 @@ class BillingClientTest extends TestCase
     public function _testGetAccountDetails()
     {   
 
-        $billingClient = \app('nkanaPrePaid');
-        $response=$billingClient->getAccountDetails('0120012000812');
+        $billingClient = \app('chambeshiPrePaid');
+        $response=$billingClient->getAccountDetails('0166200096872');
         $this->assertTrue($response['accountNumber'] == "040010151");
 
     }
+
+    public function testPostPayment()
+    {   
+
+        $tokenParams = [
+            "meter_number"=> '0166200096872',
+            "total_paid" => '20.00',
+            "debt_percent"=> 50
+        ];
+        $billingClient = \app('chambeshiPrePaid');
+        $response=$billingClient->generateToken($tokenParams);
+        $this->assertTrue($response['accountNumber'] == "040010151");
+    }
+
 
     public function _testGetComplaints()
     {   

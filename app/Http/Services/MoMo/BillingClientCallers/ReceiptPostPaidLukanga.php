@@ -7,7 +7,7 @@ use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
-class ReceiptPaymentLukanga implements IReceiptPayment
+class ReceiptPostPaidLukanga implements IReceiptPayment
 {
     private $newBalance;
     public function __construct( 

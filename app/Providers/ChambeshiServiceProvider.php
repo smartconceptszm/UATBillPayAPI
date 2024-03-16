@@ -54,7 +54,8 @@ class ChambeshiServiceProvider extends ServiceProvider
                                  'baseURL' => \env('CHAMBESHI_PREPAID_BASE_URL'),
                                  'username' => \env('CHAMBESHI_PREPAID_USERNAME'),
                                  'password' => \env('CHAMBESHI_PREPAID_PASSWORD'),
-                                 'passwordVend' => \env('CHAMBESHI_PREPAID_PASSWORD_VEND')
+                                 'passwordVend' => \env('CHAMBESHI_PREPAID_PASSWORD_VEND'),
+                                 'debtBuffer' => \env('CHAMBESHI_PREPAID_DEBT_BUFFER')
                               ]
                         );
          });

@@ -24,7 +24,7 @@ class FaultsComplaints_Step_3
       try {
          $arrCustomerJourney=\explode("*", $txDTO->customerJourney);
          $theComplaintType = $this->cTypeService->findOneBy([
-                        'order'=>$arrCustomerJourney[2],
+                        'order'=>\end($arrCustomerJourney),
                         'client_id'=>$txDTO->client_id,
                      ]);
 

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use Exception;
 
-class Lukanga implements IBillingClient
+class LukangaPostPaid implements IBillingClient
 {
 
     private XMLtoArrayParser $xmlToArrayParser;

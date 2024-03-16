@@ -2,6 +2,8 @@
 
 namespace App\Http\Services\USSD\Utility;
 
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -22,10 +24,23 @@ class StepService_GetAmount
 
       $testMSISDN = \explode("*", \env('APP_ADMIN_MSISDN')."*".$txDTO->testMSISDN);
 
-      if ((($amount< $minPaymentAmount) || $amount > $maxPaymentAmount)
-               && !(\in_array($txDTO->mobileNumber, $testMSISDN))) {
-         throw new Exception("InvalidAmount", 1);
+      if(\env(\strtoupper($txDTO->urlPrefix).'_PREPAID_DEBT_BUFFER')){
+         $minPaymentAmount = number_format((float)$txDTO->customer['balance'], 2, '.', ',');
+         if ($amount< $minPaymentAmount) {
+            Cache::put($txDTO->urlPrefix.$txDTO->accountNumber."_MinPaymentAmount", $minPaymentAmount, 
+                              Carbon::now()->addMinutes(intval(\env('CUSTOMER_ACCOUNT_CACHE'))));
+            throw new Exception("InvalidAmount", 1);
+         }
+      }else{
+         if ((($amount< $minPaymentAmount) || $amount > $maxPaymentAmount)
+                  && !(\in_array($txDTO->mobileNumber, $testMSISDN))) {
+            Cache::put($txDTO->urlPrefix.$txDTO->accountNumber."_MinPaymentAmount", $minPaymentAmount, 
+                  Carbon::now()->addMinutes(intval(\env('CUSTOMER_ACCOUNT_CACHE'))));
+            throw new Exception("InvalidAmount", 1);
+         }
       }
+
+
       return [$subscriberInput, $amount];
    }
     

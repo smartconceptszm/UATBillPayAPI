@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services\External\BillingClients;
+namespace App\Http\Services\External\BillingClients\Lukanga;
 
 class LukangaSoapService extends \SoapClient
 {
