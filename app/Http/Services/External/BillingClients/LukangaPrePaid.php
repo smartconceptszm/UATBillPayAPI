@@ -112,10 +112,9 @@ class LukangaPrePaid implements IBillingClient
          $apiResponse = Http::asForm()->post($this->baseURL, $tokenParameters);
 
          if ($apiResponse->status() == 200) {
-
-            $apiResponseString = $apiResponse->body(); // Get response data as BODY
-            parse_str($apiResponseString, $apiResponseArray);
-
+            // $apiResponseString = $apiResponse->body(); // Get response data as BODY
+            // parse_str($apiResponseString, $apiResponseArray);
+            $apiResponseArray = $apiResponse->json();
             if($apiResponseArray['errorcode']==0){
                 //Populate the Array with  Receipt data
                $response['status'] = "SUCCESS";
@@ -156,7 +155,6 @@ class LukangaPrePaid implements IBillingClient
       return $response;
 
    }
-
 
    public function postPayment(Array $postParams): Array
    {

@@ -47,8 +47,6 @@ class GroupService
                   unset($data[$key]);
             }
          }
-         $user = Auth::user(); 
-         $data['client_id'] = $user->client_id;
         return $this->model->create($data);
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

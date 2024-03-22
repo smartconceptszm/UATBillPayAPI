@@ -12,9 +12,8 @@ class UsersOfClientService
    public function findAll(array $criteria = null):array|null{
 
       try {
-         $user = Auth::user();
          $records = DB::table('users')
-                     ->where('client_id', '=', $user->client_id)
+                     ->where('client_id', '=', $criteria['client_id'])
                      ->select('*')
                      ->get();
          return $records->all();

@@ -233,7 +233,7 @@ Route::group(['middleware' => 'mode'], function (){
          });
       //
       // RBAC ROUTES 
-         Route::get('usersofclient', [\App\Http\Controllers\Auth\UsersOfClientController::class, 'index']);      
+         Route::get('usersofclient/{id}', [\App\Http\Controllers\Auth\UsersOfClientController::class, 'index']);      
          Route::get('groupsofuser/{id}', [\App\Http\Controllers\Auth\GroupsOfUserController::class, 'index']);
          Route::get('groupsofclient/{id}', [\App\Http\Controllers\Auth\GroupsOfClientController::class, 'index']);
          Route::get('rightsofgroup/{id}', [\App\Http\Controllers\Auth\RightsOfGroupController::class, 'index']);

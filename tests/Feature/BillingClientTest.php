@@ -1,6 +1,7 @@
 <?php
 
 use Tests\TestCase;
+use Illuminate\Support\Str;
 
 class BillingClientTest extends TestCase
 {
@@ -32,6 +33,33 @@ class BillingClientTest extends TestCase
         $this->assertTrue($response['accountNumber'] == "040010151");
     }
 
+    public function _testGenerateTokenChambeshi()
+    {   
+
+        $tokenParams = [
+            "meter_number"=> '0166200096872',
+            "total_paid" => '20.00',
+            "debt_percent"=> 50
+        ];
+        $billingClient = \app('chambeshiPrePaid');
+        $response=$billingClient->generateToken($tokenParams);
+        $this->assertTrue($response['accountNumber'] == "040010151");
+    }
+
+
+    public function _testGenerateTokenOther()
+    {   
+
+
+        $tokenParams = [
+            "meterNumber"=> '',
+            "paymentAmount" => '55.00',
+            "transactionId" => now()->timestamp.Str::random(6)
+        ];
+        $billingClient = \app('lukangaPrePaid');
+        $response=$billingClient->generateToken($tokenParams);
+        $this->assertTrue($response['accountNumber'] == "040010151");
+    }
 
     public function _testGetComplaints()
     {   

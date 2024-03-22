@@ -13,7 +13,7 @@ class UserController extends Controller
    protected $validationRules=[
          'mobileNumber' => 'required|string|size:12|unique:users',
          'username' => 'required|string|unique:users',
-         'client_id' => 'required',
+         'client_id' => 'required|string',
          'fullnames' => 'required|string',
          'password' => 'required|string',
       ];
@@ -96,7 +96,6 @@ class UserController extends Controller
 	{
 
 		try {
-
 			$this->response['data'] = $this->theService->update($this->getParameters($request),$id);
 		} catch (\Throwable $e) {
 			$this->response['status']['code'] = 500;

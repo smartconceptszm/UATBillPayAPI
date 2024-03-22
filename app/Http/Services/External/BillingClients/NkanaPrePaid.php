@@ -112,10 +112,9 @@ class NkanaPrePaid implements IBillingClient
          $apiResponse = Http::asForm()->post($this->baseURL, $tokenParameters);
 
          if ($apiResponse->status() == 200) {
-
-            $apiResponseString = $apiResponse->body(); // Get response data as BODY
-            parse_str($apiResponseString, $apiResponseArray);
-
+            // $apiResponseString = $apiResponse->body(); // Get response data as BODY
+            // parse_str($apiResponseString, $apiResponseArray);
+            $apiResponseArray = $apiResponse->json();
             if($apiResponseArray['errorcode']==0){
                 //Populate the Array with  Receipt data
                $response['status'] = "SUCCESS";
@@ -143,7 +142,6 @@ class NkanaPrePaid implements IBillingClient
                // 42 Decrypt failed, maybe root key is invalid
                throw new Exception("NKANA PrePaid Service responded with error code: ".$apiResponseArray['errorcode'], 2);
             }
-
 
          } else {
             throw new Exception("NKANA PrePaid Service responded with status code: " . $apiResponse->status(), 2);

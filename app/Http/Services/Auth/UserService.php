@@ -4,7 +4,6 @@ namespace App\Http\Services\Auth;
 
 use App\Http\Services\Auth\UserGroupService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use Exception;
 
@@ -45,35 +44,13 @@ class UserService
    {
 
       try {
-         $group_id = '';
          $data['password'] = app('hash')->make($data['password']);
          foreach ( $data as $key => $value) {
             if($value == ''){
                unset($data[$key]);
             }
          }
-         if(isset($data['group_id'])){
-            $group_id = $data['group_id'];
-            unset($data['group_id']);
-         }
-
-         DB::beginTransaction();
-         try {
-            $user = $this->model->create($data);
-            if($group_id){
-               $this->userGroupService->create(
-                     [
-                        'group_id' => $group_id,
-                        'user_id' => $user->id
-                     ]
-                  );
-            }
-            DB::commit();
-         } catch (\Throwable $e) {
-               DB::rollBack();
-               throw new Exception($e->getMessage());
-         }
-        return $user;
+        return $this->model->create($data);
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
