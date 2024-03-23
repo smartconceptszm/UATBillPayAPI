@@ -27,13 +27,23 @@ class PaymentWithReceiptToDeliverService
          $momoDTO = $this->momoDTO->fromArray(\get_object_vars($thePayment));
          if ($momoDTO->paymentStatus == 'RECEIPTED' || $momoDTO->paymentStatus == 'RECEIPT DELIVERED' ) {  
             if(!$momoDTO->receipt){
-               //consider a format receipt public method for each billing client
-               $momoDTO->receipt = "Payment successful\n" .
-                  "Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
-                  "Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
-                  "Acc: " . $momoDTO->accountNumber . "\n";
-               $momoDTO->receipt.="Date: " . Carbon::parse($momoDTO->updated_at)->format('d-M-Y'). "\n";
+               if($momoDTO->accountType == "POST-PAID"){
+                  //consider a format receipt public method for each billing client
+                  $momoDTO->receipt = "Payment successful\n" .
+                     "Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
+                     "Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
+                     "Acc: " . $momoDTO->accountNumber . "\n";
+                  $momoDTO->receipt.="Date: " . Carbon::parse($momoDTO->updated_at)->format('d-M-Y'). "\n";
+               }else{
+                  $momoDTO->receipt = "Payment successful\n" .
+                                    "Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
+                                    "Meter No: " . $momoDTO->meterNumber . "\n" .
+                                    "Acc: " . $momoDTO->accountNumber . "\n".
+                                    "Token: ". $momoDTO->tokenNumber . "\n";
+                  $momoDTO->receipt.="Date: " . Carbon::parse($momoDTO->updated_at)->format('d-M-Y'). "\n";
+               }
             }
+
             $user = Auth::user(); 
 
             //Bind the SMS Clients
