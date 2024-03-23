@@ -40,26 +40,33 @@ class LukangaPrePaid implements IBillingClient
          if ($apiResponse->status() == 200) {
             $apiResponseString = $apiResponse->body(); // Get response data as BODY
             parse_str($apiResponseString, $apiResponseArray);
-            switch ($apiResponseArray['errorcode']) {
-               case "0":
-                  $response['accountNumber'] = $apiResponseArray['identificationnumber'];
-                  $response['name'] = $apiResponseArray['customername'];
-                  $response['address'] = "CENTRAL";
-                  $response['district'] = "CENTRAL";
-                  $response['mobileNumber'] =  $apiResponseArray['telephonenumber'];
-                  $response['balance'] = $apiResponseArray['debt'];
-                  break;
-               case "10":
-                  throw new Exception("Invalid Meter Number",1);
-                  break;
-               case "11":
-                  throw new Exception("Customer does not exist",1);
-                  break;
-               default:
-                  throw new Exception("LUKANGA PrePaid Service responded with error code: " .$apiResponseArray['errorcode'], 2);
-                  break;
+            if(\is_array($apiResponseArray)){
+               if(\array_key_exists('errorcode',$apiResponseArray)){
+                  switch ($apiResponseArray['errorcode']) {
+                     case "0":
+                        $response['accountNumber'] = $apiResponseArray['identificationnumber'];
+                        $response['name'] = $apiResponseArray['customername'];
+                        $response['address'] = "CENTRAL";
+                        $response['district'] = "CENTRAL";
+                        $response['mobileNumber'] =  $apiResponseArray['telephonenumber'];
+                        $response['balance'] = $apiResponseArray['debt'];
+                        break;
+                     case "10":
+                        throw new Exception("Invalid Meter Number",1);
+                        break;
+                     case "11":
+                        throw new Exception("Customer does not exist",1);
+                        break;
+                     default:
+                        throw new Exception("LUKANGA PrePaid Service responded with error code: " .$apiResponseArray['errorcode'], 2);
+                        break;
+                  }
+               }else{
+                  throw new Exception("Lukanga PrePaid Service response could not be parsed into array without 'ErrorCode' Key", 2);
+               }
+            }else{
+               throw new Exception("Lukanga PrePaid Service response could not be parsed into array", 2);
             }
-
             // 4 Communication failed
             // 10 Invalid Meter Number
             // 11 CustomerNotExist
@@ -112,44 +119,50 @@ class LukangaPrePaid implements IBillingClient
          $apiResponse = Http::asForm()->post($this->baseURL, $tokenParameters);
 
          if ($apiResponse->status() == 200) {
-            // $apiResponseString = $apiResponse->body(); // Get response data as BODY
-            // parse_str($apiResponseString, $apiResponseArray);
-            $apiResponseArray = $apiResponse->json();
-            if($apiResponseArray['errorcode']==0){
-                //Populate the Array with  Receipt data
-               $response['status'] = "SUCCESS";
-               $response['tokenNumber'] = \implode('-', \str_split($apiResponseArray['tokenlist'], 4));
-               // $response['repaydebt'] = $apiResponseArray['repaydebt'];
-               // $response['additionalfee'] = $apiResponseArray['additionalfee'];
-               // $response['rechargeamount'] = $apiResponseArray['rechargeamount'];
-               // $response['rechargevolume'] = $apiResponseArray['rechargevolume'];
-               // $response['vatrate'] = $apiResponseArray['vatrate'];
-               // $response['vatamount'] = $apiResponseArray['vatamount'];
-
-            }else {
-               // 3 CalculateFeeFailed
-               // 4 Connect LAPIS Server Failed
-               // 5 Can’t save bill record into database
-               // 10 Invalid Meter Number
-               // 11 CustomerNotExist
-               // 12 customer account’s status is unnormal
-               // 13 Invalid platform ID
-               // 20 InvalidPayment
-               // 22 Payment is too much,more than max-purchase limitation
-               // 23 Payment is too little, less than additional fee
-               // 40 Invalid transaction ID
-               // 41 TransactionID had been Used
-               // 42 Decrypt failed, maybe root key is invalid
-               throw new Exception("LUKANGA PrePaid Service responded with error code: ".$apiResponseArray['errorcode'], 2);
+            $apiResponseString = $apiResponse->body(); // Get response data as BODY
+            parse_str($apiResponseString, $apiResponseArray);
+            // $apiResponseArray = $apiResponse->json();
+            if(\is_array($apiResponseArray)){
+               if(\array_key_exists('errorcode',$apiResponseArray)){
+                  if($apiResponseArray['errorcode']==0){
+                     //Populate the Array with  Receipt data
+                     $response['status'] = "SUCCESS";
+                     $response['tokenNumber'] = \implode('-', \str_split($apiResponseArray['tokenlist'], 4));
+                     // $response['repaydebt'] = $apiResponseArray['repaydebt'];
+                     // $response['additionalfee'] = $apiResponseArray['additionalfee'];
+                     // $response['rechargeamount'] = $apiResponseArray['rechargeamount'];
+                     // $response['rechargevolume'] = $apiResponseArray['rechargevolume'];
+                     // $response['vatrate'] = $apiResponseArray['vatrate'];
+                     // $response['vatamount'] = $apiResponseArray['vatamount'];
+   
+                  }else {
+                     // 3 CalculateFeeFailed
+                     // 4 Connect LAPIS Server Failed
+                     // 5 Can’t save bill record into database
+                     // 10 Invalid Meter Number
+                     // 11 CustomerNotExist
+                     // 12 customer account’s status is unnormal
+                     // 13 Invalid platform ID
+                     // 20 InvalidPayment
+                     // 22 Payment is too much,more than max-purchase limitation
+                     // 23 Payment is too little, less than additional fee
+                     // 40 Invalid transaction ID
+                     // 41 TransactionID had been Used
+                     // 42 Decrypt failed, maybe root key is invalid
+                     throw new Exception("LUKANGA PrePaid Service responded with error code: ".$apiResponseArray['errorcode'], 2);
+                  }
+               }else{
+                  throw new Exception("LUKANGA PrePaid Service response could not be parsed into array without 'ErrorCode' Key", 2);
+               }
+            }else{
+               throw new Exception("LUKANGA PrePaid Service response could not be parsed into array", 2);
             }
-
-
          } else {
             throw new Exception("LUKANGA PrePaid Service responded with status code: " . $apiResponse->status(), 2);
          }
 
       } catch (Exception $e) {
-         throw new Exception("Error executing 'Error Getting Token': " . $e->getMessage());
+         throw new Exception("Error executing 'Generate Token': " . $e->getMessage());
       }
 
       return $response;

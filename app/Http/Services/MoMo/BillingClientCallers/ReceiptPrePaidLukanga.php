@@ -31,7 +31,7 @@ class ReceiptPrePaidLukanga implements IReceiptPayment
 		if(!$momoDTO->tokenNumber){
 			$momoDTO->paymentStatus = "PAID | NO TOKEN";
 			//receiptNumber = transactionid in Lukanga PrePaid Billing Client
-			$momoDTO->receiptNumber =  now()->timestamp.Str::random(6); 
+			$momoDTO->receiptNumber =  now()->timestamp.\strtoupper(Str::random(6)); 
 			$tokenParams = [
 							"meterNumber"=> $momoDTO->meterNumber,
 							"paymentAmount" => $momoDTO->receiptAmount,

@@ -52,9 +52,9 @@ class BillingClientTest extends TestCase
 
 
         $tokenParams = [
-            "meterNumber"=> '',
-            "paymentAmount" => '55.00',
-            "transactionId" => now()->timestamp.Str::random(6)
+            "meterNumber"=> '1101000166',
+            "paymentAmount" => '100.00',
+            "transactionId" => '1711204810BTXGOU'
         ];
         $billingClient = \app('lukangaPrePaid');
         $response=$billingClient->generateToken($tokenParams);
