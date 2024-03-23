@@ -17,7 +17,7 @@ class PaymentSessionService
             ->leftJoin('payments as p','p.session_id','=','s.id')
             ->select('s.id as session_id','s.sessionId','s.created_at','s.mobileNumber','s.accountNumber',
                      's.customerJourney','s.status','m.prompt as paymentType','p.id','p.transactionId',
-                     'p.district','p.receiptAmount','p.receiptNumber','p.receipt',
+                     'p.district','p.receiptAmount','p.receiptNumber','p.receipt','p.tokenNumber',
                      'p.paymentStatus','mnos.name as mno','p.mnoTransactionId',
                      'p.channel','p.error');
          if($dto->accountNumber){
