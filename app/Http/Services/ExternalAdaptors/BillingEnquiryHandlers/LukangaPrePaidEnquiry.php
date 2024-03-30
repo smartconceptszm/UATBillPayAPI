@@ -23,6 +23,7 @@ class LukangaPrePaidEnquiry extends AbEnquiryHandler
 																			'paymentAmount'=>$txDTO->paymentAmount
 																		]);
 			$txDTO->accountNumber = $txDTO->customer['accountNumber'];
+			$txDTO->district = $txDTO->customer['district'];
 		} catch (\Throwable $e) {
 			throw $e;
 		}

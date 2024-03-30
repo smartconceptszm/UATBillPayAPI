@@ -15,7 +15,10 @@ class BillingClientTest extends TestCase
     {   
 
         $billingClient = \app('chambeshiPrePaid');
-        $response=$billingClient->getAccountDetails('0166200096872');
+        $response=$billingClient->getAccountDetails([
+                                        'meterNumber'=>'0166209932051',
+                                        'paymentAmount'=>'25'
+                                    ]);
         $this->assertTrue($response['accountNumber'] == "040010151");
 
     }
