@@ -15,11 +15,12 @@ class PaymentMenuService
    )
    {}
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(array $criteria):array|null
    {
 
       try {
          $client = $this->clientService->findOneBy($criteria);
+         $client = \is_null($client)?null:(object)$client->toArray();  
          return $this->clientMenuService->findAll([
                               'client_id' =>  $client->id,
                               'isPayment' =>  "YES"

@@ -17,7 +17,7 @@ class BatchReceiptDeliveryJob extends BaseJob
     */
    public function __construct(
       private Array $transactions, 
-      public String $urlPrefix = null)
+      public String $urlPrefix)
    {}
 
    /**
@@ -35,11 +35,11 @@ class BatchReceiptDeliveryJob extends BaseJob
     *
     * @return void
     */
-   public function handle(PaymentWithReceiptToDeliverService $deliverReceipt) {
+   public function handle(PaymentWithReceiptToDeliverService $paymentWithReceiptToDeliverService) {
 
       try {
          foreach ($this->transactions as $transaction) {
-               $deliverReceipt->update($transaction['id']);
+               $paymentWithReceiptToDeliverService->update($transaction['id']);
          }
       } catch (\Throwable $e) {
          Log::error("Handling batch receipt delivery job. DETAILS: " . $e->getMessage());

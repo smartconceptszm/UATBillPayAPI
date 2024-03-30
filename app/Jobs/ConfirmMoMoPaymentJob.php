@@ -43,7 +43,7 @@ class ConfirmMoMoPaymentJob extends BaseJob
             if (\env('USE_RECEIPTING_MOCK') == "YES"){
                $receiptingHandler = "MockReceipting";
             }
-            App::bind(\App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment::class,$receiptingHandler);
+            App::bind(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
          //
       //
       

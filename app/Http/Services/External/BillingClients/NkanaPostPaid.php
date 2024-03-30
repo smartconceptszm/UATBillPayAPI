@@ -16,7 +16,7 @@ class NkanaPostPaid implements IBillingClient
       )
    {}
 
-   public function getAccountDetails(string $accountNumber): array
+   public function getAccountDetails(array $params): array
    {
 
       $response = [];
@@ -27,11 +27,11 @@ class NkanaPostPaid implements IBillingClient
          $apiResponse = Http::withHeaders([
                               'Accept' => '/',
                               'AuthenticationCode'=> $this->AuthenticationCode
-                           ])->get($fullURL, ["customerID"=> $accountNumber]);
+                           ])->get($fullURL, ["customerID"=> $params['accountNumber']]);
          if ($apiResponse->status() == 200) {
             $apiResponse = $apiResponse->json();
             if($apiResponse['MsgStatusCode'] == 'ENQ001'){
-               $response['accountNumber'] = $accountNumber;
+               $response['accountNumber'] = $params['accountNumber'];
                $response['name'] =   $apiResponse['Cus_Details']['0']['INITIAL']."".$apiResponse['Cus_Details']['0']['SURNAME'];
                $response['address'] = $apiResponse['Cus_Details']['0']['UA_ADRESS1'];
                $response['district'] = "OTHER";
@@ -39,7 +39,8 @@ class NkanaPostPaid implements IBillingClient
                $response['balance'] = $apiResponse['Cus_Details']['0']['Closing_Balance'];
             }else{
                if($apiResponse['MsgStatusCode'] == 'Enq005'){
-                  throw new Exception($apiResponse['statusNarration'], 1);
+                  //throw new Exception($apiResponse['statusNarration'], 1);
+                  throw new Exception("Invalid Nkana POST-PAID Account Number", 1);
                }else{
                   throw new Exception($apiResponse['statusNarration'], 2);
                }

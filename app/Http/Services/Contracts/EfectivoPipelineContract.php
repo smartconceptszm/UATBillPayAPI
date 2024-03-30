@@ -14,6 +14,7 @@ abstract class EfectivoPipelineContract
         }
         return $next($this->stepProcess($txDTO));
     }
+    
     protected abstract function stepProcess(BaseDTO $txDTO);
 
 }

@@ -87,6 +87,7 @@ class SMSService
          $dto->urlPrefix = $client->urlPrefix;
       }else{
          $client = $this->clientService->findOneBy(['shortName'=>$dto->shortName]);
+         $client = (object)$client->toArray();
          $dto->client_id = $client->id;
       }
       $dto->smsPayMode = $client->smsPayMode;
@@ -104,6 +105,7 @@ class SMSService
                                  'client_id'=>$dto->client_id,
                                  'mno_id'=> $dto->mno_id
                               ]);
+         $ClientMnos = (object)$ClientMnos->toArray();
          $dto->smsCharge = (float)$ClientMnos->smsCharge;
       //
 

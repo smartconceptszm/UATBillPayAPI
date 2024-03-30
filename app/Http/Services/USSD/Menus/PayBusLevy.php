@@ -17,6 +17,7 @@ class PayBusLevy implements IUSSDMenu
          if (\count(\explode("*", $txDTO->customerJourney)) == 3) {
             $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$txDTO->billingClient;
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
+            App::bind(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$txDTO->urlPrefix.$txDTO->accountType."Enquiry");
          }
          $stepHandler = App::make('PayBusLevy_Step_'.\count(\explode("*", $txDTO->customerJourney)));
          $txDTO = $stepHandler->run($txDTO);

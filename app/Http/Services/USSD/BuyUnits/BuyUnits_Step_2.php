@@ -13,7 +13,7 @@ class BuyUnits_Step_2
 
       try {
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-         $txDTO->accountNumber = $txDTO->subscriberInput;
+         $txDTO->meterNumber = $txDTO->subscriberInput;
          $txDTO->response = "Enter Amount :\n";
       } catch (\Throwable $e) {
          $txDTO->error = 'Buy units sub step 2. '.$e->getMessage();

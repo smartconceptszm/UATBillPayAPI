@@ -25,13 +25,15 @@ class FaultsComplaints_Step_4
       try {        
          $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
          $theComplaintType = $this->cTypeService->findOneBy([
-                        'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-2],
-                        'client_id'=>$txDTO->client_id,
-                     ]);
+                                          'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-2],
+                                          'client_id'=>$txDTO->client_id,
+                                       ]);
+         $theComplaintType = (object)$theComplaintType->toArray();
          $theSubType = $this->cSubTypeService->findOneBy([
-                     'complaint_type_id'=>$theComplaintType->id,
-                     'order'=>\end($arrCustomerJourney)
-                  ]); 
+                                    'complaint_type_id'=>$theComplaintType->id,
+                                    'order'=>\end($arrCustomerJourney)
+                                 ]); 
+         $theSubType = (object)$theSubType->toArray();
          $txDTO->subscriberInput = $this->validateInput->handle($theSubType->detailType,$txDTO->subscriberInput);
          $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
       } catch (\Throwable $e) {

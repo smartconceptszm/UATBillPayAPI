@@ -21,8 +21,9 @@ class Step_IdentifyClient extends EfectivoPipelineContract
          try {
             
             $client = $this->clientService->findOneBy(['urlPrefix'=>$txDTO->urlPrefix]);
+            $client = \is_null($client)?null:(object)$client->toArray();
             $txDTO->client_id = $client->id;
-            $txDTO->clientCode = $client->code;
+            $txDTO->shortCode = $client->shortCode;
             $txDTO->testMSISDN = $client->testMSISDN;
             $txDTO->clientSurcharge = $client->surcharge;
             

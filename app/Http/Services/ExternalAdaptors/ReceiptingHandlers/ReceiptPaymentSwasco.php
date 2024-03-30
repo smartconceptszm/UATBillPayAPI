@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Services\MoMo\BillingClientCallers;
+namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
 use App\Http\Services\MoMo\Utility\StepService_AddShotcutMessage;
-use App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment;
+use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;

@@ -162,7 +162,7 @@ class AppServiceProvider extends ServiceProvider
 
 		//Receipting Payment
 			$this->app->singleton('MockReceipting', function () {
-            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPaymentMock::class);
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPaymentMock::class);
 			});            
 		//
 

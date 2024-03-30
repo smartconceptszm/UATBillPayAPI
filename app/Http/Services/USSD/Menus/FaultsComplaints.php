@@ -20,6 +20,7 @@ class FaultsComplaints implements IUSSDMenu
                //Bind selected Billing Client to the Interface
                   $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$txDTO->billingClient;
                   App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
+                  App::bind(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$txDTO->urlPrefix.$txDTO->accountType."Enquiry");
                //
                //Bind the Complaint Creator Client 
                   App::bind(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient::class,'Complaint_'.$txDTO->urlPrefix);

@@ -125,46 +125,44 @@ class Swasco implements IBillingClient
       )
    {}
 
-   public function getAccountDetails(string $accountNumber): array
+   public function getAccountDetails(array $params): array
    {
 
       $response = [];
 
       try {
 
-         if(!(\strlen($accountNumber)==10)){
-               throw new Exception("Invalid Account Number",1);
+         if(!(\strlen($params['accountNumber'])==10)){
+            throw new Exception("Invalid SWASCo account number",1);
          }
 
-         $fullURL = $this->baseURL . "navision/customers/".\rawurlencode($accountNumber);
+         $fullURL = $this->baseURL . "navision/customers/".\rawurlencode($params['accountNumber']);
          $apiResponse = Http::timeout($this->swascoTimeout)->withHeaders([
-               'Content-Type' => 'application/json',
-               'Accept' => '*/*'
-         ])->get($fullURL);
+                                             'Content-Type' => 'application/json',
+                                             'Accept' => '*/*'
+                                       ])->get($fullURL);
 
          if ($apiResponse->status() == 200) {
-               $apiResponse = $apiResponse->json();
-               $response = $apiResponse['data']['customer'];
-               $response['district']=$this->getDistrict(\substr($response['accountNumber'],0,3));
+            $apiResponse = $apiResponse->json();
+            $response = $apiResponse['data']['customer'];
+            $response['district']=$this->getDistrict(\substr($response['accountNumber'],0,3));
          } else {
-               if ($apiResponse->status() == 404 || $apiResponse->status() == 500) {
-                  $apiResponse = $apiResponse->json();
-                  if ($apiResponse['status']['code'] == 404) {
-                     throw new Exception($apiResponse['status']['message'], 2);
-                  } else {
-                     throw new Exception($apiResponse['status']['message'], 1);
-                  }
+            if ($apiResponse->status() == 404 || $apiResponse->status() == 500) {
+               $apiResponse = $apiResponse->json();
+               if ($apiResponse['status']['code'] == 404) {
+                  throw new Exception("Invalid SWASCo account number", 1);
                } else {
-                  throw new Exception("SWASCO Remote Service responded with status code: " . $apiResponse->status(), 1);
+                  throw new Exception($apiResponse['status']['message'], 2);
                }
+            } else {
+               throw new Exception("SWASCO Remote Service responded with status code: " . $apiResponse->status(), 2);
+            }
          }
       } catch (\Throwable $e) {
-         if ($e->getCode() == 2) {
-               throw new Exception($e->getMessage(), 2);
-         } elseif ($e->getCode() == 1) {
-               throw new Exception($e->getMessage(), 1);
+         if ($e->getCode() == 1 || $e->getCode() == 2) {
+            throw $e;
          } else {
-               throw new Exception("Error executing 'Get Account Details': " . $e->getMessage(), 3);
+            throw new Exception("Error executing 'Get Account Details': " . $e->getMessage(), 3);
          }
       }
 

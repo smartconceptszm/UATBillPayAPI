@@ -19,6 +19,7 @@ class Step_GetClientDetails extends EfectivoPipelineContract
 
       try {
          $client = $this->clientService->findOneBy(['urlPrefix'=>$webDTO->urlPrefix]);
+         $client = \is_null($client)?null:(object)$client->toArray();  
          $webDTO->client_id = $client->id;
          $webDTO->shortCode = $client->shortCode;
          $webDTO->testMSISDN = $client->testMSISDN;

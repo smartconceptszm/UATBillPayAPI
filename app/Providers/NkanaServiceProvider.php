@@ -47,8 +47,12 @@ class NkanaServiceProvider extends ServiceProvider
                      );
          });
 
+         $this->app->singleton('nkanaPOST-PAIDEnquiry', function () {
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\NkanaPostPaidEnquiry::class);
+         });
+
          $this->app->singleton('ReceiptPostPaidNkana', function () {
-            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPostPaidNkana::class);
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPostPaidNkana::class);
          });
       //
 
@@ -63,8 +67,12 @@ class NkanaServiceProvider extends ServiceProvider
                         );
          });
 
+         $this->app->singleton('nkanaPRE-PAIDEnquiry', function () {
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\NkanaPrePaidEnquiry::class);
+         });
+
          $this->app->singleton('ReceiptPrePaidNkana', function () {
-            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPrePaidNkana::class);
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPrePaidNkana::class);
          });
 
       //

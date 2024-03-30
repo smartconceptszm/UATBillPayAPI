@@ -12,11 +12,11 @@ class Mazabuka implements IBillingClient
    public function __construct()
    {}
 
-   public function getAccountDetails(string $accountNumber): array
+   public function getAccountDetails(array $params): array
    {
 
       $response = [
-         'accountNumber' => $accountNumber,
+         'accountNumber' => $params['accountNumber'],
          "name" => "Mazabuka Customer",
          "address" => "No. 1, Street 1",
          "district" => 'MAZABUKA',

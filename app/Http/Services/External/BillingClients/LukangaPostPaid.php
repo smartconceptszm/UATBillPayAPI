@@ -22,7 +22,7 @@ class LukangaPostPaid implements IBillingClient
     public function __construct()
     {}
 
-    public function getAccountDetails(string $accountNumber): array
+    public function getAccountDetails(array $params): array
     {
 
         $response = [];
@@ -31,8 +31,8 @@ class LukangaPostPaid implements IBillingClient
 
             $this->setConfigs();
 
-            if(!(\strlen($accountNumber)==10 || \strlen($accountNumber)==11)){
-                throw new Exception("Invalid Account Number",1);
+            if(!(\strlen($params['accountNumber'])==10 || \strlen($params['accountNumber'])==11)){
+                throw new Exception("Invalid Lukanga POST-PAID Account Number",1);
             }
 
             $getDebtBalParams=[ 
@@ -40,15 +40,16 @@ class LukangaPostPaid implements IBillingClient
                 'rdusername' => $this->soapUserName,
                 'rdpassword' => $this->soapPassword,
                 'token' => $this->soapToken ,
-                'account' => $accountNumber,
+                'account' => $params['accountNumber'],
             ];
 
             $apiResponse = $this->lukangaSoapService->getdebtbal($getDebtBalParams);
 
             if(\substr($apiResponse->promunError,0,7)!="00 - OK"){
-                Log::error(' Lukanga Billing Client error (getdebtbal for account number '.$accountNumber.'): '.$apiResponse->promunError);
+                Log::error(' Lukanga Billing Client error (getdebtbal for account number '.$params['accountNumber'].'): '.$apiResponse->promunError);
                 if(substr($apiResponse->promunError,0,2)=="14"){
-                    throw new Exception("Customer account number not found",1);
+                    //throw new Exception("Customer account number not found",1);
+                    throw new Exception("Invalid Lukanga POST-PAID Account Number",1);
                 }else{
                     throw new Exception("Error getting balance from Promun. Details: ".$apiResponse->promunError,2);
                 }
@@ -75,13 +76,13 @@ class LukangaPostPaid implements IBillingClient
 
 
             //Account for un creditted receipts
-            $cachedBalance = \json_decode(Cache::get('lukanga_balance_'.$accountNumber,\json_encode([])), true);
+            $cachedBalance = \json_decode(Cache::get('lukanga_balance_'.$params['accountNumber'],\json_encode([])), true);
             if($cachedBalance){
                 if(\key_exists('newBalance',$cachedBalance)){
                     if($theBalance>$cachedBalance['newBalance']){
                         $theBalance=$cachedBalance['newBalance'];
                     }else{
-                        Cache::forget('lukanga'.$accountNumber);
+                        Cache::forget('lukanga'.$params['accountNumber']);
                     }
                 }
             }
@@ -91,13 +92,13 @@ class LukangaPostPaid implements IBillingClient
                 'rdusername' => $this->soapUserName,
                 'rdpassword' => $this->soapPassword,
                 'token' => $this->soapToken ,
-                'account' => $accountNumber,
+                'account' => $params['accountNumber'],
             ];
 
             $apiResponse = $this->lukangaSoapService->getdebstatic($getDebtStaticParams);
 
             if(\substr($apiResponse->promunError,0,7)!="00 - OK"){
-                Log::error(' Lukanga Billing Client (getdebstatic  for account number '.$accountNumber.'): '.$apiResponse->promunError);
+                Log::error(' Lukanga Billing Client (getdebstatic  for account number '.$params['accountNumber'].'): '.$apiResponse->promunError);
                 throw new Exception("Error getting customer details from Promun. Details: ".$apiResponse->promunError,2);
             }
 
@@ -123,10 +124,10 @@ class LukangaPostPaid implements IBillingClient
 
         } catch (\Throwable $e) {
             if ($e->getCode() == 1) {
-                throw new Exception($e->getMessage(), 1);
+                throw $e;
             } 
             if ($e->getCode() == 2) {
-                throw new Exception($e->getMessage(), 2);
+                throw $e;
             } else{
                 throw new Exception("Error executing 'Get Account Details' Soap Request. Details: " . $e->getMessage(), 2);
             }
@@ -166,6 +167,7 @@ class LukangaPostPaid implements IBillingClient
 
             $apiResponse = $this->lukangaSoapService->updatepreceipts($receiptingParams);
             if(substr($apiResponse->promunError,0,7)!="00 - OK"){
+                Log::error(' Lukanga Billing Client (updatepreceipts) error: '.$apiResponse->promunError);
                 throw new Exception(' Lukanga Billing Client (updatepreceipts) error: '.$apiResponse->promunError,1);
             }
             
@@ -212,7 +214,6 @@ class LukangaPostPaid implements IBillingClient
         return $response;
     }
 
-
     private function setConfigs()
     {
        
@@ -234,6 +235,5 @@ class LukangaPostPaid implements IBillingClient
         $this->xmlToArrayParser = new XMLtoArrayParser();
         
     }
-
 
 }

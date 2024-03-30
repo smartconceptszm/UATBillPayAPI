@@ -65,7 +65,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                               'client_id' => $txDTO->client_id,
                               'parent_id' =>'0'
                            ]);
-
+      $selectedMenu = (object)$selectedMenu->toArray();
       $txDTO->billingClient = $selectedMenu->billingClient; 
       $txDTO->accountType = $selectedMenu->accountType; 
       $txDTO->isPayment = $selectedMenu->isPayment;
@@ -92,7 +92,9 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                      'mobileNumber' => $txDTO->mobileNumber,
                      'client_id' => $txDTO->client_id
                   ]);
+      $customer = \is_null($customer)? null : $customer->getAttributes();     
       if ($customer) { 
+         $customer = (object)$customer->toArray();
          $selectedMenu = $this->clientMenuService->findOneBy([
                               'order' => $arrInputs[1],
                               'client_id' => $txDTO->client_id,
@@ -100,6 +102,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                               'isActive' => "YES"
                            ]);
          if($selectedMenu){
+            $selectedMenu = (object)$selectedMenu->toArray();
             $txDTO->billingClient = $selectedMenu->billingClient; 
             $txDTO->accountType = $selectedMenu->accountType; 
             $txDTO->isPayment = $selectedMenu->isPayment;
@@ -145,6 +148,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                                  'client_id'=>$txDTO->client_id,
                                  'sessionId'=>$txDTO->sessionId,
                               ]);
+      $ussdSession = (object)$ussdSession->toArray();
       $txDTO->customerJourney = $ussdSession->customerJourney;
       $txDTO->accountNumber = $ussdSession->accountNumber;
       $txDTO->paymentAmount = $ussdSession->paymentAmount;
@@ -157,6 +161,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
       $txDTO->error = '';
 
       $currentMenu = $this->clientMenuService->findById($txDTO->menu_id);
+      $currentMenu = (object)$currentMenu->toArray();
       if($currentMenu->handler == 'ParentMenu'){
          $currentMenu = $this->clientMenuService->findOneBy([
                         'order' => $txDTO->subscriberInput,
@@ -227,6 +232,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                                  'client_id' => $txDTO->client_id,
                                  'parent_id' => 0
                               ]);
+            $selectedMenu = (object)$selectedMenu->toArray();
             $txDTO->billingClient = $selectedMenu->billingClient; 
             $txDTO->accountType = $selectedMenu->accountType;
             $txDTO->isPayment = $selectedMenu->isPayment;
@@ -240,6 +246,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                                  'client_id' => $txDTO->client_id,
                                  'parent_id' => 0
                               ]);
+         $selectedMenu = (object)$selectedMenu->toArray();
          $txDTO->billingClient = $selectedMenu->billingClient; 
          $txDTO->accountType = $selectedMenu->accountType;
          $txDTO->isPayment = $selectedMenu->isPayment;

@@ -18,6 +18,7 @@ class Survey implements IUSSDMenu
             if (\count(\explode("*", $txDTO->customerJourney)) == 2 || \count(\explode("*", $txDTO->customerJourney)) == 5) {
                $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$txDTO->billingClient;
                App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
+               App::bind(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$txDTO->urlPrefix.$txDTO->accountType."Enquiry");
             }
             if (\count(\explode("*", $txDTO->customerJourney)) == 5) {
                App::bind(\App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient::class,'Survey_'.$txDTO->urlPrefix);

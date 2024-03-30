@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Services\MoMo\BillingClientCallers;
+namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
-use App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment;
+use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 

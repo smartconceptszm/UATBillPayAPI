@@ -9,7 +9,7 @@ use Exception;
 class PaymentNotReceiptedService
 {
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(array $criteria):array|null
    {
 
       try {
@@ -24,7 +24,7 @@ class PaymentNotReceiptedService
                   ->join('client_menus as m','p.menu_id','=','m.id')
                   ->select('p.id','p.created_at','p.mobileNumber','p.accountNumber','p.receiptNumber',
                            'p.receiptAmount','p.paymentAmount','p.transactionId','p.district',
-                           'm.prompt as paymentType','p.mnoTransactionId',
+                           'm.prompt as paymentType','p.mnoTransactionId','p.meterNumber',
                            'mnos.name as mno','p.paymentStatus','p.channel','p.error');
          if($dto->dateFrom && $dto->dateTo){
             $records =$records->whereBetween('p.created_at',[$dto->dateFrom, $dto->dateTo]);

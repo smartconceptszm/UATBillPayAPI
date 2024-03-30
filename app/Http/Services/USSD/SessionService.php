@@ -12,7 +12,6 @@ class SessionService
          private Session $model
    ) {}
 
-
    public function findAll(array $criteria = null):array|null
    {
       try {

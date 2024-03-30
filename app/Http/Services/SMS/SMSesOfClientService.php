@@ -9,7 +9,7 @@ use Exception;
 class SMSesOfClientService
 {
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(array $criteria):array|null
    {
 
       try {
@@ -27,7 +27,7 @@ class SMSesOfClientService
          }
          $records = $records->get();
          return $records->all();
-      } catch (Exception$e) {
+      } catch (\Throwable$e) {
          throw new Exception($e->getMessage());
       }
       

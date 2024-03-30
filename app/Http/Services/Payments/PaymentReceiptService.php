@@ -56,11 +56,12 @@ class PaymentReceiptService
 
          //Bind Receipting Handler
             $theMenu = $this->clientMenuService->findById($momoDTO->menu_id);
+            $theMenu = (object)$theMenu->toArray();
             $receiptingHandler = $theMenu->receiptingHandler;
             if (\env('USE_RECEIPTING_MOCK') == "YES"){
                $receiptingHandler = "MockReceipting";
             }
-            App::bind(\App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment::class,$receiptingHandler);
+            App::bind(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
          //
 
          //Bind the SMS Clients

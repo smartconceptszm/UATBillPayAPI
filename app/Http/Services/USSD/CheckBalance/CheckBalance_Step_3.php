@@ -31,6 +31,7 @@ class CheckBalance_Step_3
                                  'isActive' => "YES",
                                  'accountType' => $txDTO->accountType
                               ]);
+            $selectedMenu = (object)$selectedMenu->toArray();
             if($selectedMenu->handler != 'Parent'){
                $txDTO->customerJourney = $arrCustomerJourney[0]."*".$selectedMenu->order;
                $txDTO->subscriberInput = $arrCustomerJourney[2];

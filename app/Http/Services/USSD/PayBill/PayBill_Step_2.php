@@ -3,7 +3,6 @@
 namespace App\Http\Services\USSD\PayBill;
 
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class PayBill_Step_2
 {

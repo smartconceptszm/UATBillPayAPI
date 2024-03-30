@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\ServiceApplications;
 
-use App\Http\Services\External\BillingClients\GetCustomerAccount;
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
 use App\Http\Services\MenuConfigs\ServiceTypeService;
 use App\Http\DTOs\BaseDTO;
@@ -12,7 +12,7 @@ class ServiceApplications_Step_3
 {
 
    public function __construct(
-      protected GetCustomerAccount $getCustomerAccount,
+      protected IEnquiryHandler $getCustomerAccount,
       protected ServiceTypeDetailService $serviceTypeDetails,
       protected ServiceTypeService $serviceTypes)
    {}
@@ -23,20 +23,24 @@ class ServiceApplications_Step_3
       if(\count(\explode("*", $txDTO->customerJourney)) == 3){
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-            $txDTO->accountNumber = $txDTO->subscriberInput;
+				if($txDTO->accountType == 'POST-PAID'){
+					$txDTO->accountNumber=$txDTO->subscriberInput;
+				}else{
+					$txDTO->meterNumber=$txDTO->subscriberInput;
+				}
             $txDTO = $this->getCustomerAccount->handle($txDTO);
             $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
             $theServiceType = $this->serviceTypes->findOneBy([
-                        'client_id'=>$txDTO->client_id,
-                        'order'=>$arrCustomerJourney[2]
-                     ]); 
-
+                                    'client_id'=>$txDTO->client_id,
+                                    'order'=>$arrCustomerJourney[2]
+                                 ]); 
+            $theServiceType = (object)$theServiceType->toArray();
             $serviceAppQuestions = $this->serviceTypeDetails->findAll([
-                  'service_type_id'=>$theServiceType->id
-               ]);
+                                             'service_type_id'=>$theServiceType->id
+                                          ]);
             $applicationQuestion = \array_values(\array_filter($serviceAppQuestions, function ($record){
-                        return ($record->order == 1);
-                     }));
+                                             return ($record->order == 1);
+                                          }));
             $applicationQuestion = $applicationQuestion[0];  
             $txDTO->response = $applicationQuestion->prompt;
          } catch (\Throwable $e) {

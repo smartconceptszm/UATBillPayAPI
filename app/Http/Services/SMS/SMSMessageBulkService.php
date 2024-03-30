@@ -17,7 +17,7 @@ class SMSMessageBulkService
       private BulkMessage $model
    ) {}
 
-   public function findAll(array $criteria = null, array $fields = ['*']):array|null
+   public function findAll(array $criteria):array|null
    {
       try {
          $dto = (object)$criteria;

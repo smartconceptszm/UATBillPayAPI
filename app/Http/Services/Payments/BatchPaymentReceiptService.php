@@ -17,17 +17,17 @@ class BatchPaymentReceiptService
 
       try {
          $user = Auth::user(); 
+         
          $data['client_id'] = $user->client_id;
          $dto = (object)$data;
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
-         $records = DB::table('payments as p')
-                  ->select('id');
+         $records = DB::table('payments as p')->select('p.id');
          if($dto->dateFrom && $dto->dateTo){
             $records = $records->whereBetween('p.created_at',[$dto->dateFrom,$dto->dateTo]);
          }
          $records = $records->where('p.client_id', '=', $dto->client_id)
-                              ->whereIn('p.paymentStatus', ['RECEIPTED']);
+                              ->where('p.paymentStatus','=', 'RECEIPTED');
          $records = $records->get()->all();
          if (\sizeof($records) > 0) {
             $chunkedArr = \array_chunk($records,5,false);
@@ -35,7 +35,7 @@ class BatchPaymentReceiptService
                Queue::later(Carbon::now()->addSeconds(1),
                               new BatchReceiptDeliveryJob($value, $user->urlPrefix));
             }
-            return (object)['data' => 'Batch receipt delivery job initiated.\n\n Check status after a few minutes!'];
+            return (object)['data' => 'Batch receipt delivery process initiated. Check status after a few minutes!'];
          } else {
             return (object)['data' => 'No records found!'];
          }

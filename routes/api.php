@@ -231,6 +231,8 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/sessions', 'index');
                Route::get('/sessions/{id}', 'show');
             });
+            Route::get('sessionsofclient', [\App\Http\Controllers\USSD\SessionofClientController::class, 'index']);
+
          //
          // RBAC ROUTES 
             Route::get('usersofclient/{id}', [\App\Http\Controllers\Auth\UsersOfClientController::class, 'index']);      
@@ -288,4 +290,5 @@ Route::group(['middleware' => 'mode'], function (){
 
       });
    //
+   
 });

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Services\MoMo\BillingClientCallers;
+namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
-use App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment;
+use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -10,7 +10,7 @@ use App\Http\DTOs\BaseDTO;
 use Exception;
 
 
-class ReceiptPrePaidLukanga implements IReceiptPayment
+class ReceiptPrePaidNkana implements IReceiptPayment
 {
 
 	public function __construct(
@@ -30,14 +30,16 @@ class ReceiptPrePaidLukanga implements IReceiptPayment
 		
 		if(!$momoDTO->tokenNumber){
 			$momoDTO->paymentStatus = "PAID | NO TOKEN";
-			//receiptNumber = transactionid in Lukanga PrePaid Billing Client
-			$momoDTO->receiptNumber =  now()->timestamp.\strtoupper(Str::random(6)); 
+			//receiptNumber = transactionid in Nkana PrePaid Billing Client
+			$momoDTO->receiptNumber =  now()->timestamp.\strtoupper(Str::random(6));
 			$tokenParams = [
 							"meterNumber"=> $momoDTO->meterNumber,
 							"paymentAmount" => $momoDTO->receiptAmount,
 							"transactionId" => $momoDTO->receiptNumber
 						];
+
 			$tokenResponse=$this->billingClient->generateToken($tokenParams);
+
 			if($tokenResponse['status']=='SUCCESS'){
 				$momoDTO->paymentStatus = "RECEIPTED";
 				$momoDTO->tokenNumber = $tokenResponse['tokenNumber'];
@@ -50,7 +52,7 @@ class ReceiptPrePaidLukanga implements IReceiptPayment
 			}else{
 				$momoDTO->error = $tokenResponse['error'];
 			}
-
+			
 		}
 
 

@@ -7,6 +7,7 @@ use App\Http\Services\MoMo\ConfirmPaymentSteps\Step_SendReceiptViaSMS;
 use App\Http\Services\MoMo\Utility\Step_UpdateTransaction;
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\MoMo\Utility\Step_LogStatus;
+use App\Http\Services\Clients\ClientMenuService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
@@ -18,6 +19,7 @@ class PaymentManaulPostService
 
    public function __construct(
       private PaymentToReviewService $paymentToReviewService, 
+      private ClientMenuService $clientMenuService,
       private MoMoDTO $momoDTO)
    {}
 
@@ -33,10 +35,22 @@ class PaymentManaulPostService
                throw new Exception($momoDTO->mnoName ." transaction Id ".$data['mnoTransactionId']. " already captured.");
             }
          }  
+
          //Bind the Services
             $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$momoDTO->urlPrefix;
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
          //
+
+         //Bind Receipting Handler
+            $theMenu = $this->clientMenuService->findById($momoDTO->menu_id);
+            $theMenu = (object)$theMenu->toArray();
+            $receiptingHandler = $theMenu->receiptingHandler;
+            if (\env('USE_RECEIPTING_MOCK') == "YES"){
+               $receiptingHandler = "MockReceipting";
+            }
+            App::bind(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
+         //
+
          //Bind the SMS Clients
             $smsClientKey = '';
             if(!$smsClientKey && (\env('SMS_SEND_USE_MOCK') == "YES")){
@@ -50,6 +64,7 @@ class PaymentManaulPostService
             }
             App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClientKey);
          //
+         
          $user = Auth::user(); 
          $momoDTO->user_id = $user->id;
          $momoDTO->mnoTransactionId = $data['mnoTransactionId'];

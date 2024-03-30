@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\SwascoUpdateMobile;
 
-use App\Http\Services\External\BillingClients\GetCustomerAccount;
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -10,7 +10,7 @@ class SwascoUpdateMobile_Step_2
 {
 
    public function __construct(
-      private GetCustomerAccount $getCustomerAccount)
+      private IEnquiryHandler $getCustomerAccount)
    {}
 
    public function run(BaseDTO $txDTO)
@@ -21,10 +21,10 @@ class SwascoUpdateMobile_Step_2
          $txDTO->accountNumber = $txDTO->subscriberInput;
          $txDTO = $this->getCustomerAccount->handle($txDTO);
          $txDTO->response = "Update Mobile on:\n". 
-         "Acc: ".$txDTO->subscriberInput."\n".
-         "Name: ".$txDTO->customer['name']."\n\n". 
-         "Current Mobile: ".$txDTO->customer['mobileNumber']."\n\n".
-         "Enter the new Mobile No. e.g (095xxxxxxx)";
+                              "Acc: ".$txDTO->subscriberInput."\n".
+                              "Name: ".$txDTO->customer['name']."\n\n". 
+                              "Current Mobile: ".$txDTO->customer['mobileNumber']."\n\n".
+                              "Enter the new Mobile No. e.g (095xxxxxxx)";
 
       } catch (\Throwable $e) {
          if($e->getCode() == 1){

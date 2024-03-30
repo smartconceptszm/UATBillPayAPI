@@ -35,8 +35,8 @@ class GetCustomerAccount
 			}
 		} catch (\Throwable $e) {
 
-			if($e->getCode()==1){
-				throw new Exception($e->getMessage(), 1);
+			if($e->getCode()==1 || $e->getCode()==4){
+				throw new Exception($e->getMessage(), $e->getCode());
 			}else{
 				$billingServiceErrorCount = (int)Cache::get($txDTO->urlPrefix.'_BillingErrorCount');
 				if($billingServiceErrorCount){

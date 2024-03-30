@@ -31,11 +31,12 @@ class UpdateDetails_Local implements IUpdateDetailsClient
                                           'client_id' => $ticketData['client_id'],
                                           'order' => $order
                                        ]);
-                  $fieldDetail = $this->customerFieldUpdateDetailService->create([
-                        'customer_field_update_id' => $updateTicket->id,
-                        'customer_field_id' => $customerField->id,
-                        'value' => $value
-                     ]);
+                  $customerField = (object)$customerField->toArray();
+                  $this->customerFieldUpdateDetailService->create([
+                                    'customer_field_update_id' => $updateTicket->id,
+                                    'customer_field_id' => $customerField->id,
+                                    'value' => $value
+                                 ]);
                }
                DB::commit();
          } catch (\Throwable $e) {

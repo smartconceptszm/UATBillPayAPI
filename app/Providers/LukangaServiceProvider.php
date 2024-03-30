@@ -23,8 +23,12 @@ class LukangaServiceProvider extends ServiceProvider
             return new \App\Http\Services\External\BillingClients\LukangaPostPaid();
          });
 
+         $this->app->singleton('lukangaPOST-PAIDEnquiry', function () {
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\LukangaPostPaidEnquiry::class);
+         });
+
          $this->app->singleton('ReceiptPostPaidLukanga', function () {
-            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPostPaidLukanga::class);
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPostPaidLukanga::class);
          });
 
       //
@@ -40,8 +44,12 @@ class LukangaServiceProvider extends ServiceProvider
                         );
          });
 
+         $this->app->singleton('lukangaPRE-PAIDEnquiry', function () {
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\LukangaPrePaidEnquiry::class);
+         });
+
          $this->app->singleton('ReceiptPrePaidLukanga', function () {
-            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPrePaidLukanga::class);
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPrePaidLukanga::class);
          });
          
       //

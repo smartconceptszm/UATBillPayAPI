@@ -23,14 +23,14 @@ class ChambeshiPostPaid extends Chambeshi implements IBillingClient
                               ));
    }
   
-   public function getAccountDetails(string $accountNumber): array
+   public function getAccountDetails(array $params): array
    {
 
       $response = [];
 
       try {
 
-         $customer = $this->chambeshiAccountService->findOneBy(['AR_Acc'=>$accountNumber]);
+         $customer = $this->chambeshiAccountService->findOneBy(['AR_Acc'=>$params['accountNumber']]);
          if($customer){
             $district = $this->getDistrict(\trim($customer->AR_Acc));
             $response = [
@@ -42,17 +42,15 @@ class ChambeshiPostPaid extends Chambeshi implements IBillingClient
                            "balance"=> \number_format((float)$customer->AR_Acc_Bal, 2, '.', ',')
                         ];
          }else{
-            throw new Exception("Invalid account number", 1);
+            throw new Exception("Invalid Chambeshi POST-PAID Account Number", 1);
          }
 
       } catch (\Throwable $e) {
-
          if ($e->getCode() == 1) {
-            throw new Exception($e->getMessage(), 1);
+            throw $e;
          }else{
             throw new Exception("Error executing 'Get Account Details': " . $e->getMessage(), 2);
          }
-         
       }
 
       return $response;

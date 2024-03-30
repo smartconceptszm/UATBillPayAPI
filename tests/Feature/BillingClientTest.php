@@ -50,15 +50,14 @@ class BillingClientTest extends TestCase
     public function _testGenerateTokenOther()
     {   
 
-
         $tokenParams = [
-            "meterNumber"=> '1101000166',
-            "paymentAmount" => '100.00',
-            "transactionId" => '1711204810BTXGOU'
+            "meterNumber"=> '0120030047597',
+            "paymentAmount" => '0.01',
+            "transactionId" => '17117061363FGG10'
         ];
-        $billingClient = \app('lukangaPrePaid');
+        $billingClient = \app('nkanaPrePaid');
         $response=$billingClient->generateToken($tokenParams);
-        $this->assertTrue($response['accountNumber'] == "040010151");
+        $this->assertTrue($response['accountNumber'] == "7701000010");
     }
 
     public function _testGetComplaints()

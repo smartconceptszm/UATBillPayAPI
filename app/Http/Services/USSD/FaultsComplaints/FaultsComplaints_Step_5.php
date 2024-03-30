@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\FaultsComplaints;
 
 use App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient;
-use App\Http\Services\External\BillingClients\GetCustomerAccount;
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use App\Http\Services\MenuConfigs\ComplaintSubTypeService;
 use App\Http\Services\MenuConfigs\ComplaintTypeService;
 use App\Http\DTOs\BaseDTO;
@@ -14,7 +14,7 @@ class FaultsComplaints_Step_5
 
    public function __construct(
       private ComplaintSubTypeService $cSubTypeService,
-      private GetCustomerAccount $getCustomerAccount,
+      private IEnquiryHandler $getCustomerAccount,
       private ComplaintTypeService $cTypeService,
       private IComplaintClient $complaintClient)
    {}
@@ -25,7 +25,11 @@ class FaultsComplaints_Step_5
       try{
          $arrCustomerJourney=\explode("*", $txDTO->customerJourney);
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-         $txDTO->accountNumber = $txDTO->subscriberInput;
+         if($txDTO->accountType == 'POST-PAID'){
+            $txDTO->accountNumber=$txDTO->subscriberInput;
+         }else{
+            $txDTO->meterNumber=$txDTO->subscriberInput;
+         }
          try {
             $txDTO = $this->getCustomerAccount->handle($txDTO);
          } catch (\Throwable $e) {
@@ -38,14 +42,15 @@ class FaultsComplaints_Step_5
             return $txDTO;
          }
          $theComplaint = $this->cTypeService->findOneBy([
-                        'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-3],
-                        'client_id'=>$txDTO->client_id,
-                     ]);
-      
+                                    'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-3],
+                                    'client_id'=>$txDTO->client_id,
+                                 ]);
+         $theComplaint = (object)$theComplaint->toArray();
          $theSubType = $this->cSubTypeService->findOneBy([
                         'complaint_type_id'=>$theComplaint->id,
                         'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-2]
                      ]); 
+         $theSubType = (object)$theSubType->toArray();
          if($theSubType->requiresDetails == 'YES'){
             $complaintInfo = \end($arrCustomerJourney);
          }else{

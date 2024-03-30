@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Web\WebPaymentService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
@@ -23,6 +24,7 @@ class WebPaymentController extends Controller
       $this->getUrlPrefix($request);
       $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$this->urlPrefix;
       App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
+      App::bind(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$this->urlPrefix."POST-PAIDEnquiry");
    }
 
    /**

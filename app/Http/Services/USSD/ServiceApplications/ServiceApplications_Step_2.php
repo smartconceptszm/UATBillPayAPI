@@ -28,9 +28,10 @@ class ServiceApplications_Step_2
                         'order'=>$txDTO->subscriberInput
                      ]); 
             
-            if(!$theServiceType->id){
+            if(!$theServiceType){
                throw new Exception("Returned empty service type",1);
             } 
+            $theServiceType = (object)$theServiceType->toArray();
             if($theServiceType->onExistingAccount == 'YES'){
                $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
             }else{
@@ -38,8 +39,8 @@ class ServiceApplications_Step_2
                      'service_type_id'=>$theServiceType->id
                   ]);
                $applicationQuestion = \array_values(\array_filter($serviceAppQuestions, function ($record){
-                           return ($record->order == 1);
-                        }));
+                                                return ($record->order == 1);
+                                             }));
                $applicationQuestion = $applicationQuestion[0];  
                $txDTO->response = $applicationQuestion->prompt;
                $txDTO->customerJourney = $txDTO->customerJourney."*". $txDTO->subscriberInput;

@@ -18,7 +18,8 @@ class Step_GetMnoDetails extends EfectivoPipelineContract
    {
 
       try {
-         $mno = $this->mnoService->findById($webDTO->mno_id);               
+         $mno = $this->mnoService->findById($webDTO->mno_id);     
+         $mno = \is_null($mno)?null:(object)$mno->toArray();     
          $webDTO->mnoName = $mno->name;
       } catch (\Throwable $e) {
          $webDTO->error = 'At get web MNO details. '.$e->getMessage();

@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\UpdateDetails;
 
 use App\Http\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient;
-use App\Http\Services\External\BillingClients\GetCustomerAccount;
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
 use App\Http\Services\MenuConfigs\CustomerFieldService;
 use Illuminate\Support\Facades\Queue;
@@ -17,7 +17,7 @@ class UpdateDetails_Step_4
 {
 
    public function __construct(
-      private GetCustomerAccount $getCustomerAccount,
+      private IEnquiryHandler $getCustomerAccount,
       private StepService_ValidateCRMInput $validateCRMInput,
       private CustomerFieldService $customerFieldService,
       private IUpdateDetailsClient $updateDetailsClient)

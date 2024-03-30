@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Services\MoMo\BillingClientCallers;
+namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
-use App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment;
+use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use App\Http\Services\Clients\ClientMenuService;
 use Illuminate\Support\Carbon;

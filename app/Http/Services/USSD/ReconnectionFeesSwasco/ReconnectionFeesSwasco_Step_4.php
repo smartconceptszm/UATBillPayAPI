@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\ReconnectionFeesSwasco;
 
-use App\Http\Services\External\BillingClients\GetCustomerAccount;
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use App\Http\Services\USSD\Utility\StepService_GetAmount;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -11,7 +11,7 @@ class ReconnectionFeesSwasco_Step_4
 {
 
    public function __construct(
-      private GetCustomerAccount $getCustomerAccount,
+      private IEnquiryHandler $getCustomerAccount,
       private StepService_GetAmount $getAmount)
    {}
 
@@ -19,17 +19,7 @@ class ReconnectionFeesSwasco_Step_4
    {
 
       try{
-         try {
-            [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
-         } catch (\Throwable $e) {
-            if($e->getCode()==1){
-               $txDTO->errorType = 'InvalidAmount';
-            }else{
-               $txDTO->errorType = 'SystemError';
-            }
-            $txDTO->error = $e->getMessage();
-            return $txDTO;
-         }
+
          try {
             $txDTO = $this->getCustomerAccount->handle($txDTO);
          } catch (\Throwable $e) {
@@ -41,6 +31,19 @@ class ReconnectionFeesSwasco_Step_4
             $txDTO->error = $e->getMessage();
             return $txDTO;
          }
+
+         try {
+            [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
+         } catch (\Throwable $e) {
+            if($e->getCode()==1){
+               $txDTO->errorType = 'InvalidAmount';
+            }else{
+               $txDTO->errorType = 'SystemError';
+            }
+            $txDTO->error = $e->getMessage();
+            return $txDTO;
+         }
+
          $txDTO->response = "Pay ZMW " . $txDTO->subscriberInput . "\n" .
                                           "Into: Customer account - " . $txDTO->accountNumber;
          $txDTO->response .= " ".$txDTO->customer['name']. "\n";

@@ -119,16 +119,20 @@ class SwascoServiceProvider extends ServiceProvider
 								]);
 			});
 
+			$this->app->singleton('swascoPOST-PAIDEnquiry', function () {
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\SwascoEnquiry::class);
+         });
+
 			$this->app->singleton('ReceiptPaymentSwasco', function () {
-				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPaymentSwasco::class);
+				return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPaymentSwasco::class);
 			});
 
 			$this->app->singleton('ReceiptReconnectionSwasco', function () {
-				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptReconnectionSwasco::class);
+				return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptReconnectionSwasco::class);
 			});
 			
 			$this->app->singleton('ReceiptVacuumTankerSwasco', function () {
-				return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptVacuumTankerSwasco::class);
+				return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptVacuumTankerSwasco::class);
 			});
 		//
 

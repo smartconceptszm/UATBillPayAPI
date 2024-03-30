@@ -86,9 +86,13 @@ class MazabukaServiceProvider extends ServiceProvider
 			$this->app->singleton('mazabuka', function () {
 				return $this->app->make(\App\Http\Services\External\BillingClients\Mazabuka::class);
 			});
+			
+         $this->app->singleton('mazabukaPOST-PAIDEnquiry', function () {
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\MazabukaEnquiry::class);
+         });
 
 			// $this->app->singleton('PostPaymentMazabuka', function () {
-			// 	return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPaymentSwasco::class);
+			// 	return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPaymentSwasco::class);
 			// });
 		//
   

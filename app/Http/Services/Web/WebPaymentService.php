@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\Web;
 
-use App\Http\Services\External\BillingClients\GetCustomerAccount;
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 USE App\Http\Services\USSD\Utility\StepService_GetAmount;
 USE App\Http\Services\Clients\ClientService;
 USE App\Http\Services\USSD\SessionService;
@@ -19,7 +19,7 @@ class WebPaymentService
 {
 
    public function __construct(
-      private GetCustomerAccount $getCustomerAccount,
+      private IEnquiryHandler $getCustomerAccount,
       private StepService_GetAmount $getAmount,
       private SessionService $sessionService,
       private ClientService $clientService,
@@ -67,11 +67,11 @@ class WebPaymentService
                      '_SUBMIT_PAYMENT')), new InitiateMoMoPaymentJob($momoDTO));
 
          Log::info('('.$momoDTO->urlPrefix.') '.
-            'Web payment initiated: Phone: '.
-               $momoDTO->mobileNumber.' - Account Number: '.
-               $momoDTO->accountNumber.' - Amount: '.
-               $momoDTO->paymentAmount
-            );
+                        'Web payment initiated: Phone: '.
+                           $momoDTO->mobileNumber.' - Account Number: '.
+                           $momoDTO->accountNumber.' - Amount: '.
+                           $momoDTO->paymentAmount
+                        );
 
       } catch (\Throwable $e) {
          if($e->getCode()==1){
@@ -87,6 +87,7 @@ class WebPaymentService
    private function getClient(WebDTO $webDTO) : WebDTO
    {
       $client = $this->clientService->findOneBy(['urlPrefix'=>$webDTO->urlPrefix]);
+      $client = \is_null($client)?null:(object)$client->toArray();
       $webDTO->client_id = $client->id;
       $webDTO->shortCode = $client->shortCode;
       $webDTO->testMSISDN = $client->testMSISDN;
@@ -104,7 +105,8 @@ class WebPaymentService
    {
 
       try {
-         $mno = $this->mnoService->findById($webDTO->mno_id);               
+         $mno = $this->mnoService->findById($webDTO->mno_id); 
+         $mno = \is_null($mno)?null:(object)$mno->toArray();              
          $webDTO->mnoName = $mno->name;
          return $webDTO;
       } catch (\Throwable $e) {

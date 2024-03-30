@@ -17,7 +17,7 @@ class SMSMessageBulkCustomService
          private BulkMessage $model
    ) {}
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(array $criteria):array|null
    {
 
       try {
@@ -32,7 +32,7 @@ class SMSMessageBulkCustomService
          }
          $records = $records->get();
          return $records->all();
-      } catch (Exception$e) {
+      } catch (\Throwable$e) {
          throw new Exception($e->getMessage());
       }
 

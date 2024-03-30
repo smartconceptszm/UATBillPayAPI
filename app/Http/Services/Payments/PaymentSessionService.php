@@ -8,7 +8,7 @@ use Exception;
 class PaymentSessionService
 {
 
-   public function findAll(array $criteria = null):array|null{
+   public function findAll(array $criteria):array|null{
       try {
          $dto = (object)$criteria;
          $records = DB::table('sessions as s')
@@ -18,7 +18,7 @@ class PaymentSessionService
             ->select('s.id as session_id','s.sessionId','s.created_at','s.mobileNumber','s.accountNumber',
                      's.customerJourney','s.status','m.prompt as paymentType','p.id','p.transactionId',
                      'p.district','p.receiptAmount','p.receiptNumber','p.receipt','p.tokenNumber',
-                     'p.paymentStatus','mnos.name as mno','p.mnoTransactionId',
+                     'p.paymentStatus','mnos.name as mno','p.mnoTransactionId','p.meterNumber',
                      'p.channel','p.error');
          if($dto->accountNumber){
             $records = $records->where('s.accountNumber', '=', $dto->accountNumber);

@@ -58,9 +58,10 @@ class Step_HandleMenu extends EfectivoPipelineContract
 			}
 		}else{
 			$selectedMenu = $this->clientMenuService->findOneBy([
-				'client_id' => $txDTO->client_id,
-				'parent_id' => 0
-			]);
+													'client_id' => $txDTO->client_id,
+													'parent_id' => 0
+												]);
+			$selectedMenu = (object)$selectedMenu->toArray();
 			$txDTO->menu_id = $selectedMenu->id; 
 			$txDTO->handler = $selectedMenu->handler; 
 			$txDTO->menuPrompt = $selectedMenu->prompt; 

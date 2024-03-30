@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\UpdateDetails;
 
-use App\Http\Services\External\BillingClients\GetCustomerAccount;
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -12,7 +12,7 @@ class UpdateDetails_Step_2
 {
 
    public function __construct(
-      private GetCustomerAccount $getCustomerAccount)
+      private IEnquiryHandler $getCustomerAccount)
    {}
 
    public function run(BaseDTO $txDTO)
@@ -23,13 +23,13 @@ class UpdateDetails_Step_2
          $txDTO->accountNumber = $txDTO->subscriberInput;
          $txDTO = $this->getCustomerAccount->handle($txDTO);
          $txDTO->response = "Update details on:\n". 
-         "Acc: ".$txDTO->subscriberInput."\n".
-         "Name: ".$txDTO->customer['name']."\n". 
-         "Addr: ".$txDTO->customer['address']."\n". 
-         "Mobile: ".$txDTO->customer['mobileNumber']."\n\n".
-         "Enter\n". 
-                  "1. Confirm\n".
-                  "0. Back";
+                           "Acc: ".$txDTO->subscriberInput."\n".
+                           "Name: ".$txDTO->customer['name']."\n". 
+                           "Addr: ".$txDTO->customer['address']."\n". 
+                           "Mobile: ".$txDTO->customer['mobileNumber']."\n\n".
+                           "Enter\n". 
+                                    "1. Confirm\n".
+                                    "0. Back";
          $cacheValue = \json_encode([
                               'must'=>false,
                               'steps'=>1,

@@ -8,23 +8,33 @@ use Exception;
 class SessionsOfClientService
 {
 
-   public function findAll(array $criteria = null):array|null{
+   public function findAll(array $criteria):array|null{
 
       try {
-         $dto=(object)$criteria;
-         $dto->dateFrom = $dto->dateFrom." 00:00:00";
-         $dto->dateTo = $dto->dateTo." 23:59:59";
+         
+            $dto=(object)$criteria;
          $records = DB::table('sessions as s')
-                  ->select('*')
+                  ->select('s.*')
                   ->where('s.client_id', '=', $dto->client_id);
-         if($dto->dateFrom && $dto->dateTo){
-               $records =$records->whereBetween('s.created_at', [$dto->dateFrom, $dto->to]);
+         if(\array_key_exists('accountNumber',$criteria)){
+            $records = $records->where('s.accountNumber', '=', $dto->accountNumber);
          }
-         $records =$records->get();
+         if(\array_key_exists('meterNumber',$criteria)){
+            $records = $records->where('s.meterNumber', '=', $dto->meterNumber);
+         }
+         if(\array_key_exists('mobileNumber',$criteria)){
+            $records = $records->where('s.mobileNumber', '=', $dto->mobileNumber);
+         }
+         if(\array_key_exists('dateFrom',$criteria) && \array_key_exists('dateTo',$criteria)){
+            $records =$records->whereBetween('s.created_at', [$dto->dateFrom." 00:00:00", $dto->dateTo." 23:59:59"]);
+         }
+         $records =$records->orderByDesc('s.created_at')->get();
          return $records->all();
+
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
+
    }
 
 }

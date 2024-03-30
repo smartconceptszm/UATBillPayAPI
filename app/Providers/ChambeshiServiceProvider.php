@@ -13,6 +13,7 @@ class ChambeshiServiceProvider extends ServiceProvider
    public function register(): void
    {
 
+
       //USSD Menu Option Handlers
          $this->app->singleton('ServiceApplications', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\ServiceApplications::class);
@@ -42,8 +43,12 @@ class ChambeshiServiceProvider extends ServiceProvider
             return $this->app->make(\App\Http\Services\External\BillingClients\ChambeshiPostPaid::class);
          });
 
+         $this->app->singleton('chambeshiPOST-PAIDEnquiry', function () {
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\ChambeshiPostPaidEnquiry::class);
+         });
+
          $this->app->singleton('ReceiptPostPaidChambeshi', function () {
-            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPostPaidChambeshi::class);
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPostPaidChambeshi::class);
          });
       //
 
@@ -54,14 +59,17 @@ class ChambeshiServiceProvider extends ServiceProvider
                                  'baseURL' => \env('CHAMBESHI_PREPAID_BASE_URL'),
                                  'username' => \env('CHAMBESHI_PREPAID_USERNAME'),
                                  'password' => \env('CHAMBESHI_PREPAID_PASSWORD'),
-                                 'passwordVend' => \env('CHAMBESHI_PREPAID_PASSWORD_VEND'),
-                                 'debtBuffer' => \env('CHAMBESHI_PREPAID_DEBT_BUFFER')
+                                 'passwordVend' => \env('CHAMBESHI_PREPAID_PASSWORD_VEND')
                               ]
                         );
          });
 
+         $this->app->singleton('chambeshiPRE-PAIDEnquiry', function () {
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\ChambeshiPrePaidEnquiry::class);
+         });
+
          $this->app->singleton('ReceiptPrePaidChambeshi', function () {
-            return $this->app->make(\App\Http\Services\MoMo\BillingClientCallers\ReceiptPrePaidChambeshi::class);
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPrePaidChambeshi::class);
          });
 
       //

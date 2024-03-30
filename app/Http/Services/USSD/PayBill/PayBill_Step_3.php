@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\PayBill;
 
 use App\Http\Services\MoMo\Utility\StepService_CalculatePaymentAmounts;
-use App\Http\Services\External\BillingClients\GetCustomerAccount;
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use App\Http\Services\USSD\Utility\StepService_GetAmount;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
@@ -15,12 +15,24 @@ class PayBill_Step_3
 
    public function __construct(
       private StepService_CalculatePaymentAmounts $calculatePaymentAmounts,
-      private GetCustomerAccount $getCustomerAccount,
+      private IEnquiryHandler $getCustomerAccount,
       private StepService_GetAmount $getAmount, 
    ){}
 
    public function run(BaseDTO $txDTO)
    {
+
+      try {
+         $txDTO = $this->getCustomerAccount->handle($txDTO);
+      } catch (\Throwable$e) {
+         if($e->getCode()==1){
+            $txDTO->errorType = 'InvalidAccount';
+         }else{
+            $txDTO->errorType = 'SystemError';
+         }
+         $txDTO->error=$e->getMessage();
+         return $txDTO;
+      }
 
       try {
          [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
@@ -34,17 +46,6 @@ class PayBill_Step_3
          return $txDTO;
       }
       
-      try {
-         $txDTO = $this->getCustomerAccount->handle($txDTO);
-      } catch (Exception$e) {
-         if($e->getCode()==1){
-            $txDTO->errorType = 'InvalidAccount';
-         }else{
-            $txDTO->errorType = 'SystemError';
-         }
-         $txDTO->error=$e->getMessage();
-         return $txDTO;
-      }
       $txDTO = $this->getResponse($txDTO);
       return $txDTO;
       

@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\Survey;
 
-use App\Http\Services\External\BillingClients\GetCustomerAccount;
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -13,7 +13,7 @@ class Survey_Step_2
 {
 
    public function __construct(
-      private GetCustomerAccount $getCustomerAccount)
+      private IEnquiryHandler $getCustomerAccount)
    {}
 
    public function run(BaseDTO $txDTO)
@@ -22,16 +22,20 @@ class Survey_Step_2
       try {
 
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-         $txDTO->accountNumber = $txDTO->subscriberInput;
+         if($txDTO->accountType == 'POST-PAID'){
+            $txDTO->accountNumber=$txDTO->subscriberInput;
+         }else{
+            $txDTO->meterNumber=$txDTO->subscriberInput;
+         }
          $txDTO = $this->getCustomerAccount->handle($txDTO);
          
          $txDTO->response = "Good ".$this->timeofDay().",\n". 
-            $txDTO->customer['name']." (".$txDTO->subscriberInput.")\n". 
-            "Thank you for participating in this survey,\n". 
-            "where we want to get your feedback\n\n".
-            "Enter\n". 
-                     "1. Confirm\n".
-                     "0. Back";
+                           $txDTO->customer['name']." (".$txDTO->subscriberInput.")\n". 
+                           "Thank you for participating in this survey,\n". 
+                           "where we want to get your feedback\n\n".
+                           "Enter\n". 
+                                    "1. Confirm\n".
+                                    "0. Back";
          $cacheValue = \json_encode([
                               'must'=>false,
                               'steps'=>1,

@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\GetLastToken;
 
-use App\Http\Services\External\BillingClients\GetCustomerAccount;
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use App\Http\Services\Payments\PaymentHistoryService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -11,7 +11,7 @@ class GetLastToken_Step_2
 {
 
    public function __construct(
-      private GetCustomerAccount $getCustomerAccount,
+      private IEnquiryHandler $getCustomerAccount,
       private PaymentHistoryService $paymentHistoryService)
    {}
 
@@ -20,7 +20,7 @@ class GetLastToken_Step_2
 
       try {
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-         $txDTO->accountNumber = $txDTO->subscriberInput;
+         $txDTO->meterNumber = $txDTO->subscriberInput;
          $txDTO = $this->getCustomerAccount->handle($txDTO);
       } catch (\Throwable $e) {
             if($e->getCode()==1){
@@ -42,6 +42,7 @@ class GetLastToken_Step_2
                                                          ]
                                                       );
          if($payment){
+            $payment = (object)$payment->toArray();
             $txDTO->response = $payment->receipt;
          }else{
             $txDTO->response = "NO Token found for Meter Number: ".$txDTO->meterNumber;

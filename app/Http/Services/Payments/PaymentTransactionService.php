@@ -9,7 +9,7 @@ use Exception;
 class PaymentTransactionService
 {
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(array $criteria):array|null
    {
 
       try {
@@ -22,7 +22,7 @@ class PaymentTransactionService
             ->join('sessions as s','p.session_id','=','s.id')
             ->join('mnos','p.mno_id','=','mnos.id')
             ->join('client_menus as m','p.menu_id','=','m.id')
-            ->select('p.id','p.created_at','p.transactionId','p.accountNumber','p.district','p.mobileNumber',
+            ->select('p.id','p.created_at','p.transactionId','p.accountNumber','p.meterNumber','p.district','p.mobileNumber',
                      'p.receiptAmount','p.receiptNumber','m.prompt as paymentType','p.paymentStatus',
                      'mnos.name as mno','p.mnoTransactionId','p.channel','p.error');
             //->whereIn('p.paymentStatus',['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])

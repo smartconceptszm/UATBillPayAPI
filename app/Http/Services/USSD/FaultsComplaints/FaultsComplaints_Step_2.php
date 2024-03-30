@@ -22,11 +22,11 @@ class FaultsComplaints_Step_2
 
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $theComplaintType = $this->complaintType->findOneBy([
-                     'order'=>$txDTO->subscriberInput,
-                     'client_id'=>$txDTO->client_id,
-               ]);
-
-         if($theComplaintType->id){
+                                          'order'=>$txDTO->subscriberInput,
+                                          'client_id'=>$txDTO->client_id,
+                                    ]);
+         if($theComplaintType){
+            $theComplaintType = (object)$theComplaintType->toArray();
             $subTypes = $this->complaintSubType->findAll([
                            'complaint_type_id'=>$theComplaintType->id
                         ]);

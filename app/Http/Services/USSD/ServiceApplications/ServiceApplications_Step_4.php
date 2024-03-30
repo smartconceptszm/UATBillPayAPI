@@ -37,8 +37,8 @@ class ServiceApplications_Step_4
             $serviceAppResponses = $serviceAppResponses? $serviceAppResponses:[];
             $order = \count($serviceAppResponses) + 1;
             $serviceAppQuestions = $this->serviceTypeDetails->findAll([
-                  'service_type_id'=>$theServiceType->id
-               ]);
+                                                'service_type_id'=>$theServiceType->id
+                                             ]);
             $applicationQuestion = \array_values(\array_filter($serviceAppQuestions, function ($record) use($order){
                         return ($record->order == $order);
                      }));

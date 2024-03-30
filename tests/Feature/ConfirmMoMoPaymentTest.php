@@ -15,7 +15,7 @@ class ConfirmMoMoPaymentTest extends TestCase
       App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,'nkanaPrePaid');
       App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,'MTN');
       App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,'MockSMSDelivery');
-      App::bind(\App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment::class,'ReceiptPrePaidNkana');
+      App::bind(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment::class,'ReceiptPrePaidNkana');
 
       $momoDTO = new MoMoDTO();
       $momoDTO = $momoDTO->fromArray(

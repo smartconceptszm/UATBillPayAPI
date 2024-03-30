@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\MoMo\ConfirmPaymentSteps;
 
-use App\Http\Services\MoMo\BillingClientCallers\IReceiptPayment;
+use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\DTOs\BaseDTO;
 use Exception;
