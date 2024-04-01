@@ -18,12 +18,11 @@ class ReceiptPostPaidNkana implements IReceiptPayment
 	{
 
 		$newBalance = "0";
-		if(!$momoDTO->customer){
-			$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->accountNumber);
+		if($momoDTO->customer){
+			$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+										(float)$momoDTO->receiptAmount;
+			$newBalance = \number_format($newBalance, 2, '.', ',');
 		}
-		$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
-				(float)$momoDTO->receiptAmount;
-		$newBalance = \number_format($newBalance, 2, '.', ',');
 
 		$receiptingParams=[
 				'custkey' => $momoDTO->accountNumber,
@@ -33,17 +32,17 @@ class ReceiptPostPaidNkana implements IReceiptPayment
 		];
 
 		$billingResponse=$this->billingClient->postPayment($receiptingParams);
-		if($billingResponse['status']=='SUCCESS'){
-				$momoDTO->receiptNumber=$billingResponse['receiptNumber'];
+		if($billingResponse['status'] == 'SUCCESS'){
+				$momoDTO->receiptNumber = $billingResponse['receiptNumber'];
 				$momoDTO->paymentStatus = 'RECEIPTED';
 				$momoDTO->receipt = "Payment successful\n" .
 											"Rcpt No: " . $momoDTO->receiptNumber . "\n" .
 											"Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
 											"Acc: " . $momoDTO->accountNumber . "\n";
-				if($newBalance!="0"){
-					$momoDTO->receipt.="Bal: ZMW ".$newBalance . "\n";
+				if($newBalance!=="0"){
+					$momoDTO->receipt .= "Bal: ZMW ".$newBalance . "\n";
 				}
-				$momoDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
+				$momoDTO->receipt .= "Date: " . Carbon::now()->format('d-M-Y') . "\n";
 		}else{
 				$momoDTO->error = "At post payment. ".$billingResponse['error'];
 		}

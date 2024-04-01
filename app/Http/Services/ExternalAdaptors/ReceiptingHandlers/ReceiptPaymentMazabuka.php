@@ -33,7 +33,7 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
 					$momoDTO->paymentStatus = "RECEIPTED";
 
 					$theMenu = $this->clientMenuService->findById($momoDTO->menu_id);
-
+					$theMenu = (object)$theMenu->toArray();
 					$momoDTO->receipt = "Payment successful\n" .
 									"Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
 									"Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n";

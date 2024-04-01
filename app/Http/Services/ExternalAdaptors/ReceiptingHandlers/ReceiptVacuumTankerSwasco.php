@@ -33,15 +33,15 @@ class ReceiptVacuumTankerSwasco implements IReceiptPayment
 		}
 
 												
-		$receiptingParams=[ 
-				'paymentType'=>'12',
-				'account' => $momoDTO->accountNumber,
-				'amount' => $momoDTO->receiptAmount,
-				'mobileNumber'=> $momoDTO->mobileNumber,
-				'referenceNumber' => $referenceNumber,
-		];
+		$receiptingParams = [ 
+										'paymentType'=>'12',
+										'account' => $momoDTO->accountNumber,
+										'amount' => $momoDTO->receiptAmount,
+										'mobileNumber'=> $momoDTO->mobileNumber,
+										'referenceNumber' => $referenceNumber,
+								];
 
-		$billingResponse=$this->billingClient->postPayment($receiptingParams);
+		$billingResponse = $this->billingClient->postPayment($receiptingParams);
 		if($billingResponse['status'] == 'SUCCESS'){
 				$momoDTO->receiptNumber = $billingResponse['receiptNumber'];
 				$momoDTO->paymentStatus = "RECEIPTED";

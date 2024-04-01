@@ -32,6 +32,13 @@ class ChambeshiServiceProvider extends ServiceProvider
          });
       //
 
+      //Survey Entry Handlers
+			$this->app->singleton('Survey_chambeshi', function () {
+				return $this->app->make(\App\Http\Services\USSD\Survey\ClientCallers\Survey_Local::class);
+			});
+		//
+
+
       //Service Application Handlers
          $this->app->singleton('ServiceApplications_chambeshi', function () {
             return $this->app->make(\App\Http\Services\USSD\ServiceApplications\ClientCallers\ServiceApplication_Local::class);

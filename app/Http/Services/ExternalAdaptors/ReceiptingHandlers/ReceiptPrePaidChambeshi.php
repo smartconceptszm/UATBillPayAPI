@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\ChambeshiPostPaidEnquiry;
 use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Carbon;
@@ -13,20 +14,20 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 {
 
 	public function __construct(
+		private ChambeshiPostPaidEnquiry $chambeshiEnquiry,
 		private IBillingClient $billingClient)
 	{}
 
 	public function handle(BaseDTO $momoDTO):BaseDTO
 	{
 
-		// $newBalance = "0";
-		// if(!$momoDTO->customer){
-		// 	$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->meterNumber);
-		// }
-		// $newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
-		// 		(float)$momoDTO->receiptAmount;
-		// $newBalance = \number_format($newBalance, 2, '.', ',');
-
+		$newBalance = "0";
+		if(!$momoDTO->customer){
+			$momoDTO = $this->chambeshiEnquiry->handle($momoDTO);
+		}
+		$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+										(float)$momoDTO->receiptAmount;
+		$newBalance = \number_format($newBalance, 2, '.', ',');
 
 		if(!$momoDTO->tokenNumber){
 			$momoDTO->paymentStatus = "PAID | NO TOKEN";
@@ -46,7 +47,7 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 		}
 
 		if($momoDTO->tokenNumber && $momoDTO->paymentStatus == "PAID | NOT RECEIPTED"){
-			$momoDTO->receiptNumber =  $momoDTO->accountNumber."_".date('YmdHis');
+			$momoDTO->receiptNumber =  $momoDTO->accountNumber."_".\now()->timestamp;
 			$receiptingParams=[
 					"TxDate"=> $momoDTO->created_at,
 					"Account"=> $momoDTO->accountNumber,  
@@ -65,7 +66,6 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 
 			if($billingResponse['status'] == 'SUCCESS'){
 				$momoDTO->paymentStatus = "RECEIPTED";
-
 				$momoDTO->receipt = "Payment successful\n" .
 											"Rcpt No: " . $momoDTO->receiptNumber . "\n" .
 											"Amount: ZMW " . \number_format( $momoDTO->receiptAmount, 2, '.', ',') . "\n".
@@ -73,6 +73,7 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 											"Token: ". $momoDTO->tokenNumber . "\n".
 											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{
+				$momoDTO->receiptNumber = '';
 				$momoDTO->error = "At post payment. ".$billingResponse['error'];
 			}
 		}

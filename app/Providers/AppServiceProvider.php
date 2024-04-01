@@ -154,6 +154,26 @@ class AppServiceProvider extends ServiceProvider
          //
       //
 
+      //USSD Survey
+			$this->app->singleton('Survey', function () {
+				return $this->app->make(\App\Http\Services\USSD\Menus\Survey::class);
+			});
+			//Menu Step Handlers
+				$this->app->singleton('Survey_Step_1', function () {
+					return $this->app->make(\App\Http\Services\USSD\Survey\Survey_Step_1::class);
+				});
+				$this->app->singleton('Survey_Step_2', function () {
+					return $this->app->make(\App\Http\Services\USSD\Survey\Survey_Step_2::class);
+				});
+				$this->app->singleton('Survey_Step_3', function () {
+					return $this->app->make(\App\Http\Services\USSD\Survey\Survey_Step_3::class);
+				});
+				$this->app->singleton('Survey_Step_5', function () {
+					return $this->app->make(\App\Http\Services\USSD\Survey\Survey_Step_5::class);
+				});
+			//
+		//
+
       //Billing Clients
 			$this->app->singleton('BillingMock', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\BillingMock::class);

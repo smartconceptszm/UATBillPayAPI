@@ -38,11 +38,14 @@ class PaymentReceiptService
                throw new Exception("Payment appears receipted! Receipt number ".$momoDTO->receiptNumber);
             }
          }else{
-            if($momoDTO->paymentStatus != 'PAID | NO TOKEN' ){
+            if(!($momoDTO->paymentStatus == 'PAID | NO TOKEN' || $momoDTO->paymentStatus == 'PAID | NOT RECEIPTED')){
                throw new Exception("Unexpected payment status - ".$momoDTO->paymentStatus);
             }
-            if($momoDTO->tokenNumber != ''){
+            if($momoDTO->tokenNumber != '' && $momoDTO->paymentStatus == 'PAID | NO TOKEN'){
                throw new Exception("Token was already issued! Token number ".$momoDTO->tokenNumber);
+            }
+            if($momoDTO->receiptNumber != '' &&  $momoDTO->paymentStatus == 'PAID | NOT RECEIPTED'){
+               throw new Exception("Payment appears receipted! Receipt number ".$momoDTO->receiptNumber);
             }
          }
 

@@ -27,7 +27,7 @@ class ReceiptReconnectionSwasco implements IReceiptPayment
 											'mobileNumber'=> $momoDTO->mobileNumber,
 											'referenceNumber' => $swascoTransactionRef,
 									];
-			$billingResponse=$this->billingClient->postPayment($receiptingParams);
+			$billingResponse = $this->billingClient->postPayment($receiptingParams);
 
 			if($billingResponse['status']=='SUCCESS'){
 				$momoDTO->receiptNumber = $billingResponse['receiptNumber'];

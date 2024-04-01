@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\ChambeshiPostPaidEnquiry;
 use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Carbon;
@@ -13,6 +14,7 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 {
 
 	public function __construct(
+		private ChambeshiPostPaidEnquiry $chambeshiEnquiry,
 		private IBillingClient $billingClient)
 	{}
 
@@ -21,13 +23,13 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 
 		$newBalance = "0";
 		if(!$momoDTO->customer){
-			$momoDTO->customer = $this->billingClient->getAccountDetails($momoDTO->accountNumber);
+			$momoDTO = $this->chambeshiEnquiry->handle($momoDTO);
 		}
 		$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
-				(float)$momoDTO->receiptAmount;
+										(float)$momoDTO->receiptAmount;
 		$newBalance = \number_format($newBalance, 2, '.', ',');
 
-		$momoDTO->receiptNumber =  $momoDTO->accountNumber."_".date('YmdHis');
+		$momoDTO->receiptNumber =  $momoDTO->accountNumber."_".\now()->timestamp;
 
 		$receiptingParams=[
             "TxDate"=> $momoDTO->created_at,
@@ -52,11 +54,9 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 										"Amount: ZMW " . \number_format( $momoDTO->receiptAmount, 2, '.', ',') . "\n".
 										"Acc: " . $momoDTO->accountNumber . "\n";
 			$momoDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
-			// if($newBalance != "0"){
-			// 	$momoDTO->receipt.="Bal: ZMW ". $newBalance . "\n";
-			// }
 			$momoDTO->receipt.="Balance update within 48 hrs.";
 		}else{
+			$momoDTO->receiptNumber =  '';
 			$momoDTO->error = "At post payment. ".$billingResponse['error'];
 		}
 		return $momoDTO;

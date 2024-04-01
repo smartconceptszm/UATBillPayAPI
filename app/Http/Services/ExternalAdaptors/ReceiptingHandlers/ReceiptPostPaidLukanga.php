@@ -9,7 +9,7 @@ use App\Http\DTOs\BaseDTO;
 
 class ReceiptPostPaidLukanga implements IReceiptPayment
 {
-    private $newBalance;
+
     public function __construct( 
         private IBillingClient $billingClient)
     {}
@@ -17,14 +17,12 @@ class ReceiptPostPaidLukanga implements IReceiptPayment
     public function handle(BaseDTO $momoDTO):BaseDTO
     {
         
-		$this->newBalance="0";
+		$newBalance="0";
 		if($momoDTO->customer){
 			if(\key_exists('balance',$momoDTO->customer)){
-				$this->newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
+				$newBalance = (float)(\str_replace(",", "", $momoDTO->customer['balance'])) - 
 												(float)$momoDTO->receiptAmount;
-				$this->newBalance = \number_format($this->newBalance, 2, '.', ',');
-			}else{
-				$this->newBalance = "0";
+				$newBalance = \number_format($newBalance, 2, '.', ',');
 			}
 		}
 
@@ -44,9 +42,9 @@ class ReceiptPostPaidLukanga implements IReceiptPayment
 											"Rcpt No: " . $momoDTO->receiptNumber . "\n" .
 											"Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n".
 											"Acc: " . $momoDTO->accountNumber . "\n";
-											if($this->newBalance!="0"){
-												$momoDTO->receipt.="Bal: ZMW ".$this->newBalance . "\n";
-											}
+				if($newBalance!=="0"){
+					$momoDTO->receipt.="Bal: ZMW ".$newBalance . "\n";
+				}
 				$momoDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
 		}else{
 				$momoDTO->error = "At post payment. ".$billingResponse['error'];
