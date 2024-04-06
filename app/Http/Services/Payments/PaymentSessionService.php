@@ -14,7 +14,7 @@ class PaymentSessionService
          $records = DB::table('sessions as s')
             ->join('mnos','s.mno_id','=','mnos.id')
             ->join('client_menus as m','s.menu_id','=','m.id')
-            ->leftJoin('payments as p','p.session_id','=','s.id')
+            ->join('payments as p','p.session_id','=','s.id')
             ->select('p.*','s.id as session_id','s.sessionId','s.customerJourney','s.status','m.accountType',
                      'm.prompt as paymentType','mnos.name as mno');
          if(\array_key_exists('accountNumber',$criteria)){
