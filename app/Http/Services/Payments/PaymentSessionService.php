@@ -17,10 +17,10 @@ class PaymentSessionService
             ->leftJoin('payments as p','p.session_id','=','s.id')
             ->select('p.*','s.id as session_id','s.sessionId','s.customerJourney','s.status','m.accountType',
                      'm.prompt as paymentType','mnos.name as mno');
-         if($dto->accountNumber){
+         if(\array_key_exists('accountNumber',$criteria)){
             $records = $records->where('s.accountNumber', '=', $dto->accountNumber);
          }
-         if($dto->meterNumber){
+         if(\array_key_exists('meterNumber',$criteria)){
             $records = $records->where('s.meterNumber', '=', $dto->meterNumber);
          }
          $records = $records->where('s.client_id', '=', $dto->client_id)
