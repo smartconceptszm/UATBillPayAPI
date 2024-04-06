@@ -26,7 +26,7 @@ class FaultsComplaints_Step_2
                                           'client_id'=>$txDTO->client_id,
                                     ]);
          if($theComplaintType){
-            $theComplaintType = (object)$theComplaintType->toArray();
+            $theComplaintType = \is_null($theComplaintType)?null: (object)$theComplaintType->toArray();
             $subTypes = $this->complaintSubType->findAll([
                            'complaint_type_id'=>$theComplaintType->id
                         ]);

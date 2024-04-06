@@ -41,7 +41,7 @@ class ChambeshiPaymentService
       try {
          foreach ( $data as $key => $value) {
             if($value == ''){
-                  unset($data[$key]);
+               unset($data[$key]);
             }
          }
         return $this->model->create($data);

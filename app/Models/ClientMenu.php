@@ -13,8 +13,8 @@ class ClientMenu extends Model
    protected $table = "client_menus";
 
    protected $fillable=[
-      'client_id','parent_id','order','prompt','handler','billingClient', 'description',
-      'isPayment','accountType','receiptingHandler','isDefault','isActive'
+      'client_id','parent_id','order','prompt','handler','billingClient','enquiryHandler', 
+      'description','isPayment','accountType','receiptingHandler','isDefault','isActive'
    ];
    
    protected $casts = [

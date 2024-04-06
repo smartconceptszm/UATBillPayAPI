@@ -42,7 +42,7 @@ class GetLastToken_Step_2
                                                          ]
                                                       );
          if($payment){
-            $payment = (object)$payment->toArray();
+            $payment = \is_null($payment)?null: (object)$payment->toArray();
             $txDTO->response = $payment->receipt;
          }else{
             $txDTO->response = "NO Token found for Meter Number: ".$txDTO->meterNumber;

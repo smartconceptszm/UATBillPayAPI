@@ -11,15 +11,22 @@ use Exception;
 
 class ChambeshiPrePaid extends Chambeshi implements IBillingClient
 {
-    
+
+   private string $passwordVend;
+   private string $username;
+   private string $password;
+   private string $baseURL;
+
    public function __construct(
-         private string $baseURL,
-         private string $username,
-         private string $password,
-         private string $passwordVend,
          protected ChambeshiPaymentService $chambeshiPaymentService
       )
-   {}
+   {
+
+      $this->passwordVend = \env('CHAMBESHI_PREPAID_PASSWORD_VEND');
+      $this->username = \env('CHAMBESHI_PREPAID_USERNAME');
+      $this->password = \env('CHAMBESHI_PREPAID_PASSWORD');
+      $this->baseURL = \env('CHAMBESHI_PREPAID_BASE_URL');
+   }
 
    public function getAccountDetails(array $params): array
    {

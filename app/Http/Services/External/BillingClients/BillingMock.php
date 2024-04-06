@@ -10,11 +10,11 @@ class BillingMock implements IBillingClient
    public function __construct()
    {}
 
-   public function getAccountDetails(string $accountNumber): array
+   public function getAccountDetails(array $params): array
    {
 
       return [
-         "accountNumber" => $accountNumber,
+         "accountNumber" => $params['accountNumber'],
          "name" => "Mock Customer",
          "address" => "No. 1, Street 1",
          "district" => "MOCK",

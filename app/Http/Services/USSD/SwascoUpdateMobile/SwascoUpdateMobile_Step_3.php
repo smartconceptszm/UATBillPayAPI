@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\SwascoUpdateMobile;
 
 use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\Swasco;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -12,7 +12,7 @@ class SwascoUpdateMobile_Step_3
 
    public function __construct(
       private StepService_ValidateCRMInput $validateCRMInput,
-      private IBillingClient $billingClient)
+      private Swasco $billingClient)
    {} 
 
    public function run(BaseDTO $txDTO)

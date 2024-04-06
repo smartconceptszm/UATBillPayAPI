@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\USSD\Survey;
 
-use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
 use App\Http\Services\MenuConfigs\SurveyQuestionListItemService;
 use App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient;
@@ -17,7 +16,6 @@ class Survey_Step_5
 
    public function __construct(
       private SurveyQuestionListItemService $questionListItemService,
-      private IEnquiryHandler $getCustomerAccount,
       private StepService_ValidateCRMInput $validateCRMInput,
       private SurveyQuestionService $surveyQuestionService,
       private ISurveyClient $surveyCreateClient)
@@ -38,7 +36,7 @@ class Survey_Step_5
                                                          'survey_id' => $surveyId,
                                                          'order' => $order
                                                       ]);
-         $surveyQuestion = (object)$surveyQuestion->toArray();
+         $surveyQuestion = \is_null($surveyQuestion)?null: (object)$surveyQuestion->toArray();
          $txDTO->subscriberInput = $this->validateCRMInput->handle($surveyQuestion->type,$txDTO->subscriberInput);
          if($surveyQuestion->type == 'LIST'){
             $listItem = $this->questionListItemService->findOneBy([
@@ -58,7 +56,6 @@ class Survey_Step_5
                                                 'survey_id' => $surveyId
                                              ]);
          if(\count($surveyQuestions) == (\count($surveyResponses))){
-            $txDTO = $this->getCustomerAccount->handle($txDTO);
             $txDTO->subscriberInput = \implode(";",\array_values($surveyResponses));
             $surveyResponseData = [
                                     'accountNumber' => $txDTO->accountNumber,
@@ -66,7 +63,7 @@ class Survey_Step_5
                                     'client_id' => $txDTO->client_id,
                                     'urlPrefix' => $txDTO->urlPrefix,
                                     'survey_id' => $surveyId,
-                                    'district' => $txDTO->customer['district'],
+                                    'district' => $txDTO->district,
                                     'responses' => $surveyResponses
                                  ];
             $txDTO->response = $this->surveyCreateClient->create($surveyResponseData);

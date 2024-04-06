@@ -3,14 +3,14 @@
 namespace App\Http\Services\USSD\UpdateDetails\ClientCallers;
 
 use App\Http\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\Swasco;
 use Exception;
 
 class UpdateDetails_Swasco implements IUpdateDetailsClient
 {
 
    public function __construct(
-      private IBillingClient $billingClient)
+      private Swasco $billingClient)
    {}
 
    public function create(array $detailsData): string

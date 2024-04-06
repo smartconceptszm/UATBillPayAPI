@@ -8,7 +8,7 @@ use Exception;
 class GroupsOfClientService 
 {
 
-   public function findAll(array $criteria = null):array|null{
+   public function findAll(array $criteria):array|null{
 
       try {
          $dto = (object)$criteria;

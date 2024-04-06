@@ -10,7 +10,7 @@ use Exception;
 class ClientDashboardService 
 {
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(array $criteria):array|null
    {
       
       try {
@@ -108,7 +108,7 @@ class ClientDashboardService
       
    }
 
-   public function findOneYearTrend(array $criteria = null):array|null
+   public function findOneYearTrend(array $criteria):array|null
    {
       
       try {

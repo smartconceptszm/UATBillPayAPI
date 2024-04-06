@@ -11,15 +11,32 @@ class BillingClientTest extends TestCase
     //  */
 
 
-    public function _testGetAccountDetails()
+    public function _testGetPostPaidAccountDetails()
     {   
 
-        $billingClient = \app('chambeshiPrePaid');
+        $billingClient = new App\Http\Services\External\BillingClients\ChambeshiPostPaid(
+            new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService(new \App\Models\ChambeshiPayment()),
+            new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiAccountService(new \App\Models\ChambeshiAccount())
+        );
         $response=$billingClient->getAccountDetails([
-                                        'meterNumber'=>'0166209932051',
-                                        'paymentAmount'=>'25'
+                                        'accountNumber'=>'KMH47970'
                                     ]);
         $this->assertTrue($response['accountNumber'] == "040010151");
+
+    }
+
+    public function _testGetPrePaidAccountDetails()
+    {   
+
+        $billingClient = new App\Http\Services\External\BillingClients\ChambeshiPrePaid(
+                                    new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService(new \App\Models\ChambeshiPayment())
+                                );
+
+        $response=$billingClient->getAccountDetails([
+                                        'meterNumber'=>'0166200158680',
+                                        'paymentAmount'=>100.00,
+                                    ]);
+        $this->assertTrue($response['accountNumber'] == "KMH42801");
 
     }
 

@@ -4,14 +4,14 @@ namespace App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers;
 
 
 use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\AbEnquiryHandler;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\ChambeshiPrePaid;
 use App\Http\DTOs\BaseDTO;
 
 class ChambeshiPrePaidEnquiry extends AbEnquiryHandler
 {
 
 	public function __construct(
-		private IBillingClient $billingClient)
+		private ChambeshiPrePaid $billingClient)
 	{}
 
 	public function getAccountDetails(BaseDTO $txDTO):BaseDTO

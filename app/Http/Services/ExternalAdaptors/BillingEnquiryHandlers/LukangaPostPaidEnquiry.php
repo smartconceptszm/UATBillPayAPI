@@ -4,14 +4,14 @@ namespace App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers;
 
 
 use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\AbEnquiryHandler;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\LukangaPostPaid;
 use App\Http\DTOs\BaseDTO;
 
 class LukangaPostPaidEnquiry extends AbEnquiryHandler
 {
 
 	public function __construct(
-		private IBillingClient $billingClient)
+		private LukangaPostPaid $billingClient)
 	{}
 
 	public function getAccountDetails(BaseDTO $txDTO):BaseDTO

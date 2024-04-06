@@ -2,9 +2,9 @@
 
 namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
-use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\ChambeshiPostPaidEnquiry;
+use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\ChambeshiPrePaidEnquiry;
 use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\ChambeshiPrePaid;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -14,8 +14,8 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 {
 
 	public function __construct(
-		private ChambeshiPostPaidEnquiry $chambeshiEnquiry,
-		private IBillingClient $billingClient)
+		private ChambeshiPrePaidEnquiry $chambeshiEnquiry,
+		private ChambeshiPrePaid $billingClient)
 	{}
 
 	public function handle(BaseDTO $momoDTO):BaseDTO

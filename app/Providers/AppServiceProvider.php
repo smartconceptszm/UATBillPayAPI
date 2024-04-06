@@ -175,6 +175,12 @@ class AppServiceProvider extends ServiceProvider
 		//
 
       //Billing Clients
+         $this->app->singleton('MockEnquiry', function () {
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\MockEnquiry::class);
+         }); 
+         $this->app->singleton('ReceiptingMock', function () {
+            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPaymentMock::class);
+         });
 			$this->app->singleton('BillingMock', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\BillingMock::class);
 			});            

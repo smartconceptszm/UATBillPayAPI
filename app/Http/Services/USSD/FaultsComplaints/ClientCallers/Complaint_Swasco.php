@@ -3,14 +3,14 @@
 namespace App\Http\Services\USSD\FaultsComplaints\ClientCallers;
 
 use App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\Swasco;
 use Exception;
 
 class Complaint_Swasco implements IComplaintClient
 {
    
    public function __construct(
-      private IBillingClient $billingClient)
+      private Swasco $billingClient)
    {}
 
    public function create(array $complaintData): string

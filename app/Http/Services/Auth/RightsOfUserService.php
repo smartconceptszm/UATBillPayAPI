@@ -8,7 +8,7 @@ use Exception;
 class RightsOfUserService
 {
 
-   public function findAll(array $criteria = null):array|null{
+   public function findAll(array $criteria):array|null{
       try {
 			$dto = (object)$criteria;
 			$records = DB::table('users as u')

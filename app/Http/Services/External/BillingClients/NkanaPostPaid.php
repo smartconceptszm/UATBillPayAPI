@@ -10,11 +10,14 @@ use Exception;
 class NkanaPostPaid implements IBillingClient
 {
 
-   public function __construct(
-      private string $baseURL,
-      private string $AuthenticationCode
-      )
-   {}
+   private string $AuthenticationCode;
+   private string $baseURL;
+
+   public function __construct()
+   {
+      $this->AuthenticationCode = \env('NKANA_POSTPAID_BASE_URL');
+      $this->baseURL = \env('NKANA_AuthenticationCode');
+   }
 
    public function getAccountDetails(array $params): array
    {

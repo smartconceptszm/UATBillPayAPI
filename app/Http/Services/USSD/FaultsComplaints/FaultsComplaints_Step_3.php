@@ -27,7 +27,7 @@ class FaultsComplaints_Step_3
                                        'order'=>\end($arrCustomerJourney),
                                        'client_id'=>$txDTO->client_id,
                                     ]);
-         $theComplaintType = (object)$theComplaintType->toArray();
+         $theComplaintType = \is_null($theComplaintType)?null: (object)$theComplaintType->toArray();
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $theSubType = $this->cSubTypeService->findOneBy([
                      'complaint_type_id'=>$theComplaintType->id,
@@ -37,7 +37,7 @@ class FaultsComplaints_Step_3
          if(!$theSubType){
             throw new Exception("Returned empty complaint code",1);
          } 
-         $theSubType = (object)$theSubType->toArray();
+         $theSubType = \is_null($theSubType)?null: (object)$theSubType->toArray();
          if($theSubType->requiresDetails == 'YES'){
             $txDTO->response = $theSubType->prompt;
          }else{

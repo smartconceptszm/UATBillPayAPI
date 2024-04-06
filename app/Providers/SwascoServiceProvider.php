@@ -92,15 +92,15 @@ class SwascoServiceProvider extends ServiceProvider
 		//
 
 		//Billing Clients			
-			$this->app->singleton('swasco', function () {
-				return $this->app->make(\App\Http\Services\External\BillingClients\Swasco::class,[
-									'swascoReceiptingTimeout'=>\intval(\env('SWASCO_RECEIPTING_TIMEOUT')),
-									'swascoTimeout' => \intval(\env('SWASCO_REMOTE_TIMEOUT')),
-									'baseURL' => \env('SWASCO_BASE_URL')
-								]);
-			});
+			// $this->app->singleton('swasco', function () {
+			// 	return $this->app->make(\App\Http\Services\External\BillingClients\Swasco::class,[
+			// 						'swascoReceiptingTimeout'=>\intval(\env('SWASCO_RECEIPTING_TIMEOUT')),
+			// 						'swascoTimeout' => \intval(\env('SWASCO_REMOTE_TIMEOUT')),
+			// 						'baseURL' => \env('SWASCO_BASE_URL')
+			// 					]);
+			// });
 
-			$this->app->singleton('swascoPOST-PAIDEnquiry', function () {
+			$this->app->singleton('swascoPostPaidEnquiry', function () {
             return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\SwascoEnquiry::class);
          });
 

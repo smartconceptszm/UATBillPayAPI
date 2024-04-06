@@ -3,7 +3,7 @@
 namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
 use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\LukangaPrePaid;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use App\Http\DTOs\BaseDTO;
@@ -14,7 +14,7 @@ class ReceiptPrePaidLukanga implements IReceiptPayment
 {
 
 	public function __construct(
-		private IBillingClient $billingClient)
+		private LukangaPrePaid $billingClient)
 	{}
 
 	public function handle(BaseDTO $momoDTO):BaseDTO

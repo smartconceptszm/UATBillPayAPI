@@ -10,7 +10,7 @@ use Exception;
 class ComplaintsOfClientService 
 {
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(array $criteria):array|null
    {
       
       try {

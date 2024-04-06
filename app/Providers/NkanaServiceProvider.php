@@ -38,16 +38,7 @@ class NkanaServiceProvider extends ServiceProvider
       //
 
       //Billing Clients	PostPaid
-         $this->app->singleton('nkanaPostPaid', function () {
-            return $this->app->make(\App\Http\Services\External\BillingClients\NkanaPostPaid::class,
-                       [
-                        'baseURL' => \env('NKANA_POSTPAID_BASE_URL'),
-                        'AuthenticationCode' => \env('NKANA_AuthenticationCode')
-                       ]
-                     );
-         });
-
-         $this->app->singleton('nkanaPOST-PAIDEnquiry', function () {
+         $this->app->singleton('nkanaPostPaidEnquiry', function () {
             return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\NkanaPostPaidEnquiry::class);
          });
 
@@ -57,17 +48,7 @@ class NkanaServiceProvider extends ServiceProvider
       //
 
       //Billing Clients	PrePaid
-         $this->app->singleton('nkanaPrePaid', function () {
-            return $this->app->make(\App\Http\Services\External\BillingClients\NkanaPrePaid::class,
-                              [
-                                 'baseURL' => \env('NKANA_PREPAID_BASE_URL'),
-                                 'platformId' => \env('NKANA_PREPAID_PLATFORMID'),
-                                 'purchaseEncryptor'=>new \App\Http\Services\External\BillingClients\Nkana\PurchaseEncryptor()
-                              ]
-                        );
-         });
-
-         $this->app->singleton('nkanaPRE-PAIDEnquiry', function () {
+         $this->app->singleton('nkanaPrePaidEnquiry', function () {
             return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\NkanaPrePaidEnquiry::class);
          });
 

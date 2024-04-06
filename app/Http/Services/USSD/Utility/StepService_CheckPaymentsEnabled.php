@@ -24,7 +24,7 @@ class StepService_CheckPaymentsEnabled
                         'client_id' => $txDTO->client_id,
                         'mno_id' => $txDTO->mno_id,             
                      ]);
-      $mnoMoMo = (object)$mnoMoMo->toArray();
+      $mnoMoMo = \is_null($mnoMoMo)?null: (object)$mnoMoMo->toArray();
       if ($mnoMoMo->momoActive != 'YES'){
          $response['responseText'] = "Payments to ".\strtoupper($txDTO->urlPrefix).
                   " via " . $txDTO->mnoName . " Mobile Money will be launched soon!" . "\n" .

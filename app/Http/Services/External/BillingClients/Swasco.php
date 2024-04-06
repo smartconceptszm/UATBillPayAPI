@@ -117,13 +117,16 @@ class Swasco implements IBillingClient
          "format" => ""
       ],
    ];
+   private int $swascoReceiptingTimeout;
+   private int $swascoTimeout;
+   private string $baseURL;
 
-   public function __construct(
-      private int $swascoReceiptingTimeout,
-      private int $swascoTimeout,
-      private string $baseURL
-      )
-   {}
+   public function __construct()
+   {
+      $this->swascoReceiptingTimeout = \intval(\env('SWASCO_RECEIPTING_TIMEOUT'));
+      $this->swascoTimeout = \intval(\env('SWASCO_REMOTE_TIMEOUT'));
+      $this->baseURL = \env('SWASCO_BASE_URL');
+   }
 
    public function getAccountDetails(array $params): array
    {

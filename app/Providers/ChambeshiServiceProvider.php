@@ -46,11 +46,7 @@ class ChambeshiServiceProvider extends ServiceProvider
       //
 
       //Billing Clients	PostPaid		
-         $this->app->singleton('chambeshiPostPaid', function () {
-            return $this->app->make(\App\Http\Services\External\BillingClients\ChambeshiPostPaid::class);
-         });
-
-         $this->app->singleton('chambeshiPOST-PAIDEnquiry', function () {
+         $this->app->singleton('chambeshiPostPaidEnquiry', function () {
             return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\ChambeshiPostPaidEnquiry::class);
          });
 
@@ -59,19 +55,8 @@ class ChambeshiServiceProvider extends ServiceProvider
          });
       //
 
-      //Billing Clients	PrePaid	
-         $this->app->singleton('chambeshiPrePaid', function () {
-            return $this->app->make(\App\Http\Services\External\BillingClients\ChambeshiPrePaid::class,
-                              [
-                                 'baseURL' => \env('CHAMBESHI_PREPAID_BASE_URL'),
-                                 'username' => \env('CHAMBESHI_PREPAID_USERNAME'),
-                                 'password' => \env('CHAMBESHI_PREPAID_PASSWORD'),
-                                 'passwordVend' => \env('CHAMBESHI_PREPAID_PASSWORD_VEND')
-                              ]
-                        );
-         });
-
-         $this->app->singleton('chambeshiPRE-PAIDEnquiry', function () {
+      //Billing Clients	PrePaid
+         $this->app->singleton('chambeshiPrePaidEnquiry', function () {
             return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\ChambeshiPrePaidEnquiry::class);
          });
 

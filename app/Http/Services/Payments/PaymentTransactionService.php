@@ -22,9 +22,7 @@ class PaymentTransactionService
             ->join('sessions as s','p.session_id','=','s.id')
             ->join('mnos','p.mno_id','=','mnos.id')
             ->join('client_menus as m','p.menu_id','=','m.id')
-            ->select('p.id','p.created_at','p.transactionId','p.accountNumber','p.meterNumber','p.district','p.mobileNumber',
-                     'p.receiptAmount','p.receiptNumber','m.prompt as paymentType','p.paymentStatus',
-                     'mnos.name as mno','p.mnoTransactionId','p.channel','p.error');
+            ->select('p.*','m.prompt as paymentType','mnos.name as mno', 'm.accountType');
             //->whereIn('p.paymentStatus',['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
          if($dto->dateFrom && $dto->dateTo){
             $records = $records->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo]);

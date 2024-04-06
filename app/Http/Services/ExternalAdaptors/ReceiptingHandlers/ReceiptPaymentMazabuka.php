@@ -3,7 +3,7 @@
 namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
 use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\Mazabuka;
 use App\Http\Services\Clients\ClientMenuService;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -13,7 +13,7 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
 {
 
     public function __construct(
-        private IBillingClient $billingClient,
+        private Mazabuka $billingClient,
 		  private ClientMenuService $clientMenuService)
     {}
 
@@ -33,7 +33,7 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
 					$momoDTO->paymentStatus = "RECEIPTED";
 
 					$theMenu = $this->clientMenuService->findById($momoDTO->menu_id);
-					$theMenu = (object)$theMenu->toArray();
+					$theMenu = \is_null($theMenu)?null: (object)$theMenu->toArray();
 					$momoDTO->receipt = "Payment successful\n" .
 									"Rcpt No.: " . $momoDTO->receiptNumber . "\n" .
 									"Amount: ZMW " . \number_format($momoDTO->receiptAmount, 2, '.', ',') . "\n";

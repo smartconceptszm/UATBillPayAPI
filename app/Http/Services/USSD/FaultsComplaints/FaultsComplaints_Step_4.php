@@ -28,12 +28,12 @@ class FaultsComplaints_Step_4
                                           'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-2],
                                           'client_id'=>$txDTO->client_id,
                                        ]);
-         $theComplaintType = (object)$theComplaintType->toArray();
+         $theComplaintType = \is_null($theComplaintType)?null: (object)$theComplaintType->toArray();
          $theSubType = $this->cSubTypeService->findOneBy([
                                     'complaint_type_id'=>$theComplaintType->id,
                                     'order'=>\end($arrCustomerJourney)
                                  ]); 
-         $theSubType = (object)$theSubType->toArray();
+         $theSubType = \is_null($theComplaintType)?null: (object)$theSubType->toArray();
          $txDTO->subscriberInput = $this->validateInput->handle($theSubType->detailType,$txDTO->subscriberInput);
          $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
       } catch (\Throwable $e) {

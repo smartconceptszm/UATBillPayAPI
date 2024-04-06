@@ -19,6 +19,7 @@ return new class extends Migration
          $table->string('prompt',50)->notNullable();
          $table->string('handler',50)->notNullable();
          $table->string('billingClient',50)->nullable();
+         $table->string('enquiryHandler',50)->nullable();
          $table->string('description',150)->nullable();
          $table->enum('accountType',['POST-PAID', 'PRE-PAID'])->default('POST-PAID')->nullable();
          $table->enum('isPayment',['YES','NO'])->default('NO')->notNullable();

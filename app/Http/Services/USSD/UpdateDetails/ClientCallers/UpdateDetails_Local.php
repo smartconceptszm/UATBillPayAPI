@@ -31,7 +31,7 @@ class UpdateDetails_Local implements IUpdateDetailsClient
                                           'client_id' => $ticketData['client_id'],
                                           'order' => $order
                                        ]);
-                  $customerField = (object)$customerField->toArray();
+                  $customerField = \is_null($customerField)?null: (object)$customerField->toArray();
                   $this->customerFieldUpdateDetailService->create([
                                     'customer_field_update_id' => $updateTicket->id,
                                     'customer_field_id' => $customerField->id,

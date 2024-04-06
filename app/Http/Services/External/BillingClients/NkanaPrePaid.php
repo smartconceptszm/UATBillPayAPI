@@ -13,13 +13,16 @@ class NkanaPrePaid implements IBillingClient
 
    private $getCustomerFunction = "querycustomerbymeternumber";
    private $purchasePreview = "platformcalculatefee";
+   private string $platformId;
+   private string $baseURL;
 
    public function __construct(
-         private string $baseURL,
-         private string $platformId,
          private PurchaseEncryptor $purchaseEncryptor
       )
-   {}
+   {
+      $this->platformId = \env('NKANA_PREPAID_PLATFORMID');
+      $this->baseURL = \env('NKANA_PREPAID_BASE_URL');
+   }
 
    public function getAccountDetails(array $params): array
    {

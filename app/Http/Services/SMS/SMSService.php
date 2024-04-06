@@ -105,7 +105,7 @@ class SMSService
                                  'client_id'=>$dto->client_id,
                                  'mno_id'=> $dto->mno_id
                               ]);
-         $ClientMnos = (object)$ClientMnos->toArray();
+         $ClientMnos = \is_null($ClientMnos)?null: (object)$ClientMnos->toArray();
          $dto->smsCharge = (float)$ClientMnos->smsCharge;
       //
 

@@ -3,7 +3,7 @@
 namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
 use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\Swasco;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
@@ -12,7 +12,7 @@ class ReceiptReconnectionSwasco implements IReceiptPayment
 {
 
     public function __construct(
-        private IBillingClient $billingClient)
+        private Swasco $billingClient)
     {}
 
     public function handle(BaseDTO $momoDTO): BaseDTO

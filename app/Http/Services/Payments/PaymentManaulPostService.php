@@ -36,14 +36,9 @@ class PaymentManaulPostService
             }
          }  
 
-         //Bind the Services
-            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$momoDTO->urlPrefix;
-            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
-         //
-
          //Bind Receipting Handler
             $theMenu = $this->clientMenuService->findById($momoDTO->menu_id);
-            $theMenu = (object)$theMenu->toArray();
+            $theMenu = \is_null($theMenu)?null: (object)$theMenu->toArray();
             $receiptingHandler = $theMenu->receiptingHandler;
             if (\env('USE_RECEIPTING_MOCK') == "YES"){
                $receiptingHandler = "MockReceipting";

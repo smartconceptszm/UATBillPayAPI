@@ -34,7 +34,7 @@ class ServiceApplications_Step_3
                                     'client_id'=>$txDTO->client_id,
                                     'order'=>$arrCustomerJourney[2]
                                  ]); 
-            $theServiceType = (object)$theServiceType->toArray();
+            $theServiceType = \is_null($theServiceType)?null: (object)$theServiceType->toArray();
             $serviceAppQuestions = $this->serviceTypeDetails->findAll([
                                              'service_type_id'=>$theServiceType->id
                                           ]);

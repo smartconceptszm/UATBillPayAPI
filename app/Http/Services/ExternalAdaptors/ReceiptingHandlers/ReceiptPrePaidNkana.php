@@ -3,7 +3,7 @@
 namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
 use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\NkanaPrePaid;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use App\Http\DTOs\BaseDTO;
@@ -14,7 +14,7 @@ class ReceiptPrePaidNkana implements IReceiptPayment
 {
 
 	public function __construct(
-		private IBillingClient $billingClient)
+		private NkanaPrePaid $billingClient)
 	{}
 
 	public function handle(BaseDTO $momoDTO):BaseDTO

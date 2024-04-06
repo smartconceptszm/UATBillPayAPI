@@ -31,7 +31,7 @@ class ServiceApplications_Step_2
             if(!$theServiceType){
                throw new Exception("Returned empty service type",1);
             } 
-            $theServiceType = (object)$theServiceType->toArray();
+            $theServiceType = \is_null($theServiceType)?null: (object)$theServiceType->toArray();
             if($theServiceType->onExistingAccount == 'YES'){
                $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
             }else{

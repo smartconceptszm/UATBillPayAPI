@@ -15,10 +15,10 @@ class SwascoUpdateMobile implements IUSSDMenu
       
       if ($txDTO->error == '') {
          try {
-            if (\count(\explode("*", $txDTO->customerJourney)) == 2 || \count(\explode("*", $txDTO->customerJourney)) == 3) {
-               $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$txDTO->billingClient;
-               App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
-               App::bind(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$txDTO->urlPrefix.$txDTO->accountType."Enquiry");
+            if (\count(\explode("*", $txDTO->customerJourney)) == 2 ) {
+               $enquiryHandler = \env('USE_BILLING_MOCK')=="YES"? 
+                           'MockEnquiry':$txDTO->enquiryHandler;
+               App::bind(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$enquiryHandler);
             }
             $stepHandler = App::make('SwascoUpdateMobile_Step_'.\count(\explode("*", $txDTO->customerJourney)));
             $txDTO = $stepHandler->run($txDTO);

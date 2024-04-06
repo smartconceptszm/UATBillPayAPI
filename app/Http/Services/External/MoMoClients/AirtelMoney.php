@@ -250,7 +250,7 @@ class AirtelMoney implements IMoMoClient
             $errorMessage = "Airtel response: Withdrawal amount limit exceeded.";
             break;
          case 'DP00800001004':
-            $errorMessage = "Airtel response: Invalid Amount.";
+            $errorMessage = "Airtel response: The amount User is trying to transfer is less than the minimum amount allowed.";
             break;
          case 'DP00800001005':
             $errorMessage = "Airtel response: User didn't enter the pin.";

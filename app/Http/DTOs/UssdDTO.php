@@ -16,7 +16,7 @@ class UssdDTO extends BaseDTO
    public $subscriberInput;
    public $fireMoMoRequest;
    public $customerJourney;
-   public $billingClient;
+   public $enquiryHandler;
    public $accountNumber;
    public $paymentAmount;
    public $lastResponse;

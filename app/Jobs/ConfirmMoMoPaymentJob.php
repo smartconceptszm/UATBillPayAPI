@@ -31,20 +31,13 @@ class ConfirmMoMoPaymentJob extends BaseJob
          App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,$momoClient);
       //
       
-      //Bind billing related services
+      //Bind Receipting Handler
          $theMenu = $clientMenuService->findById($this->momoDTO->menu_id);
-         //Bind the billing client
-            $this->momoDTO->billingClient = $theMenu->billingClient; 
-            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$this->momoDTO->billingClient;
-            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
-         //
-         //Bind Receipting Handler
-            $receiptingHandler = $theMenu->receiptingHandler;
-            if (\env('USE_RECEIPTING_MOCK') == "YES"){
-               $receiptingHandler = "MockReceipting";
-            }
-            App::bind(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
-         //
+         $receiptingHandler = $theMenu->receiptingHandler;
+         if (\env('USE_RECEIPTING_MOCK') == "YES"){
+            $receiptingHandler = "MockReceipting";
+         }
+         App::bind(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
       //
       
       //Bind the SMS Client

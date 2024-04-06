@@ -4,14 +4,14 @@ namespace App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers;
 
 
 use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\AbEnquiryHandler;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\Mazabuka;
 use App\Http\DTOs\BaseDTO;
 
 class MazabukaEnquiry extends AbEnquiryHandler
 {
 
 	public function __construct(
-		private IBillingClient $billingClient)
+		private Mazabuka $billingClient)
 	{}
 
 	public function getAccountDetails(BaseDTO $txDTO):BaseDTO

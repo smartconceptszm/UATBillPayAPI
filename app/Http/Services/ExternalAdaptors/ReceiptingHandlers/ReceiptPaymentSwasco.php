@@ -4,7 +4,7 @@ namespace App\Http\Services\ExternalAdaptors\ReceiptingHandlers;
 
 use App\Http\Services\MoMo\Utility\StepService_AddShotcutMessage;
 use App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\External\BillingClients\Swasco;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -16,7 +16,7 @@ class ReceiptPaymentSwasco implements IReceiptPayment
 
 	public function __construct(
 		private StepService_AddShotcutMessage $addShotcutMessage,
-		private IBillingClient $billingClient)
+		private Swasco $billingClient)
 	{}
 
 	public function handle(BaseDTO $momoDTO):BaseDTO

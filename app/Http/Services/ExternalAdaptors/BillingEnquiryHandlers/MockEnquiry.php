@@ -4,14 +4,14 @@ namespace App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers;
 
 
 use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\AbEnquiryHandler;
-use App\Http\Services\External\BillingClients\NkanaPostPaid;
+use App\Http\Services\External\BillingClients\BillingMock;
 use App\Http\DTOs\BaseDTO;
 
-class NkanaPostPaidEnquiry extends AbEnquiryHandler
+class MockEnquiry extends AbEnquiryHandler
 {
 
 	public function __construct(
-		private NkanaPostPaid $billingClient)
+		private BillingMock $billingClient)
 	{}
 
 	public function getAccountDetails(BaseDTO $txDTO):BaseDTO

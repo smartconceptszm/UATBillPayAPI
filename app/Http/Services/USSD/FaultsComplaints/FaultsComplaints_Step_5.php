@@ -45,12 +45,12 @@ class FaultsComplaints_Step_5
                                     'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-3],
                                     'client_id'=>$txDTO->client_id,
                                  ]);
-         $theComplaint = (object)$theComplaint->toArray();
+         $theComplaint = \is_null($theComplaint)?null: (object)$theComplaint->toArray();
          $theSubType = $this->cSubTypeService->findOneBy([
                         'complaint_type_id'=>$theComplaint->id,
                         'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-2]
                      ]); 
-         $theSubType = (object)$theSubType->toArray();
+         $theSubType = \is_null($theSubType)?null: (object)$theSubType->toArray();
          if($theSubType->requiresDetails == 'YES'){
             $complaintInfo = \end($arrCustomerJourney);
          }else{

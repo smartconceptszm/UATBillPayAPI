@@ -15,11 +15,9 @@ class PaymentSessionService
             ->join('mnos','s.mno_id','=','mnos.id')
             ->join('client_menus as m','s.menu_id','=','m.id')
             ->leftJoin('payments as p','p.session_id','=','s.id')
-            ->select('s.id as session_id','s.sessionId','s.created_at','s.mobileNumber','s.accountNumber',
-                     's.customerJourney','s.status','m.prompt as paymentType','p.id','p.transactionId',
-                     'p.district','p.receiptAmount','p.receiptNumber','p.receipt','p.tokenNumber',
-                     'p.paymentStatus','mnos.name as mno','p.mnoTransactionId','p.meterNumber',
-                     'p.channel','p.error');
+            ->select('p.*','s.id as session_id','s.sessionId','s.created_at','s.mobileNumber',
+                     's.accountNumber','s.customerJourney','s.status','m.accountType',
+                     'm.prompt as paymentType','mnos.name as mno');
          if($dto->accountNumber){
             $records = $records->where('s.accountNumber', '=', $dto->accountNumber);
          }

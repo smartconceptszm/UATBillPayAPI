@@ -31,10 +31,7 @@ class PaymentFailedService
                   ->join('sessions as s','p.session_id','=','s.id')
                   ->join('mnos','p.mno_id','=','mnos.id')
                   ->join('client_menus as m','p.menu_id','=','m.id')
-                  ->select('p.id','p.created_at','p.mobileNumber','p.accountNumber','p.receiptNumber',
-                           'p.receiptAmount','p.paymentAmount','p.transactionId','p.district',
-                           'p.mnoTransactionId','mnos.name as mno','m.prompt as paymentType',
-                           'p.paymentStatus','p.error');
+                  ->select('p.*','mnos.name as mno','m.prompt as paymentType','m.accountType');
          if($dto->dateFrom && $dto->dateTo){
             $records =$records->whereBetween('p.created_at',[$dto->dateFrom, $dto->dateTo]);
          }
@@ -82,15 +79,10 @@ class PaymentFailedService
             }
             App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,$momoClient);
          //
-
-         //Bind the billing client
-            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'BillingMock':$momoDTO->billingClient;
-            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
-         //
-   
+         
          //Bind Receipting Handler
             $theMenu = $this->clientMenuService->findById($momoDTO->menu_id);
-            $theMenu = (object)$theMenu->toArray();
+            $theMenu = \is_null($theMenu)?null:(object)$theMenu->toArray();
             $receiptingHandler = $theMenu->receiptingHandler;
             if (\env('USE_RECEIPTING_MOCK') == "YES"){
                $receiptingHandler = "MockReceipting";
