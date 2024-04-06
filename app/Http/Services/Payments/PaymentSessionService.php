@@ -15,14 +15,13 @@ class PaymentSessionService
             ->join('mnos','s.mno_id','=','mnos.id')
             ->join('client_menus as m','s.menu_id','=','m.id')
             ->leftJoin('payments as p','p.session_id','=','s.id')
-            ->select('p.*','s.id as session_id','s.sessionId','s.created_at','s.mobileNumber',
-                     's.accountNumber','s.customerJourney','s.status','m.accountType',
+            ->select('p.*','s.id as session_id','s.sessionId','s.customerJourney','s.status','m.accountType',
                      'm.prompt as paymentType','mnos.name as mno');
          if($dto->accountNumber){
             $records = $records->where('s.accountNumber', '=', $dto->accountNumber);
          }
-         if(\property_exists($dto,'mobileNumber') && $dto->accountNumber){
-            $records = $records->where('s.mobileNumber', '=', $dto->mobileNumber);
+         if($dto->meterNumber){
+            $records = $records->where('s.meterNumber', '=', $dto->meterNumber);
          }
          $records = $records->where('s.client_id', '=', $dto->client_id)
                               ->where('m.isPayment','=', 'YES')
