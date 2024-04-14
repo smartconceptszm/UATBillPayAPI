@@ -11,30 +11,34 @@ use Illuminate\Http\Request;
 class WebPaymentController extends Controller
 {
 
-   private $urlPrefix;
    private $validationRules = [
-      'mobileNumber' => 'required|string',
-      'paymentAmount' => 'required',
-      'mno_id' => 'required',
-      'menu_id' => 'required',
-   ];
+                                 'mobileNumber' => 'required|string',
+                                 'paymentAmount' => 'required',
+                                 'mno_id' => 'required',
+                                 'menu_id' => 'required',
+                              ];
 
-	public function __construct(private Request $request)
+	public function __construct(
+      private ClientMenuService $clientMenuService,
+      private Request $request)
 	{
-      $this->getUrlPrefix($request);
-      $billingEnquiryClient = \env('USE_BILLING_MOCK')=="YES"? 
-            'MockEnquiry':$this->urlPrefix."PostPaidEnquiry";
+      $billingEnquiryClient = 'MockEnquiry';
+      if(\env('USE_BILLING_MOCK')!="YES"){
+         $clientMenuService = $this->clientMenuService->findById($request->input('menu_id'));
+         $clientMenuService = \is_null($clientMenuService)?null:(object)$clientMenuService->toArray();
+         $billingEnquiryClient = $clientMenuService->enquiryHandler;
+      }
       App::bind(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$billingEnquiryClient);
    }
 
    /**
     * Display the specified resource.
       */
-   public function show(WebPaymentService $theService,string $accountNumber)
+   public function show(Request $request, WebPaymentService $theService)
    {
 
       try {
-         $this->response['data'] = $theService->getCustomer($accountNumber, $this->urlPrefix);
+         $this->response['data'] = $theService->getCustomer($this->getParameters($request));
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -53,7 +57,6 @@ class WebPaymentController extends Controller
          //validate incoming request 
          $this->validate($request, $this->validationRules);
          $params = $this->getParameters($request);
-         $params['urlPrefix'] = $this->urlPrefix;
          $params['channel'] = 'WEBSITE';
          $this->response['data'] = $theService->initiateWebPayement($params);
       } catch (\Throwable $e) {
@@ -64,14 +67,4 @@ class WebPaymentController extends Controller
 
    }
 
-   private function getUrlPrefix(Request $request):void
-   {
-      $requestUrlArr = \explode("/",$request->url());
-      if ($request->isMethod('post')) {
-         $this->urlPrefix = $requestUrlArr[\count($requestUrlArr)-2];
-      }else{
-         $this->urlPrefix = $requestUrlArr[\count($requestUrlArr)-3];
-      }
-   }
-   
 }

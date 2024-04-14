@@ -28,7 +28,7 @@ class RequestLoggerMiddleware
       if($txParams){
          if($txParams['error']==''){
                Log::info('('.$txParams['urlPrefix'].') '.
-                           'Request Cycle completed: Session id: '.
+                           'USSD Cycle: Session id: '.
                               $txParams['sessionId'].' - Phone: '.
                               $txParams['mobileNumber'].' - Journey: '.
                               $txParams['customerJourney']

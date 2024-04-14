@@ -4,6 +4,7 @@ namespace App\Http\Services\Web;
 
 use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
 USE App\Http\Services\USSD\Utility\StepService_GetAmount;
+USE App\Http\Services\Clients\ClientMenuService;
 USE App\Http\Services\Clients\ClientService;
 USE App\Http\Services\USSD\SessionService;
 USE App\Http\Services\Clients\MnoService;
@@ -19,7 +20,8 @@ class WebPaymentService
 {
 
    public function __construct(
-      private IEnquiryHandler $getCustomerAccount,
+      private ClientMenuService $clientMenuService,
+      private IEnquiryHandler $enquiryHandler,
       private StepService_GetAmount $getAmount,
       private SessionService $sessionService,
       private ClientService $clientService,
@@ -29,15 +31,12 @@ class WebPaymentService
    )
    {}
 
-   public function getCustomer(string $accountNumber, string $urlPrefix):array
+   public function getCustomer(array $criteria):array
    {
 
       try {
-         $momoDTO = $this->moMoDTO->fromArray([
-                                             'accountNumber'=> $accountNumber,
-                                             'urlPrefix'=>$urlPrefix
-                                          ]);
-         $momoDTO = $this->getCustomerAccount->handle($momoDTO);
+         $momoDTO = $this->moMoDTO->fromArray($criteria);
+         $momoDTO = $this->enquiryHandler->handle($momoDTO);
          return $momoDTO->customer;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
@@ -69,7 +68,8 @@ class WebPaymentService
          Log::info('('.$momoDTO->urlPrefix.') '.
                         'Web payment initiated: Phone: '.
                            $momoDTO->mobileNumber.' - Account Number: '.
-                           $momoDTO->accountNumber.' - Amount: '.
+                           $momoDTO->accountNumber.' - Meter Number: '.
+                           $momoDTO->meterNumber.' - Amount: '.
                            $momoDTO->paymentAmount
                         );
 
@@ -86,10 +86,10 @@ class WebPaymentService
 
    private function getClient(WebDTO $webDTO) : WebDTO
    {
-      $client = $this->clientService->findOneBy(['urlPrefix'=>$webDTO->urlPrefix]);
+      $client = $this->clientService->findById($webDTO->client_id);
       $client = \is_null($client)?null:(object)$client->toArray();
-      $webDTO->client_id = $client->id;
       $webDTO->shortCode = $client->shortCode;
+      $webDTO->urlPrefix = $client->urlPrefix;
       $webDTO->testMSISDN = $client->testMSISDN;
       $webDTO->clientSurcharge = $client->surcharge;
       if($client->mode != 'UP'){

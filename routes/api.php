@@ -75,10 +75,10 @@ Route::group(['middleware' => 'mode'], function (){
       Route::put('/passwordreset/{id}', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'update']);
 
    //Web Payment Routes - SWASCO
-      Route::get('/webpayments/swasco/paymentmenus', [\App\Http\Controllers\Web\PaymentMenuController::class, 'index']);
-      Route::get('/webpayments/swasco/customers/{accountNumber}', [\App\Http\Controllers\Web\WebPaymentController::class, 'show']);
-      Route::get('/webpayments/swasco/momos', [\App\Http\Controllers\Web\PaymentMnoController::class, 'index']);
-      Route::post('/webpayments/swasco/payments', [\App\Http\Controllers\Web\WebPaymentController::class, 'store']);
+      Route::get('/webpayments/paymentmenus', [\App\Http\Controllers\Web\PaymentMenuController::class, 'index']);
+      Route::get('/webpayments/customers', [\App\Http\Controllers\Web\WebPaymentController::class, 'show']);
+      Route::get('/webpayments/momos', [\App\Http\Controllers\Web\PaymentMnoController::class, 'index']);
+      Route::post('/webpayments/payments', [\App\Http\Controllers\Web\WebPaymentController::class, 'store']);
    //
    // AUTHENTICATED Routes
       Route::group(['middleware' => 'auth'], function (){
@@ -99,6 +99,7 @@ Route::group(['middleware' => 'mode'], function (){
             Route::post('paymentsreviewbatch', [\App\Http\Controllers\Payments\PaymentFailedBatchController::class, 'store']);
             
             Route::get('paymentsessions', [\App\Http\Controllers\Payments\PaymentSessionController::class, 'index']);
+            Route::get('sessionpayment', [\App\Http\Controllers\Payments\PaymentController::class, 'findOneBy']);
 
             Route::post('paymentstomanuallypost', [\App\Http\Controllers\Payments\PaymentManualPostController::class, 'store']);
 
@@ -119,7 +120,9 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/clients', 'index');
             });
          //
+         
          //Menus
+            Route::get('rootmenu', [\App\Http\Controllers\Clients\ClientMenuController::class,'findOneBy']);
             Route::controller(\App\Http\Controllers\Clients\ClientMenuController::class)->group(function () {
                Route::get('/clientmenus/findoneby', 'findOneBy');
                Route::put('/clientmenus/{id}', 'update');
@@ -129,6 +132,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/clientmenus', 'index');
             });
          //
+
          //MNOs
             Route::controller(\App\Http\Controllers\Clients\MNOController::class)->group(function () {
                Route::get('/mnos/findoneby', 'findOneBy');

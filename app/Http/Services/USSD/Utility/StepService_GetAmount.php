@@ -17,8 +17,9 @@ class StepService_GetAmount
       $subscriberInput = \str_replace(" ", "", $subscriberInput);
       $subscriberInput = \str_replace("K", "",$subscriberInput);
       $subscriberInput = \str_replace(",", "",$subscriberInput);
-      $subscriberInput = number_format((float)$subscriberInput, 2, '.', ',');
-      $amount = (float)\str_replace(",", "",$subscriberInput);
+      $amount = (float)$subscriberInput;
+      $subscriberInput = number_format($amount, 2, '.', ',');
+      
 
       $testMSISDN = \explode("*", \env('APP_ADMIN_MSISDN')."*".$txDTO->testMSISDN);
 

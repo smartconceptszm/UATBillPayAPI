@@ -15,8 +15,8 @@ class NkanaPostPaid implements IBillingClient
 
    public function __construct()
    {
-      $this->AuthenticationCode = \env('NKANA_POSTPAID_BASE_URL');
-      $this->baseURL = \env('NKANA_AuthenticationCode');
+      $this->AuthenticationCode = \env('NKANA_AuthenticationCode');
+      $this->baseURL = \env('NKANA_POSTPAID_BASE_URL');
    }
 
    public function getAccountDetails(array $params): array

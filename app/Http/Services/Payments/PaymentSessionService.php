@@ -14,9 +14,13 @@ class PaymentSessionService
          $records = DB::table('sessions as s')
             ->join('mnos','s.mno_id','=','mnos.id')
             ->join('client_menus as m','s.menu_id','=','m.id')
-            ->join('payments as p','p.session_id','=','s.id')
-            ->select('p.*','s.id as session_id','s.sessionId','s.customerJourney','s.status','m.accountType',
-                     'm.prompt as paymentType','mnos.name as mno');
+            ->leftJoin('payments as p','p.session_id','=','s.id')
+            ->select('s.id as session_id','s.sessionId','s.client_id','s.customerJourney','s.mobileNumber','s.accountNumber',
+                        's.meterNumber','s.district','s.status','s.created_at','p.id','p.reference',
+                        'p.mnoTransactionId','p.surchargeAmount','p.paymentAmount','p.receiptAmount',
+                        'p.transactionId','p.receiptNumber','p.tokenNumber','p.receipt','p.channel',
+                        'p.paymentStatus','p.error','m.accountType','m.description as paymentType',
+                        'mnos.name as mno');
          if(\array_key_exists('accountNumber',$criteria)){
             $records = $records->where('s.accountNumber', '=', $dto->accountNumber);
          }
@@ -24,7 +28,7 @@ class PaymentSessionService
             $records = $records->where('s.meterNumber', '=', $dto->meterNumber);
          }
          $records = $records->where('s.client_id', '=', $dto->client_id)
-                              ->where('m.isPayment','=', 'YES')
+                              //->where('m.isPayment','=', 'YES')
                               ->orderByDesc('s.created_at');
          // $theSQLQuery = $records->toSql();
          // $theBindings = $records-> getBindings();

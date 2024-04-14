@@ -18,6 +18,7 @@ class WebDTO extends BaseDTO
    public $accountNumber;
    public $paymentAmount;
    public $mobileNumber;
+   public $meterNumber;
    public $testMSISDN;
    public $created_at;
    public $updated_at;
@@ -39,6 +40,7 @@ class WebDTO extends BaseDTO
             'accountNumber'=>$this->accountNumber,
             'paymentAmount'=>$this->paymentAmount,
             'mobileNumber'=>$this->mobileNumber,
+            'meterNumber'=>$this->meterNumber,
             'sessionId'=>$this->sessionId,
             'client_id'=>$this->client_id,
             'menu_id'=>$this->menu_id,

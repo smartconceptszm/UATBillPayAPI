@@ -21,10 +21,7 @@ class PaymentMenuController extends Controller
    {
 
       try {
-         $requestUrlArr = \explode("/",$request->url());
-         $this->response['data'] = $this->theService->findAll([
-                                       'urlPrefix' => $requestUrlArr[\count($requestUrlArr)-2],
-                                    ]);
+         $this->response['data'] = $this->theService->findAll(['urlPrefix' => $request->input('urlPrefix')]);
       } catch (\Throwable $e) {
             $this->response['status']['code'] = 500;
             $this->response['status']['message'] = $e->getMessage();

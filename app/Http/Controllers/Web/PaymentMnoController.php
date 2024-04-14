@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Services\Web\PaymentMnoService;
-use App\Http\Services\Clients\ClientService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -11,8 +10,7 @@ class PaymentMnoController extends Controller
 {
    
 	public function __construct(
-		private PaymentMnoService $theService,
-      private ClientService $clientService)
+		private PaymentMnoService $theService)
 	{}
 
 
@@ -23,11 +21,7 @@ class PaymentMnoController extends Controller
    {
 
       try {
-         $requestUrlArr = \explode("/",$request->url());
-         $client = $this->clientService->findOneBy([
-                           'urlPrefix' => $requestUrlArr[\count($requestUrlArr)-2]
-                        ]);
-         $this->response['data'] = $this->theService->findAll($client->id);
+         $this->response['data'] = $this->theService->findAll(['urlPrefix' => $request->input('urlPrefix')]);
       } catch (\Throwable $e) {
             $this->response['status']['code'] = 500;
             $this->response['status']['message'] = $e->getMessage();

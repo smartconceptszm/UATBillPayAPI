@@ -22,7 +22,9 @@ class CheckBalance_Step_3
    {
 
       try {
+
          $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
+         
          if($txDTO->subscriberInput == '1'){
             $selectedMenu = $this->clientMenuService->findOneBy([
                                  'client_id' => $txDTO->client_id,
@@ -44,6 +46,7 @@ class CheckBalance_Step_3
             }
             return $txDTO;
          }
+
          if($txDTO->subscriberInput == '0'){
             $txDTO->customerJourney = $arrCustomerJourney[0];
             $txDTO->subscriberInput = $arrCustomerJourney[1];
@@ -56,21 +59,21 @@ class CheckBalance_Step_3
             $payments = $this->paymentHistoryService->findAll([
                               'limit' => \env(\strtoupper($txDTO->urlPrefix).'_PAYMENT_HISTORY'),
                               'accountNumber' => $txDTO->accountNumber,
-                              'mobileNumber' => $txDTO->mobileNumber,
+                              //'mobileNumber' => $txDTO->mobileNumber,
                               'client_id' => $txDTO->client_id,
                            ]);
             if($payments){
-               $prompt = "Payment history for ".$txDTO->mobileNumber.":\n";
+               $prompt = "Payment history for ".$txDTO->accountNumber.":\n";
                foreach ($payments as $key=>$payment) {
                   
                   $prompt .= ($key+1).". ".Carbon::parse($payment->created_at)->format('d-M-Y').
-                              " ".$payment->accountNumber.
+                              //" ".$payment->accountNumber.
                               " ZMW ".number_format($payment->receiptAmount, 2, '.', ',')."\n";
                }
                $txDTO->response = $prompt;
                $txDTO->lastResponse = true;
             }else{
-               $txDTO->response = "There are no Mobile Money based payments to Acc: ".$txDTO->accountNumber." from ".$txDTO->mobileNumber;
+               $txDTO->response = "There are no Mobile Money based payments to Acc: ".$txDTO->accountNumber;//." from ".$txDTO->mobileNumber;
                $txDTO->lastResponse = true;
             }
             return $txDTO;
@@ -79,6 +82,7 @@ class CheckBalance_Step_3
          $txDTO->accountNumber = $arrCustomerJourney[2];
          $txDTO->error = 'Invalid selection';
          $txDTO->errorType= "InvalidInput";
+
       } catch (\Throwable $e) {
          $txDTO->error = 'At check balance step 3. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';

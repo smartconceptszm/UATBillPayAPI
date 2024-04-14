@@ -15,7 +15,7 @@ class SessionsOfClientService
             $dto=(object)$criteria;
          $records = DB::table('sessions as s')
                   ->join('client_menus as m','s.menu_id','=','m.id')
-                  ->select('s.*','m.prompt AS menu','m.accountType')
+                  ->select('s.*','m.description AS menu','m.accountType')
                   ->where('s.client_id', '=', $dto->client_id);
          if(\array_key_exists('accountNumber',$criteria)){
             $records = $records->where('s.accountNumber', '=', $dto->accountNumber);
