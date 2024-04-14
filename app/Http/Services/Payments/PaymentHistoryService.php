@@ -16,7 +16,7 @@ class PaymentHistoryService
          $records = DB::table('payments')
                         ->select('id','created_at','accountNumber','mobileNumber','receiptAmount','receiptNumber')
                         ->where('accountNumber', '=', $dto->accountNumber)
-                        ->where('mobileNumber', '=', $dto->mobileNumber)
+                        //->where('mobileNumber', '=', $dto->mobileNumber)
                         ->where('client_id', '=', $dto->client_id)
                         ->whereIn('paymentStatus',['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                         ->orderByDesc('created_at')
