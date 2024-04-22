@@ -28,7 +28,7 @@ class PaymentSessionService
             $records = $records->where('s.meterNumber', '=', $dto->meterNumber);
          }
          $records = $records->where('s.client_id', '=', $dto->client_id)
-                              //->where('m.isPayment','=', 'YES')
+                              ->where('m.isPayment','=', 'YES')
                               ->orderByDesc('s.created_at');
          // $theSQLQuery = $records->toSql();
          // $theBindings = $records-> getBindings();

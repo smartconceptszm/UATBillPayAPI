@@ -168,6 +168,7 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //
          //Complaint Types
+            Route::get('complainttypesofclient', [\App\Http\Controllers\MenuConfigs\ComplaintTypeController::class, 'index']);
             Route::controller(\App\Http\Controllers\MenuConfigs\ComplaintTypeController::class)->group(function () {
                Route::get('/complainttypes/findoneby', 'findOneBy');
                Route::put('/complainttypes/{id}', 'update');
@@ -234,6 +235,7 @@ Route::group(['middleware' => 'mode'], function (){
             Route::controller(\App\Http\Controllers\USSD\SessionController::class)->group(function () {
                Route::get('/sessions', 'index');
                Route::get('/sessions/{id}', 'show');
+               Route::put('/sessions/{id}', 'update');
             });
             Route::get('sessionsofclient', [\App\Http\Controllers\USSD\SessionofClientController::class, 'index']);
 

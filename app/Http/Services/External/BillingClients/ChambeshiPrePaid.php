@@ -102,6 +102,7 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
       ];
 
       try {
+         
          $postParams["user_name"] = $this->username;
          $postParams["password"] = $this->password;
          $postParams["password_vend"] = $this->passwordVend;

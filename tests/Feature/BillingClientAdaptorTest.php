@@ -10,19 +10,17 @@ class BillingClientAdaptorTest extends TestCase
     //  */
 
 
-    public function _testGetPrePaidAccountDetails()
+    public function testGetPrePaidAccountDetails()
     {   
 
-        $billingClientAdaptor = new App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\ChambeshiPrePaidEnquiry(
-            new \App\Http\Services\External\BillingClients\ChambeshiPrePaid(
-                new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService(new \App\Models\ChambeshiPayment())
-            )
+        $billingClientAdaptor = new App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\NkanaPrePaidEnquiry(
+            new \App\Http\Services\External\BillingClients\NkanaPrePaid(new \App\Http\Services\External\BillingClients\Nkana\PurchaseEncryptor())
         );
 
         $txDTO = new \App\Http\DTOs\UssdDTO();
         $txDTO = $txDTO->fromArray([
-                                        'meterNumber'=>'0166209932051',
-                                        'paymentAmount'=>25.00
+                                        'meterNumber'=>'0120030047597',
+                                        'paymentAmount'=>30.00
                                     ]);
 
         $response = $billingClientAdaptor->getAccountDetails($txDTO);

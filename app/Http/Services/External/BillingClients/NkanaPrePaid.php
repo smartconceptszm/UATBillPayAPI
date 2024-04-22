@@ -23,7 +23,7 @@ class NkanaPrePaid implements IBillingClient
       $this->platformId = \env('NKANA_PREPAID_PLATFORMID');
       $this->baseURL = \env('NKANA_PREPAID_BASE_URL');
    }
-
+   
    public function getAccountDetails(array $params): array
    {
 
@@ -32,9 +32,10 @@ class NkanaPrePaid implements IBillingClient
       try {
 
          $getData = [
-                        "function"=> $this->getCustomerFunction,
+                        "function"=> $this->purchasePreview,
                         "platformid" =>$this->platformId,
                         "meternumber" => $params['meterNumber'],
+                        "payment" => $params['paymentAmount'],
                      ];
 
          $apiResponse = Http::withHeaders([
@@ -56,7 +57,7 @@ class NkanaPrePaid implements IBillingClient
                         $response['address'] = "KITWE";
                         $response['district'] = "KITWE";
                         $response['mobileNumber'] =  $apiResponseArray['telephonenumber'];
-                        $response['balance'] = $apiResponseArray['debt'];
+                        $response['balance'] =  $apiResponseArray['additionalfee'];
                         break;
                      case "3":
                         throw new Exception("Failed to calculate fee, increase amount",4);
@@ -99,29 +100,19 @@ class NkanaPrePaid implements IBillingClient
                         break;
                   }
                }else{
-                  throw new Exception("Lukanga PrePaid Service response could not be parsed into array without 'ErrorCode' Key", 2);
+                  throw new Exception("Nkana PrePaid Service response could not be parsed into array without 'ErrorCode' Key", 2);
                }
             }else{
-               throw new Exception("Lukanga PrePaid Service response could not be parsed into array", 2);
+               throw new Exception("Nkana PrePaid Service response could not be parsed into array", 2);
             }
-            // 4 Communication failed
-            // 10 Invalid Meter Number
-            // 11 CustomerNotExist
-            // 12 customer account’s status is unnormal
-            // 13 Invalid platform ID
-            // 20 InvalidPayment
-            // 22 Payment is too much,more than max-purchase limitation
-            // 23 Payment is too little, less than additional fee
-            // 45 Exist outdoor task
+            
          } else {
-            throw new Exception("LUKANGA PrePaid Service responded with status code: " . $apiResponse->status(), 2);
+            throw new Exception("NKANA PrePaid Service responded with status code: " . $apiResponse->status(), 2);
          }
 
       } catch (\Throwable $e) {
-         if ($e->getCode() == 2) {
-            throw new Exception($e->getMessage(), 2);
-         } elseif ($e->getCode() == 1) {
-            throw new Exception($e->getMessage(), 1);
+         if ($e->getCode() == 1 || $e->getCode() == 2 || $e->getCode() == 4) {
+            throw $e;
          } else {
             throw new Exception("Error executing 'Get PrePaid Account Details': " . $e->getMessage(), 3);
          }
@@ -129,6 +120,7 @@ class NkanaPrePaid implements IBillingClient
 
       return $response;
    }
+
 
    public function generateToken(Array $postParams): Array
    {
@@ -240,7 +232,7 @@ class NkanaPrePaid implements IBillingClient
       return $response;
    }
 
-   public function getAccountPosPreview(array $params): array
+   public function getAccountDetailsOLD(array $params): array
    {
 
       $response = [];
@@ -248,10 +240,9 @@ class NkanaPrePaid implements IBillingClient
       try {
 
          $getData = [
-                        "function"=> $this->purchasePreview,
+                        "function"=> $this->getCustomerFunction,
                         "platformid" =>$this->platformId,
                         "meternumber" => $params['meterNumber'],
-                        "payment" => $params['paymentAmount'],
                      ];
 
          $apiResponse = Http::withHeaders([
@@ -273,7 +264,7 @@ class NkanaPrePaid implements IBillingClient
                         $response['address'] = "KITWE";
                         $response['district'] = "KITWE";
                         $response['mobileNumber'] =  $apiResponseArray['telephonenumber'];
-                        $response['balance'] =  $apiResponseArray['additionalfee'];
+                        $response['balance'] = $apiResponseArray['debt'];
                         break;
                      case "3":
                         throw new Exception("Failed to calculate fee, increase amount",4);
@@ -330,15 +321,15 @@ class NkanaPrePaid implements IBillingClient
             // 22 Payment is too much,more than max-purchase limitation
             // 23 Payment is too little, less than additional fee
             // 45 Exist outdoor task
-
-
          } else {
-            throw new Exception("NKANA PrePaid Service responded with status code: " . $apiResponse->status(), 2);
+            throw new Exception("Nkana PrePaid Service responded with status code: " . $apiResponse->status(), 2);
          }
 
       } catch (\Throwable $e) {
-         if ($e->getCode() == 1 || $e->getCode() == 2 || $e->getCode() == 4) {
-            throw $e;
+         if ($e->getCode() == 2) {
+            throw new Exception($e->getMessage(), 2);
+         } elseif ($e->getCode() == 1) {
+            throw new Exception($e->getMessage(), 1);
          } else {
             throw new Exception("Error executing 'Get PrePaid Account Details': " . $e->getMessage(), 3);
          }
@@ -346,6 +337,7 @@ class NkanaPrePaid implements IBillingClient
 
       return $response;
    }
+
 
 
 
