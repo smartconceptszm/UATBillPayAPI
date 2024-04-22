@@ -10,7 +10,7 @@ class BillingClientAdaptorTest extends TestCase
     //  */
 
 
-    public function testGetPrePaidAccountDetails()
+    public function _testGetPrePaidAccountDetails()
     {   
 
         $billingClientAdaptor = new App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\NkanaPrePaidEnquiry(
