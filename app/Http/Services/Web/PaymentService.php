@@ -2,12 +2,10 @@
 
 namespace App\Http\Services\Web;
 
-use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
-USE App\Http\Services\USSD\Utility\StepService_GetAmount;
-USE App\Http\Services\Clients\ClientMenuService;
-USE App\Http\Services\Clients\ClientService;
-USE App\Http\Services\USSD\SessionService;
-USE App\Http\Services\Clients\MnoService;
+use App\Http\Services\USSD\Utility\StepService_GetAmount;
+use App\Http\Services\Clients\ClientService;
+use App\Http\Services\USSD\SessionService;
+use App\Http\Services\Clients\MnoService;
 use Illuminate\Support\Facades\Queue;
 use App\Jobs\InitiateMoMoPaymentJob;
 use Illuminate\Support\Facades\Log;
@@ -16,12 +14,10 @@ use App\Http\DTOs\MoMoDTO;
 use App\Http\DTOs\WebDTO;
 use Exception;
 
-class WebPaymentService
+class PaymentService
 {
 
    public function __construct(
-      private ClientMenuService $clientMenuService,
-      private IEnquiryHandler $enquiryHandler,
       private StepService_GetAmount $getAmount,
       private SessionService $sessionService,
       private ClientService $clientService,
@@ -30,19 +26,6 @@ class WebPaymentService
       private WebDTO $webDTO,
    )
    {}
-
-   public function getCustomer(array $criteria):array
-   {
-
-      try {
-         $momoDTO = $this->moMoDTO->fromArray($criteria);
-         $momoDTO = $this->enquiryHandler->handle($momoDTO);
-         return $momoDTO->customer;
-      } catch (\Throwable $e) {
-         throw new Exception($e->getMessage());
-      }
-
-   }
 
    public function initiateWebPayement(array $params): string
    {

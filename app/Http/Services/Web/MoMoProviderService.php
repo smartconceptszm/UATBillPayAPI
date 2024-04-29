@@ -6,7 +6,7 @@ use App\Http\Services\Clients\ClientService;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class PaymentMnoService
+class MoMoProviderService
 {
 
    public function __construct(

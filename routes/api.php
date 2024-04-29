@@ -29,11 +29,18 @@ Route::get('/', function () use ($router) {
 
 
 Route::group(['middleware' => 'mode'], function (){
-   //USSD ROUTES
+
+   //Auth Routes
+      Route::post('/login', [\App\Http\Controllers\Auth\UserLoginController::class,'store']);
+      Route::post('/passwordreset', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'store']);
+      Route::put('/passwordreset/{id}', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'update']);
+   //End
+
+   //USSD Routes
       Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
       Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
       Route::get('/mtn',[\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
-      //DEV ROUTES to Simulate /clientPrefix/mno
+      //DEV Routes to Simulate /clientPrefix/mno
             Route::group(['prefix' => '/swasco'], function (){
                Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
                Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
@@ -68,18 +75,15 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
             });
       //End of Dev ROUTES
-   //End of USSD Routes
-   //Auth
-      Route::post('/login', [\App\Http\Controllers\Auth\UserLoginController::class,'store']);
-      Route::post('/passwordreset', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'store']);
-      Route::put('/passwordreset/{id}', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'update']);
+   //End
 
-   //Web Payment Routes - SWASCO
-      Route::get('/webpayments/paymentmenus', [\App\Http\Controllers\Web\PaymentMenuController::class, 'index']);
-      Route::get('/webpayments/customers', [\App\Http\Controllers\Web\WebPaymentController::class, 'show']);
-      Route::get('/webpayments/momos', [\App\Http\Controllers\Web\PaymentMnoController::class, 'index']);
-      Route::post('/webpayments/payments', [\App\Http\Controllers\Web\WebPaymentController::class, 'store']);
-   //
+   //Mobile/Web/External Routes
+      Route::get('/app/services', [\App\Http\Controllers\Web\MenuController::class, 'index']);
+      Route::get('/app/customers', [\App\Http\Controllers\Web\CustomerController::class, 'show']);
+      Route::get('/app/momoproviders', [\App\Http\Controllers\Web\MoMoProviderController::class, 'index']);
+      Route::post('/app/payments', [\App\Http\Controllers\Web\PaymentController::class, 'store']);
+   //End
+
    // AUTHENTICATED Routes
       Route::group(['middleware' => 'auth'], function (){
          //Payment Transactions Related Routes

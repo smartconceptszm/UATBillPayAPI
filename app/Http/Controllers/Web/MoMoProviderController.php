@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Http\Services\Web\PaymentMnoService;
+use App\Http\Services\Web\MoMoProviderService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class PaymentMnoController extends Controller
+class MoMoProviderController extends Controller
 {
    
 	public function __construct(
-		private PaymentMnoService $theService)
+		private MoMoProviderService $theService)
 	{}
 
 

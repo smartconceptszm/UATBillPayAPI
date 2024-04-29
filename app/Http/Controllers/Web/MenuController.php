@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Web;
 
-use App\Http\Services\Web\PaymentMenuService;
+use App\Http\Services\Web\MenuService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class PaymentMenuController extends Controller
+class MenuController extends Controller
 {
    
 	public function __construct(
-		private PaymentMenuService $theService)
+		private MenuService $theService)
 	{}
 
 

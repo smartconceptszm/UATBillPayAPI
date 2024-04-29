@@ -6,7 +6,7 @@ use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Clients\ClientService;
 use Exception;
 
-class PaymentMenuService
+class MenuService
 {
 
    public function __construct(
