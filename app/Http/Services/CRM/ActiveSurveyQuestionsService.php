@@ -23,7 +23,7 @@ class ActiveSurveyQuestionsService
             ->select(DB::raw('sq.survey_id,sq.id,COUNT(sed.id) as responses,sq.prompt, sq.order as number'))
             ->where('s.isActive', '=', 'YES')
             ->where('s.client_id', '=', $dto->client_id);
-         $records = $records->groupBy('sq.id','sq.prompt','number');
+         $records = $records->groupBy('sq.survey_id','sq.id','sq.prompt','number');
          return $records->get()->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
