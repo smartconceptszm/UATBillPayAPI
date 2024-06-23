@@ -229,8 +229,9 @@ class KafubuPostPaid implements IBillingClient
                             ];
         $this->kafubuSoapService = new \SoapClient($wsdlPath,$soapOptions);
         $this->kafubuSoapService->__setLocation($baseURL);
-
-        $this->cashierNo = $clientCredentials['SOAP_CASHIER_NO_'.$providerName];
+        if($providerName){
+            $this->cashierNo = $clientCredentials['SOAP_CASHIER_NO_'.$providerName];
+        }
         $this->soapUserName =$clientCredentials['SOAP_USERNAME'];
         $this->soapPassword = $clientCredentials['SOAP_PASSWORD'];
         $this->operator = $clientCredentials['SOAP_OPERATOR'];
