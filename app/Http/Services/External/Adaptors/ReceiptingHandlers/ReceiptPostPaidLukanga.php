@@ -31,6 +31,7 @@ class ReceiptPostPaidLukanga implements IReceiptPayment
 				'reference' => $paymentDTO->ppTransactionId,
 				'amount' => $paymentDTO->receiptAmount,
 				'mnoName'=>$paymentDTO->walletHandler,
+				'client_id' => $paymentDTO->client_id,
 				'balance' => $paymentDTO->customer?(float)(\str_replace(",", "", $paymentDTO->customer['balance'])):0
 		];
 
