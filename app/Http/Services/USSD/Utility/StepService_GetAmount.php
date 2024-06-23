@@ -2,16 +2,22 @@
 
 namespace App\Http\Services\USSD\Utility;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Carbon;
+use App\Http\Services\Web\Clients\ClientWalletCredentialsService;
+use App\Http\Services\Web\Clients\ClientWalletService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
 class StepService_GetAmount 
 {
 
+   public function __construct(
+      private ClientWalletCredentialsService $walletCredentialsService,
+      private ClientWalletService $clientWalletService)
+   {}
+
    public function handle(BaseDTO $txDTO):array
    {
+      
       $subscriberInput = \str_replace("ZMW", "", $txDTO->subscriberInput);
       $subscriberInput = \str_replace("ZMK", "", $subscriberInput);
       $subscriberInput = \str_replace(" ", "", $subscriberInput);
@@ -20,26 +26,24 @@ class StepService_GetAmount
       $amount = (float)$subscriberInput;
       $subscriberInput = number_format($amount, 2, '.', ',');
       
+      if(!$txDTO->wallet_id){
+         $theWallet = $this->clientWalletService->findOneBy([
+                                                      'payments_provider_id'=> $txDTO->payments_provider_id,
+                                                      'client_id'=>$txDTO->client_id                                              
+                                                   ]);
+         $txDTO->wallet_id = $theWallet->id;  
+      }
+      $walletCredentials = $this->walletCredentialsService->getWalletCredentials($txDTO->wallet_id);
+      $maxPaymentAmount = (float)$walletCredentials['MAX_PAYMENT_AMOUNT'];
+      $minPaymentAmount = (float)$walletCredentials['MIN_PAYMENT_AMOUNT'];
 
       $testMSISDN = \explode("*", \env('APP_ADMIN_MSISDN')."*".$txDTO->testMSISDN);
 
-      $maxPaymentAmount = (float)\env(\strtoupper($txDTO->urlPrefix).'_MAX_PAYMENT_AMOUNT');
-      $minPaymentAmount = (float)\env(\strtoupper($txDTO->urlPrefix).'_MIN_PAYMENT_AMOUNT');
-
-      // if(\env(\strtoupper($txDTO->urlPrefix).'_PREPAID_DEBT_BUFFER')){
-      //    $minPaymentAmount = number_format((float)$txDTO->customer['balance'], 2, '.', ',');
-      // }else{
-      //    $minPaymentAmount = (float)\env(\strtoupper($txDTO->urlPrefix).'_MIN_PAYMENT_AMOUNT');
-      // }
-
       if ((($amount< $minPaymentAmount) || $amount > $maxPaymentAmount) && !(\in_array($txDTO->mobileNumber, $testMSISDN))) {
-         // Cache::put($txDTO->urlPrefix.$txDTO->accountNumber."_MinPaymentAmount", $minPaymentAmount, 
-         //                      Carbon::now()->addMinutes(intval(\env('CUSTOMER_ACCOUNT_CACHE'))));
          throw new Exception("Amount either below the minimum or above the maximum amount allowed", 1);
       }
-
-
       return [$subscriberInput, $amount];
+
    }
     
 }

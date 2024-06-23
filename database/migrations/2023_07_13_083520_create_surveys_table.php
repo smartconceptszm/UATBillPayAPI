@@ -15,7 +15,7 @@ return new class extends Migration
       
       Schema::create('surveys', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid('client_id')->notNullable();
+         $table->string('client_id',36)->notNullable();
          $table->string('name',50)->unique()->notNullable();
          $table->string('description',150)->nullable();
          $table->enum('isActive',['YES','NO'])->default('NO')->notNullable();

@@ -14,7 +14,7 @@ return new class extends Migration
 
       Schema::create('shortcut_customers', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid('client_id')->notNullable();
+         $table->string('client_id',36)->notNullable();
          $table->string('mobileNumber',12)->notNullable();
          $table->string('accountNumber',50)->notNullable();
          $table->timestamps();

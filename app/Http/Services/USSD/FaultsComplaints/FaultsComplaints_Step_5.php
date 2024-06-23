@@ -3,9 +3,9 @@
 namespace App\Http\Services\USSD\FaultsComplaints;
 
 use App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient;
-use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
-use App\Http\Services\MenuConfigs\ComplaintSubTypeService;
-use App\Http\Services\MenuConfigs\ComplaintTypeService;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
+use App\Http\Services\Web\MenuConfigs\ComplaintSubTypeService;
+use App\Http\Services\Web\MenuConfigs\ComplaintTypeService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 

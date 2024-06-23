@@ -3,9 +3,8 @@
 namespace App\Http\Services\USSD;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
-use App\Http\Services\USSD\SessionService;
+use App\Http\Services\Web\Sessions\SessionService;
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class Step_SaveSession extends EfectivoPipelineContract
 {

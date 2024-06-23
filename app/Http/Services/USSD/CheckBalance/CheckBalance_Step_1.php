@@ -4,7 +4,6 @@ namespace App\Http\Services\USSD\CheckBalance;
 
 use App\Http\Services\USSD\Utility\StepService_AccountNoMenu;
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class CheckBalance_Step_1 
 {
@@ -18,7 +17,7 @@ class CheckBalance_Step_1
 	{
 
 		try {
-			$txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
+			$txDTO->response = $this->accountNoMenu->handle($txDTO);
 		} catch (\Throwable $e) {
 			$txDTO->error = 'At check balance step 1. '.$e->getMessage();
 			$txDTO->errorType = 'SystemError';

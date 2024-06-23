@@ -13,8 +13,8 @@ return new class extends Migration
    {
       Schema::create('group_rights', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid("group_id")->notNullable();
-         $table->uuid("right_id")->notNullable();
+         $table->string("group_id",36)->notNullable();
+         $table->string("right_id",36)->notNullable();
          $table->timestamps();
       });
    }

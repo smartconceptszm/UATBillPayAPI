@@ -9,7 +9,7 @@ class PaymentSessionTest extends TestCase
    public function _testPaymentSession()
    { 
 
-      $paymentSessionService = new \App\Http\Services\Payments\PaymentSessionService();
+      $paymentSessionService = new \App\Http\Services\Web\Payments\PaymentSessionService();
 
       
       $response = $paymentSessionService->findAll([

@@ -1,22 +1,22 @@
 <?php
 
-use App\Http\Services\MoMo\InitiateMoMoPayment;
+use App\Http\Services\Gateway\InitiatePayment;
 use Illuminate\Support\Facades\App;
 use App\Http\DTOs\MoMoDTO;
 use Tests\TestCase;
 
-class InitiateMoMoPaymentTest extends TestCase
+class InitiatePaymentTest extends TestCase
 {
 
 
    public function _testInitiatePayment()
    { 
 
-      $momoService = new InitiateMoMoPayment();
+      $momoService = new InitiatePayment();
 
-      App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,'MTN');
-      $momoDTO = new MoMoDTO();
-      $momoDTO = $momoDTO->fromArray(
+      App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,'MTN');
+      $paymentDTO = new MoMoDTO();
+      $paymentDTO = $paymentDTO->fromArray(
          [
                "customerJourney" => "2012*2*0120012000812*98.00*1",
                "mobileNumber" => "260761028631",
@@ -35,7 +35,7 @@ class InitiateMoMoPaymentTest extends TestCase
                'sessionId' => '100003111',
                "mno_id" => '0fd6f718-730b-11ee-b8ce-fec6e52a2330'
          ]);
-      $response = $momoService->handle($momoDTO);
+      $response = $momoService->handle($paymentDTO);
       $this->assertTrue($response->paymentStatus == 'SUBMITTED');
       
    }

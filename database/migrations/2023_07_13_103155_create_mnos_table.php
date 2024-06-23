@@ -13,7 +13,8 @@ return new class extends Migration
    {
       Schema::create('mnos', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->string('name')->unique()->notNullable();
+         $table->string('name')->unique()->notNullable(); 
+         $table->string('payments_provider_id')->notNullable(); 
          $table->string('colour')->nullable();
          $table->string('contactName')->nullable();
          $table->string('contactEmail')->nullable();

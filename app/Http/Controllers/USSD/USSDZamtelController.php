@@ -17,7 +17,9 @@ class USSDZamtelController extends USSDController
 
             //Parse Parameters
             if ($request->input('RequestType') == '1') {
-                $zamtelParams['subscriberInput']= $request->input('SHORTCODE');
+                $theInput = substr_replace($request->input('USSDString'), '', -1);
+                $zamtelParams['subscriberInput'] = substr($theInput, 1);
+                // $zamtelParams['subscriberInput']= $request->input('SHORTCODE');
                 $zamtelParams['isNewRequest']= '1';
             }else{
                 $theInput = \explode("*", $request->input('USSDString'));
@@ -31,28 +33,30 @@ class USSDZamtelController extends USSDController
             $zamtelParams['urlPrefix']=$this->getUrlPrefix($request);
             $zamtelParams['sessionId'] = $request->input('TransId');
             $zamtelParams['mnoName'] = 'ZAMTEL';
-            $zamtelParams['mno_id'] = $this->getMnoId($zamtelParams['mnoName']); 
-            $this->theDTO=$this->theDTO->fromArray($zamtelParams);
+            $mno = $this->getMno($zamtelParams['mnoName']);
+            $zamtelParams['payments_provider_id'] = $mno->payments_provider_id;
+            $zamtelParams['mno_id'] = $mno->id; 
+            $this->ussdDTO=$this->ussdDTO->fromArray($zamtelParams);
             //Process the Request
-            $this->theDTO = $this->theService->handle($this->theDTO);
+            $this->ussdDTO = $this->ussdService->handle($this->ussdDTO);
 
             //Format the Response Text
             $responseText = '';
-            $responseText = '&TransId=' . $this->theDTO->sessionId;
+            $responseText = '&TransId=' . $this->ussdDTO->sessionId;
             $responseText .= '&Pid=' . $request->input('Pid');
-            if ($this->theDTO->lastResponse) {
+            if ($this->ussdDTO->lastResponse) {
                 $responseText .= '&RequestType=3';
             } else {
                 $responseText .= '&RequestType=2';
             }
             $responseText .= '&MSISDN=' . $request->input('MSISDN');
             $responseText .= '&AppId=' . $request->input('AppId');
-            $responseText .= '&USSDString=' . $this->theDTO->response;
-            $this->theDTO->response=$responseText;
+            $responseText .= '&USSDString=' . $this->ussdDTO->response;
+            $this->ussdDTO->response=$responseText;
         } catch (\Throwable $e) {
-            $this->theDTO->error = 'Error: At Zamtel controller level. '.$e->getMessage();
-            $this->theDTO->response = \env('ERROR_MESSAGE');
-            $this->theDTO->lastResponse = true;
+            $this->ussdDTO->error = 'Error: At Zamtel controller level. '.$e->getMessage();
+            $this->ussdDTO->response = \env('ERROR_MESSAGE');
+            $this->ussdDTO->lastResponse = true;
         }
         return $this->responder($request);
 

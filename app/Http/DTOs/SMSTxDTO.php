@@ -29,7 +29,7 @@ class SMSTxDTO extends BaseDTO
       'message' => 'required|string'
    ];
 
-   public function fromMoMoDTO(BaseDTO $txDTO): BaseDTO
+   public function fromPaymentDTO(BaseDTO $txDTO): BaseDTO
    {
       $this->transaction_id = $txDTO->transactionId;
       $this->accountNumber = $txDTO->accountNumber;
@@ -66,6 +66,7 @@ class SMSTxDTO extends BaseDTO
             'transactionId'=>$this->transaction_id,
             'clientShortName'=>$this->shortName,
             'mobileNumber'=>$this->mobileNumber,
+            'client_id'=>$this->client_id,
             'urlPrefix'=>$this->urlPrefix,
             'message'=>$this->message
          ];

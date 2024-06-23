@@ -1,23 +1,24 @@
 <?php
 
 namespace App\Http\Services\External\BillingClients;
-use App\Http\Services\External\BillingClients\Lukanga\PurchaseEncryptor;
+use App\Http\Services\External\BillingClients\PrePaidVendor\PurchaseEncryptor;
 use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\Web\Clients\BillingCredentialService;
 use Illuminate\Support\Facades\Http;
 use Exception;
 
 class LukangaPrePaid implements IBillingClient
 {
 
-   private $getCustomerFunction = "querycustomerbymeternumber";
    private $purchasePreview = "platformcalculatefee";
    private string $platformId;
    private string $baseURL;
+   private string $rootKey;
 
-   public function __construct(private PurchaseEncryptor $purchaseEncryptor){
-      $this->platformId = \env('LUKANGA_PREPAID_PLATFORMID');
-      $this->baseURL = \env('LUKANGA_PREPAID_BASE_URL');
-   }
+   public function __construct(
+      private BillingCredentialService $billingCredentialsService,
+      private PurchaseEncryptor $purchaseEncryptor)
+   {}
 
    public function getAccountDetails(array $params): array
    {
@@ -25,7 +26,7 @@ class LukangaPrePaid implements IBillingClient
       $response = [];
 
       try {
-
+         $this->getConfigs($params['client_id']);
          $getData = [
                         "function"=> $this->purchasePreview,
                         "platformid" =>$this->platformId,
@@ -126,9 +127,9 @@ class LukangaPrePaid implements IBillingClient
       ];
 
       try {
-
+         $this->getConfigs($postParams['client_id']);
          $purchaseParameterString = $this->purchaseEncryptor->generatePurchaseString(
-                                          $postParams['transactionId'], $postParams['paymentAmount']);
+                                          $postParams['transactionId'], $postParams['paymentAmount'],$this->rootKey);
                                           
          $tokenParameters = [
                               "operatetype"=>"purchasebytransid",
@@ -226,82 +227,12 @@ class LukangaPrePaid implements IBillingClient
       return $response;
    }
 
-   public function getAccountDetailsOld(array $params): array
+   private function getConfigs(string $client_id)
    {
-
-      $response = [];
-
-      try {
-
-         $getData = [
-                        "function"=> $this->getCustomerFunction,
-                        "platformid" =>$this->platformId,
-                        "meternumber" => $params['meterNumber'],
-                     ];
-
-         $apiResponse = Http::withHeaders([
-                                    'Accept' => '*/*'
-                                 ])->get($this->baseURL, $getData);
-
-         if ($apiResponse->status() == 200) {
-            $apiResponseString = $apiResponse->body(); // Get response data as BODY
-            parse_str($apiResponseString, $apiResponseArray);
-            if(\is_array($apiResponseArray)){
-               if(\count($apiResponseArray) == 1){
-                  $apiResponseArray = $apiResponse->json();
-               }
-               if(\array_key_exists('errorcode',$apiResponseArray)){
-                  switch ($apiResponseArray['errorcode']) {
-                     case "0":
-                        $response['accountNumber'] = $apiResponseArray['identificationnumber'];
-                        $response['name'] = $apiResponseArray['customername'];
-                        $response['address'] = "CENTRAL";
-                        $response['district'] = "CENTRAL";
-                        $response['mobileNumber'] =  $apiResponseArray['telephonenumber'];
-                        $response['balance'] = $apiResponseArray['debt'];
-                        break;
-                     case "10":
-                        throw new Exception("Invalid Lukanga PRE-PAID Meter Number",1);
-                        break;
-                     case "11":
-                        throw new Exception("Invalid Lukanga PRE-PAID Meter Number",1);
-                        break;
-                     default:
-                        throw new Exception("LUKANGA PrePaid Service responded with error code: " .$apiResponseArray['errorcode'], 2);
-                        break;
-                  }
-               }else{
-                  throw new Exception("Lukanga PrePaid Service response could not be parsed into array without 'ErrorCode' Key", 2);
-               }
-            }else{
-               throw new Exception("Lukanga PrePaid Service response could not be parsed into array", 2);
-            }
-            // 4 Communication failed
-            // 10 Invalid Meter Number
-            // 11 CustomerNotExist
-            // 12 customer account’s status is unnormal
-            // 13 Invalid platform ID
-            // 20 InvalidPayment
-            // 22 Payment is too much,more than max-purchase limitation
-            // 23 Payment is too little, less than additional fee
-            // 45 Exist outdoor task
-
-
-         } else {
-            throw new Exception("LUKANGA PrePaid Service responded with status code: " . $apiResponse->status(), 2);
-         }
-
-      } catch (\Throwable $e) {
-         if ($e->getCode() == 2) {
-            throw new Exception($e->getMessage(), 2);
-         } elseif ($e->getCode() == 1) {
-            throw new Exception($e->getMessage(), 1);
-         } else {
-            throw new Exception("Error executing 'Get PrePaid Account Details': " . $e->getMessage(), 3);
-         }
-      }
-
-      return $response;
+      $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
+      $this->platformId = $clientCredentials['PREPAID_PLATFORMID'];
+      $this->rootKey = $clientCredentials['PREPAID_ROOTKEY'];
+      $this->baseURL = $clientCredentials['PREPAID_BASE_URL'];
    }
 
 }

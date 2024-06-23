@@ -11,7 +11,8 @@ namespace App\Http\DTOs;
 
 class UssdDTO extends BaseDTO
 {
-   
+
+   public $payments_provider_id;
    public $clientSurcharge;
    public $subscriberInput;
    public $fireMoMoRequest;
@@ -19,6 +20,7 @@ class UssdDTO extends BaseDTO
    public $enquiryHandler;
    public $accountNumber;
    public $paymentAmount;
+   public $walletHandler;
    public $lastResponse;
    public $isNewRequest;
    public $mobileNumber;
@@ -30,6 +32,7 @@ class UssdDTO extends BaseDTO
    public $updated_at;
    public $urlPrefix;
    public $sessionId;
+   public $wallet_id;
    public $client_id;
    public $reference;
    public $errorType;
@@ -58,8 +61,8 @@ class UssdDTO extends BaseDTO
             'district'=>$this->district,
             'response'=>$this->response,
             'menu_id'=>$this->menu_id,
-            'status'=>$this->status,
             'mno_id'=>$this->mno_id,
+            'status'=>$this->status,
             'error'=>$this->error,
             'id'=>$this->id
          ];

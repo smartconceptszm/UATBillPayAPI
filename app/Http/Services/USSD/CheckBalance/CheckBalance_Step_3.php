@@ -2,9 +2,11 @@
 
 namespace App\Http\Services\USSD\CheckBalance;
 
+use App\Http\Services\USSD\Utility\StepService_CheckPaymentsEnabled;
 use App\Http\Services\USSD\Utility\StepService_AccountNoMenu;
-use App\Http\Services\Payments\PaymentHistoryService;
-use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Web\Clients\BillingCredentialService;
+use App\Http\Services\Web\Payments\PaymentHistoryService;
+use App\Http\Services\Web\Clients\ClientMenuService;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -13,6 +15,8 @@ class CheckBalance_Step_3
 {
 
    public function __construct( 
+      private StepService_CheckPaymentsEnabled $checkPaymentsEnabled,
+      private BillingCredentialService $billingCredentialService,
       private PaymentHistoryService $paymentHistoryService,
       private StepService_AccountNoMenu $accountNoMenu,
       private ClientMenuService $clientMenuService
@@ -26,23 +30,28 @@ class CheckBalance_Step_3
          $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
          
          if($txDTO->subscriberInput == '1'){
-            $selectedMenu = $this->clientMenuService->findOneBy([
-                                 'client_id' => $txDTO->client_id,
-                                 'isPayment' => "YES",
-                                 'isDefault' => "YES",
-                                 'isActive' => "YES",
-                                 'accountType' => $txDTO->accountType
-                              ]);
-            $selectedMenu = \is_null($selectedMenu)?null:(object)$selectedMenu->toArray();
-            if($selectedMenu->handler != 'Parent'){
-               $txDTO->customerJourney = $arrCustomerJourney[0]."*".$selectedMenu->order;
-               $txDTO->subscriberInput = $arrCustomerJourney[2];
-               $txDTO->menu_id = $selectedMenu->id;
-               $txDTO->response = "Enter Amount :\n";
-               $txDTO->status = 'INITIATED';
+            $paymentsProviderStatus = $this->checkPaymentsEnabled->handle($txDTO);
+				if($paymentsProviderStatus['enabled']){
+               $selectedMenu = $this->clientMenuService->findOneBy([
+                                    'client_id' => $txDTO->client_id,
+                                    'isPayment' => "YES",
+                                    'isDefault' => "YES",
+                                    'isActive' => "YES",
+                                    'accountType' => $txDTO->accountType
+                                 ]);
+               $selectedMenu = \is_null($selectedMenu)?null:(object)$selectedMenu->toArray();
+               if($selectedMenu->handler != 'Parent'){
+                  $txDTO->customerJourney = $arrCustomerJourney[0]."*".$selectedMenu->order;
+                  $txDTO->subscriberInput = $arrCustomerJourney[2];
+                  $txDTO->menu_id = $selectedMenu->id;
+                  $txDTO->response = "Enter Amount :\n";
+                  $txDTO->status = 'INITIATED';
+               }else{
+                  $txDTO->response = " Dial *".$arrCustomerJourney[0]."# and choose the menu for payment!";
+                  $txDTO->lastResponse = true;
+               }
             }else{
-               $txDTO->response = " Dial *".$arrCustomerJourney[0]."# and choose to pay!";
-               $txDTO->lastResponse = true;
+               throw new Exception($paymentsProviderStatus['responseText'], 1);
             }
             return $txDTO;
          }
@@ -50,14 +59,15 @@ class CheckBalance_Step_3
          if($txDTO->subscriberInput == '0'){
             $txDTO->customerJourney = $arrCustomerJourney[0];
             $txDTO->subscriberInput = $arrCustomerJourney[1];
-            $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
+            $txDTO->response = $this->accountNoMenu->handle($txDTO);
             $txDTO->status = 'INITIATED';
             return $txDTO;
          }
 
          if($txDTO->subscriberInput == '2'){
+            $billingCredentials = $this->billingCredentialService->getClientCredentials($txDTO->client_id);
             $payments = $this->paymentHistoryService->findAll([
-                              'limit' => \env(\strtoupper($txDTO->urlPrefix).'_PAYMENT_HISTORY'),
+                              'limit' => $billingCredentials['PAYMENT_HISTORY'],
                               'accountNumber' => $txDTO->accountNumber,
                               //'mobileNumber' => $txDTO->mobileNumber,
                               'client_id' => $txDTO->client_id,
@@ -84,8 +94,13 @@ class CheckBalance_Step_3
          $txDTO->errorType= "InvalidInput";
 
       } catch (\Throwable $e) {
-         $txDTO->error = 'At check balance step 3. '.$e->getMessage();
-         $txDTO->errorType = 'SystemError';
+         if($e->getCode() == 1) {
+            $txDTO->error = $e->getMessage();
+            $txDTO->errorType = 'PaymentProviderNotActivated';
+         }else{
+            $txDTO->error = 'At check balance step 3. '.$e->getMessage();
+            $txDTO->errorType = 'SystemError';
+         }
       }
       return $txDTO;
    }

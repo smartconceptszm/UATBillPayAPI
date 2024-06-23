@@ -21,14 +21,14 @@ class PayBill_Step_1
       try {    
          $momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
          if($momoPaymentStatus['enabled']){
-            $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
+            $txDTO->response = $this->accountNoMenu->handle($txDTO);
          }else{
             throw new Exception($momoPaymentStatus['responseText'], 1);
          }
       } catch (\Throwable $e) {
          if($e->getCode() == 1) {
             $txDTO->error = $e->getMessage();
-            $txDTO->errorType = 'MoMoNotActivated';
+            $txDTO->errorType = 'PaymentProviderNotActivated';
          }else{
             $txDTO->error = 'Pay bill sub step 1. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';

@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\External\SMSClients;
 
+use App\Http\Services\Web\Clients\ClientWalletCredentialsService;
 use App\Http\Services\External\SMSClients\ISMSClient;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -9,6 +10,10 @@ use Exception;
 
 class MTNMoMoDeliverySMS implements ISMSClient
 {
+
+   public function __construct(
+      private ClientWalletCredentialsService $clientWalletCredentialsService) 
+   {}
 
    public function channelChargeable():bool
    {
@@ -18,7 +23,7 @@ class MTNMoMoDeliverySMS implements ISMSClient
    public function send(array $mtnParams): bool{
       $response = false;
       try {
-         $configs = $this->getConfigs($mtnParams['urlPrefix']);
+         $configs = $this->getConfigs($mtnParams['wallet_id']);
          $apiToken = $this->getToken($configs);
          $token=$apiToken['access_token'];
          $fullURL = $configs['baseURL']."v1_0/requesttopay/".$mtnParams['transactionId']."/deliverynotification";
@@ -76,18 +81,20 @@ class MTNMoMoDeliverySMS implements ISMSClient
       return $response;
    }
 
-   private function getConfigs(string $urlPrefix):array
+   private function getConfigs(string $wallet_id):array
    {
+      
+      $walletCredentials = $this->clientWalletCredentialsService->getWalletCredentials($wallet_id);
+
       return [
-               'clientUserName'=>\env(\strtoupper($urlPrefix).'_MTN_USERNAME'),
-               'clientPassword'=>\env(\strtoupper($urlPrefix).'_MTN_PASSWORD'),
-               'clientId'=>\env(\strtoupper($urlPrefix).'_MTN_OCPKEY'),
+               'clientId'=>$walletCredentials['MTN_OCPKEY'],
+               'clientUserName'=>$walletCredentials['MTN_USERNAME'],
+               'clientPassword'=>$walletCredentials['MTN_PASSWORD'],
                'targetEnv'=>\env('MTN_TARGET_ENVIRONMENT'),
                'timeout'=>\env('MTN_Http_Timeout'),
                'txCurrency'=>\env('MTN_CURRENCY'),
                'baseURL'=>\env('MTN_BASE_URL')
-
-         ];
+            ];
    }
 
 }

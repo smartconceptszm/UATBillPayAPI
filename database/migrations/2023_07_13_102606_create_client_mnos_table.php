@@ -13,13 +13,9 @@ return new class extends Migration
    {
       Schema::create('client_mnos', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid("client_id")->notNullable();
-         $table->uuid("mno_id")->notNullable();
+         $table->string("client_id",36)->notNullable();
+         $table->string("mno_id",36)->notNullable();
          $table->float('smsCharge',10,2)->default(0);
-         $table->enum('momoActive',['YES','NO'])->default('NO')->notNullable();
-         $table->float('momoCommission',10,2)->default(0);
-         $table->enum('momoMode',['UP','DOWN'])->default('UP')->notNullable();
-         $table->string('modeMessage',155)->nullable();
          $table->timestamps();
       });
    }

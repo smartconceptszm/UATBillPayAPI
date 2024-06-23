@@ -2,9 +2,9 @@
 
 namespace App\Http\Services\USSD\UpdateDetails\ClientCallers;
 
-use App\Http\Services\CRM\CustomerFieldUpdateDetailService;
-use App\Http\Services\MenuConfigs\CustomerFieldService;
-use App\Http\Services\CRM\CustomerFieldUpdateService;
+use App\Http\Services\Web\CRM\CustomerFieldUpdateDetailService;
+use App\Http\Services\Web\MenuConfigs\CustomerFieldService;
+use App\Http\Services\Web\CRM\CustomerFieldUpdateService;
 use Illuminate\Support\Facades\DB;
 use Exception;
 

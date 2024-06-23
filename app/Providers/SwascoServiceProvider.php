@@ -91,41 +91,26 @@ class SwascoServiceProvider extends ServiceProvider
 			});
 		//
 
-		//Billing Clients			
-			// $this->app->singleton('swasco', function () {
-			// 	return $this->app->make(\App\Http\Services\External\BillingClients\Swasco::class,[
-			// 						'swascoReceiptingTimeout'=>\intval(\env('SWASCO_RECEIPTING_TIMEOUT')),
-			// 						'swascoTimeout' => \intval(\env('SWASCO_REMOTE_TIMEOUT')),
-			// 						'baseURL' => \env('SWASCO_BASE_URL')
-			// 					]);
-			// });
-
 			$this->app->singleton('swascoPostPaidEnquiry', function () {
-            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\SwascoEnquiry::class);
+            return $this->app->make(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\SwascoEnquiry::class);
          });
 
-			$this->app->singleton('ReceiptPaymentSwasco', function () {
-				return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPaymentSwasco::class);
+			$this->app->singleton('ReceiptPostPaidSwasco', function () {
+				return $this->app->make(\App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptPostPaidSwasco::class);
 			});
 
 			$this->app->singleton('ReceiptReconnectionSwasco', function () {
-				return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptReconnectionSwasco::class);
+				return $this->app->make(\App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptReconnectionSwasco::class);
 			});
 			
 			$this->app->singleton('ReceiptVacuumTankerSwasco', function () {
-				return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptVacuumTankerSwasco::class);
+				return $this->app->make(\App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptVacuumTankerSwasco::class);
 			});
 		//
 
 		//Complaint Handlers
 			$this->app->singleton('Complaint_swasco', function () {
-					return new \App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Swasco(
-									$this->app->make(\App\Http\Services\External\BillingClients\Swasco::class,[                    
-											'swascoReceiptingTimeout'=>\intval(\env('SWASCO_RECEIPTING_TIMEOUT')),
-											'swascoTimeout' => \intval(\env('SWASCO_REMOTE_TIMEOUT')),
-											'baseURL' => \env('SWASCO_BASE_URL')
-										])
-								);
+					return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Swasco::class);
 			});
 		//
   

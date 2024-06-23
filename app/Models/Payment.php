@@ -12,9 +12,10 @@ class Payment extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'client_id','session_id','mno_id','menu_id', 'mobileNumber','accountNumber','meterNumber','district',
-      'mnoTransactionId','surchargeAmount','paymentAmount','receiptAmount','transactionId','receiptNumber',
-      'tokenNumber','receipt','channel','paymentStatus','status','error','user_id','reference'
+      'client_id','session_id','wallet_id','mno_id','menu_id', 'mobileNumber','walletNumber','accountNumber',
+      'meterNumber','district','ppTransactionId','surchargeAmount','paymentAmount','receiptAmount',
+      'transactionId','receiptNumber','tokenNumber','receipt','channel','paymentStatus','status',
+      'error','user_id','reference'
    ];
 
    protected $casts = [

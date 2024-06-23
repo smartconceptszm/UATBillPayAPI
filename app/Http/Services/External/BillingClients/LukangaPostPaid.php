@@ -3,6 +3,7 @@
 namespace App\Http\Services\External\BillingClients;
 
 use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\Web\Clients\BillingCredentialService;
 use App\Http\Services\Utility\XMLtoArrayParser;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -12,15 +13,18 @@ use Exception;
 class LukangaPostPaid implements IBillingClient
 {
 
-    private XMLtoArrayParser $xmlToArrayParser;
     private $lukangaSoapService;
     private string $soapUserName;
     private string $soapPassword;
     private string $soapToken;
+    private string $cashierNo;
     private string $operator;
+    private $cacheTTL;
 
-    public function __construct()
-    {}
+    public function __construct(
+        private BillingCredentialService $billingCredentialsService,
+        private XMLtoArrayParser $xmlToArrayParser)
+     {}
 
     public function getAccountDetails(array $params): array
     {
@@ -29,7 +33,7 @@ class LukangaPostPaid implements IBillingClient
 
         try {
 
-            $this->setConfigs();
+            $this->setConfigs($params['client_id']);
 
             if(!(\strlen($params['accountNumber'])==10 || \strlen($params['accountNumber'])==11)){
                 throw new Exception("Invalid Lukanga POST-PAID Account Number",1);
@@ -146,8 +150,7 @@ class LukangaPostPaid implements IBillingClient
             ];
 
         try {
-            $this->setConfigs();
-            $cashierNo = \env('LUKANGA_'.'SOAP_CASHIER_NO_'.$postParams['mnoName']);
+            $this->setConfigs($postParams['client_id'],$postParams['providerName']);
             
             $receiptingParams=[ 
                 'functionName' => 'updatepreceipts',
@@ -155,7 +158,7 @@ class LukangaPostPaid implements IBillingClient
                 'rdpassword' => $this->soapPassword,
                 'token' => $this->soapToken ,
                 'receiptDate' => \date('Ymd'),
-                'cashierNo' => $cashierNo,
+                'cashierNo' => $this->cashierNo,
                 'operator' => $this->operator,
                 'account' => $postParams['account'],
                 'reference' => $postParams['reference'],
@@ -184,9 +187,9 @@ class LukangaPostPaid implements IBillingClient
             $cacheValues=[];
             $cacheValues['newBalance']= $postParams['balance']-$postParams['amount'];
 
-            $cacheTTL =intval(\env('LUKANGA_BALANCE_CACHE'))*2;
+            $cacheTTL =intval($this->cacheTTL)*2;
             if(Carbon::now()->dayOfWeek == 5 || Carbon::now()->dayOfWeek == 6){
-                $cacheTTL+=intval(\env('LUKANGA_BALANCE_CACHE'));
+                $cacheTTL+=intval($this->cacheTTL);
             }
             Cache::put('lukanga_balance_'.$postParams['account'],\json_encode($cacheValues), 
                 Carbon::now()->addMinutes($cacheTTL));
@@ -206,33 +209,37 @@ class LukangaPostPaid implements IBillingClient
     public function changeCustomerNumber(
         String $accountNumber,
         String $newMobileNo,
-        String $phoneNumber
-    ): String {
+        String $phoneNumber): String 
+    {
 
         $response = 'LgWSSC'.$accountNumber.$newMobileNo;
 
         return $response;
     }
 
-    private function setConfigs()
+    private function setConfigs(string $client_id,string $providerName=null)
     {
-       
-        $wsdlPath = \env("LUKANGA_BASE_URL").\env("LUKANGA_wsdl_URI");
+        $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
+        $baseURL = $clientCredentials['POSTPAID_BASE_URL'];
+        $wsdlPath = $baseURL.$clientCredentials['wsdl_URI'];
         $soapOptions =  [
                                 'exceptions' => true,
                                 'cache_wsdl' => WSDL_CACHE_BOTH,
                                 'soap_version' => SOAP_1_1,
                                 'trace' => 1,
-                                'connection_timeout' => \env('LUKANGA_SOAP_CONNECTION_TIMEOUT')
+                                'connection_timeout' => $clientCredentials['SOAP_CONNECTION_TIMEOUT']
                             ];
         $this->lukangaSoapService = new \SoapClient($wsdlPath,$soapOptions);
-        $this->lukangaSoapService->__setLocation(\env("LUKANGA_BASE_URL"));
+        $this->lukangaSoapService->__setLocation($baseURL);
 
-        $this->soapUserName = \env('LUKANGA_SOAP_USERNAME');
-        $this->soapPassword = \env('LUKANGA_SOAP_PASSWORD');
-        $this->soapToken = \env('LUKANGA_SOAP_TOKEN');
-        $this->operator = \env('LUKANGA_SOAP_OPERATOR');
-        $this->xmlToArrayParser = new XMLtoArrayParser();
+        if($providerName){
+            $this->cashierNo = $clientCredentials['SOAP_CASHIER_NO_'.$providerName];
+        }
+        $this->soapUserName = $clientCredentials['SOAP_USERNAME'];
+        $this->soapPassword = $clientCredentials['SOAP_PASSWORD'];
+        $this->soapToken = $clientCredentials['SOAP_TOKEN'];
+        $this->operator = $clientCredentials['SOAP_OPERATOR'];
+        $this->cacheTTL = $clientCredentials['BALANCE_CACHE'];
         
     }
 

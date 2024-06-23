@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Services\External\MoMoClients\MTNMoMo;
+use App\Http\Services\External\PaymentsProviderClients\MTNMoMo;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -10,24 +10,14 @@ class MTNMoMoTest extends TestCase
    public function _testRequestPayment()
    {   
 
-      $strClientName="LUKANGA";
       $momoParams=[];
-      $momoParams['transactionId']=(string)Str::uuid();
-      $momoParams['paymentAmount']='5.67';
-      $mobile= \substr('+260761028631',4,9);
-      $momoParams['mobileNumber']= $mobile;
-      $momoParams['configs']=[
-               'baseURL'=>\env('MTN_BASE_URL'),
-               'clientId'=>\env($strClientName.'_MTN_OCPKEY'),
-               'clientUserName'=>\env($strClientName.'_MTN_USERNAME'),
-               'clientPassword'=>\env($strClientName.'_MTN_PASSWORD'),
-               'txCurrency'=>\env('MTN_CURRENCY'),
-               'targetEnv'=>\env('MTN_TARGET_ENVIRONMENT')
-         ];
-
+      $momoParams['transactionId']="";
+      $momoParams['accountNumber']="KCT10482";
+      $momoParams['paymentAmount']='1.10';
+      $momoParams['urlPrefix']='chambeshi';
+      $momoParams['walletNumber']= '260965199175';
       $mtnClient=new MTNMoMo();
-      $response = $mtnClient->requestPayment($momoParams);
-
+      $response = $mtnClient->requestPayment((object)$momoParams);
       $this->assertTrue($response['status']=="SUCCESS");
 
    }
@@ -35,21 +25,12 @@ class MTNMoMoTest extends TestCase
    public function _testConfirmPayment()
    {   
 
-      $strClientName="LUKANGA";
+
       $momoParams=[];
-      $momoParams['transactionId']="dbd36ae6-237b-4f42-8892-54f233492c03";
-      $momoParams['configs']=[
-               'baseURL'=>\env('MTN_BASE_URL'),
-               'clientId'=>\env($strClientName.'_MTN_OCPKEY'),
-               'clientUserName'=>\env($strClientName.'_MTN_USERNAME'),
-               'clientPassword'=>\env($strClientName.'_MTN_PASSWORD'),
-               'txCurrency'=>\env('MTN_CURRENCY'),
-               'targetEnv'=>\env('MTN_TARGET_ENVIRONMENT')
-         ];
-
+      $momoParams['transactionId']="eccab365-3b44-4b51-951c-6a92d2b9ec2a";
+      $momoParams['urlPrefix']='lukanga';
       $mtnClient=new MTNMoMo();
-      $response = $mtnClient->confirmPayment($momoParams);
-
+      $response = $mtnClient->confirmPayment((object)$momoParams);
       $this->assertTrue($response['status']=="SUCCESS");
 
    }

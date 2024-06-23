@@ -21,6 +21,7 @@ return new class extends Migration
          $table->enum('smsPayMode',['POST-PAID','PRE-PAID'])->default('POST-PAID')->notNullable();
          $table->enum('surcharge',['NO','YES'])->default('NO')->notNullable();
          $table->enum('mode',['UP','DOWN'])->default('UP')->notNullable();
+         $table->enum('ussdAggregator',['NO','YES'])->default('NO')->notNullable();
          $table->text('testMSISDN')->nullable();
          $table->enum('status',['ACTIVE','BLOCKED'])->default('ACTIVE')->notNullable();
          $table->timestamps();

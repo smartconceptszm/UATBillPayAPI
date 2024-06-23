@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\PayBusLevy;
 
-use App\Http\Services\MoMo\Utility\StepService_CalculatePaymentAmounts;
+use App\Http\Services\Gateway\Utility\StepService_CalculatePaymentAmounts;
 use App\Http\Services\USSD\Utility\StepService_GetAmount;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
@@ -44,10 +44,10 @@ class PayBusLevy_Step_3
       $txDTO->response= "Pay ZMW ".$txDTO->subscriberInput." as:\n";
       $txDTO->response .= "Bus levy for ".$txDTO->reference.".\n";
       if($txDTO->clientSurcharge == 'YES'){
-         $calculatedAmounts = $this->calculatePaymentAmounts->handle($txDTO);
+         $txDTO = $this->calculatePaymentAmounts->handle($txDTO);
          $txDTO->response .= "\nYou will be surcharged ZMW "
-                     .number_format($calculatedAmounts['paymentAmount'] -
-                                 $calculatedAmounts['receiptAmount'], 2, '.', ',')
+                     .number_format($txDTO->paymentAmount -
+                                       $txDTO->receiptAmount, 2, '.', ',')
                      ." for this transaction\n";
       }
       $txDTO->response .= "\nEnter\n". 

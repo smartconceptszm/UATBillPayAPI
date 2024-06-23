@@ -13,9 +13,9 @@ return new class extends Migration
    {
       Schema::create('complaints', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid('complaint_subtype_id')->notNullable();
-         $table->uuid('client_id')->notNullable();
-         $table->uuid('session_id')->nullable();
+         $table->string('complaint_subtype_id',36)->notNullable();
+         $table->string('client_id',36)->notNullable();
+         $table->string('session_id',36)->nullable();
          $table->string('caseNumber',50)->unique()->nullable();
          $table->string('mobileNumber',12)->notNullable();
          $table->string('accountNumber',20)->notNullable();
@@ -23,8 +23,8 @@ return new class extends Migration
          $table->string('address',255)->nullable();
          $table->string('details')->nullable();
          $table->enum('status',['SUBMITTED','ASSIGNED','CLOSED'])->default('SUBMITTED')->notNullable();
-         $table->uuid('assignedBy')->nullable();
-         $table->string('assignedTo')->nullable();
+         $table->string('assignedBy',36)->nullable();
+         $table->string('assignedTo',36)->nullable();
          $table->string('resolution')->nullable();
          $table->string('comments')->nullable();
          $table->timestamps();

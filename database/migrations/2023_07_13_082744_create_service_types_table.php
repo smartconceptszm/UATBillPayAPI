@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('service_types', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('client_id')->notNullable();
-            $table->uuid('code')->notNullable();
+            $table->string('client_id',36)->notNullable();
+            $table->string('code',36)->notNullable();
             $table->string('name',50)->notNullable();
             $table->unsignedTinyInteger('order')->notNullable();
             $table->enum('onExistingAccount',['YES','NO'])->default('NO')->notNullable();

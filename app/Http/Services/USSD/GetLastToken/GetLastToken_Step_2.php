@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\USSD\GetLastToken;
 
-use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
-use App\Http\Services\Payments\PaymentHistoryService;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
+use App\Http\Services\Web\Payments\PaymentHistoryService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 

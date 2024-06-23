@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\USSD\PayBill;
 
-use App\Http\Services\MoMo\Utility\StepService_CalculatePaymentAmounts;
-use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
+use App\Http\Services\Gateway\Utility\StepService_CalculatePaymentAmounts;
 use App\Http\Services\USSD\Utility\StepService_GetAmount;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
@@ -61,10 +61,10 @@ class PayBill_Step_3
          $txDTO->response .= "Addr: ".$txDTO->customer['address']."\n". 
          "Bal: ".$txDTO->customer['balance']."\n\n";
       }else{
-         $calculatedAmounts = $this->calculatePaymentAmounts->handle($txDTO);
+         $txDTO = $this->calculatePaymentAmounts->handle($txDTO);
          $txDTO->response .= "\nYou will be surcharged ZMW "
-                     .number_format($calculatedAmounts['paymentAmount'] -
-                                 $calculatedAmounts['receiptAmount'], 2, '.', ',')
+                     .number_format($txDTO->paymentAmount -
+                                             $txDTO->receiptAmount, 2, '.', ',')
                      ." for this transaction\n\n";
       }
       $txDTO->response .= "Enter\n". 

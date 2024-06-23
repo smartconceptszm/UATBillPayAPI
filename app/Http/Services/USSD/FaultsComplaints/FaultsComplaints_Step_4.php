@@ -4,8 +4,8 @@ namespace App\Http\Services\USSD\FaultsComplaints;
 
 use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
 use App\Http\Services\USSD\Utility\StepService_AccountNoMenu;
-use App\Http\Services\MenuConfigs\ComplaintSubTypeService;
-use App\Http\Services\MenuConfigs\ComplaintTypeService;
+use App\Http\Services\Web\MenuConfigs\ComplaintSubTypeService;
+use App\Http\Services\Web\MenuConfigs\ComplaintTypeService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -35,7 +35,7 @@ class FaultsComplaints_Step_4
                                  ]); 
          $theSubType = \is_null($theComplaintType)?null: (object)$theSubType->toArray();
          $txDTO->subscriberInput = $this->validateInput->handle($theSubType->detailType,$txDTO->subscriberInput);
-         $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
+         $txDTO->response = $this->accountNoMenu->handle($txDTO);
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = 'InvalidInput';

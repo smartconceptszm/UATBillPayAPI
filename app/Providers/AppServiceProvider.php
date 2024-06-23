@@ -176,10 +176,10 @@ class AppServiceProvider extends ServiceProvider
 
       //Billing Clients
          $this->app->singleton('MockEnquiry', function () {
-            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\MockEnquiry::class);
+            return $this->app->make(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\MockEnquiry::class);
          }); 
          $this->app->singleton('ReceiptingMock', function () {
-            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPaymentMock::class);
+            return $this->app->make(\App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptPaymentMock::class);
          });
 			$this->app->singleton('BillingMock', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\BillingMock::class);
@@ -188,7 +188,7 @@ class AppServiceProvider extends ServiceProvider
 
 		//Receipting Payment
 			$this->app->singleton('MockReceipting', function () {
-            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPaymentMock::class);
+            return $this->app->make(\App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptPaymentMock::class);
 			});            
 		//
 
@@ -217,23 +217,26 @@ class AppServiceProvider extends ServiceProvider
          $this->app->singleton('SystemError', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\SystemError::class);
          });
-         $this->app->singleton('MoMoNotActivated', function () {
-            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\MoMoNotActivated::class);
+         $this->app->singleton('PaymentProviderNotActivated', function () {
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\PaymentProviderNotActivated::class);
          });
       //
 
-      //MoMo Clients
+      //Payments Provider Clients
 			$this->app->singleton('ZAMTEL', function () {
-            return $this->app->make(\App\Http\Services\External\MoMoClients\ZamtelKwacha::class);
+            return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\ZamtelKwacha::class);
 				});
 			$this->app->singleton('AIRTEL', function () {
-               return $this->app->make(\App\Http\Services\External\MoMoClients\AirtelMoney::class);
+               return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\AirtelMoney::class);
 				});
 			$this->app->singleton('MTN', function () {
-               return $this->app->make(\App\Http\Services\External\MoMoClients\MTNMoMo::class);
+               return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\MTNMoMo::class);
 				});
-         $this->app->singleton('MoMoMock', function () {
-               return $this->app->make(\App\Http\Services\External\MoMoClients\MoMoMock::class);
+         $this->app->singleton('DPO', function () {
+               return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\DPO::class);
+				});
+         $this->app->singleton('MockWallet', function () {
+               return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\MockWallet::class);
 				});
       //
 

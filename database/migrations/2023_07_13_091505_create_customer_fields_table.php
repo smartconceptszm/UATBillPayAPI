@@ -13,7 +13,7 @@ return new class extends Migration
     {
       Schema::create('customer_fields', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid('client_id')->notNullable();
+         $table->string('client_id',36)->notNullable();
          $table->string('name',50)->notNullable();
          $table->enum('type',['MOBILE','GENERAL'])->default('GENERAL')->notNullable();
          $table->unsignedTinyInteger('order')->notNullable();

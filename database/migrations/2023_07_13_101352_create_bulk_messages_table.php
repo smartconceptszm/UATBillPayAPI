@@ -13,8 +13,8 @@ return new class extends Migration
    {
       Schema::create('bulk_messages', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid("client_id")->notNullable();
-         $table->uuid("user_id")->notNullable();
+         $table->string("client_id",36)->notNullable();
+         $table->string("user_id",36)->notNullable();
          $table->json('mobileNumbers')->nullable();
          $table->string('message')->nullable();
          $table->enum('type',['BULK','BULKCUSTOM'])->default('BULK')->notNullable();

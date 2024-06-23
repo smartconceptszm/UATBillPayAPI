@@ -13,7 +13,7 @@ return new class extends Migration
     {
       Schema::create('complaint_sub_types', function (Blueprint $table) {
         $table->uuid('id')->primary();
-        $table->uuid('complaint_type_id')->notNullable();
+        $table->string('complaint_type_id',36)->notNullable();
         $table->string('code',3)->notNullable();
         $table->string('name',50)->notNullable();
         $table->unsignedTinyInteger('order')->notNullable();

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\USSD;
 
-use App\Http\Services\Clients\MnoService;
+use App\Http\Services\Web\Clients\MnoService;
 use App\Http\Services\USSD\USSDService;
 use App\Http\Controllers\Controller;
 use App\Http\DTOs\UssdDTO;
@@ -12,9 +12,9 @@ class USSDController extends Controller
 {
 
 	public function __construct(
-		protected USSDService $theService,
+		protected USSDService $ussdService,
 		protected MnoService $mnoService, 
-		protected UssdDTO $theDTO)
+		protected UssdDTO $ussdDTO)
 	{}
 
 	protected function getUrlPrefix(Request $request):string
@@ -24,21 +24,21 @@ class USSDController extends Controller
 		return $clientUrlPrefix;
 	}
 
-	protected function getMnoId(string $mnoName):string
+	protected function getMno(string $mnoName):object
 	{
 
 		$mno = $this->mnoService->findOneBy(['name'=>$mnoName]);               
-		return $mno->id;
+		return $mno;
 
 	}
 
 	protected function responder(Request $request)
 	{
 		//For Terminate Middleware
-		$request->merge(['ussdParams' =>$this->theDTO->toArray()]);
+		$request->merge(['ussdParams' =>$this->ussdDTO->toArray()]);
 		//Respond
-		$theHeaders = $this->prepHeaders($this->theDTO);
-		return response($this->theDTO->response,200)->withHeaders($theHeaders);
+		$theHeaders = $this->prepHeaders($this->ussdDTO);
+		return response($this->ussdDTO->response,200)->withHeaders($theHeaders);
 	}
 
 	protected function prepHeaders(UssdDTO $txDTO): array

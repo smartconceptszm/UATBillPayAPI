@@ -2,9 +2,10 @@
 
 namespace App\Listeners;
 
+use App\Http\Services\Web\Clients\BillingCredentialService;
 use App\Http\Services\Utility\PsrMessageToStringConvertor;
 use Illuminate\Http\Client\Events\ResponseReceived;
-use App\Http\Services\Clients\ClientService;
+use App\Http\Services\Web\Clients\ClientService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +20,9 @@ class HttpCallErrorsLogger
     *
     * @return void
     */
-   public function __construct(private PsrMessageToStringConvertor $messageConvertor, 
+   public function __construct(
+      private BillingCredentialService $billingCredentialService,
+      private PsrMessageToStringConvertor $messageConvertor, 
       private ClientService $clientService)
    {}
 
@@ -39,12 +42,16 @@ class HttpCallErrorsLogger
          $logString="\n\n*******************************\n\n";
 
          $clients = $this->clientService->findAll(['status' => 'ACTIVE']);
-
          foreach ( $clients as $client) {
-            if(\strpos($event->request->url(),\env(\strtoupper($client->urlPrefix).'_BASE_URL'))){
-               $logString.=\env(\strtoupper($client->urlPrefix).'_BASE_URL');
-               $errorType=\env(\strtoupper($client->urlPrefix).'_BASE_URL');
-               break;
+            $billingCredentials = $this->billingCredentialService->findAll(['client_id'=>$client->id]);
+            foreach ($billingCredentials as $key => $value) {
+               if(\substr($key, -7) == 'BASE_URL'){
+                  if(\strpos($event->request->url(),$value)){
+                     $logString.=$value;
+                     $errorType=$value;
+                     break;
+                  }
+               }
             }
          }
 
@@ -79,6 +86,7 @@ class HttpCallErrorsLogger
                   $adminMobileNumbers = \explode("*",\env('APP_ADMIN_MSISDN'));
                   $arrSMSes=[];
                   foreach ($adminMobileNumbers as $key => $mobileNumber) {
+                        $arrSMSes[$key]['urlPrefix']="scl";
                         $arrSMSes[$key]['shortName']="SCL";
                         $arrSMSes[$key]['type']="NOTIFICATION";
                         $arrSMSes[$key]['mobileNumber']=$mobileNumber;
@@ -86,7 +94,7 @@ class HttpCallErrorsLogger
                                                    ." have failed over 5 times in the last ".
                                                    env('HTTP_ERROR_CACHE')." minutes!";
                   }
-                  Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes));
+                  Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes),'','low');
                //
                Cache::put($errorType.'_ErrorCount', $httpErrorCount, Carbon::now()->addMinutes((int)env('HTTP_ERROR_CACHE')));
             } 

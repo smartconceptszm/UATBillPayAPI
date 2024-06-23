@@ -14,8 +14,7 @@ class ClientMno extends Model
    protected $table = "client_mnos";
 
    protected $fillable=[
-      'client_id','mno_id','momoActive','momoCommission', 'smsCharge',
-      'modeMessage','momoMode'
+      'client_id','mno_id','smsCharge'
    ];
 
    

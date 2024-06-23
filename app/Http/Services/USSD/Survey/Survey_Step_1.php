@@ -17,7 +17,7 @@ class Survey_Step_1
    {
       
       try {
-         $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
+         $txDTO->response = $this->accountNoMenu->handle($txDTO);
       } catch (\Throwable $e) {
          $txDTO->error = 'Survey step 1. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';

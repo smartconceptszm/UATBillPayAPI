@@ -4,8 +4,8 @@ namespace App\Http\Services\USSD\ServiceApplications;
 
 use App\Http\Services\USSD\ServiceApplications\ClientCallers\IServiceApplicationClient;
 use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
-use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
-use App\Http\Services\MenuConfigs\ServiceTypeService;
+use App\Http\Services\Web\MenuConfigs\ServiceTypeDetailService;
+use App\Http\Services\Web\MenuConfigs\ServiceTypeService;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
@@ -98,7 +98,7 @@ class ServiceApplications_Step_4
             ]
          ];
       Queue::later(Carbon::now()->addSeconds(3), 
-                     new SendSMSesJob($arrSMSes));
+                     new SendSMSesJob($arrSMSes),'','low');
    }
 
 }

@@ -1,0 +1,177 @@
+<?php
+
+namespace App\Http\Services\Web\Payments;
+
+use App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient;
+use App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS;
+use App\Http\Services\Gateway\Utility\Step_UpdateTransaction;
+use App\Http\Services\Web\Clients\BillingCredentialService;
+use App\Http\Services\Web\Payments\PaymentToReviewService;
+use App\Http\Services\Gateway\Utility\Step_LogStatus;
+use App\Http\Services\Web\Clients\ClientMenuService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\App;
+use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Carbon;
+use App\Http\DTOs\MoMoDTO;
+use Exception;
+
+class PaymentReceiptService
+{
+
+   public function __construct(
+      private BillingCredentialService $billingCredentialService,
+      private PaymentToReviewService $paymentToReviewService, 
+      private ClientMenuService $clientMenuService,
+      private MoMoDTO $paymentDTO)
+   {}
+
+   public function create(array $data):object|null{
+      
+      try {
+
+         $thePayment = $this->paymentToReviewService->findById($data['id']);
+         $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
+
+         if($paymentDTO->accountType == "POST-PAID"){
+            if($paymentDTO->paymentStatus != 'PAID | NOT RECEIPTED' ){
+               throw new Exception("Unexpected payment status - ".$paymentDTO->paymentStatus);
+            }
+            if($paymentDTO->receiptNumber != ''){
+               throw new Exception("Payment appears receipted! Receipt number ".$paymentDTO->receiptNumber);
+            }
+         }else{
+            if(!($paymentDTO->paymentStatus == 'PAID | NO TOKEN' || $paymentDTO->paymentStatus == 'PAID | NOT RECEIPTED')){
+               throw new Exception("Unexpected payment status - ".$paymentDTO->paymentStatus);
+            }
+            if($paymentDTO->tokenNumber != '' && $paymentDTO->paymentStatus == 'PAID | NO TOKEN'){
+               throw new Exception("Token was already issued! Token number ".$paymentDTO->tokenNumber);
+            }
+            if($paymentDTO->receiptNumber != '' &&  $paymentDTO->paymentStatus == 'PAID | NOT RECEIPTED'){
+               throw new Exception("Payment appears receipted! Receipt number ".$paymentDTO->receiptNumber);
+            }
+         }
+
+         if($paymentDTO->ppTransactionId == ''){
+            throw new Exception("MNO transaction Id is null. Payment not yet confirmed!");
+         }  
+
+         //Bind Receipting Handler
+            $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
+            $theMenu = \is_null($theMenu)?null: (object)$theMenu->toArray();
+            $receiptingHandler = $theMenu->receiptingHandler;
+            if (\env('USE_RECEIPTING_MOCK') == "YES"){
+               $receiptingHandler = "MockReceipting";
+            }
+            App::bind(\App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
+         //
+
+         //Bind the SMS Clients
+            $billingCredentials = $this->billingCredentialService->getClientCredentials($paymentDTO->client_id);
+            $smsClientKey = '';
+            if(!$smsClientKey && (\env('SMS_SEND_USE_MOCK') == "YES")){
+               $smsClientKey = 'MockSMSDelivery';
+            }
+            if(!$smsClientKey && ($billingCredentials['HAS_OWNSMS'] == 'YES')){
+               $smsClientKey = \strtoupper($paymentDTO->urlPrefix).'SMS';
+            }
+            if(!$smsClientKey){
+               $smsClientKey = \env('SMPP_CHANNEL');
+            }
+            App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClientKey);
+         //
+         
+         if($user = Auth::user()){
+            $paymentDTO->user_id = $user->id;
+         }
+
+         $paymentDTO->error = "";
+         $paymentDTO =  App::make(Pipeline::class)
+                        ->send($paymentDTO)
+                        ->through(
+                           [
+                              Step_PostPaymentToClient::class,
+                              Step_SendReceiptViaSMS::class,
+                              Step_UpdateTransaction::class,  
+                              Step_LogStatus::class 
+                           ]
+                        )
+                        ->thenReturn();
+                        
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+      return $paymentDTO;
+      
+   }
+
+   public function update(array $data, string $id):object|null{
+      try {
+         $thePayment = $this->paymentToReviewService->findById($id);
+         $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
+
+         if($paymentDTO->accountType == "POST-PAID"){
+            if($paymentDTO->receiptNumber != ''){
+               throw new Exception("Payment already receipted! Receipt number ".$paymentDTO->receiptNumber);
+            }
+            $paymentDTO->receiptNumber = $data['receiptNumber'];
+            $paymentDTO->paymentStatus = "RECEIPTED";
+   
+            //consider a format receipt public method for each billing client
+               $paymentDTO->receipt = "Payment successful\n" .
+                     "Rcpt No.: " . $paymentDTO->receiptNumber . "\n" .
+                     "Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n".
+                     "Acc: " . $paymentDTO->accountNumber . "\n";
+               $paymentDTO->receipt .= "Date: " . Carbon::now()->format('d-M-Y') . "\n";
+            //
+         }else{
+            if($paymentDTO->tokenNumber != ''){
+               throw new Exception("Token already issued! Token number ".$paymentDTO->tokenNumber);
+            }
+            $paymentDTO->tokenNumber = $data['receiptNumber'];
+            $paymentDTO->paymentStatus = "RECEIPTED";
+   
+            //consider a format receipt public method for each billing client
+               $paymentDTO->receipt = "Payment successful\n" .
+                     "Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
+                     "Meter No: " . $paymentDTO->meterNumber . "\n" .
+                     "Acc: " . $paymentDTO->accountNumber . "\n".
+                     "Token: ". $paymentDTO->tokenNumber . "\n".
+                     "Date: " . Carbon::now()->format('d-M-Y') . "\n";
+            //
+         }
+
+         //Bind the SMS Clients
+            $billingCredentials = $this->billingCredentialService->getClientCredentials($paymentDTO->client_id);
+            $smsClientKey = '';
+            if(!$smsClientKey && (\env('SMS_SEND_USE_MOCK') == "YES")){
+               $smsClientKey = 'MockSMSDelivery';
+            }
+            if(!$smsClientKey && ($billingCredentials['HAS_OWNSMS'] == 'YES')){
+               $smsClientKey = \strtoupper($paymentDTO->urlPrefix).'SMS';
+            }
+            if(!$smsClientKey){
+               $smsClientKey = \env('SMPP_CHANNEL');
+            }
+            App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClientKey);
+         //
+
+         $paymentDTO = App::make(Pipeline::class)
+                     ->send($paymentDTO)
+                     ->through(
+                        [
+                           Step_SendReceiptViaSMS::class,
+                           Step_UpdateTransaction::class,  
+                           Step_LogStatus::class 
+                        ]
+                     )
+                     ->thenReturn();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+      return $paymentDTO;
+      
+   }
+
+
+}

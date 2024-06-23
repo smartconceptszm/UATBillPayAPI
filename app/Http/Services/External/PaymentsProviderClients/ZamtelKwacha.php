@@ -1,0 +1,102 @@
+<?php
+
+namespace App\Http\Services\External\PaymentsProviderClients;
+
+use App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient;
+use App\Http\Services\Web\Clients\ClientWalletCredentialsService;
+use Illuminate\Support\Facades\Http;
+use Exception;
+
+class ZamtelKwacha implements IPaymentsProviderClient
+{
+
+   public function __construct(
+      private ClientWalletCredentialsService $clientWalletCredentialsService) 
+   {}
+
+   public function requestPayment(object $dto): object
+   {
+      return (object)[
+            'transactionId' => substr($dto->walletNumber,2,10).date('YmdHis'),
+            'status' => 'SUBMITTED',
+            'error' => '',
+         ];
+   }
+   
+   public function confirmPayment(object $dto): object
+   {
+
+      $mainResponse=[
+            'status'=>"PAYMENT FAILED",
+            'ppTransactionId'=>'',
+            'error'=>''
+         ];
+
+      try {
+         $configs = $this->getConfigs($dto->wallet_id);
+         //ThirdPartyID=&Password=&Amount=1&Msisdn=260956099652&Shortcode=000088&ConversationId=00001
+         $zamtelURI="ThirdPartyID=".trim($configs['clientId']);
+         $zamtelURI.="&Password=".trim($configs['clientSecret']);
+         $zamtelURI.="&Amount=".$dto->paymentAmount;
+         $zamtelURI.="&Msisdn=".trim($dto->walletNumber);
+         $zamtelURI.="&Shortcode=".trim($configs['shortCode']);
+         $zamtelURI.="&ConversationId=".trim($dto->transactionId);
+         $fullURL = $configs['baseURL'].$zamtelURI;
+         $apiResponse = Http::timeout($configs['timeout'])->withHeaders([
+                                 'Content-Type' => 'application/json',
+                                 "Accept" => "*/*",
+                              ])->get($fullURL);
+         //{"Conversation id":"00001","message":"Success","status":"0","TransactionId":"000000239171","Transaction id":"000000239171"}
+         if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
+            $apiResponse=$apiResponse->json();
+            if($apiResponse['status']==='0'){
+               $mainResponse['status'] = "PAID | NOT RECEIPTED";
+               $mainResponse['ppTransactionId']=$apiResponse['TransactionId'];
+            }else{
+               $errorMessage='';
+               switch ($apiResponse['status']) {
+                     case 'E8003':
+                        $errorMessage='Wrong PIN.';
+                        break;
+                     case '2006':
+                        $errorMessage='Balance insufficient.';
+                        break;
+                     case '2004':
+                        $errorMessage='Amount invalid.';
+                        break;
+                     case 'E8036':
+                        $errorMessage='Customer not registered';
+                        break;
+                     default:
+                        $errorMessage='System Time Out';
+                        break;
+               }
+               throw new Exception($errorMessage,1);
+            }
+         }else{
+            throw new Exception($apiResponse->status(), 2);
+         }
+      } catch (\Throwable $e){
+         if($e->getCode()==1){
+            $mainResponse['error']=$e->getMessage();
+         }else{
+            $mainResponse['error']="Zamtel Kwacha unavailable";
+         }
+      }
+      return (object)$mainResponse;
+
+   }
+
+   private function getConfigs(string $wallet_id):array
+   {
+      $walletCredentials = $this->clientWalletCredentialsService->getWalletCredentials($wallet_id);
+      return [
+            'clientId'=>$walletCredentials['ZAMTEL_THIRDPARTYID'],
+            'clientSecret'=>$walletCredentials['ZAMTEL_PASSWORD'],
+            'shortCode'=>$walletCredentials['ZAMTEL_SHORTCODE'],
+            'timeout'=>\env('ZAMTEL_Http_Timeout'),
+            'baseURL'=>\env('ZAMTEL_BASE_URL')
+         ];
+   }
+    
+}

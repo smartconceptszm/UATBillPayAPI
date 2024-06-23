@@ -14,7 +14,7 @@ return new class extends Migration
 		
 		Schema::create('survey_question_list_items', function (Blueprint $table) {
 			$table->uuid('id')->primary();
-			$table->uuid('survey_question_list_type_id')->notNullable();
+			$table->string('survey_question_list_type_id',36)->notNullable();
 			$table->string('value',30)->notNullable();
 			$table->unsignedTinyInteger('order')->notNullable();
 			$table->unique(['survey_question_list_type_id', 'order'],'list_type_order');

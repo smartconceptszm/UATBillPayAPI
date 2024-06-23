@@ -5,8 +5,8 @@ namespace App\Http\Services\External\BillingClients;
 use \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService;
 use App\Http\Services\External\BillingClients\Chambeshi\Chambeshi;
 use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\Web\Clients\BillingCredentialService;
 use Illuminate\Support\Facades\Http;
-
 use Exception;
 
 class ChambeshiPrePaid extends Chambeshi implements IBillingClient
@@ -18,22 +18,16 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
    private string $baseURL;
 
    public function __construct(
-         protected ChambeshiPaymentService $chambeshiPaymentService
-      )
-   {
-
-      $this->passwordVend = \env('CHAMBESHI_PREPAID_PASSWORD_VEND');
-      $this->username = \env('CHAMBESHI_PREPAID_USERNAME');
-      $this->password = \env('CHAMBESHI_PREPAID_PASSWORD');
-      $this->baseURL = \env('CHAMBESHI_PREPAID_BASE_URL');
-   }
+         protected ChambeshiPaymentService $chambeshiPaymentService,
+         private BillingCredentialService $billingCredentialsService)
+   {}
 
    public function getAccountDetails(array $params): array
    {
 
       $response = [];
-
       try {
+         $this->setConfigs($params['client_id']);
          $fullURL = $this->baseURL."pos_preview";
          $postData = [
                         "user_name"=> $this->username,
@@ -88,7 +82,6 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
                break;
          }
       }
-
       return $response;
    }
 
@@ -102,7 +95,7 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
       ];
 
       try {
-         
+         $this->setConfigs($postParams['client_id']);
          $postParams["user_name"] = $this->username;
          $postParams["password"] = $this->password;
          $postParams["password_vend"] = $this->passwordVend;
@@ -133,5 +126,15 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
  
    }
 
+   private function setConfigs(string $client_id)
+   {
+
+      $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
+      $this->passwordVend = $clientCredentials['PREPAID_PASSWORD_VEND'];
+      $this->username = $clientCredentials['PREPAID_USERNAME'];
+      $this->password = $clientCredentials['PREPAID_PASSWORD'];
+      $this->baseURL = $clientCredentials['PREPAID_BASE_URL'];
+       
+   }
 
 }

@@ -3,9 +3,9 @@
 namespace App\Http\Services\USSD\UpdateDetails;
 
 use App\Http\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient;
-use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
-use App\Http\Services\MenuConfigs\CustomerFieldService;
+use App\Http\Services\Web\MenuConfigs\CustomerFieldService;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
@@ -93,7 +93,7 @@ class UpdateDetails_Step_4
                ]
          ];
       Queue::later(Carbon::now()->addSeconds(3), 
-                     new SendSMSesJob($arrSMSes));
+                     new SendSMSesJob($arrSMSes),'','low');
    }
 
 }

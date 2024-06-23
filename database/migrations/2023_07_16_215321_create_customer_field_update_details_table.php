@@ -13,8 +13,8 @@ return new class extends Migration
    {
       Schema::create('customer_field_update_details', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid('customer_field_update_id')->notNullable();
-         $table->uuid('customer_field_id')->notNullable();
+         $table->string('customer_field_update_id',36)->notNullable();
+         $table->string('customer_field_id',36)->notNullable();
          $table->string('value')->nullable();
          $table->timestamps();
       });

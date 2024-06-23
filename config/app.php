@@ -159,11 +159,13 @@ return [
         /*
          * Package Service Providers...
          */
-            App\Providers\NkanaServiceProvider::class,
-            App\Providers\SwascoServiceProvider::class,
+            App\Providers\ChambeshiServiceProvider::class,
+            App\Providers\KafubuServiceProvider::class,
             App\Providers\LukangaServiceProvider::class,
             App\Providers\MazabukaServiceProvider::class,
-            App\Providers\ChambeshiServiceProvider::class,
+            App\Providers\NkanaServiceProvider::class,
+            App\Providers\SwascoServiceProvider::class,
+
         /*
          * Application Service Providers...
          */

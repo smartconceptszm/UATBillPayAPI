@@ -13,16 +13,17 @@ return new class extends Migration
    {
       Schema::create('payments', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid('client_id')->notNullable();
-         $table->uuid('session_id')->notNullable();
-         $table->uuid('mno_id')->notNullable();
-         $table->uuid('menu_id')->notNullable();
+         $table->string('client_id',36)->notNullable();
+         $table->string('session_id',36)->notNullable();
+         $table->string('wallet_id',36)->notNullable();
+         $table->string('menu_id',36)->notNullable();
          $table->string('mobileNumber',12)->notNullable();
+         $table->string('walletNumber',12)->nullable();
          $table->string('accountNumber',50)->nullable();
          $table->string('meterNumber',50)->nullable();
          $table->string('district',50)->nullable();
          $table->string('reference',160)->nullable();
-         $table->string('mnoTransactionId',30)->nullable();            
+         $table->string('ppTransactionId',30)->nullable();            
          $table->float('surchargeAmount',10,2)->default(0);
          $table->float('paymentAmount',10,2)->default(0);
          $table->float('receiptAmount',10,2)->default(0);
@@ -39,7 +40,7 @@ return new class extends Migration
          $table->enum('status',['INITIATED','COMPLETED','FAILED','SUCCESSFUL','REVIEWED',
                               'MANUALLY REVIEWED'])->default('INITIATED')->notNullable();
          $table->text('error')->nullable();
-         $table->uuid('user_id')->nullable();
+         $table->string('user_id',36)->nullable();
          $table->timestamps();
          $table->index(['accountNumber']);
          $table->index(['client_id']);

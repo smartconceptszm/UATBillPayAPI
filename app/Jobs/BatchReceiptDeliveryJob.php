@@ -2,13 +2,15 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\Payments\PaymentWithReceiptToDeliverService;
+use App\Http\Services\Web\Payments\PaymentWithReceiptToDeliverService;
 use App\Jobs\Middleware\SMSClientBindJobMiddleware;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\BaseJob;
 
 class BatchReceiptDeliveryJob extends BaseJob
 {
+
+   public $timeout = 600;
 
    /**
     * Create a new job instance.
@@ -25,10 +27,10 @@ class BatchReceiptDeliveryJob extends BaseJob
     *
     * @return array<int, object>
     */
-    public function middleware(): array
-    {
-       return [new SMSClientBindJobMiddleware()];
-    }
+   public function middleware(): array
+   {
+      return [new SMSClientBindJobMiddleware()];
+   }
 
    /**
     * Execute the job.
@@ -38,8 +40,8 @@ class BatchReceiptDeliveryJob extends BaseJob
    public function handle(PaymentWithReceiptToDeliverService $paymentWithReceiptToDeliverService) {
 
       try {
-         foreach ($this->transactions as $transaction) {
-               $paymentWithReceiptToDeliverService->update($transaction['id']);
+         foreach ($this->transactions as $value) {
+            $paymentWithReceiptToDeliverService->update($value->id);
          }
       } catch (\Throwable $e) {
          Log::error("Handling batch receipt delivery job. DETAILS: " . $e->getMessage());

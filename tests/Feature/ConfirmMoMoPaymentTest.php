@@ -1,24 +1,24 @@
 <?php
 
-use App\Http\Services\MoMo\ConfirmMoMoPayment;
+use App\Http\Services\Gateway\ConfirmPayment;
 use Illuminate\Support\Facades\App;
 use App\Http\DTOs\MoMoDTO;
 use Tests\TestCase;
 
-class ConfirmMoMoPaymentTest extends TestCase
+class ConfirmPaymentTest extends TestCase
 {
 
    public function _testConfirmPayment()
    { 
 
-      $momoService = new ConfirmMoMoPayment();
+      $momoService = new ConfirmPayment();
       App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,'nkanaPrePaid');
-      App::bind(\App\Http\Services\External\MoMoClients\IMoMoClient::class,'MTN');
+      App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,'MTN');
       App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,'MockSMSDelivery');
-      App::bind(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\IReceiptPayment::class,'ReceiptPrePaidNkana');
+      App::bind(\App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment::class,'ReceiptPrePaidNkana');
 
-      $momoDTO = new MoMoDTO();
-      $momoDTO = $momoDTO->fromArray(
+      $paymentDTO = new MoMoDTO();
+      $paymentDTO = $paymentDTO->fromArray(
          [
                "customerJourney" => "2012*2*0120012000812*98.00*1",
                "mobileNumber" => "260761028631",
@@ -46,7 +46,7 @@ class ConfirmMoMoPaymentTest extends TestCase
                "id" => '9b85f2d2-70a5-4fc1-967c-135220956db6'
          ]);
       
-      $response = $momoService->handle($momoDTO);
+      $response = $momoService->handle($paymentDTO);
       $this->assertTrue($response->paymentStatus == 'RECEIPT DELIVERED');
       
    }

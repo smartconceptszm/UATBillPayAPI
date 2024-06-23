@@ -3,8 +3,8 @@
 namespace App\Http\Services\USSD\ServiceApplications;
 
 use App\Http\Services\USSD\Utility\StepService_AccountNoMenu;
-use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
-use App\Http\Services\MenuConfigs\ServiceTypeService;
+use App\Http\Services\Web\MenuConfigs\ServiceTypeDetailService;
+use App\Http\Services\Web\MenuConfigs\ServiceTypeService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -33,7 +33,7 @@ class ServiceApplications_Step_2
             } 
             $theServiceType = \is_null($theServiceType)?null: (object)$theServiceType->toArray();
             if($theServiceType->onExistingAccount == 'YES'){
-               $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
+               $txDTO->response = $this->accountNoMenu->handle($txDTO);
             }else{
                $serviceAppQuestions = $this->serviceTypeDetails->findAll([
                      'service_type_id'=>$theServiceType->id

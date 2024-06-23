@@ -26,7 +26,7 @@ class PayMarketLevy_Step_1
       } catch (\Throwable $e) {
          if($e->getCode() == 1) {
             $txDTO->error = $e->getMessage();
-            $txDTO->errorType = 'MoMoNotActivated';
+            $txDTO->errorType = 'PaymentProviderNotActivated';
          }else{
             $txDTO->error = 'Pay market levy step 1. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';

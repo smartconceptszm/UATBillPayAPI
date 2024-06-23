@@ -3,9 +3,9 @@
 namespace App\Http\Services\USSD\Survey;
 
 use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
-use App\Http\Services\MenuConfigs\SurveyQuestionListItemService;
+use App\Http\Services\Web\MenuConfigs\SurveyQuestionListItemService;
 use App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient;
-use App\Http\Services\MenuConfigs\SurveyQuestionService;
+use App\Http\Services\Web\MenuConfigs\SurveyQuestionService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;

@@ -3,7 +3,6 @@
 namespace App\Http\Services\USSD\BuyUnits;
 
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class BuyUnits_Step_2
 {

@@ -2,9 +2,9 @@
 
 namespace App\Http\Services\USSD\Survey;
 
-use App\Http\Services\MenuConfigs\SurveyQuestionListItemService;
-use App\Http\Services\MenuConfigs\SurveyQuestionService;
-use App\Http\Services\MenuConfigs\SurveyService;
+use App\Http\Services\Web\MenuConfigs\SurveyQuestionListItemService;
+use App\Http\Services\Web\MenuConfigs\SurveyQuestionService;
+use App\Http\Services\Web\MenuConfigs\SurveyService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 

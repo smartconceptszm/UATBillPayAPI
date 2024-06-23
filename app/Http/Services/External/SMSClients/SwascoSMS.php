@@ -2,11 +2,16 @@
 
 namespace App\Http\Services\External\SMSClients;
 
+use App\Http\Services\Web\Clients\BillingCredentialService;
 use App\Http\Services\External\SMSClients\ISMSClient;
 use Illuminate\Support\Facades\Http;
 
 class SwascoSMS implements ISMSClient
 {
+
+    public function __construct(
+        private BillingCredentialService $billingCredentialService) 
+    {}
 
     public function channelChargeable():bool
     {
@@ -18,11 +23,11 @@ class SwascoSMS implements ISMSClient
 
         $smsSent = false;
         try {
-
-            $sms_SENDER_ID = \env('SWASCO_SMS_SENDER_ID');
-            $sms_baseURL = \env('SWASCO_SMS_BASE_URL');
-            $sms_APIKEY = \env('SWASCO_SMS_APIKEY');
-            $swascoTimeout = \env('SWASCO_REMOTE_TIMEOUT');
+            $billingCredentials = $this->billingCredentialService->getClientCredentials($smsParams['client_id']);
+            $sms_SENDER_ID = $billingCredentials['SMS_SENDER_ID'];
+            $sms_baseURL = $billingCredentials['SMS_BASE_URL'];
+            $sms_APIKEY = $billingCredentials['SMS_APIKEY'];
+            $swascoTimeout = $billingCredentials['REMOTE_TIMEOUT'];
             
             if(\substr($smsParams['mobileNumber'],0,1)== "+"){
                 $smsParams['mobileNumber'] = \substr($smsParams['mobileNumber'],1,\strlen($smsParams['mobileNumber'])-1);

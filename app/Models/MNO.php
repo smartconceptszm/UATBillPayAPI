@@ -14,8 +14,7 @@ class MNO extends Model
    protected $table = 'mnos';
 
    protected $fillable=[
-      'name','colour','contactName', 'contactEmail','contactNo',
-      'logo'
+      'name','payments_provider_id','colour','contactName', 'contactEmail','contactNo','logo'
    ];
 
    protected $casts = [

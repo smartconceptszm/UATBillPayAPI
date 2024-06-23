@@ -29,15 +29,17 @@ class USSDAirtelController extends USSDController
             }
             $airtelParams['urlPrefix']=$this->getUrlPrefix($request);
             $airtelParams['mnoName'] = 'AIRTEL';
-            $airtelParams['mno_id'] = $this->getMnoId($airtelParams['mnoName']); 
-            $this->theDTO = $this->theDTO->fromArray($airtelParams);
+            $mno = $this->getMno($airtelParams['mnoName']);
+            $airtelParams['payments_provider_id'] = $mno->payments_provider_id;
+            $airtelParams['mno_id'] = $mno->id; 
+            $this->ussdDTO = $this->ussdDTO->fromArray($airtelParams);
          //Process the Request
-         $this->theDTO = $this->theService->handle($this->theDTO);
+         $this->ussdDTO = $this->ussdService->handle($this->ussdDTO);
 
       } catch (\Throwable $e) {
-         $this->theDTO->error = 'Error: At Airtel controller level. '.$e->getMessage();
-         $this->theDTO->response = \env('ERROR_MESSAGE');
-         $this->theDTO->lastResponse = true;
+         $this->ussdDTO->error = 'Error: At Airtel controller level. '.$e->getMessage();
+         $this->ussdDTO->response = \env('ERROR_MESSAGE');
+         $this->ussdDTO->lastResponse = true;
       }
       return $this->responder($request);
 

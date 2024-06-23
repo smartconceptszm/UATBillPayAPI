@@ -6,8 +6,6 @@ use \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService
 use App\Http\Services\External\BillingClients\Chambeshi\ChambeshiAccountService;
 use App\Http\Services\External\BillingClients\Chambeshi\Chambeshi;
 use App\Http\Services\External\BillingClients\IBillingClient;
-use Illuminate\Support\Facades\Log;
-
 use Exception;
 
 class ChambeshiPostPaid extends Chambeshi implements IBillingClient

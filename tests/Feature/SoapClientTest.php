@@ -1,6 +1,9 @@
 <?php
 
-use App\Http\Services\External\BillingClients\Lukanga;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\KafubuPostPaidEnquiry;
+use App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptPostPaidKafubu;
+use App\Http\Services\External\BillingClients\KafubuPostPaid;
+use App\Http\DTOs\UssdDTO;
 use Tests\TestCase;
 
 class SoapClientTest extends TestCase
@@ -13,10 +16,12 @@ class SoapClientTest extends TestCase
     public function _testGetAccount()
     {   
 
-        $LgWSSCClient = new Lukanga();
-        $response=$LgWSSCClient->getAccountDetails('5500000241');
+        $txDTO = new UssdDTO();
+        $txDTO->accountNumber='1053780';
+        $billingClient = new KafubuPostPaidEnquiry(new KafubuPostPaid());
+        $response=$billingClient->getAccountDetails($txDTO);
         
-        $this->assertTrue($response['accountNumber'] == "3303000003");
+        $this->assertTrue($response['accountNumber'] == "1053780");
 
     }
 
@@ -24,21 +29,19 @@ class SoapClientTest extends TestCase
     public function _testPostPayment()
     {   
 
-        $LgWSSCClient = new Lukanga();
+        $kafubuBilling = new KafubuPostPaid();
 
-        $response=$LgWSSCClient->postPayment(
+        $response=$kafubuBilling->postPayment(
             [
-                'receiptDate' => "20221208",
-                'accountNumber' => '1100001033',
-                'reference' => '11000010332212082',
-                'incomeCode' => 'zz',
-                'paytype' => 'C',
-                'recTime' => '',
-                'amount' => '5.55',
+                'account' => '1053780',
+                'balance' => '0',
+                'reference' => '10537802406121404',
+                'amount' => '1.11',
+                'mnoName' => 'MTN'
             ]
         );
         
-        $this->assertTrue($response['accountNumber'] == "5501000058");
+        $this->assertTrue($response['accountNumber'] == "1053780");
 
     }
 

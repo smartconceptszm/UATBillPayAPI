@@ -17,7 +17,7 @@ class ReconnectionFeesSwasco_Step_2
    {
 
       try {
-         $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
+         $txDTO->response = $this->accountNoMenu->handle($txDTO);
       } catch (\Throwable $e) {
          if($e->getCode()==1){
             $txDTO->errorType = "InvalidInput";

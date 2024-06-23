@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\Survey;
 
-use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;

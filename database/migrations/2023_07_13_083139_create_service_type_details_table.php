@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('service_type_details', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('service_type_id')->notNullable();
+            $table->string('service_type_id',36)->notNullable();
             $table->string('name',50)->unique()->notNullable();
             $table->enum('type',['MOBILE','NATIONALID','GENERAL'])->default('GENERAL')->notNullable();
             $table->string('prompt',150)->nullable();

@@ -18,13 +18,13 @@ class GetLastToken_Step_1
 
       try {    
 
-         $txDTO->response = $this->accountNoMenu->handle($txDTO->urlPrefix,$txDTO->accountType);
+         $txDTO->response = $this->accountNoMenu->handle($txDTO);
          
       } catch (\Throwable $e) {
 
          if($e->getCode() == 1) {
             $txDTO->error = $e->getMessage();
-            $txDTO->errorType = 'MoMoNotActivated';
+            $txDTO->errorType = 'PaymentProviderNotActivated';
          }else{
             $txDTO->error = 'Buy units sub step 1. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';

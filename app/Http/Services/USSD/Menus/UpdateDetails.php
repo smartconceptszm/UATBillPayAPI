@@ -18,7 +18,7 @@ class UpdateDetails implements IUSSDMenu
             if (\count(\explode("*", $txDTO->customerJourney)) == 2) {
                $enquiryHandler = \env('USE_BILLING_MOCK')=="YES"? 
                            'MockEnquiry':$txDTO->enquiryHandler;
-               App::bind(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$enquiryHandler);
+               App::bind(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$enquiryHandler);
             }
             if (\count(\explode("*", $txDTO->customerJourney)) == 4) {
                App::bind(\App\Http\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient::class,$txDTO->urlPrefix);

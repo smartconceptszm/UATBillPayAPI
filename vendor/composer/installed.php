@@ -3,7 +3,7 @@
         'name' => 'smartconcepts/efectivobillpay',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'dc95111b272bdb3e1a23e76081e1f9b7d0287624',
+        'reference' => '05359725e1d9fb9915cf648d00001a3daab05f27',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -965,7 +965,7 @@
         'smartconcepts/efectivobillpay' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'dc95111b272bdb3e1a23e76081e1f9b7d0287624',
+            'reference' => '05359725e1d9fb9915cf648d00001a3daab05f27',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

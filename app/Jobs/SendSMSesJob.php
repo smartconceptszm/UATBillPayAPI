@@ -3,8 +3,7 @@
 namespace App\Jobs;
 
 use App\Jobs\Middleware\SMSClientBindJobMiddleware;
-use App\Http\Services\Clients\ClientService;
-use App\Http\Services\SMS\SMSService;
+use App\Http\Services\Web\SMS\SMSService;
 use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\SMSTxDTO;
 use App\Jobs\BaseJob;
@@ -38,19 +37,18 @@ class SendSMSesJob extends BaseJob
     *
     * @return void
     */
-   public function handle(SMSService $smsService, SMSTxDTO $smsTxDTO, ClientService $clientService )
+   public function handle(SMSService $smsService, SMSTxDTO $smsTxDTO)
    {
 
       foreach ($this->arrSMSes as $key=>$smsData) {
          $smsService->send($smsTxDTO->fromArray($smsData));
          if($smsData['type'] != "RECEIPT"){
-            $client = $clientService->findById($smsData['client_id']);
-            Log::info('('.$client->urlPrefix.') '.
-                           'SMS Message Dispatched: Phone: '.
-                              $smsData['mobileNumber'].' - :Type '.
-                              $smsData['type'].' - Message: '.
-                              $smsData['message']
-                           );
+            Log::info('('.$smsData['urlPrefix'].') '.
+                        'SMS Message Dispatched: Phone: '.
+                        $smsData['mobileNumber'].' - :Type '.
+                        $smsData['type'].' - Message: '.
+                        $smsData['message']
+                     );
          }
       }
 

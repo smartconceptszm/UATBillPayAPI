@@ -13,7 +13,7 @@ return new class extends Migration
    {
       Schema::create('topups', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid("client_id")->notNullable();
+         $table->string("client_id",36)->notNullable();
          $table->float('amount',10,2)->default(0);
          $table->enum('approval_status',['PENDING','APPROVED','REJECTED'])->default('PENDING')->notNullable();
          $table->unsignedBigInteger('initiatedBy')->notNullable();

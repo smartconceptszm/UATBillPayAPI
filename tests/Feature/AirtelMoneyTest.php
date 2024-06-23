@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Services\External\MoMoClients\AirtelMoney;
+use App\Http\Services\External\PaymentsProviderClients\AirtelMoney;
 use Tests\TestCase;
 
 class AirtelMoneyTest extends TestCase
@@ -13,10 +13,11 @@ class AirtelMoneyTest extends TestCase
             'transactionId'=>'230703195608LIV0011567GDY',
             'accountNumber'=>'LIV0011567',
             'paymentAmount'=>73,
-            'mobileNumber'=>'260971644467',
+            'mobileNumber'=>'260977787659',
             'urlPrefix'=>'swasco'
         ];
         $airtelClient=new AirtelMoney();
+
         $response = $airtelClient->requestPayment($momoParams);
         $this->assertTrue($response->status=="SUBMITTED");
 

@@ -17,9 +17,9 @@ return new class extends Migration
          $table->string('mobileNumber',12)->notNullable();
          $table->string('accountNumber',20)->nullable();
          $table->string('message',160)->notNullable();
-         $table->uuid("mno_id")->notNullable();
-         $table->uuid("client_id")->notNullable();
-         $table->uuid('bulk_id')->nullable();
+         $table->string("mno_id",36)->notNullable();
+         $table->string("client_id",36)->notNullable();
+         $table->string('bulk_id',36)->nullable();
          $table->string('transaction_id',50)->nullable();
          $table->float('amount',10,2)->default(0);
          $table->enum('type',['RECEIPT','SINGLE','BULK','BULKCUSTOM','NOTIFICATION'])->default('RECEIPT')->notNullable();

@@ -13,7 +13,7 @@ class BillingClientAdaptorTest extends TestCase
     public function _testGetPrePaidAccountDetails()
     {   
 
-        $billingClientAdaptor = new App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\NkanaPrePaidEnquiry(
+        $billingClientAdaptor = new App\Http\Services\External\Adaptors\BillingEnquiryHandlers\NkanaPrePaidEnquiry(
             new \App\Http\Services\External\BillingClients\NkanaPrePaid(new \App\Http\Services\External\BillingClients\Nkana\PurchaseEncryptor())
         );
 
@@ -32,7 +32,7 @@ class BillingClientAdaptorTest extends TestCase
     public function _testGetPostPaidAccountDetails()
     {   
 
-        $billingClientAdaptor = new App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\ChambeshiPostPaidEnquiry(
+        $billingClientAdaptor = new App\Http\Services\External\Adaptors\BillingEnquiryHandlers\ChambeshiPostPaidEnquiry(
             new App\Http\Services\External\BillingClients\ChambeshiPostPaid(
                 new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService(new \App\Models\ChambeshiPayment()), 
                 new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiAccountService(new \App\Models\ChambeshiAccount())

@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\Menus;
 
 use App\Http\Services\USSD\Utility\StepService_CheckPaymentsEnabled;
-use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Web\Clients\ClientMenuService;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -41,7 +41,7 @@ class ParentMenu implements IUSSDMenu
 			} catch (\Throwable $e) {
 				if($e->getCode() == 1) {
 					$txDTO->error = $e->getMessage();
-					$txDTO->errorType = 'MoMoNotActivated';
+					$txDTO->errorType = 'PaymentProviderNotActivated';
 				}else{
 					$txDTO->error = 'At handle parent menu. '.$e->getMessage();
 					$txDTO->errorType = 'SystemError';

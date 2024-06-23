@@ -14,12 +14,13 @@ return new class extends Migration
 
       Schema::create('sessions', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid('client_id')->notNullable();
-         $table->uuid('mno_id')->notNullable();
-         $table->uuid('menu_id')->notNullable();
+         $table->string('client_id',36)->notNullable();
+         $table->string('mno_id',36)->notNullable();
+         $table->string('menu_id',36)->notNullable();
          $table->string('sessionId',50)->notNullable();
          $table->text('customerJourney')->nullable();
          $table->string('mobileNumber',12)->notNullable();
+         $table->string('walletNumber',12)->nullable();
          $table->string('accountNumber',50)->nullable();
          $table->string('meterNumber',50)->nullable();
          $table->string('district',50)->nullable();

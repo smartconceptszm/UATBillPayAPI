@@ -137,12 +137,12 @@
 
 //Import Payment into NEW 'Receipt' Table
       INSERT INTO `receipts` (`client_id`, `session_id`, `mno_id`,
-                  `mobileNumber`,`accountNo`,`district`,`mnoTransactionId`,
+                  `mobileNumber`,`accountNo`,`district`,`ppTransactionId`,
                   `surchargeAmount`,`paymentAmount`,`receiptAmount`,
                   `transactionId`,`receiptNo`,`receipt`,`channel`,
                   `paymentStatus`,`status`,`error`)                           
       SELECT `client_id`,`id` AS `session_id`, `mno_id`,`mobileNumber`,`accountNo`,
-            `district`,`mnoTransactionId`,`surchargeAmount`,`paymentAmount`,
+            `district`,`ppTransactionId`,`surchargeAmount`,`paymentAmount`,
             `receiptAmount`,`transactionId`,`receiptNo`,`receipt`,
             'USSD' as `channel`,`paymentStatus`,`status`,`errorMessage` as `error`
       FROM `sessions`

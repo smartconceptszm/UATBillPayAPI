@@ -20,22 +20,22 @@ class LukangaServiceProvider extends ServiceProvider
 
       //Billing Clients - POST PAID
          $this->app->singleton('lukangaPostPaidEnquiry', function () {
-            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\LukangaPostPaidEnquiry::class);
+            return $this->app->make(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\LukangaPostPaidEnquiry::class);
          });
 
          $this->app->singleton('ReceiptPostPaidLukanga', function () {
-            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPostPaidLukanga::class);
+            return $this->app->make(\App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptPostPaidLukanga::class);
          });
 
       //
 
       //Billing Clients - PRE PAID
          $this->app->singleton('lukangaPrePaidEnquiry', function () {
-            return $this->app->make(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\LukangaPrePaidEnquiry::class);
+            return $this->app->make(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\LukangaPrePaidEnquiry::class);
          });
 
          $this->app->singleton('ReceiptPrePaidLukanga', function () {
-            return $this->app->make(\App\Http\Services\ExternalAdaptors\ReceiptingHandlers\ReceiptPrePaidLukanga::class);
+            return $this->app->make(\App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptPrePaidLukanga::class);
          });
          
       //

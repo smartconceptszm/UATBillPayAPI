@@ -4,11 +4,10 @@ namespace App\Http\Services\USSD;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 
-use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Web\Clients\ClientMenuService;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use Illuminate\Support\Facades\Cache;
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class Step_HandleMenu extends EfectivoPipelineContract
 {

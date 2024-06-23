@@ -13,7 +13,7 @@ return new class extends Migration
    {
       Schema::create('survey_entries', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid('survey_id')->notNullable();
+         $table->string('survey_id',36)->notNullable();
          $table->string('caseNumber',50)->unique()->nullable();
          $table->string('mobileNumber',12)->notNullable();
          $table->string('accountNumber',12)->nullable();

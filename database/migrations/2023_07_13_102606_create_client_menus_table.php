@@ -13,8 +13,8 @@ return new class extends Migration
    {
       Schema::create('client_menus', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid("client_id")->notNullable();
-         $table->uuid("parent_id")->notNullable()->default(0);
+         $table->string("client_id",36)->notNullable();
+         $table->string("parent_id",36)->notNullable()->default(0);
          $table->integer("order")->notNullable();
          $table->string('prompt',50)->notNullable();
          $table->string('handler',50)->notNullable();

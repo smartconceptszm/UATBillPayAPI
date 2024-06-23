@@ -16,7 +16,7 @@ return new class extends Migration
 
       Schema::create('users', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->uuid('client_id')->notNullable();
+         $table->string('client_id',36)->notNullable();
          $table->string('username',25)->unique()->notNullable();
          $table->string('password',250)->notNullable();
          $table->string('fullnames',100)->notNullable();

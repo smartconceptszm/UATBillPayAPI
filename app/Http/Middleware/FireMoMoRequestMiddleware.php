@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
-use App\Jobs\InitiateMoMoPaymentJob;
+use App\Jobs\InitiatePaymentJob;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\MoMoDTO;
 
@@ -13,11 +13,9 @@ use Closure;
 class FireMoMoRequestMiddleware
 {
 
-    private $momoDTO;
-    public function __construct(MoMoDTO $momoDTO)
-    {
-        $this->momoDTO = $momoDTO;
-    }
+    public function __construct(
+        private MoMoDTO $momoDTO)
+    {}
     
     /**
      * Handle an incoming request.
@@ -38,12 +36,12 @@ class FireMoMoRequestMiddleware
         if ($ussdParams) {
             if($ussdParams['fireMoMoRequest']){
 
-                $momoDTO =  $this->momoDTO->fromUssdData($ussdParams);
-                $momoDTO->customer = \json_decode(Cache::get($momoDTO->urlPrefix.
-                                $momoDTO->accountNumber,\json_encode([])), true);
+                $paymentDTO =  $this->momoDTO->fromSessionData($ussdParams);
+                $paymentDTO->customer = \json_decode(Cache::get($paymentDTO->urlPrefix.
+                                $paymentDTO->accountNumber,\json_encode([])), true);
                                 
-                Queue::later(Carbon::now()->addSeconds((int)\env($momoDTO->mnoName.
-                                    '_SUBMIT_PAYMENT')), new InitiateMoMoPaymentJob($momoDTO));
+                Queue::later(Carbon::now()->addSeconds((int)\env($paymentDTO->walletHandler.
+                                    '_SUBMIT_PAYMENT')), new InitiatePaymentJob($paymentDTO),'','high');
             }
         }
         

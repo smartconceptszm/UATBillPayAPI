@@ -3,9 +3,9 @@
 namespace App\Http\Services\USSD\ServiceApplications\ClientCallers;
 
 use App\Http\Services\USSD\ServiceApplications\ClientCallers\IServiceApplicationClient;
-use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
-use App\Http\Services\CRM\ServiceApplicationDetailService;
-use App\Http\Services\CRM\ServiceApplicationService;
+use App\Http\Services\Web\MenuConfigs\ServiceTypeDetailService;
+use App\Http\Services\Web\CRM\ServiceApplicationDetailService;
+use App\Http\Services\Web\CRM\ServiceApplicationService;
 use Illuminate\Support\Facades\DB;
 use Exception;
 

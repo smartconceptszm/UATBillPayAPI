@@ -21,14 +21,16 @@ class USSDMTNController extends USSDController
                 $mtnParams['urlPrefix'] = $this->getUrlPrefix($request);
                 $mtnParams['clean'] = $request->input('clean','');
                 $mtnParams['mnoName'] = 'MTN';
-                $mtnParams['mno_id'] = $this->getMnoId($mtnParams['mnoName']); 
-                $this->theDTO=$this->theDTO->fromArray($mtnParams);
+                $mno = $this->getMno($mtnParams['mnoName']);
+                $mtnParams['payments_provider_id'] = $mno->payments_provider_id;
+                $mtnParams['mno_id'] = $mno->id; 
+                $this->ussdDTO=$this->ussdDTO->fromArray($mtnParams);
             //Process the Request
-            $this->theDTO = $this->theService->handle($this->theDTO);
+            $this->ussdDTO = $this->ussdService->handle($this->ussdDTO);
         } catch (\Throwable $e) {
-            $this->theDTO->error = 'Error: At MTN controller level. '.$e->getMessage();
-            $this->theDTO->response = \env('ERROR_MESSAGE');
-            $this->theDTO->lastResponse = true;
+            $this->ussdDTO->error = 'Error: At MTN controller level. '.$e->getMessage();
+            $this->ussdDTO->response = \env('ERROR_MESSAGE');
+            $this->ussdDTO->lastResponse = true;
         }
         return $this->responder($request);
 

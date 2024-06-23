@@ -3,6 +3,7 @@
 namespace App\Http\Services\External\BillingClients;
 
 use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\Web\Clients\BillingCredentialService;
 use Illuminate\Support\Facades\Http;
 
 use Exception;
@@ -121,12 +122,9 @@ class Swasco implements IBillingClient
    private int $swascoTimeout;
    private string $baseURL;
 
-   public function __construct()
-   {
-      $this->swascoReceiptingTimeout = \intval(\env('SWASCO_RECEIPTING_TIMEOUT'));
-      $this->swascoTimeout = \intval(\env('SWASCO_REMOTE_TIMEOUT'));
-      $this->baseURL = \env('SWASCO_BASE_URL');
-   }
+   public function __construct(
+      private BillingCredentialService $billingCredentialsService) 
+   {}
 
    public function getAccountDetails(array $params): array
    {
@@ -134,7 +132,7 @@ class Swasco implements IBillingClient
       $response = [];
 
       try {
-
+         $this->getConfigs($params['client_id']);
          if(!(\strlen($params['accountNumber'])==10)){
             throw new Exception("Invalid SWASCo account number",1);
          }
@@ -182,6 +180,7 @@ class Swasco implements IBillingClient
          ];
 
       try {
+         $this->getConfigs($postParams['client_id']);
          switch ($postParams['paymentType']) {
                case '1':
                   $fullURL = $this->baseURL . "navision/payments/bills";
@@ -239,6 +238,7 @@ class Swasco implements IBillingClient
    public function postComplaint(array $postParams): String {
       $response ="";
       try {
+         $this->getConfigs($postParams['client_id']);
          $fullURL = $this->baseURL . "navision/complaints";
          $apiResponse = Http::timeout($this->swascoTimeout)
                ->withHeaders([
@@ -275,7 +275,7 @@ class Swasco implements IBillingClient
 
 
          //$response = 'CASE2929292929';
-
+         $this->getConfigs($postParams['client_id']);
          $fullURL = $this->baseURL . "navision/mobilenos";
          $apiResponse = Http::timeout($this->swascoTimeout)
                ->withHeaders([
@@ -316,5 +316,14 @@ class Swasco implements IBillingClient
       
    }
 
+   private function getConfigs(string $client_id)
+   {
+
+      $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
+      $this->swascoReceiptingTimeout = $clientCredentials['RECEIPTING_TIMEOUT'];
+      $this->swascoTimeout = $clientCredentials['REMOTE_TIMEOUT'];
+      $this->baseURL = $clientCredentials['POSTPAID_BASE_URL'];
+
+   }
 
 }

@@ -3,8 +3,8 @@
 namespace App\Http\Services\External\BillingClients;
 
 use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\Web\Clients\BillingCredentialService;
 use Illuminate\Support\Facades\Http;
-
 use Exception;
 
 class NkanaPostPaid implements IBillingClient
@@ -13,11 +13,8 @@ class NkanaPostPaid implements IBillingClient
    private string $AuthenticationCode;
    private string $baseURL;
 
-   public function __construct()
-   {
-      $this->AuthenticationCode = \env('NKANA_AuthenticationCode');
-      $this->baseURL = \env('NKANA_POSTPAID_BASE_URL');
-   }
+   public function __construct(private BillingCredentialService $billingCredentialsService)
+   {}
 
    public function getAccountDetails(array $params): array
    {
@@ -26,6 +23,7 @@ class NkanaPostPaid implements IBillingClient
 
       try {
 
+         $this->getConfigs($params['client_id']);
          $fullURL = $this->baseURL."nwsc-api/ClientDetails/Customer_Details";
          $apiResponse = Http::withHeaders([
                               'Accept' => '/',
@@ -72,7 +70,7 @@ class NkanaPostPaid implements IBillingClient
                ];
 
       try {
-
+         $this->getConfigs($postParams['client_id']);
          $fullURL = $this->baseURL."nwsc-api/Payment/ClientPayment";
          $apiResponse = Http::withHeaders([
                                  'Accept' => '/',
@@ -103,6 +101,13 @@ class NkanaPostPaid implements IBillingClient
          }
       }
       return $response;
+   }
+
+   private function getConfigs(string $client_id)
+   {
+      $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
+      $this->AuthenticationCode = $clientCredentials['AuthenticationCode'];
+      $this->baseURL = $clientCredentials['POSTPAID_BASE_URL'];
    }
 
 

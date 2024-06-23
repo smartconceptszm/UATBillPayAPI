@@ -4,9 +4,9 @@ namespace App\Http\Services\USSD;
 
 use App\Http\Services\USSD\Utility\StepService_CheckPaymentsEnabled;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
-use App\Http\Services\USSD\ShortcutCustomerService;
-use App\Http\Services\Clients\ClientMenuService;
-use App\Http\Services\USSD\SessionService;
+use App\Http\Services\Web\Sessions\ShortcutCustomerService;
+use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Web\Sessions\SessionService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\App;
 use App\Http\DTOs\BaseDTO;
@@ -58,7 +58,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
       
    }
 
-   private function newSession(BaseDTO $txDTO)
+   private function newSession(BaseDTO $txDTO):BaseDTO
    {
 
       $selectedMenu = $this->clientMenuService->findOneBy([
@@ -73,7 +73,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
       $txDTO->handler = $selectedMenu->handler; 
       $txDTO->menu_id = $selectedMenu->id; 
       if(!$txDTO->subscriberInput){
-         $txDTO->subscriberInput = \env(\strtoupper($txDTO->urlPrefix).'_USSD_SHORT_CODE');
+         $txDTO->subscriberInput = $txDTO->shortCode;
       }
       $ussdSession = $this->sessionService->create($txDTO->toSessionData());
       $txDTO->id = $ussdSession->id;
@@ -89,18 +89,18 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
 
       $arrInputs = explode("*", $txDTO->subscriberInput);
       $customer = $this->shortcutCustomerService->findOneBy([
-                     'mobileNumber' => $txDTO->mobileNumber,
-                     'client_id' => $txDTO->client_id
-                  ]);
+                                                         'mobileNumber' => $txDTO->mobileNumber,
+                                                         'client_id' => $txDTO->client_id
+                                                      ]);
       $customer = \is_null($customer)? null : $customer->getAttributes();     
       if ($customer) { 
          $customer = \is_null($customer)?null:(object)$customer->toArray();
          $selectedMenu = $this->clientMenuService->findOneBy([
-                              'order' => $arrInputs[1],
-                              'client_id' => $txDTO->client_id,
-                              'parent_id' => $homeMenu->id,
-                              'isActive' => "YES"
-                           ]);
+                                                      'order' => $arrInputs[1],
+                                                      'client_id' => $txDTO->client_id,
+                                                      'parent_id' => $homeMenu->id,
+                                                      'isActive' => "YES"
+                                                   ]);
          if($selectedMenu){
             $selectedMenu = \is_null($selectedMenu)?null: (object)$selectedMenu->toArray();
             $txDTO->enquiryHandler = $selectedMenu->enquiryHandler; 
@@ -140,15 +140,20 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
        
    }
 
-   private function existingSession(BaseDTO $txDTO)
+   private function existingSession(BaseDTO $txDTO):BaseDTO
    {
 
       $ussdSession = $this->sessionService->findOneBy([   
                                  'mobileNumber'=>$txDTO->mobileNumber,
-                                 'client_id'=>$txDTO->client_id,
                                  'sessionId'=>$txDTO->sessionId,
                               ]);
-      $ussdSession = \is_null($ussdSession)?null: (object)$ussdSession->toArray();
+      if(!$ussdSession){
+         $subscriberInput = \explode("*",$txDTO->subscriberInput);
+         $txDTO->subscriberInput = $subscriberInput[0];
+         $txDTO->isNewRequest = '1';
+         return $this->newSession($txDTO);
+      }
+      $ussdSession =(object)$ussdSession->toArray();
       $txDTO->customerJourney = $ussdSession->customerJourney;
       $txDTO->accountNumber = $ussdSession->accountNumber;
       $txDTO->paymentAmount = $ussdSession->paymentAmount;
@@ -241,7 +246,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
             $txDTO->menu_id = $selectedMenu->id;
          }
       }else{
-         $txDTO->subscriberInput = \env(\strtoupper($txDTO->urlPrefix).'_USSD_SHORT_CODE');
+         $txDTO->subscriberInput = $txDTO->shortCode;
          $selectedMenu = $this->clientMenuService->findOneBy([
                                  'client_id' => $txDTO->client_id,
                                  'parent_id' => 0

@@ -20,7 +20,7 @@ class ServiceApplications implements IUSSDMenu
             if (\count(\explode("*", $txDTO->customerJourney)) == 3) {
                $enquiryHandler = \env('USE_BILLING_MOCK')=="YES"? 
                            'MockEnquiry':$txDTO->enquiryHandler;
-               App::bind(\App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$enquiryHandler);
+               App::bind(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$enquiryHandler);
             }
             if (\count(\explode("*", $txDTO->customerJourney)) == 5) {
                App::bind(\App\Http\Services\USSD\ServiceApplications\ClientCallers\IServiceApplicationClient::class,$txDTO->urlPrefix);

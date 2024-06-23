@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\SwascoUpdateMobile;
 
-use App\Http\Services\ExternalAdaptors\BillingEnquiryHandlers\IEnquiryHandler;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 

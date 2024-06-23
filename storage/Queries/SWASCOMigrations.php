@@ -111,7 +111,7 @@ FROM `swascoussd`.`sessions` AS `S1`
    INSERT INTO `billpay_production`.`payments`(
       `id`,`client_id`,`session_id`,`mno_id`,`menu_id`,
       `mobileNumber`,`accountNumber`,`district`,
-      `mnoTransactionId`,`paymentAmount`,
+      `ppTransactionId`,`paymentAmount`,
       `receiptAmount`,`transactionId`,
       `receiptNumber`,`receipt`,`channel`,
       `paymentStatus`,`status`,`error`,
@@ -119,7 +119,7 @@ FROM `swascoussd`.`sessions` AS `S1`
    )
    SELECT
    uuid(),`S1`.`client_id`,`S1`.`id` AS `session_id`,`S1`.`mno_id`,`S1`.`menu_id`,
-   `S1`.`mobileNumber`,`S1`.`accountNumber`,`S1`.`district`,`S2`.`mnoTransactionId`,
+   `S1`.`mobileNumber`,`S1`.`accountNumber`,`S1`.`district`,`S2`.`ppTransactionId`,
    `S1`.`paymentAmount`, `S1`.`paymentAmount` AS `receiptAmount`, `S2`.`transactionId`, 
    `S2`.`swascoReceiptNo` AS `receiptNumber`,`S2`.`customerReceipt` AS `receipt`,
    'USSD' AS `channel`,`S2`.`paymentStatus`, `S1`.`status`,`S1`.`error`,

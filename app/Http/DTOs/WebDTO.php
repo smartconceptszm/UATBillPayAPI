@@ -12,18 +12,22 @@ namespace App\Http\DTOs;
 class WebDTO extends BaseDTO
 {
    
+   public $payments_provider_id;
    public $subscriberInput;
    public $clientSurcharge;
    public $enquiryHandler;
    public $accountNumber;
    public $paymentAmount;
+   public $walletHandler;
    public $mobileNumber;
+   public $walletNumber;
    public $meterNumber;
    public $testMSISDN;
    public $created_at;
    public $updated_at;
    public $urlPrefix;
    public $sessionId;
+   public $wallet_id;
    public $client_id;
    public $reference;
    public $isPayment;
@@ -35,11 +39,16 @@ class WebDTO extends BaseDTO
    public $status = 'INITIATED';
    public $error;
 
+   public $cardHolderName;
+   public $cardExpiry;
+   public $cardCVV;
+
    public function toSessionData():array{
       return [
             'accountNumber'=>$this->accountNumber,
             'paymentAmount'=>$this->paymentAmount,
             'mobileNumber'=>$this->mobileNumber,
+            'walletNumber'=>$this->walletNumber,
             'meterNumber'=>$this->meterNumber,
             'sessionId'=>$this->sessionId,
             'client_id'=>$this->client_id,

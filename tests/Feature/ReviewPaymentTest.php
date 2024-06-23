@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Services\Payments\PaymentFailedService;
+use App\Http\Services\Web\Payments\PaymentFailedService;
 use Tests\TestCase;
 
 class ReviewPaymentTest extends TestCase
@@ -11,9 +11,9 @@ class ReviewPaymentTest extends TestCase
    { 
 
       $paymentFailedService = new PaymentFailedService(
-         new \App\Http\Services\Payments\PaymentToReviewService(),
-         new \App\Http\Services\Clients\ClientMenuService(New \App\Models\ClientMenu()),
-         New  \App\Http\DTOs\MoMoDTO()
+         new \App\Http\Services\Web\Payments\PaymentToReviewService(),
+         new \App\Http\Services\Web\Clients\ClientMenuService(New \App\Models\ClientMenu()),
+         New  \App\Http\DTOs\GatewayDTO()
       );
 
       
