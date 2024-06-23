@@ -30,7 +30,7 @@ class MainDashboardService
                                  ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                                  ->join('payments_providers as pps','cw.payments_provider_id','=','pps.id')
                                  ->select('p.id','p.receiptAmount',
-                                                   'pp.shortName as paymentsProvider','pp.colour')
+                                                   'pps.shortName as paymentsProvider','pps.colour')
                                  ->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo])
                                  ->where('p.client_id', '=', $activeClient->id)
                                  ->whereIn('p.paymentStatus', 
