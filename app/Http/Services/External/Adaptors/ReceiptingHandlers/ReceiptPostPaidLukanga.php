@@ -29,6 +29,7 @@ class ReceiptPostPaidLukanga implements IReceiptPayment
 		$receiptingParams=[ 
 				'account' => $paymentDTO->accountNumber,
 				'reference' => $paymentDTO->ppTransactionId,
+				'providerName'=>$paymentDTO->walletHandler,
 				'amount' => $paymentDTO->receiptAmount,
 				'mnoName'=>$paymentDTO->walletHandler,
 				'client_id' => $paymentDTO->client_id,
