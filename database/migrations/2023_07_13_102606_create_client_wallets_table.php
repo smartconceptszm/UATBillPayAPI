@@ -15,6 +15,7 @@ return new class extends Migration
          $table->uuid('id')->primary();
          $table->string("client_id",36)->notNullable();
          $table->string("payments_provider_id",36)->notNullable();
+         $table->string("handler",36)->notNullable();
          $table->enum('paymentMethod',['MOMO','CARD'])->default('MOMO')->notNullable();
          $table->enum('paymentsActive',['YES','NO'])->default('NO')->notNullable();
          $table->float('paymentsCommission',10,2)->default(0);

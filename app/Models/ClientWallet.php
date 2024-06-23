@@ -14,7 +14,7 @@ class ClientWallet extends Model
    protected $table = "client_wallets";
 
    protected $fillable=[
-      'client_id','payments_provider_id','paymentMethod','paymentsActive','paymentsCommission',
+      'client_id','payments_provider_id','handler','paymentMethod','paymentsActive','paymentsCommission',
       'modeMessage','paymentsMode'
    ];
    
