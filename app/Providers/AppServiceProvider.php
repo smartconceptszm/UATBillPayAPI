@@ -233,7 +233,7 @@ class AppServiceProvider extends ServiceProvider
                return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\MTNMoMo::class);
 				});
          $this->app->singleton('DPO', function () {
-               return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\DPO::class);
+               return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\DPOPay::class);
 				});
          $this->app->singleton('MockWallet', function () {
                return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\MockWallet::class);

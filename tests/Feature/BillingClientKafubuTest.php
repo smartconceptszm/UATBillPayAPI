@@ -17,7 +17,11 @@ class BillingClientKafubuTest extends TestCase
 
         $txDTO = new UssdDTO();
         $txDTO->accountNumber='1053780';
-        $billingClient = new KafubuPostPaidEnquiry(new KafubuPostPaid());
+        $txDTO->client_id ='cba1c60c-240f-11ef-b077-8db5e354f7db';
+        $billingClient = new KafubuPostPaidEnquiry(
+                                    new KafubuPostPaid( new \App\Http\Services\Web\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
+                                    new \App\Http\Services\Utility\XMLtoArrayParser())
+                                );
         $response=$billingClient->getAccountDetails($txDTO);
         
         $this->assertTrue($response['accountNumber'] == "1053780");
@@ -28,9 +32,12 @@ class BillingClientKafubuTest extends TestCase
     public function _testPostPayment()
     {   
 
-        $kafubuBilling = new KafubuPostPaid();
+        $billingClient = new KafubuPostPaidEnquiry(
+                                new KafubuPostPaid( new \App\Http\Services\Web\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
+                                new \App\Http\Services\Utility\XMLtoArrayParser())
+                            );
 
-        $response=$kafubuBilling->postPayment(
+        $response=$billingClient->postPayment(
             [
                 'account' => '1053780',
                 'balance' => '0',

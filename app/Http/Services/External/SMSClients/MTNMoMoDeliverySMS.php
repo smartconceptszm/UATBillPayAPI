@@ -17,7 +17,7 @@ class MTNMoMoDeliverySMS implements ISMSClient
 
    public function channelChargeable():bool
    {
-       return false;
+      return false;
    }
 
    public function send(array $mtnParams): bool{
@@ -40,7 +40,7 @@ class MTNMoMoDeliverySMS implements ISMSClient
          if($response->status()>=200 && $response->status()<300 ){
             $response = true;
          }else{
-               throw new Exception("Error on deliver notification. MTN MoMo responded with status code: ".$response->status(), 2);
+            throw new Exception("Error on deliver notification. MTN MoMo responded with status code: ".$response->status(), 2);
          }
       } catch (\Throwable $e) {
          Log::error('SMS Not sent by MTN MoMo. Details: '.$e->getMessage());

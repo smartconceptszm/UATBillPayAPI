@@ -11,6 +11,7 @@ class SMSTxDTO extends BaseDTO
    public $mobileNumber;
    public $accountNumber;
    public $smsPayMode;
+   public $wallet_id;
    public $client_id;
    public $urlPrefix;
    public $shortName;
@@ -23,11 +24,11 @@ class SMSTxDTO extends BaseDTO
    public $type = 'SINGLE';
    public $error;
 
-   public $validationRules=[
-      'mobileNumber' => 'required|string|size:12',
-      'client_id' => 'required|string',
-      'message' => 'required|string'
-   ];
+   public $validationRules = [
+                              'mobileNumber' => 'required|string|size:12',
+                              'client_id' => 'required|string',
+                              'message' => 'required|string'
+                           ];
 
    public function fromPaymentDTO(BaseDTO $txDTO): BaseDTO
    {
@@ -35,6 +36,7 @@ class SMSTxDTO extends BaseDTO
       $this->accountNumber = $txDTO->accountNumber;
       $this->mobileNumber = $txDTO->mobileNumber;
       $this->urlPrefix = $txDTO->urlPrefix;
+      $this->wallet_id = $txDTO->wallet_id;
       $this->client_id = $txDTO->client_id;
       $this->message = $txDTO->receipt;
       $this->mno_id = $txDTO->mno_id;
@@ -66,8 +68,9 @@ class SMSTxDTO extends BaseDTO
             'transactionId'=>$this->transaction_id,
             'clientShortName'=>$this->shortName,
             'mobileNumber'=>$this->mobileNumber,
-            'client_id'=>$this->client_id,
             'urlPrefix'=>$this->urlPrefix,
+            'wallet_id'=>$this->wallet_id,
+            'client_id'=>$this->client_id,
             'message'=>$this->message
          ];
    }
