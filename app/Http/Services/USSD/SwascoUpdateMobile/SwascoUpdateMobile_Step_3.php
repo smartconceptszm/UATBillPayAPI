@@ -22,9 +22,10 @@ class SwascoUpdateMobile_Step_3
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->subscriberInput = $this->validateCRMInput->handle('MOBILE',$txDTO->subscriberInput);
          $caseNumber = $this->billingClient->changeCustomerDetail([
+                                    'newMobileNumber' => $txDTO->subscriberInput,
                                     'accountNumber' => $txDTO->accountNumber,
                                     'mobileNumber' => $txDTO->mobileNumber,
-                                    'newMobileNumber' => $txDTO->subscriberInput
+                                    'client_id' => $txDTO->client_id,
                                  ]);
          $txDTO->response = "Application to change customer mobile number successfully submitted. Case number: ".
                               $caseNumber; 
