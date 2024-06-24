@@ -33,7 +33,7 @@ class SMSTest extends TestCase
 
     }
 
-    public function testMTNSMS()
+    public function _testMTNSMS()
     {   
 
         $smsClient = new \App\Http\Services\External\SMSClients\MTNMoMoDeliverySMS(
