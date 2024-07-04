@@ -11,7 +11,6 @@ class PaymentsProviderService
    public function __construct(
          private PaymentsProvider $model
    ) {}
-
    
    public function findAll(array $criteria = null):array|null
    {

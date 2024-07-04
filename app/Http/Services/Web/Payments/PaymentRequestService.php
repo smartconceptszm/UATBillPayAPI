@@ -29,7 +29,7 @@ class PaymentRequestService
    ) {}
 
 
-   public function initiateWebPayement(array $params, PaymentDTO $thePaymentDTO): string
+   public function initiateWebPayement(array $params, PaymentDTO $thePaymentDTO): array
    {
 
       try {
@@ -64,8 +64,12 @@ class PaymentRequestService
          }
          throw new Exception($e->getMessage());
       }
-      return \strtoupper($paymentDTO->urlPrefix)." Payment request submitted to ".$paymentDTO->mnoName.
-                  ". You will receive a PIN prompt shortly!";
+      return [
+               'session_id' => $paymentDTO->session_id,
+               'paymentStatusCheck' => (int)\env($paymentDTO->walletHandler.'_PAYSTATUS_CHECK'),
+               'message' => \strtoupper($paymentDTO->urlPrefix)." Payment request submitted to ".$paymentDTO->walletHandler.
+                                    ". You will receive a PIN prompt shortly!"
+               ];
 
    }
 
@@ -73,7 +77,7 @@ class PaymentRequestService
    {
 
       try {
-         $mnoName = MNOs::getMNO(substr($webDTO->mobileNumber,5));
+         $mnoName = MNOs::getMNO(substr($webDTO->mobileNumber,0,5));
          $mno = $this->mnoService->findOneBy(['name'=>$mnoName]); 
          $mno = \is_null($mno)?null:(object)$mno->toArray();              
          $webDTO->mnoName = $mno->name;
@@ -99,13 +103,9 @@ class PaymentRequestService
    private function getClientWallet(WebDTO $webDTO) : WebDTO
    {
 
-      $clientWallet = $this->ClientWalletService->findOneBy([
-                                          'payments_provider_id' => $$webDTO->payments_provider_id,
-                                          'client_id' => $webDTO->client_id
-                                       ]);
+      $clientWallet = $this->ClientWalletService->findById($webDTO->wallet_id);
       $clientWallet = \is_null($clientWallet)?null:(object)$clientWallet->toArray();
       $webDTO->walletHandler = $clientWallet->handler;
-      $webDTO->wallet_id = $clientWallet->id;
       if($clientWallet->paymentsMode != 'UP'){
          throw new Exception(\env('MODE_MESSAGE'));
       }

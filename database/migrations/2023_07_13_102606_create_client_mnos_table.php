@@ -17,6 +17,7 @@ return new class extends Migration
          $table->string("mno_id",36)->notNullable();
          $table->float('smsCharge',10,2)->default(0);
          $table->timestamps();
+         $table->unique(['client_id', 'mno_id'],'ClientMNO');
       });
    }
 

@@ -22,6 +22,7 @@ return new class extends Migration
          $table->enum('paymentsMode',['UP','DOWN'])->default('UP')->notNullable();
          $table->string('modeMessage',155)->nullable();
          $table->timestamps();
+         $table->unique(['client_id', 'payments_provider_id'],'UniqueWallet');
       });
    }
 
@@ -30,6 +31,6 @@ return new class extends Migration
     */
    public function down(): void
    {
-      Schema::dropIfExists('client_mnos');
+      Schema::dropIfExists('client_wallets');
    }
 };

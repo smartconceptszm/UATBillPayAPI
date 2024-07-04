@@ -14,9 +14,11 @@ class ClientMenu extends Model
 
    protected $fillable=[
       'client_id','parent_id','order','prompt','handler','billingClient','enquiryHandler', 
-      'description','isPayment','accountType','receiptingHandler','isDefault','isActive'
+      'description','isPayment','accountType','receiptingHandler','isDefault','isActive',
+      'onOneAccount','commonAccount','servicePoint','servicePointPrompt',
+      'requiresReference','referencePrompt'
    ];
-   
+
    protected $casts = [
       'created_at' => 'datetime:Y-m-d H:i:s',
       'updated_at' => 'datetime:Y-m-d H:i:s',
@@ -24,6 +26,8 @@ class ClientMenu extends Model
 
    protected $attributes = [
       'accountType'  => 'POST-PAID',
+      'requiresReference' => 'NO',
+      'onOneAccount' => 'NO',
       'isPayment' => 'NO',
       'isDefault' => 'NO',
       'isActive' => 'NO',

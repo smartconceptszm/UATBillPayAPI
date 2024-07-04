@@ -57,8 +57,13 @@ class HttpCallErrorsLogger
 
          foreach ($mnos as $mno) {
             if(\strpos($event->request->url(),$mno)){
-               $logString.=\strtoupper($mno)." MONEY";
-               $errorType=\strtoupper($mno)."MONEY";
+               if(\strpos($event->request->url(),'sms')){
+                  $logString.=\strtoupper($mno)." SMS";
+                  $errorType=\strtoupper($mno)."SMS";
+               }else{
+                  $logString.=\strtoupper($mno)." MONEY";
+                  $errorType=\strtoupper($mno)."MONEY";
+               }
                break;
             }
          }

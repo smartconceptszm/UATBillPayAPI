@@ -23,6 +23,7 @@ class MessageService
       try {
 			$user = Auth::user(); 
          $data['client_id'] = $user->client_id;
+         $data['urlPrefix'] = $user->urlPrefix;
 			$data['user_id'] = $user->id;
 			Queue::later(Carbon::now()->addSeconds(1),new SendSMSesJob([$data],$user->urlPrefix),'','low');
          return 'Message submitted';

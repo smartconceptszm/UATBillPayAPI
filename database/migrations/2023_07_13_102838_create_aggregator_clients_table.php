@@ -13,10 +13,12 @@ return new class extends Migration
    {
       Schema::create('aggregated_clients', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->string('parent_client_id',36)->notNullable();
+         $table->string('parent_id',36)->notNullable();
+         $table->string('client_id',36)->notNullable();
          $table->string('menuNo',2)->notNnullable();
-         $table->string('urlPrefix',25)->unique()->notNullable();
          $table->timestamps();
+         $table->unique(['parent_id', 'client_id'],'parentClient');
+         $table->unique(['parent_id', 'menuNo'],'parentSubMenu');
       });
    }
 
@@ -25,6 +27,6 @@ return new class extends Migration
     */
    public function down(): void
    {
-      Schema::dropIfExists('clients');
+      Schema::dropIfExists('aggregated_clients');
    }
 };

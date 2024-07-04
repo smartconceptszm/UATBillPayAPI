@@ -50,6 +50,7 @@ class Step_IdentifyMenu extends EfectivoPipelineContract
                   $txDTO->errorType = 'SystemError';
                   break;
             }
+            $txDTO->handler = 'DummyMenu';
          }
       }
 

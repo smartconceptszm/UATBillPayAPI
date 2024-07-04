@@ -34,4 +34,17 @@ class PaymentSessionController extends Controller
 
    }
 
+   public function show(Request $request,$id)
+   {
+
+      try {
+         $this->response['data'] = $this->paymentSessionService->findById($id);
+      } catch (\Throwable $e) {
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
+      }
+      return response()->json( $this->response);
+
+   }
+
 }

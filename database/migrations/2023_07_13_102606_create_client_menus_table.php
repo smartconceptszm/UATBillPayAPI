@@ -20,12 +20,18 @@ return new class extends Migration
          $table->string('handler',50)->notNullable();
          $table->string('billingClient',50)->nullable();
          $table->string('enquiryHandler',50)->nullable();
-         $table->string('description',150)->nullable();
          $table->enum('accountType',['POST-PAID', 'PRE-PAID'])->default('POST-PAID')->nullable();
+         $table->string('description',150)->nullable();
          $table->enum('isPayment',['YES','NO'])->default('NO')->notNullable();
          $table->string('receiptingHandler',50)->nullable();
          $table->enum('isDefault',['YES','NO'])->default('NO')->notNullable();
          $table->enum('isActive',['YES','NO'])->default('NO')->notNullable();
+         $table->enum('onOneAccount',['YES','NO'])->default('NO')->notNullable();
+         $table->string('commonAccount',50)->nullable();
+         $table->enum('servicePoint',['accountNumber','meterNumber'])->nullable();
+         $table->string('servicePointPrompt',150)->nullable();
+         $table->enum('requiresReference',['YES','NO'])->default('NO')->notNullable();
+         $table->string('referencePrompt',150)->nullable();
          $table->timestamps();
       });
    }
@@ -35,6 +41,6 @@ return new class extends Migration
     */
    public function down(): void
    {
-      Schema::dropIfExists('client_mnos');
+      Schema::dropIfExists('client_menus');
    }
 };

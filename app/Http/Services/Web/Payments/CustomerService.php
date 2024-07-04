@@ -11,7 +11,7 @@ class CustomerService
 
    public function __construct(
       private IEnquiryHandler $enquiryHandler,
-      private MoMoDTO $paymentDTO,
+      private MoMoDTO $momoDTO,
    )
    {}
 
@@ -19,7 +19,7 @@ class CustomerService
    {
 
       try {
-         $paymentDTO = $this->paymentDTO->fromArray($criteria);
+         $paymentDTO = $this->momoDTO->fromArray($criteria);
          $paymentDTO = $this->enquiryHandler->handle($paymentDTO);
          return $paymentDTO->customer;
       } catch (\Throwable $e) {

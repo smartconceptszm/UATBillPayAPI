@@ -33,12 +33,11 @@ class Step_IdentifyClient extends EfectivoPipelineContract
                   if(\count($subscriberInput)>1){
                      $txDTO->subscriberInput = $subscriberInput[0];
                      $aggregatedClient = $this->aggregatedClientService->findOneBy([
-                                                      'parent_client_id'=>$client->id,
+                                                      'parent_id'=>$client->id,
                                                       'menuNo'=>$subscriberInput[1]
                                                    ]);
                      $aggregatedClient = \is_null($aggregatedClient)?null:(object)$aggregatedClient->toArray();
-                     $txDTO->urlPrefix = $aggregatedClient->urlPrefix; 
-                     $client = $this->clientService->findOneBy(['urlPrefix'=>$txDTO->urlPrefix]);
+                     $client = $this->clientService->findById($aggregatedClient->client_id);
                      $client = \is_null($client)?null:(object)$client->toArray();
                   }
                }else{
@@ -77,6 +76,7 @@ class Step_IdentifyClient extends EfectivoPipelineContract
          } catch (\Throwable $e) {
             $txDTO->error = 'At identify client step. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';
+            $txDTO->handler = 'DummyMenu';
          }
       }
       return $txDTO;

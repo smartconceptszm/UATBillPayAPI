@@ -10,9 +10,9 @@ class AggregatedClientController extends Controller
 {
 
    protected  $validationRules=[
-                  'parent_client_id' => 'required|string',
-                  'menuNo' => 'required|string',
-                  'urlPrefix' => 'required|string|unique:clients'
+                  'parent_id' => 'required|string',
+                  'client_id' => 'required|string',
+                  'menuNo' => 'required|string'
                ];
 	public function __construct(
 		private AggregatedClientService $aggregatedClientService)
@@ -31,6 +31,22 @@ class AggregatedClientController extends Controller
             $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json( $this->response);
+
+   }
+
+   /**
+    * Display the specified resources.
+   */
+   public function clientsofaggregator(Request $request, string $id)
+   {
+
+      try {
+         $this->response['data'] = $this->aggregatedClientService->getClientsOfAggregator($id);
+      } catch (\Throwable $e) {
+            $this->response['status']['code'] = 500;
+            $this->response['status']['message'] = $e->getMessage();
+      }
+      return response()->json($this->response);
 
    }
 

@@ -18,7 +18,7 @@ return new class extends Migration
          $table->string('wallet_id',36)->notNullable();
          $table->string('menu_id',36)->notNullable();
          $table->string('mobileNumber',12)->notNullable();
-         $table->string('walletNumber',12)->nullable();
+         $table->string('walletNumber',50)->nullable();
          $table->string('accountNumber',50)->nullable();
          $table->string('meterNumber',50)->nullable();
          $table->string('district',50)->nullable();

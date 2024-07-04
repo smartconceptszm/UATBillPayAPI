@@ -8,7 +8,7 @@ class ZamtelKwachaTest extends TestCase
 
     public function _testRequestPayment()
     {   
-
+        //9b9fe666-1ff3-11ef-b077-8db5e354f7db
         $zamtelClient=new ZamtelKwacha();
         $response = $zamtelClient->requestPayment((object)[]);
         $this->assertTrue($response['status']=="SUCCESS");

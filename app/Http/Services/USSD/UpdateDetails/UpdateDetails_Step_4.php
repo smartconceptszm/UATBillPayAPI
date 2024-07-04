@@ -87,6 +87,7 @@ class UpdateDetails_Step_4
       $arrSMSes = [
                [
                   'mobileNumber' => $txDTO->mobileNumber,
+                  'urlPrefix' => $txDTO->urlPrefix,
                   'client_id' => $txDTO->client_id,
                   'message' => $txDTO->response,
                   'type' => 'NOTIFICATION',

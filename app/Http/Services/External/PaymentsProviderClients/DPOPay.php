@@ -5,7 +5,7 @@ namespace App\Http\Services\External\PaymentsProviderClients;
 use App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient;
 use App\Http\Services\Web\Clients\ClientWalletCredentialsService;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 use Exception;
 
 class DPOPay implements IPaymentsProviderClient
@@ -25,42 +25,39 @@ class DPOPay implements IPaymentsProviderClient
       ];
 
       try {
-         $mainResponse['transactionId'] = (string)Str::uuid();
+         
          $configs = $this->getConfigs($dto->wallet_id);
-         $apiToken = $this->getToken($configs);
-         $token=$apiToken['access_token'];
+         $theXML = $this->getTokenXML($configs,$dto);
+         $configs['transactionToken'] = $this->getTransactionToken($configs, $theXML);
 
-         $fullURL = $configs['baseURL']."v1_0/requesttopay";
-         $mtnResponse = Http::timeout($configs['timeout'])->withHeaders([
-                           'X-Reference-Id'=>$mainResponse['transactionId'],
-                           'X-Target-Environment'=>$configs['targetEnv'],
-                           'Content-Type' => 'application/json',
-                           'Ocp-Apim-Subscription-Key' => $configs['clientId'],
-                           'Accept' => '*/*',
-                     ])
-               ->withToken($token)
-               ->post($fullURL, [
-                  "amount"=> $dto->paymentAmount,
-                  'currency'=>$configs['txCurrency'],
-                  "externalId"=>$mainResponse['transactionId'],
-                  "payer" => [
-                     "partyIdType"=>"MSISDN",
-                     "partyId"=>$dto->walletNumber, 
-                  ],
-                  "payerMessage"=>"Payment Request",
-                  "payeeNote"=>"Click yes to approve"
-         ]);
+         $theXML = $this->getChargeCardXML($configs, $dto);
 
-         if($mtnResponse->status()>=200 && $mtnResponse->status()<300 ){
-               $mainResponse['status']="SUBMITTED";
-         }else{
-               throw new Exception("Error on collect funds. MTN MoMo responded with status code: ".$mtnResponse->status().".", 2);
+         $fullURL = $configs['baseURL'];
+         $apiResponse = Http::timeout($configs['timeout'])
+               ->withHeaders([
+                  'Content-Type' => 'application/xml',
+                  'Accept' => 'application/xml',
+              ])->send('POST', $fullURL, [
+                  'body' => $theXML,
+              ]);
+         
+         if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
+            $xmlObject = simplexml_load_string($apiResponse->body(), "SimpleXMLElement", LIBXML_NOCDATA);
+            $jsonArray = json_decode(json_encode($xmlObject), true);
+            if($jsonArray['Result'] == '000'){
+               $mainResponse['transactionId'] = $configs['transactionToken'];
+               $mainResponse['status'] = 'SUBMITTED';
+            }else{
+               throw new Exception("DPOPay Charge Card error: ".$jsonArray['ResultExplanation'].".", 1);
+            }
+         } else{
+            throw new Exception("DPOPay Charge Card error. DPOPay responded with status code: ".$apiResponse->status().".", 1);
          }
       } catch (\Throwable $e) {
-         if($e->getCode()==1 || $e->getCode()==2){
+         if($e->getCode()==1){
                $mainResponse['error']=$e->getMessage();
          }else{
-               $mainResponse['error']="Error on collect funds. MTN MoMo details: ".$e->getMessage();
+               $mainResponse['error']="DPOPay Charge Card error. DPOPay details: ".$e->getMessage();
          }
       }
       return (object)$mainResponse;
@@ -76,113 +73,147 @@ class DPOPay implements IPaymentsProviderClient
 
       try {
          $configs = $this->getConfigs($dto->wallet_id);
-         $apiToken = $this->getToken($configs);
-         $token=$apiToken['access_token'];
-         $fullURL = $configs['baseURL']."v1_0/requesttopay/".$dto->transactionId;
-         $apiResponse = Http::timeout($configs['timeout'])->withHeaders([
-                              'Ocp-Apim-Subscription-Key' => $configs['clientId'],
-                              'X-Target-Environment'=>$configs['targetEnv'],
-                              'Content-Type' => 'application/json',
-                              'Accept' => '*/*'   
-                           ])
-                     ->withToken($token)
-                     ->get($fullURL);
+
+         $theXML = '<?xml version="1.0" encoding="utf-8"?>
+                        <API3G>
+                        <CompanyToken>'.$configs['companyToken'].'</CompanyToken>
+                        <Request>verifyToken</Request>
+                        <TransactionToken>'.$dto->transactionId.'</TransactionToken>
+                        </API3G>';
+
+         $fullURL = $configs['baseURL'];
+         $apiResponse = Http::timeout($configs['timeout'])
+               ->withHeaders([
+                     'Content-Type' => 'application/xml',
+                     'Accept' => 'application/xml',
+                  ])
+               ->send('POST', $fullURL, [
+                     'body' => $theXML,
+                  ]);
+         
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
-               $apiResponse=$apiResponse->json();
-               if($apiResponse['status']==='SUCCESSFUL'){
-                  $response['status'] = "PAID | NOT RECEIPTED";
-                  $response['ppTransactionId']=$apiResponse['financialTransactionId'];
-               }else{
-                  switch ($apiResponse['status']) {
-                     case 'FAILED':
-                           if(is_array($apiResponse['reason'])){
-                              if(\array_key_exists('message', $apiResponse['reason'])){
-                                 throw new Exception("MTN response: ". $apiResponse['reason']['message'].".", 2);
-                              }
-                           }
-                           throw new Exception("MTN response: ". $apiResponse['reason'].".", 2);
-                           break;
-                     case 'PENDING':
-                           throw new Exception("Error on get transaction status. MTN response: ". $apiResponse['status'].".", 2);
-                           break;
-                     default:
-                           throw new Exception("Error on get transaction status. MTN response: ". $apiResponse['status'].".", 2);
-                           break;
-                  }
-               }
-         }else{
-               switch ($apiResponse->status()) {
-                  case 400:
-                     throw new Exception("Error on get transaction status. MTN response: Request not properly formatted.", 2);
-                     break;
-                  case 404:
-                     throw new Exception("MTN response: Requested resource was not found.", 2);
-                     break;    
-                  case 500:
-                     throw new Exception("Error on get transaction status. MTN response: An internal error occurred while processing.", 2);
-                     break;                  
-                  default:
-                     throw new Exception("Error on get transaction status. MTN response: Status Code ".$apiResponse->status().".", 2);
-                     break;
-               }
+            $xmlObject = simplexml_load_string($apiResponse->body(), "SimpleXMLElement", LIBXML_NOCDATA);
+            $jsonArray = json_decode(json_encode($xmlObject), true);
+            if($jsonArray['Result'] == '000'){
+               $response['ppTransactionId'] = $jsonArray['TransactionApproval'];
+               $response['status'] = 'PAID | NOT RECEIPTED';
+            }else{
+               throw new Exception("DPOPay verify token error: ".$jsonArray['ResultExplanation'].".", 1);
+            }
+         } else{
+            throw new Exception("DPOPay verify token error. DPOPay responded with status code: ".$apiResponse->status().".", 1);
          }
       } catch (\Throwable $e) {
-         if ($e->getCode()==2 || $e->getCode()==3) {
+         if ($e->getCode()==1) {
             $response['error']=$e->getMessage();
          } else {
-            $response['error']="Error on get transaction status. ".$e->getMessage();
+            $response['error']="DPOPay verify token error. ".$e->getMessage();
          }
       }
       return (object)$response;
 
    }
 
-   private function getToken(array $configs): Array
+   private function getTransactionToken(array $configs, string $theXML): string
    {
 
-      $response=['access_token'=>'',
-                     'expires_in'=>''];
+      $response='';
 
       try {
-         $fullURL = $configs['baseURL']."token/";
+         $fullURL = $configs['baseURL'];
          $apiResponse = Http::timeout($configs['timeout'])
-            ->withBasicAuth($configs['clientUserName'], $configs['clientPassword'])
                ->withHeaders([
-                  'Ocp-Apim-Subscription-Key' => $configs['clientId'],
-                  'Accept' => '*/*'
-               ])->post($fullURL,[]);
+                     'Content-Type' => 'application/xml',
+                     'Accept' => 'application/xml',
+                  ])
+               ->send('POST', $fullURL, [
+                     'body' => $theXML,
+                  ]);
          
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
-               $apiResponse=$apiResponse->json();
-               $response['access_token']=$apiResponse['access_token'];
-               $response['expires_in']=$apiResponse['expires_in'];
+            $xmlObject = simplexml_load_string($apiResponse->body(), "SimpleXMLElement", LIBXML_NOCDATA);
+            $jsonArray = json_decode(json_encode($xmlObject), true);
+            if($jsonArray['Result'] == '000'){
+               $response=$jsonArray['TransToken'];
+            }else{
+               throw new Exception("DPOPay API Get Transaction Token error: ".$jsonArray['ResultExplanation'].".", 1);
+            }
          } else{
-               throw new Exception("MTN API Get Token error. MTN MoMo responded with status code: ".$apiResponse->status().".", 1);
+               throw new Exception("DPOPay API Get Transaction Token error. DPOPay responded with status code: ".$apiResponse->status().".", 1);
          }
+
       } catch (\Throwable $e) {
          if ($e->getCode()==1) {
                throw new Exception($e->getMessage(), 1);
          } else {
-               throw new Exception("MTN API Get Token error. Details: ".$e->getMessage(), 1);
+               throw new Exception("DPOPay API Get Transaction Token error. Details: ".$e->getMessage(), 1);
          }
       }
       return $response;
    }
 
+   private function getTokenXML(array $configs, object $params):string
+   {
+      $transactionDate = Carbon::now();
+      $transactionDate = $transactionDate->format('Y/m/d H:i');
+      $xmlTemplate = '<?xml version=\"1.0\" encoding=\"utf-8\"?><API3G>';
+      $xmlTemplate .= '<CompanyToken>'.$configs['companyToken'].'</CompanyToken>
+                                          <Request>createToken</Request>
+                                          <Transaction>
+                                             <PaymentAmount>'.$params->paymentAmount.'</PaymentAmount>
+                                             <PaymentCurrency>'.$configs['currency'].'</PaymentCurrency>
+                                             <CompanyRef>'.$configs['companyRef'].'</CompanyRef>
+                                             <RedirectURL>http://www.domain.com/payurl.php</RedirectURL>
+                                             <BackURL>http://www.domain.com/backurl.php </BackURL>
+                                             <CompanyRefUnique>0</CompanyRefUnique>
+                                             <PTL>5</PTL>
+                                          </Transaction>
+                                          <Services>
+                                             <Service>
+                                                   <ServiceType>'.$configs['serviceType'].'</ServiceType>
+                                                   <ServiceDescription>'.$configs['serviceDescription'].'</ServiceDescription>
+                                                   <ServiceDate>'.$transactionDate.'</ServiceDate>
+                                             </Service>
+                                          </Services>
+                                       </API3G>';
+      // $xmlTemplate = new SimpleXMLElement($xmlTemplate);
+      return $xmlTemplate;
+
+   }
+
+   private function getChargeCardXML(array $configs,  object $dto):string
+   {
+
+      $cardExpiry = Carbon::createFromFormat('Y-m',$dto->cardExpiry);
+      $cardExpiry = $cardExpiry->format('my');
+
+      return '<?xml version="1.0" encoding="utf-8"?>
+                                    <API3G>
+                                       <CompanyToken>'.$configs['companyToken'].'</CompanyToken>
+                                       <Request>chargeTokenCreditCard</Request>
+                                       <TransactionToken>'.$configs['transactionToken'].'</TransactionToken>
+                                       <CreditCardNumber>'.$dto->creditCardNumber.'</CreditCardNumber>
+                                       <CreditCardExpiry>'.$cardExpiry.'</CreditCardExpiry>
+                                       <CreditCardCVV>'.$dto->cardCVV.'</CreditCardCVV>
+                                       <CardHolderName>'.$dto->cardHolderName.'</CardHolderName>
+                                       <ChargeType></ChargeType>
+                                    </API3G>';
+   }
+
    private function getConfigs(string $wallet_id):array
    {
 
-      $walletCredentials = $this->clientWalletCredentialsService->getWalletCredentials($wallet_id);
-
+      $walletCredentials = $this->clientWalletCredentialsService->getWalletCredentials($wallet_id);   
       return [
-               'clientId'=>$walletCredentials['MTN_OCPKEY'],
-               'clientUserName'=>$walletCredentials['MTN_USERNAME'],
-               'clientPassword'=>$walletCredentials['MTN_PASSWORD'],
-               'targetEnv'=>\env('MTN_TARGET_ENVIRONMENT'),
-               'timeout'=>\env('MTN_Http_Timeout'),
-               'txCurrency'=>\env('MTN_CURRENCY'),
-               'baseURL'=>\env('MTN_BASE_URL')
-            ];
+            'serviceDescription'=>$walletCredentials['DPO_ServiceDescription'],
+            'companyToken'=>$walletCredentials['DPO_CompanyToken'],
+            'serviceType'=>$walletCredentials['DPO_ServiceType'],
+            'companyRef'=>$walletCredentials['DPO_CompanyRef'],
+            'currency'=>$walletCredentials['DPO_Currency'],
+            'timeout'=>\env('DPOPay_Http_Timeout'),
+            'baseURL'=>\env('DPOPay_BASE_URL')
+         ];
+
    }
 
 }

@@ -2,26 +2,26 @@
 
 namespace App\Http\Services\USSD\NkanaOtherPayments;
 
-use App\Http\Services\Web\Clients\BillingCredentialService;
+use App\Http\Services\Web\Clients\ClientMenuService;
 use App\Http\DTOs\BaseDTO;
 
 class NkanaOtherPayments_Step_2
 {
 
    public function __construct(
-      private BillingCredentialService $billingCredentialService)
+      private ClientMenuService $clientMenuService)
    {}
 
    public function run(BaseDTO $txDTO)
    {
 
       try {
-         $clientCredentials = $this->billingCredentialService->getClientCredentials($txDTO->client_id);
+         $clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
          $txDTO->customerJourney = $txDTO->customerJourney."*".$txDTO->subscriberInput;
-         $txDTO->subscriberInput = $clientCredentials[$txDTO->menuPrompt];
-         $txDTO->accountNumber = $clientCredentials[$txDTO->menuPrompt];
-         $txDTO->customer['accountNumber'] = $clientCredentials[$txDTO->menuPrompt];
-         $txDTO->customer['name'] = $txDTO->menuPrompt;
+         $txDTO->subscriberInput = $clientMenu->commonAccount;
+         $txDTO->accountNumber = $clientMenu->commonAccount;
+         $txDTO->customer['accountNumber'] = $clientMenu->commonAccount;
+         $txDTO->customer['name'] = $clientMenu->description;
          $txDTO->response = "Enter Amount :\n";
       } catch (\Throwable $e) {
          if($e->getCode()==1){

@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Web\SMS;
 
+use App\Http\Services\Web\Clients\ClientService;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +15,7 @@ class SMSMessageBulkService
 {
 
    public function __construct(
+      private ClientService $clientService,
       private BulkMessage $model
    ) {}
 
@@ -62,12 +64,16 @@ class SMSMessageBulkService
          $data['user_id'] = $user->id;
          $bulkSMS = $this->model->create($data);
          $chunkedArr = \array_chunk($data['mobileNumbers'],15,false);
+         
+         $theClient = $this->clientService->findById($data['client_id']);
+
          foreach ($chunkedArr as $mobileNumbersArr) {
             $arrSMSes=[];
             foreach ($mobileNumbersArr as $key => $value) {
                $arrSMSes[$key]= [
-                                 'client_id'=>$data['client_id'],
                                  'mobileNumber'=>$value['mobileNumber'],
+                                 'urlPrefix' => $theClient->urlPrefix,
+                                 'client_id'=>$data['client_id'],
                                  'message'=>$data['message'],
                                  'bulk_id'=>$bulkSMS->id,
                                  'type'=>$bulkSMS->type

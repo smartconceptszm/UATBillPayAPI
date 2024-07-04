@@ -28,6 +28,7 @@ class Complaint_Local implements IComplaintClient
 					[
 						'mobileNumber' => $complaintData['mobileNumber'],
 						'client_id' => $complaintData['client_id'],
+						'urlPrefix' => $urlPrefix,
 						'message' => "Complaint(Fault) successfully submitted. Case number: ".$complaint->caseNumber,
 						'type' => 'NOTIFICATION',
 					]

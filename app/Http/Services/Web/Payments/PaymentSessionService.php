@@ -48,4 +48,31 @@ class PaymentSessionService
 
    }
 
+   public function findById(string $id){
+      try {
+         $records = DB::table('sessions as s')
+            ->join('mnos','s.mno_id','=','mnos.id')
+            ->join('client_menus as m','s.menu_id','=','m.id')
+            ->leftJoin('payments as p','p.session_id','=','s.id')
+            ->leftJoin('client_wallets as cw','p.wallet_id','=','cw.id')
+            ->leftJoin('payments_providers as pps','cw.payments_provider_id','=','pps.id')
+            ->select('s.id as session_id','s.sessionId','s.client_id','s.customerJourney','s.mobileNumber',
+                        's.accountNumber','s.meterNumber','s.district','s.status','s.created_at','p.id',
+                        'p.reference','p.ppTransactionId','p.surchargeAmount','p.paymentAmount',
+                        'p.receiptAmount','p.transactionId','p.receiptNumber','p.tokenNumber',
+                        'p.receipt','p.channel','p.paymentStatus','p.error','m.accountType',
+                        'm.description as paymentType','mnos.name as mno', 
+                        'pps.shortName as paymentProvider')
+            ->where('s.id', '=', $id)
+            ->orderByDesc('s.created_at');               
+         // $theSQLQuery = $records->toSql();
+         // $theBindings = $records-> getBindings();
+         // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
+         return $records->get()->first();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+
+   }
+
 }

@@ -13,7 +13,7 @@ class AggregatedClient extends Model
    protected $table = "aggregated_clients";
 
    protected $fillable=[
-      'parent_client_id','menuNo','urlPrefix'
+      'parent_id','client_id','menuNo'
    ];
 
    protected $casts = [

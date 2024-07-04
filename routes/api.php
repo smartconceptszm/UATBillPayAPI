@@ -85,9 +85,11 @@ Route::group(['middleware' => 'mode'], function (){
    //Mobile/Web/External Routes
       Route::get('/app/services', [\App\Http\Controllers\Web\Payments\PaymentsMenuController::class, 'index']);
       Route::get('/app/customers', [\App\Http\Controllers\Web\Payments\CustomerController::class, 'show']);
-      Route::get('/app/paymentsproviders', [\App\Http\Controllers\Web\Payments\PaymentsProviderController::class, 'index']);
+      Route::get('/app/paymentsprovidersofclient', [\App\Http\Controllers\Web\Payments\PaymentsProvidersOfClientController::class, 'index']);
+      Route::get('/app/clientwallets/findoneby', [\App\Http\Controllers\Web\Clients\ClientWalletController::class, 'findOneBy']);
       Route::post('/app/paymentsviamomo', [\App\Http\Controllers\Web\Payments\PaymentViaMoMoController::class, 'store']);
       Route::post('/app/paymentsviacard', [\App\Http\Controllers\Web\Payments\PaymentViaCardController::class, 'store']);
+      Route::get('/app/payments/{id}', [\App\Http\Controllers\Web\Payments\PaymentSessionController::class, 'show']);
    //End
 
    // AUTHENTICATED Routes
@@ -178,11 +180,6 @@ Route::group(['middleware' => 'mode'], function (){
 
          //
 
-         Route::controller(\App\Http\Controllers\Web\Clients\MnosOfClientController::class)->group(function () {
-            Route::get('/mnosofclient/{id}', 'index');
-         });
-
-
          //PAYMENTS PROVIDERS
             Route::controller(\App\Http\Controllers\Web\Clients\PaymentsProviderController::class)->group(function () {
                Route::get('/paymentsproviders/findoneby', 'findOneBy');
@@ -201,12 +198,10 @@ Route::group(['middleware' => 'mode'], function (){
                Route::post('/clientwallets', 'store');
                Route::get('/clientwallets', 'index');
             });
-
+            Route::controller(\App\Http\Controllers\Web\Clients\ClientWalletController::class)->group(function () {
+               Route::get('/walletsofclient/{id}', 'walletsofclient');
+            });   
          //
-
-         Route::controller(\App\Http\Controllers\Web\Clients\ClientWalletController::class)->group(function () {
-            Route::get('/walletsofclient/{id}', 'walletsofclient');
-         });
 
          //Client Wallet Credentials
             Route::controller(\App\Http\Controllers\Web\Clients\ClientWalletCredentialController::class)->group(function () {
@@ -218,6 +213,19 @@ Route::group(['middleware' => 'mode'], function (){
             });
             Route::controller(\App\Http\Controllers\Web\Clients\ClientWalletCredentialController::class)->group(function () {
                Route::get('/credentialsofwallet/{id}', 'credentialsofwallet');
+            });
+         //
+
+         //Client Wallet Credentials
+            Route::controller(\App\Http\Controllers\Web\Clients\AggregatedClientController::class)->group(function () {
+               Route::get('/aggregatedclients/findoneby', 'findOneBy');
+               Route::put('/aggregatedclients/{id}', 'update');
+               Route::get('/aggregatedclients/{id}', 'show');
+               Route::post('/aggregatedclients', 'store');
+               Route::get('/aggregatedclients', 'index');
+            });
+            Route::controller(\App\Http\Controllers\Web\Clients\AggregatedClientController::class)->group(function () {
+               Route::get('/clientsofaggregator/{id}', 'clientsofaggregator');
             });
          //
    

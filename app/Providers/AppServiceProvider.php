@@ -14,6 +14,12 @@ class AppServiceProvider extends ServiceProvider
    {
 
       //Menu Home
+         $this->app->singleton('DummyMenu', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\DummyMenu::class);
+         });
+      //
+
+      //DUMMY MENU
          $this->app->singleton('ParentMenu', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\ParentMenu::class);
          });
@@ -232,7 +238,7 @@ class AppServiceProvider extends ServiceProvider
 			$this->app->singleton('MTN', function () {
                return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\MTNMoMo::class);
 				});
-         $this->app->singleton('DPO', function () {
+         $this->app->singleton('DPOPay', function () {
                return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\DPOPay::class);
 				});
          $this->app->singleton('MockWallet', function () {

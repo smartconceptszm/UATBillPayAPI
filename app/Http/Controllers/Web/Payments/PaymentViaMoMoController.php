@@ -11,10 +11,10 @@ class PaymentViaMoMoController extends Controller
 {
 
    private $validationRules = [
-                  'payments_provider_id' => 'required',
-                  'mobileNumber' => 'required|string',
-                  'walletNumber' => 'required|string',
+                  'mobileNumber' => 'required|string|size:12',
+                  'walletNumber' => 'required|string|size:12',
                   'paymentAmount' => 'required',
+                  'wallet_id' => 'required',
                   'client_id' => 'required',
                   'menu_id' => 'required',
                ];

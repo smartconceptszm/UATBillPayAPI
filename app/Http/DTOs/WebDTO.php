@@ -48,7 +48,6 @@ class WebDTO extends BaseDTO
             'accountNumber'=>$this->accountNumber,
             'paymentAmount'=>$this->paymentAmount,
             'mobileNumber'=>$this->mobileNumber,
-            'walletNumber'=>$this->walletNumber,
             'meterNumber'=>$this->meterNumber,
             'sessionId'=>$this->sessionId,
             'client_id'=>$this->client_id,
