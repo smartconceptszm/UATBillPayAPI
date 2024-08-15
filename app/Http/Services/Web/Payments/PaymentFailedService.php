@@ -32,13 +32,14 @@ class PaymentFailedService
          $records = DB::table('payments as p')
                   ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                   ->join('payments_providers as pp','cw.payments_provider_id','=','pp.id')
+                  ->join('clients as c','cw.client_id','=','c.id')
                   ->join('sessions as s','p.session_id','=','s.id')
                   ->join('client_menus as m','p.menu_id','=','m.id')
-                  ->select('p.*','m.prompt as paymentType','pp.shortName as paymentProvider', 'm.accountType');
+                  ->select('p.*','m.prompt as paymentType','pp.shortName as paymentProvider');
          if($dto->dateFrom && $dto->dateTo){
             $records =$records->whereBetween('p.created_at',[$dto->dateFrom, $dto->dateTo]);
          }
-         $allFailed = $records->where('p.client_id', '=', $dto->client_id)
+         $allFailed = $records->where('c.id', '=', $dto->client_id)
                               ->whereIn('p.paymentStatus', ['SUBMISSION FAILED','PAYMENT FAILED'])
                               ->orderByDesc('p.created_at');
          $allFailed = $records->get();
@@ -86,11 +87,13 @@ class PaymentFailedService
 
          //Bind Receipting Handler
             $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
-            $theMenu = \is_null($theMenu)?null:(object)$theMenu->toArray();
             $receiptingHandler = $theMenu->receiptingHandler;
+            $billingClient = $theMenu->billingClient;
             if (\env('USE_RECEIPTING_MOCK') == "YES"){
                $receiptingHandler = "MockReceipting";
+               $billingClient = "MockBillingClient";
             }
+            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
             App::bind(\App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
          //
    

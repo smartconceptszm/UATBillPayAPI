@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\Survey;
 
-use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
+use App\Http\Services\USSD\StepServices\ValidateCRMInput;
 use App\Http\Services\Web\MenuConfigs\SurveyQuestionListItemService;
 use App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient;
 use App\Http\Services\Web\MenuConfigs\SurveyQuestionService;
@@ -16,7 +16,7 @@ class Survey_Step_5
 
    public function __construct(
       private SurveyQuestionListItemService $questionListItemService,
-      private StepService_ValidateCRMInput $validateCRMInput,
+      private ValidateCRMInput $validateCRMInput,
       private SurveyQuestionService $surveyQuestionService,
       private ISurveyClient $surveyCreateClient)
    {} 
@@ -36,7 +36,7 @@ class Survey_Step_5
                                                          'survey_id' => $surveyId,
                                                          'order' => $order
                                                       ]);
-         $surveyQuestion = \is_null($surveyQuestion)?null: (object)$surveyQuestion->toArray();
+
          $txDTO->subscriberInput = $this->validateCRMInput->handle($surveyQuestion->type,$txDTO->subscriberInput);
          if($surveyQuestion->type == 'LIST'){
             $listItem = $this->questionListItemService->findOneBy([
@@ -58,7 +58,7 @@ class Survey_Step_5
          if(\count($surveyQuestions) == (\count($surveyResponses))){
             $txDTO->subscriberInput = \implode(";",\array_values($surveyResponses));
             $surveyResponseData = [
-                                    'accountNumber' => $txDTO->accountNumber,
+                                    'customerAccount' => $txDTO->customerAccount,
                                     'mobileNumber' => $txDTO->mobileNumber,
                                     'client_id' => $txDTO->client_id,
                                     'urlPrefix' => $txDTO->urlPrefix,

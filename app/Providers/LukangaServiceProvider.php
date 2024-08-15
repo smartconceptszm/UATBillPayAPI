@@ -19,8 +19,8 @@ class LukangaServiceProvider extends ServiceProvider
       //
 
       //Billing Clients - POST PAID
-         $this->app->singleton('lukangaPostPaidEnquiry', function () {
-            return $this->app->make(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\LukangaPostPaidEnquiry::class);
+         $this->app->singleton('lukangaPostPaid', function () {
+            return $this->app->make(\App\Http\Services\External\BillingClients\LukangaPostPaid::class);
          });
 
          $this->app->singleton('ReceiptPostPaidLukanga', function () {
@@ -30,8 +30,8 @@ class LukangaServiceProvider extends ServiceProvider
       //
 
       //Billing Clients - PRE PAID
-         $this->app->singleton('lukangaPrePaidEnquiry', function () {
-            return $this->app->make(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\LukangaPrePaidEnquiry::class);
+         $this->app->singleton('lukangaPrePaid', function () {
+            return $this->app->make(\App\Http\Services\External\BillingClients\LukangaPrePaid::class);
          });
 
          $this->app->singleton('ReceiptPrePaidLukanga', function () {
@@ -47,7 +47,7 @@ class LukangaServiceProvider extends ServiceProvider
       //
 
       //Customer Updates Handlers
-         $this->app->singleton('Updates_lukanga', function () {
+         $this->app->singleton('UpdateDetails_lukanga', function () {
             return $this->app->make(\App\Http\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Local::class);
          });
       //

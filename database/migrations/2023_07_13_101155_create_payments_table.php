@@ -13,14 +13,12 @@ return new class extends Migration
    {
       Schema::create('payments', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->string('client_id',36)->notNullable();
          $table->string('session_id',36)->notNullable();
          $table->string('wallet_id',36)->notNullable();
          $table->string('menu_id',36)->notNullable();
          $table->string('mobileNumber',12)->notNullable();
          $table->string('walletNumber',50)->nullable();
-         $table->string('accountNumber',50)->nullable();
-         $table->string('meterNumber',50)->nullable();
+         $table->string('customerAccount',50)->nullable();
          $table->string('district',50)->nullable();
          $table->string('reference',160)->nullable();
          $table->string('ppTransactionId',30)->nullable();            
@@ -42,13 +40,6 @@ return new class extends Migration
          $table->text('error')->nullable();
          $table->string('user_id',36)->nullable();
          $table->timestamps();
-         $table->index(['accountNumber']);
-         $table->index(['client_id']);
-         $table->index(['session_id']);
-         $table->index(['mno_id']);
-         $table->index(['menu_id']);
-         $table->index(['created_at']);
-         $table->index(['paymentStatus']);
       });
    }
 

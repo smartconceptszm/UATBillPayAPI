@@ -2,8 +2,9 @@
 
 namespace App\Http\Services\USSD\Menus;
 
-use App\Http\Services\USSD\Utility\StepService_CheckPaymentsEnabled;
+use App\Http\Services\Web\Clients\AggregatedClientService; 
 use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Web\Clients\ClientService;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -12,8 +13,9 @@ class ParentMenu implements IUSSDMenu
 {
 
 	public function __construct(
-		private StepService_CheckPaymentsEnabled $checkPaymentsEnabled,
-		private ClientMenuService $clientMenuService) 
+		private AggregatedClientService $aggregatedClientService,
+		private ClientMenuService $clientMenuService,
+		private ClientService $clientService) 
 	{}
 
 	public function handle(BaseDTO $txDTO):BaseDTO
@@ -21,18 +23,24 @@ class ParentMenu implements IUSSDMenu
 		
 		if($txDTO->error==''){
 			try {
-				if($txDTO->isPayment=='YES'){
-					$momoPaymentStatus = $this->checkPaymentsEnabled->handle($txDTO);
-					if(!$momoPaymentStatus['enabled']){
-						throw new Exception($momoPaymentStatus['responseText'], 1);
+
+				$menus = [];
+				if($txDTO->isNewRequest == '1'){
+					$client = $this->clientService->findById($txDTO->client_id);
+					if($client->ussdAggregator == 'YES'){
+						$menus = $this->aggregatedClientService->getAggregatedMenu($client->id);
 					}
 				}
-				$menus = $this->clientMenuService->findAll([
-								'client_id'=>$txDTO->client_id,
-								'parent_id'=>$txDTO->menu_id,
-								'isActive' => 'YES'
-							]);
-				$prompt = $txDTO->menuPrompt.". Enter\n";
+
+				if(!$menus){
+					$menus = $this->clientMenuService->findAll([
+													'client_id'=>$txDTO->client_id,
+													'parent_id'=>$txDTO->menu_id,
+													'isActive' => 'YES'
+												]);
+				}
+
+				$prompt = $txDTO->menuPrompt."\n";
 				foreach ($menus as $menu) {
 					$prompt .= $menu->order.". ".$menu->prompt."\n";
 				}
@@ -41,7 +49,7 @@ class ParentMenu implements IUSSDMenu
 			} catch (\Throwable $e) {
 				if($e->getCode() == 1) {
 					$txDTO->error = $e->getMessage();
-					$txDTO->errorType = 'PaymentProviderNotActivated';
+					$txDTO->errorType = 'WalletNotActivated';
 				}else{
 					$txDTO->error = 'At handle parent menu. '.$e->getMessage();
 					$txDTO->errorType = 'SystemError';

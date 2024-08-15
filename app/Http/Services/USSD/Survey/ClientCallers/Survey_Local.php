@@ -31,7 +31,7 @@ class Survey_Local implements ISurveyClient
          DB::beginTransaction();
          try {
             $surveyTicket = $this->surveyEntryService->create([
-                                    'accountNumber' => $surveyData['accountNumber'],
+                                    'customerAccount' => $surveyData['customerAccount'],
                                     'mobileNumber' => $surveyData['mobileNumber'],
                                     'survey_id' => $surveyData['survey_id'],
                                     'district' => $surveyData['district'],
@@ -42,7 +42,7 @@ class Survey_Local implements ISurveyClient
                                        'survey_id' => $surveyData['survey_id'],
                                        'order' => $order
                                     ]);
-               $surveyQuestion = \is_null($surveyQuestion)?null: (object)$surveyQuestion->toArray(); 
+
                $this->surveyEntryDetailService->create([
                                        'survey_entry_id' => $surveyTicket->id,
                                        'survey_question_id' => $surveyQuestion->id,

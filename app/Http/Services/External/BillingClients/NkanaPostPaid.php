@@ -10,9 +10,6 @@ use Exception;
 class NkanaPostPaid implements IBillingClient
 {
 
-   private string $AuthenticationCode;
-   private string $baseURL;
-
    public function __construct(private BillingCredentialService $billingCredentialsService)
    {}
 
@@ -23,16 +20,19 @@ class NkanaPostPaid implements IBillingClient
 
       try {
 
-         $this->getConfigs($params['client_id']);
-         $fullURL = $this->baseURL."nwsc-api/ClientDetails/Customer_Details";
+         $configs = $this->getConfigs($params['client_id']);
+         $fullURL = $configs['baseURL']."nwsc-api/ClientDetails/Customer_Details";
+         
          $apiResponse = Http::withHeaders([
-                              'Accept' => '/',
-                              'AuthenticationCode'=> $this->AuthenticationCode
-                           ])->get($fullURL, ["customerID"=> $params['accountNumber']]);
+                                 'Accept' => '/',
+                                 'AuthenticationCode'=> $configs['AuthenticationCode']
+                              ])
+                           ->get($fullURL, ["customerID"=> $params['customerAccount']]);
+
          if ($apiResponse->status() == 200) {
             $apiResponse = $apiResponse->json();
             if($apiResponse['MsgStatusCode'] == 'ENQ001'){
-               $response['accountNumber'] = $params['accountNumber'];
+               $response['customerAccount'] = $params['customerAccount'];
                $response['name'] =   $apiResponse['Cus_Details']['0']['INITIAL']."".$apiResponse['Cus_Details']['0']['SURNAME'];
                $response['address'] = $apiResponse['Cus_Details']['0']['UA_ADRESS1'];
                $response['district'] = "OTHER";
@@ -70,12 +70,13 @@ class NkanaPostPaid implements IBillingClient
                ];
 
       try {
-         $this->getConfigs($postParams['client_id']);
-         $fullURL = $this->baseURL."nwsc-api/Payment/ClientPayment";
+         $configs = $this->getConfigs($postParams['client_id']);
+         $fullURL = $configs['baseURL']."nwsc-api/Payment/ClientPayment";
          $apiResponse = Http::withHeaders([
                                  'Accept' => '/',
-                                 'AuthenticationCode'=> $this->AuthenticationCode
-                              ])->post($fullURL, $postParams);
+                                 'AuthenticationCode'=> $configs['AuthenticationCode']
+                              ])
+                           ->post($fullURL, $postParams);
          if ($apiResponse->status() == 201) {
                $apiResponse = $apiResponse->json();
                if($apiResponse['Trax_Code'] == 'CPM-003'){
@@ -105,9 +106,12 @@ class NkanaPostPaid implements IBillingClient
 
    private function getConfigs(string $client_id)
    {
+
       $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
-      $this->AuthenticationCode = $clientCredentials['AuthenticationCode'];
-      $this->baseURL = $clientCredentials['POSTPAID_BASE_URL'];
+      $configs['AuthenticationCode'] = $clientCredentials['AuthenticationCode'];
+      $configs['baseURL'] = $clientCredentials['POSTPAID_BASE_URL'];
+      return $configs;
+
    }
 
 

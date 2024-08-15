@@ -2,8 +2,7 @@
 
 namespace App\Http\Services\USSD\CheckBalance;
 
-use App\Http\Services\USSD\Utility\StepService_CheckPaymentsEnabled;
-use App\Http\Services\USSD\Utility\StepService_AccountNoMenu;
+use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
 use App\Http\Services\Web\Clients\BillingCredentialService;
 use App\Http\Services\Web\Payments\PaymentHistoryService;
 use App\Http\Services\Web\Clients\ClientMenuService;
@@ -15,10 +14,9 @@ class CheckBalance_Step_3
 {
 
    public function __construct( 
-      private StepService_CheckPaymentsEnabled $checkPaymentsEnabled,
+      private CheckPaymentsEnabled $checkPaymentsEnabled,
       private BillingCredentialService $billingCredentialService,
       private PaymentHistoryService $paymentHistoryService,
-      private StepService_AccountNoMenu $accountNoMenu,
       private ClientMenuService $clientMenuService
    ){}
 
@@ -26,9 +24,9 @@ class CheckBalance_Step_3
    {
 
       try {
-
+         $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
+         $clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
          $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
-         
          if($txDTO->subscriberInput == '1'){
             $paymentsProviderStatus = $this->checkPaymentsEnabled->handle($txDTO);
 				if($paymentsProviderStatus['enabled']){
@@ -37,12 +35,12 @@ class CheckBalance_Step_3
                                     'isPayment' => "YES",
                                     'isDefault' => "YES",
                                     'isActive' => "YES",
-                                    'accountType' => $txDTO->accountType
+                                    'billingClient' =>  $clientMenu->billingClient
                                  ]);
-               $selectedMenu = \is_null($selectedMenu)?null:(object)$selectedMenu->toArray();
                if($selectedMenu->handler != 'Parent'){
-                  $txDTO->customerJourney = $arrCustomerJourney[0]."*".$selectedMenu->order;
-                  $txDTO->subscriberInput = $arrCustomerJourney[2];
+                  $txDTO->customerJourney = $arrCustomerJourney[0]."*".$selectedMenu->order."*".$arrCustomerJourney[2];
+                  $txDTO->subscriberInput = $txDTO->mobileNumber;
+                  $txDTO->handler = $selectedMenu->handler;
                   $txDTO->menu_id = $selectedMenu->id;
                   $txDTO->response = "Enter Amount :\n";
                   $txDTO->status = 'INITIATED';
@@ -59,7 +57,7 @@ class CheckBalance_Step_3
          if($txDTO->subscriberInput == '0'){
             $txDTO->customerJourney = $arrCustomerJourney[0];
             $txDTO->subscriberInput = $arrCustomerJourney[1];
-            $txDTO->response = $this->accountNoMenu->handle($txDTO);
+            $txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
             $txDTO->status = 'INITIATED';
             return $txDTO;
          }
@@ -68,35 +66,35 @@ class CheckBalance_Step_3
             $billingCredentials = $this->billingCredentialService->getClientCredentials($txDTO->client_id);
             $payments = $this->paymentHistoryService->findAll([
                               'limit' => $billingCredentials['PAYMENT_HISTORY'],
-                              'accountNumber' => $txDTO->accountNumber,
+                              'customerAccount' => $txDTO->customerAccount,
                               //'mobileNumber' => $txDTO->mobileNumber,
                               'client_id' => $txDTO->client_id,
                            ]);
             if($payments){
-               $prompt = "Payment history for ".$txDTO->accountNumber.":\n";
+               $prompt = "Payment history for ".$txDTO->customerAccount.":\n";
                foreach ($payments as $key=>$payment) {
                   
                   $prompt .= ($key+1).". ".Carbon::parse($payment->created_at)->format('d-M-Y').
-                              //" ".$payment->accountNumber.
+                              //" ".$payment->customerAccount.
                               " ZMW ".number_format($payment->receiptAmount, 2, '.', ',')."\n";
                }
                $txDTO->response = $prompt;
                $txDTO->lastResponse = true;
             }else{
-               $txDTO->response = "There are no Mobile Money based payments to Acc: ".$txDTO->accountNumber;//." from ".$txDTO->mobileNumber;
+               $txDTO->response = "There are no Mobile Money based payments to Acc: ".$txDTO->customerAccount;//." from ".$txDTO->mobileNumber;
                $txDTO->lastResponse = true;
             }
             return $txDTO;
          }
 
-         $txDTO->accountNumber = $arrCustomerJourney[2];
+         $txDTO->customerAccount = $arrCustomerJourney[2];
          $txDTO->error = 'Invalid selection';
          $txDTO->errorType= "InvalidInput";
 
       } catch (\Throwable $e) {
          if($e->getCode() == 1) {
             $txDTO->error = $e->getMessage();
-            $txDTO->errorType = 'PaymentProviderNotActivated';
+            $txDTO->errorType = 'WalletNotActivated';
          }else{
             $txDTO->error = 'At check balance step 3. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';

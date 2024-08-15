@@ -24,7 +24,9 @@ class ComplaintService
 
    public function findById(string $id) : object|null {
       try {
-         return $this->model->findOrFail($id);
+         $item = $this->model->findOrFail($id);
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
@@ -32,7 +34,9 @@ class ComplaintService
 
    public function findOneBy(array $criteria) : object|null {
       try {
-         return $this->model->where($criteria)->first();
+         $item = $this->model->where($criteria)->first();
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
@@ -45,7 +49,7 @@ class ComplaintService
                   unset($data[$key]);
             }
          }
-         $data['caseNumber'] = $data['accountNumber'].'_'.date('YmdHis');
+         $data['caseNumber'] = $data['customerAccount'].'_'.date('YmdHis');
         return $this->model->create($data);
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

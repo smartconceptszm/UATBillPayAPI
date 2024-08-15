@@ -3,7 +3,7 @@
 namespace App\Http\Services\External\Adaptors\ReceiptingHandlers;
 
 use App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\KafubuPostPaid;
+use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
@@ -11,7 +11,7 @@ class ReceiptPostPaidKafubu implements IReceiptPayment
 {
 
     public function __construct( 
-        private KafubuPostPaid $billingClient)
+        private IBillingClient $billingClient)
     {}
 
     public function handle(BaseDTO $paymentDTO):BaseDTO
@@ -30,7 +30,7 @@ class ReceiptPostPaidKafubu implements IReceiptPayment
 									'balance' => $paymentDTO->customer?(float)(\str_replace(",", "", $paymentDTO->customer['balance'])):0,
 									'providerName'=>$paymentDTO->walletHandler,
 									'reference' => $paymentDTO->ppTransactionId,
-									'account' => $paymentDTO->accountNumber,
+									'account' => $paymentDTO->customerAccount,
 									'amount' => $paymentDTO->receiptAmount,
 									'client_id'=>$paymentDTO->client_id
 							];
@@ -39,10 +39,10 @@ class ReceiptPostPaidKafubu implements IReceiptPayment
 		if($billingResponse['status']=='SUCCESS'){
 				$paymentDTO->receiptNumber=$billingResponse['receiptNumber'];
 				$paymentDTO->paymentStatus = 'RECEIPTED';
-				$paymentDTO->receipt = "Payment successful\n" .
+				$paymentDTO->receipt = "\n"."Payment successful"."\n".
 											"Rcpt No: " . $paymentDTO->receiptNumber . "\n" .
 											"Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-											"Acc: " . $paymentDTO->accountNumber . "\n";
+											"Acc: " . $paymentDTO->customerAccount . "\n";
 				if($newBalance!=="0"){
 					$paymentDTO->receipt.="Bal: ZMW ".$newBalance . "\n";
 				}

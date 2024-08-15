@@ -3,8 +3,10 @@
 namespace App\Http\Services\External\Adaptors\ReceiptingHandlers;
 
 use App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\Mazabuka;
+use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\Web\Clients\BillingCredentialService;
 use App\Http\Services\Web\Clients\ClientMenuService;
+
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
@@ -12,15 +14,16 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
 {
 
     public function __construct(
-        private Mazabuka $billingClient,
-		  private ClientMenuService $clientMenuService)
+			private BillingCredentialService $billingCredentials,
+		  	private ClientMenuService $clientMenuService,
+        	private IBillingClient $billingClient)
     {}
 
     public function handle(BaseDTO $paymentDTO): BaseDTO
     {
 
 			$receiptingParams = [ 
-										'account' => $paymentDTO->accountNumber,
+										'account' => $paymentDTO->customerAccount,
 										'amount' => $paymentDTO->receiptAmount,
 										'mobileNumber'=> $paymentDTO->mobileNumber,
 										'client_id' => $paymentDTO->client_id,
@@ -29,24 +32,22 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
 			$billingResponse = $this->billingClient->postPayment($receiptingParams);
 
 			if($billingResponse['status']=='SUCCESS'){
+
+				$customerJourney = \explode("*", $paymentDTO->customerJourney);
+				$billingCredential = $this->billingCredentials->findOneBy(['client_id' =>$paymentDTO->client_id,
+																									'key' =>$customerJourney[2]]);
 					$paymentDTO->receiptNumber = $billingResponse['receiptNumber'];
 					$paymentDTO->paymentStatus = "RECEIPTED";
 
 					$theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
-					$theMenu = \is_null($theMenu)?null: (object)$theMenu->toArray();
-					$paymentDTO->receipt = "Payment successful\n" .
+					$paymentDTO->receipt = "\n"."Payment successful"."\n".
 									"Rcpt No.: " . $paymentDTO->receiptNumber . "\n" .
-									"Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n";
-					if($paymentDTO->accountNumber){
-						$paymentDTO->receipt .= "Acc: " . $paymentDTO->accountNumber . "\n";
-					}
-					if($paymentDTO->reference){
-						$paymentDTO->receipt .= "Ref: " . $paymentDTO->reference . "\n";
-					}
-					$paymentDTO->receipt .= "For: " . $theMenu->description. "\n".
-												"Date: " . Carbon::now()->format('d-M-Y') . "\n";
+									"Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n".
+									"For: (".$billingCredential->key.") - ".$billingCredential->keyValue."\n".
+									"Name: ".$paymentDTO->reference."\n".
+									"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{
-					$paymentDTO->error = "At post recoonection fee. ".$billingResponse['error'];
+				$paymentDTO->error = "At Council payment. ".$billingResponse['error'];
 			}
         
         return $paymentDTO;

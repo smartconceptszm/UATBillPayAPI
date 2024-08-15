@@ -12,7 +12,7 @@ class CustomerFieldUpdate extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'client_id','customer_field_id','caseNumber', 'mobileNumber','accountNumber',
+      'client_id','customer_field_id','caseNumber', 'mobileNumber','customerAccount',
       'district','address','details', 'status','assignedBy','assignedTo',
       'resolution','comments'
    ];

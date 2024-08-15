@@ -11,7 +11,7 @@ class AirtelMoneyTest extends TestCase
 
         $momoParams = (object)[
             'transactionId'=>'230703195608LIV0011567GDY',
-            'accountNumber'=>'LIV0011567',
+            'customerAccount'=>'LIV0011567',
             'paymentAmount'=>73,
             'mobileNumber'=>'260977787659',
             'urlPrefix'=>'swasco'
@@ -28,7 +28,7 @@ class AirtelMoneyTest extends TestCase
 
         $momoParams = (object)[
                         'transactionId'=>'A1018100001D240320T162710',
-                        'accountNumber'=>'10181000018',
+                        'customerAccount'=>'10181000018',
                         'paymentAmount'=>55.00,
                         'mobileNumber'=>'260977358383',
                         'urlPrefix'=>'lukanga'

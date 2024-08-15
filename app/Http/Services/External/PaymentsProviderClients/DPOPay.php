@@ -25,21 +25,18 @@ class DPOPay implements IPaymentsProviderClient
       ];
 
       try {
-         
          $configs = $this->getConfigs($dto->wallet_id);
-         $theXML = $this->getTokenXML($configs,$dto);
-         $configs['transactionToken'] = $this->getTransactionToken($configs, $theXML);
-
-         $theXML = $this->getChargeCardXML($configs, $dto);
-
+         $txTokenXML = $this->getTransactionTokenXML($configs,$dto);
+         $configs['transactionToken'] = $this->getTransactionToken($configs, $txTokenXML);
+         $chargeCardXML = $this->getChargeCardXML($configs, $dto);
          $fullURL = $configs['baseURL'];
          $apiResponse = Http::timeout($configs['timeout'])
-               ->withHeaders([
-                  'Content-Type' => 'application/xml',
-                  'Accept' => 'application/xml',
-              ])->send('POST', $fullURL, [
-                  'body' => $theXML,
-              ]);
+                              ->withHeaders([
+                                 'Content-Type' => 'application/xml',
+                                 'Accept' => 'application/xml',
+                              ])->send('POST', $fullURL, [
+                                    'body' => $chargeCardXML,
+                              ]);
          
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
             $xmlObject = simplexml_load_string($apiResponse->body(), "SimpleXMLElement", LIBXML_NOCDATA);
@@ -73,23 +70,22 @@ class DPOPay implements IPaymentsProviderClient
 
       try {
          $configs = $this->getConfigs($dto->wallet_id);
-
          $theXML = '<?xml version="1.0" encoding="utf-8"?>
-                        <API3G>
+                     <API3G>
                         <CompanyToken>'.$configs['companyToken'].'</CompanyToken>
                         <Request>verifyToken</Request>
                         <TransactionToken>'.$dto->transactionId.'</TransactionToken>
-                        </API3G>';
+                     </API3G>';
 
          $fullURL = $configs['baseURL'];
          $apiResponse = Http::timeout($configs['timeout'])
-               ->withHeaders([
-                     'Content-Type' => 'application/xml',
-                     'Accept' => 'application/xml',
-                  ])
-               ->send('POST', $fullURL, [
-                     'body' => $theXML,
-                  ]);
+                              ->withHeaders([
+                                    'Content-Type' => 'application/xml',
+                                    'Accept' => 'application/xml',
+                                 ])
+                              ->send('POST', $fullURL, [
+                                    'body' => $theXML,
+                                 ]);
          
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
             $xmlObject = simplexml_load_string($apiResponse->body(), "SimpleXMLElement", LIBXML_NOCDATA);
@@ -152,30 +148,30 @@ class DPOPay implements IPaymentsProviderClient
       return $response;
    }
 
-   private function getTokenXML(array $configs, object $params):string
+   private function getTransactionTokenXML(array $configs, object $params):string
    {
       $transactionDate = Carbon::now();
       $transactionDate = $transactionDate->format('Y/m/d H:i');
       $xmlTemplate = '<?xml version=\"1.0\" encoding=\"utf-8\"?><API3G>';
       $xmlTemplate .= '<CompanyToken>'.$configs['companyToken'].'</CompanyToken>
-                                          <Request>createToken</Request>
-                                          <Transaction>
-                                             <PaymentAmount>'.$params->paymentAmount.'</PaymentAmount>
-                                             <PaymentCurrency>'.$configs['currency'].'</PaymentCurrency>
-                                             <CompanyRef>'.$configs['companyRef'].'</CompanyRef>
-                                             <RedirectURL>http://www.domain.com/payurl.php</RedirectURL>
-                                             <BackURL>http://www.domain.com/backurl.php </BackURL>
-                                             <CompanyRefUnique>0</CompanyRefUnique>
-                                             <PTL>5</PTL>
-                                          </Transaction>
-                                          <Services>
-                                             <Service>
-                                                   <ServiceType>'.$configs['serviceType'].'</ServiceType>
-                                                   <ServiceDescription>'.$configs['serviceDescription'].'</ServiceDescription>
-                                                   <ServiceDate>'.$transactionDate.'</ServiceDate>
-                                             </Service>
-                                          </Services>
-                                       </API3G>';
+                     <Request>createToken</Request>
+                     <Transaction>
+                        <PaymentAmount>'.$params->paymentAmount.'</PaymentAmount>
+                        <PaymentCurrency>'.$configs['currency'].'</PaymentCurrency>
+                        <CompanyRef>'.$configs['companyRef'].'</CompanyRef>
+                        <RedirectURL>http://www.domain.com/payurl.php</RedirectURL>
+                        <BackURL>http://www.domain.com/backurl.php </BackURL>
+                        <CompanyRefUnique>0</CompanyRefUnique>
+                        <PTL>5</PTL>
+                     </Transaction>
+                     <Services>
+                        <Service>
+                              <ServiceType>'.$configs['serviceType'].'</ServiceType>
+                              <ServiceDescription>'.$configs['serviceDescription'].'</ServiceDescription>
+                              <ServiceDate>'.$transactionDate.'</ServiceDate>
+                        </Service>
+                     </Services>
+                  </API3G>';
       // $xmlTemplate = new SimpleXMLElement($xmlTemplate);
       return $xmlTemplate;
 

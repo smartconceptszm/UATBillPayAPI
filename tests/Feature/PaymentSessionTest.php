@@ -13,7 +13,7 @@ class PaymentSessionTest extends TestCase
 
       
       $response = $paymentSessionService->findAll([
-                              'meterNumber' =>'0120210638835',
+                              'customerAccount' =>'0120210638835',
                               'client_id' => '39d62460-7303-11ee-b8ce-fec6e52a2330'
                            ]);
       

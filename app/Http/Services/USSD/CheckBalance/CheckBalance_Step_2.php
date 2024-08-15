@@ -2,18 +2,20 @@
 
 namespace App\Http\Services\USSD\CheckBalance;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
-use App\Http\Services\USSD\Utility\StepService_CheckPaymentsEnabled;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
+use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
 use App\Http\Services\Web\Clients\PaymentsProviderService;
+use App\Http\Services\Web\Clients\ClientMenuService;
 use App\Http\DTOs\BaseDTO;
 
 class CheckBalance_Step_2 
 {
 
 	public function __construct(
-        private StepService_CheckPaymentsEnabled $checkPaymentsEnabled,
+        private CheckPaymentsEnabled $checkPaymentsEnabled,
 		  private PaymentsProviderService $paymentsProviderService,
-        private IEnquiryHandler $getCustomerAccount)
+		  private ClientMenuService $clientMenuService,
+		  private EnquiryHandler $enquiryHandler)
 	{}
 	
 	public function run(BaseDTO $txDTO)
@@ -21,13 +23,10 @@ class CheckBalance_Step_2
 
         	try {
 				$txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-				if($txDTO->accountType == 'POST-PAID'){
-					$txDTO->accountNumber=$txDTO->subscriberInput;
-				}else{
-					$txDTO->meterNumber=$txDTO->subscriberInput;
-				}
+				$clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
+				$txDTO->customerAccount = $txDTO->subscriberInput;
 				try {
-					$txDTO = $this->getCustomerAccount->handle($txDTO);
+					$txDTO = $this->enquiryHandler->handle($txDTO);
 				} catch (\Throwable $e) {
 						if($e->getCode()==1){
 							$txDTO->errorType = "InvalidAccount";
@@ -37,19 +36,22 @@ class CheckBalance_Step_2
 						$txDTO->error = $e->getMessage();
 						return $txDTO;
 				}
-				$txDTO->response="Acc: ".$txDTO->subscriberInput."\n". 
-								"Name: ".$txDTO->customer['name']."\n".
-								"Addr: ".$txDTO->customer['address']."\n". 
-								"Bal: ".$txDTO->customer['balance']."\n\n".
-								"Enter\n";
+				$txDTO->response = "Acc: ".$txDTO->subscriberInput."\n". 
+											"Name: ".$txDTO->customer['name']."\n".
+											"Addr: ".$txDTO->customer['address']."\n". 
+											"Bal: ".$txDTO->customer['balance']."\n\n".
+											"Enter\n";
 				$paymentsProviderStatus = $this->checkPaymentsEnabled->handle($txDTO);
 				if($paymentsProviderStatus['enabled']){
+					$clientMenu = $this->clientMenuService->findOneBy([
+																		'client_id' => $txDTO->client_id,
+																		'isPayment' => 'YES',
+																		'isDefault' => 'YES',
+																		'isActive' => "YES",
+																		'billingClient' =>  $clientMenu->billingClient
+																	]);
 					$paymentsProvider = $this->paymentsProviderService->findById($txDTO->payments_provider_id);
-					if($txDTO->accountType == 'POST-PAID'){
-						$txDTO->response .= "1. To Pay Bill (via ".$paymentsProvider->shortName.")"."\n";
-					}else{
-						$txDTO->response .= "1. To Buy Units (via ".$paymentsProvider->shortName.")"."\n";
-					}
+					$txDTO->response .= "1. ".$clientMenu->prompt." (via ".$paymentsProvider->shortName.")"."\n";
 				}
 				$txDTO->response .= "2. Payments history\n";
 				$txDTO->response .= "0. Back";  

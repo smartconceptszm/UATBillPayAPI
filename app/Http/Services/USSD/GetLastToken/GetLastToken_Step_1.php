@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\GetLastToken;
 
-use App\Http\Services\USSD\Utility\StepService_AccountNoMenu;
+use App\Http\Services\Web\Clients\ClientMenuService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -10,7 +10,7 @@ class GetLastToken_Step_1
 {
 
    public function __construct(
-      private StepService_AccountNoMenu $accountNoMenu)
+      private ClientMenuService $clientMenuService)
    {}
 
    public function run(BaseDTO $txDTO)
@@ -18,13 +18,14 @@ class GetLastToken_Step_1
 
       try {    
 
-         $txDTO->response = $this->accountNoMenu->handle($txDTO);
+			$clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
+			$txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
          
       } catch (\Throwable $e) {
 
          if($e->getCode() == 1) {
             $txDTO->error = $e->getMessage();
-            $txDTO->errorType = 'PaymentProviderNotActivated';
+            $txDTO->errorType = 'WalletNotActivated';
          }else{
             $txDTO->error = 'Buy units sub step 1. '.$e->getMessage();
             $txDTO->errorType = 'SystemError';

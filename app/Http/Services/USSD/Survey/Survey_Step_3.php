@@ -30,14 +30,12 @@ class Survey_Step_3
                            'isActive' => 'YES'
                         ]);
          if($survey){
-            $survey = \is_null($survey)?null: (object)$survey->toArray();
             $txDTO->subscriberInput = $txDTO->subscriberInput."*".$survey->id;
 
             $surveyQuestion = $this->questionService->findOneBy([
                                     'survey_id' => $survey->id,
                                     'order' => '1',
-                                 ]);
-            $surveyQuestion = \is_null($surveyQuestion)?null: (object)$surveyQuestion->toArray();                
+                                 ]);                
             $thePrompt = $surveyQuestion->prompt;
             if($surveyQuestion->type == 'LIST'){
                $listItems = $this->questionListItemService->findAll([

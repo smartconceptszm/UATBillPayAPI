@@ -13,11 +13,13 @@ class PaymentHistoryService
 
       try {
          $dto = (object)$criteria;
-         $records = DB::table('payments')
-                        ->select('id','created_at','accountNumber','mobileNumber','receiptAmount','receiptNumber')
-                        ->where('accountNumber', '=', $dto->accountNumber)
+         $records = DB::table('payments as p')
+                        ->join('client_wallets as cw','p.wallet_id','=','cw.id')
+                        ->join('clients as c','cw.client_id','=','c.id')
+                        ->select('p.id','p.created_at','p.customerAccount','p.mobileNumber','p.receiptAmount','p.receiptNumber')
+                        ->where('customerAccount', '=', $dto->customerAccount)
                         //->where('mobileNumber', '=', $dto->mobileNumber)
-                        ->where('client_id', '=', $dto->client_id)
+                        ->where('c.id', '=', $dto->client_id)
                         ->whereIn('paymentStatus',['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                         ->orderByDesc('created_at')
                         ->limit($dto->limit)
@@ -35,16 +37,18 @@ class PaymentHistoryService
       try {
          $dto = (object)$criteria;
          $record = DB::table('payments as p')
+                        ->join('client_wallets as cw','p.wallet_id','=','cw.id')
+                        ->join('clients as c','cw.client_id','=','c.id')
                         ->join('client_menus as cm','p.menu_id','=','cm.id')
                         ->select('p.id','p.tokenNumber', 'p.receipt')
-                        ->where('p.meterNumber', '=', $dto->meterNumber)
-                        ->where('p.client_id', '=', $dto->client_id)
+                        ->where('p.customerAccount', '=', $dto->customerAccount)
+                        ->where('c.id', '=', $dto->client_id)
                         ->where('cm.isPayment', '=', "YES")
                         ->where('cm.isDefault', '=', "YES")
-                        ->where('cm.accountType', '=', "PRE-PAID")
                         ->whereIn('p.paymentStatus',['RECEIPTED','RECEIPT DELIVERED'])
                         ->orderByDesc('p.created_at')
                         ->first();
+         $record = \is_null($record)?null:(object)$record->toArray();
          return $record;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

@@ -2,9 +2,9 @@
 
 namespace App\Http\Services\External\Adaptors\ReceiptingHandlers;
 
-use App\Http\Services\Gateway\Utility\StepService_AddShotcutMessage;
 use App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\Swasco;
+use App\Http\Services\Gateway\Utility\StepService_AddShotcutMessage;
+use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -14,7 +14,7 @@ class ReceiptPostPaidSwasco implements IReceiptPayment
 
 	public function __construct(
 		private StepService_AddShotcutMessage $addShotcutMessage,
-		private Swasco $billingClient)
+		private IBillingClient $billingClient)
 	{}
 
 	public function handle(BaseDTO $paymentDTO):BaseDTO
@@ -35,7 +35,7 @@ class ReceiptPostPaidSwasco implements IReceiptPayment
 		$receiptingParams = [ 
 				'mobileNumber'=> $paymentDTO->mobileNumber,
 				'referenceNumber' => $swascoTransactionRef,
-				'account' => $paymentDTO->accountNumber,
+				'account' => $paymentDTO->customerAccount,
 				'amount' => $paymentDTO->receiptAmount,
 				'client_id' => $paymentDTO->client_id,
 				'paymentType'=>"1",
@@ -47,10 +47,10 @@ class ReceiptPostPaidSwasco implements IReceiptPayment
 			$paymentDTO->receiptNumber = $billingResponse['receiptNumber'];
 			$paymentDTO->paymentStatus = "RECEIPTED";
 
-			$paymentDTO->receipt = "Payment successful\n" .
+			$paymentDTO->receipt = "\n"."Payment successful"."\n".
 											"Rcpt No: " . $paymentDTO->receiptNumber . "\n" .
 											"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-											"Acc: " . $paymentDTO->accountNumber . "\n";
+											"Acc: " . $paymentDTO->customerAccount . "\n";
 			if($newBalance != "0"){
 				$paymentDTO->receipt.="Bal: ZMW ". $newBalance . "\n";
 			}

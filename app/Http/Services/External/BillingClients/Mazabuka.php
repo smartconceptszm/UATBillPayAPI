@@ -16,7 +16,7 @@ class Mazabuka implements IBillingClient
    {
 
       $response = [
-         'accountNumber' => $params['accountNumber'],
+         'customerAccount' => $params['customerAccount'],
          "name" => "Mazabuka Customer",
          "address" => "No. 1, Street 1",
          "district" => 'MAZABUKA',
@@ -29,13 +29,16 @@ class Mazabuka implements IBillingClient
    public function postPayment(Array $postParams): Array 
    {
 
+      $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      $firstChar = $alphabet[\random_int(0, strlen($alphabet) - 1)];
+      $digits = \str_pad(\random_int(0, 99999), 5, '0', STR_PAD_LEFT);
       $response=[
             'status'=>'SUCCESS',
-            'receiptNumber'=>"RCPT".\rand(1000,100000),
+            'receiptNumber'=>"MAZ".\date('ymd').".".\date('His').".".$firstChar.$digits,
             'error'=>''
          ];
-
       return $response;
+      
    }
 
 }

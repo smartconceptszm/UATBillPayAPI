@@ -25,30 +25,25 @@ class Step_IdentifyClient extends EfectivoPipelineContract
          try {
             
             $client = $this->clientService->findOneBy(['urlPrefix'=>$txDTO->urlPrefix]);
-            $client = \is_null($client)?null:(object)$client->toArray();
-
+            
             if($client->ussdAggregator == 'YES'){
                if($txDTO->isNewRequest == '1'){
                   $subscriberInput = \explode("*",$txDTO->subscriberInput);
                   if(\count($subscriberInput)>1){
-                     $txDTO->subscriberInput = $subscriberInput[0];
                      $aggregatedClient = $this->aggregatedClientService->findOneBy([
                                                       'parent_id'=>$client->id,
                                                       'menuNo'=>$subscriberInput[1]
                                                    ]);
-                     $aggregatedClient = \is_null($aggregatedClient)?null:(object)$aggregatedClient->toArray();
                      $client = $this->clientService->findById($aggregatedClient->client_id);
-                     $client = \is_null($client)?null:(object)$client->toArray();
+                     $txDTO->subscriberInput = $subscriberInput[0];
                   }
                }else{
                   $ussdSession = $this->sessionService->findOneBy([   
                                                             'mobileNumber'=>$txDTO->mobileNumber,
                                                             'sessionId'=>$txDTO->sessionId,
                                                          ]);
-                  $ussdSession =(object)$ussdSession->toArray();
                   if($ussdSession->client_id != $client->id){
                      $client = $this->clientService->findById($ussdSession->client_id);
-                     $client = \is_null($client)?null:(object)$client->toArray();
                   }
                }
             }

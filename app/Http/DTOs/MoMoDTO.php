@@ -27,7 +27,7 @@ class MoMoDTO extends PaymentDTO
       return [
             'ppTransactionId'=>$this->ppTransactionId,
             'surchargeAmount'=>$this->surchargeAmount,
-            'accountNumber'=>$this->accountNumber,
+            'customerAccount'=>$this->customerAccount,
             'paymentAmount'=>$this->paymentAmount,
             'transactionId'=>$this->transactionId,
             'receiptAmount'=>$this->receiptAmount,
@@ -35,11 +35,9 @@ class MoMoDTO extends PaymentDTO
             'receiptNumber'=>$this->receiptNumber,
             'mobileNumber'=>$this->mobileNumber,
             'walletNumber'=>$this->walletNumber,
-            'meterNumber'=>$this->meterNumber,
             'tokenNumber'=>$this->tokenNumber,
             'session_id'=>$this->session_id,
-            'wallet_id'=>$this->wallet_id,
-            'client_id'=>$this->client_id,         
+            'wallet_id'=>$this->wallet_id,      
             'reference'=>$this->reference,
             'district'=>$this->district,
             'menu_id'=>$this->menu_id,
@@ -54,8 +52,8 @@ class MoMoDTO extends PaymentDTO
 
    public function toProviderParams():object{
       return (object)[
+            'customerAccount'=>$this->customerAccount,
             'transactionId'=>$this->transactionId,
-            'accountNumber'=>$this->accountNumber,
             'paymentAmount'=>$this->paymentAmount,
             'mobileNumber'=>$this->mobileNumber,
             'walletNumber'=>$this->walletNumber,

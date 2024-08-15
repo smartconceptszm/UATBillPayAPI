@@ -2,9 +2,9 @@
 
 namespace App\Http\Services\External\Adaptors\ReceiptingHandlers;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\ChambeshiPostPaidEnquiry;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
 use App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\ChambeshiPostPaid;
+use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
@@ -12,8 +12,8 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 {
 
 	public function __construct(
-		private ChambeshiPostPaidEnquiry $chambeshiEnquiry,
-		private ChambeshiPostPaid $billingClient)
+		private EnquiryHandler $chambeshiEnquiry,
+		private IBillingClient $billingClient)
 	{}
 
 	public function handle(BaseDTO $paymentDTO):BaseDTO
@@ -27,15 +27,15 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 										(float)$paymentDTO->receiptAmount;
 		$newBalance = \number_format($newBalance, 2, '.', ',');
 
-		$paymentDTO->receiptNumber =  $paymentDTO->accountNumber."_".\now()->timestamp;
+		$paymentDTO->receiptNumber =  $paymentDTO->customerAccount."_".\now()->timestamp;
 
 		$receiptingParams = [
 									"Mobile Network" => $paymentDTO->walletHandler, 
 									"AccountName"=> $paymentDTO->customer['name'],
 									"AmountPaid" => $paymentDTO->receiptAmount,
 									"ReceiptNo"=> $paymentDTO->receiptNumber,
-									"Address"=> $paymentDTO->accountNumber,
-									"Account"=> $paymentDTO->accountNumber,
+									"Address"=> $paymentDTO->customerAccount,
+									"Account"=> $paymentDTO->customerAccount,
 									"TransactDescript"=> "2220 POSTPAID.",
 									"Phone#"=> $paymentDTO->mobileNumber,
 									"District"=> $paymentDTO->district,
@@ -47,10 +47,10 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 	
 		if($billingResponse['status']=='SUCCESS'){
 			$paymentDTO->paymentStatus = "RECEIPTED";
-			$paymentDTO->receipt = "Payment successful\n" .
+			$paymentDTO->receipt = "\n"."Payment successful"."\n".
 										"Rcpt No: " . $paymentDTO->receiptNumber . "\n" .
 										"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-										"Acc: " . $paymentDTO->accountNumber . "\n";
+										"Acc: " . $paymentDTO->customerAccount . "\n";
 			$paymentDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			$paymentDTO->receipt.="Balance update within 48 hrs.";
 		}else{

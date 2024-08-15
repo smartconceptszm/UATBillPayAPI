@@ -17,10 +17,9 @@ return new class extends Migration
          $table->string("parent_id",36)->notNullable()->default(0);
          $table->integer("order")->notNullable();
          $table->string('prompt',50)->notNullable();
+         $table->string('shortcut',150)->nullable();
          $table->string('handler',50)->notNullable();
          $table->string('billingClient',50)->nullable();
-         $table->string('enquiryHandler',50)->nullable();
-         $table->enum('accountType',['POST-PAID', 'PRE-PAID'])->default('POST-PAID')->nullable();
          $table->string('description',150)->nullable();
          $table->enum('isPayment',['YES','NO'])->default('NO')->notNullable();
          $table->string('receiptingHandler',50)->nullable();
@@ -28,8 +27,7 @@ return new class extends Migration
          $table->enum('isActive',['YES','NO'])->default('NO')->notNullable();
          $table->enum('onOneAccount',['YES','NO'])->default('NO')->notNullable();
          $table->string('commonAccount',50)->nullable();
-         $table->enum('servicePoint',['accountNumber','meterNumber'])->nullable();
-         $table->string('servicePointPrompt',150)->nullable();
+         $table->string('customerAccountPrompt',150)->nullable();
          $table->enum('requiresReference',['YES','NO'])->default('NO')->notNullable();
          $table->string('referencePrompt',150)->nullable();
          $table->timestamps();

@@ -13,11 +13,10 @@ class SMSTest extends TestCase
     public function _testSendSMS()
     {   
 
-        $smsDTO= new \App\Http\DTOs\SMSTxDTO();
-        $smsDTO= $smsDTO->fromArray([
-
-        ]);
-
+        $smsDTO = new \App\Http\DTOs\SMSTxDTO();
+        $smsDTO = $smsDTO->fromArray([
+                                        'client_id'=>''
+                                    ]);
 
         $smsSender = new SMSService(
                         new \App\Http\Services\Web\SMS\MessageService(new \App\Models\Message([])),

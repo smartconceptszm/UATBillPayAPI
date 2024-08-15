@@ -11,6 +11,7 @@ use App\Jobs\BaseJob;
 class SendSMSesJob extends BaseJob
 {
 
+   public $timeout = 600;
    /**
     * Create a new job instance.
     *
@@ -18,7 +19,7 @@ class SendSMSesJob extends BaseJob
     */
    public function __construct(
       private Array $arrSMSes, 
-      public String $urlPrefix = '')
+      public String $client_id = '')
    {}
 
 
@@ -29,7 +30,7 @@ class SendSMSesJob extends BaseJob
     */
    public function middleware(): array
    {
-      return [new SMSClientBindJobMiddleware()];
+      return [new SMSClientBindJobMiddleware(new \App\Http\Services\Web\Clients\ClientMnoService(new \App\Models\ClientMno()))];
    }
 
    /**
@@ -40,10 +41,10 @@ class SendSMSesJob extends BaseJob
    public function handle(SMSService $smsService, SMSTxDTO $smsTxDTO)
    {
 
-      foreach ($this->arrSMSes as $key=>$smsData) {
-         $smsService->send($smsTxDTO->fromArray($smsData));
+      foreach ($this->arrSMSes as $smsData) {
+         $smsTxDTO = $smsService->send($smsTxDTO->fromArray($smsData));
          if($smsData['type'] != "RECEIPT"){
-            Log::info('('.$smsData['urlPrefix'].') '.
+            Log::info('('.$smsTxDTO->urlPrefix.') '.
                         'SMS Message Dispatched: Phone: '.
                         $smsData['mobileNumber'].' - :Type '.
                         $smsData['type'].' - Message: '.

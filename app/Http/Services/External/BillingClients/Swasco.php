@@ -10,65 +10,6 @@ use Exception;
 
 class Swasco implements IBillingClient
 {
-    
-   private $paymentTypes = [
-      "1" => [
-         "code" => "4",
-         "name" => "Reconnection",
-         "accountType" => "Customer",
-         "accountNo" => "320001",
-         "hasApplicationNo"=>false
-      ],
-      "2" => [
-         "code" => "12",
-         "name" => "Vacuum Tanker Pit Emptying",
-         "accountType" => "G/L Account",
-         "accountNo" => "320008",
-         "hasApplicationNo"=>false
-      ],
-      // "3" => [
-      //     "code" => "5",
-      //     "name" => "New Water Connection",
-      //     "accountType" => "G/L Account",
-      //     "accountNo" => "320003",
-      //     "hasApplicationNo"=>true
-      // ],
-      // "4" => [
-      //     "code" => "8",
-      //     "name" => "Capital Contribution",
-      //     "accountType" => "G/L Account",
-      //     "accountNo" => "222535",
-      //     "hasApplicationNo"=>true
-      // ],
-      // "5" => [
-      //     "code" => "6",
-      //     "name" => "Sewerage Connection",
-      //     "accountType" => "G/L Account",
-      //     "accountNo" => "320004",
-      //     "hasApplicationNo"=>true
-      // ],
-      // "6" => [
-      //     "code" => "13",
-      //     "name" => "Unblocking Sewer",
-      //     "accountType" => "G/L Account",
-      //     "accountNo" => "320008",
-      //     "hasApplicationNo"=>false
-      // ],
-      // "7" => [
-      //     "code" => "17",
-      //     "name" => "Meter Testing",
-      //     "accountType" => "G/L Account",
-      //     "accountNo" => "320099",
-      //     "hasApplicationNo"=>false
-      // ],
-      // "8" => [
-      //     "code" => "21",
-      //     "name" => "Bowser Water",
-      //     "accountType" => "G/L Account",
-      //     "accountNo" => "320007",
-      //     "hasApplicationNo"=>false
-      // ],
-   ];
 
    private $districts =[
       "BAT"=>"BATOKA",
@@ -96,32 +37,6 @@ class Swasco implements IBillingClient
       "ZIM"=>"ZIMBA",
    ];
 
-   private $customerDetails = [
-      "1" => [
-         "name" => "Mobile No.",
-         "type" => "mobile",
-         "format" => "095xxxxxxx"
-      ],
-      "2" => [
-         "name" => "House Number",
-         "type" => "",
-         "format" => ""
-      ],
-      "3" => [
-         "name" => "Street Name",
-         "type" => "",
-         "format" => ""
-      ],
-      "4" => [
-         "name" => "Area or Location",
-         "type" => "",
-         "format" => ""
-      ],
-   ];
-   private int $swascoReceiptingTimeout;
-   private int $swascoTimeout;
-   private string $baseURL;
-
    public function __construct(
       private BillingCredentialService $billingCredentialsService) 
    {}
@@ -132,13 +47,12 @@ class Swasco implements IBillingClient
       $response = [];
 
       try {
-         $this->getConfigs($params['client_id']);
-         if(!(\strlen($params['accountNumber'])==10)){
+         if(!(\strlen($params['customerAccount'])==10)){
             throw new Exception("Invalid SWASCo account number",1);
          }
-
-         $fullURL = $this->baseURL . "navision/customers/".\rawurlencode($params['accountNumber']);
-         $apiResponse = Http::timeout($this->swascoTimeout)->withHeaders([
+         $configs = $this->getConfigs($params['client_id']);
+         $fullURL = $configs['baseURL'] . "navision/customers/".\rawurlencode($params['customerAccount']);
+         $apiResponse = Http::timeout($configs['swascoTimeout'])->withHeaders([
                                              'Content-Type' => 'application/json',
                                              'Accept' => '*/*'
                                        ])->get($fullURL);
@@ -180,54 +94,54 @@ class Swasco implements IBillingClient
          ];
 
       try {
-         $this->getConfigs($postParams['client_id']);
+         $configs = $this->getConfigs($postParams['client_id']);
          switch ($postParams['paymentType']) {
                case '1':
-                  $fullURL = $this->baseURL . "navision/payments/bills";
+                  $fullURL = $configs['baseURL'] . "navision/payments/bills";
                   break;
                case '4':
-                  $fullURL = $this->baseURL . "navision/payments/reconnections";
+                  $fullURL = $configs['baseURL'] . "navision/payments/reconnections";
                   break;
                case '5':
-                  $fullURL = $this->baseURL . "navision/payments/waterconnections";
+                  $fullURL = $configs['baseURL'] . "navision/payments/waterconnections";
                   break;                    
                case '6':
-                  $fullURL = $this->baseURL . "navision/payments/sewerconnections";
+                  $fullURL = $configs['baseURL'] . "navision/payments/sewerconnections";
                   break;
                case '8':
-                  $fullURL = $this->baseURL . "navision/payments/capitalcontributions";
+                  $fullURL = $configs['baseURL'] . "navision/payments/capitalcontributions";
                   break;
                case '12':
-                  $fullURL = $this->baseURL . "navision/payments/vacuumtankers";
+                  $fullURL = $configs['baseURL'] . "navision/payments/vacuumtankers";
                   break;                                      
                default:
-                  $fullURL = $this->baseURL . "navision/payments/bills";
+                  $fullURL = $configs['baseURL'] . "navision/payments/bills";
                   break;
          }
          
-         $apiResponse = Http::timeout($this->swascoReceiptingTimeout)
-               ->withHeaders([
-                  'Content-Type' => 'application/json',
-                  'Accept' => '*/*',
-               ])
-               ->post($fullURL, [
-                  'accountNumber' => $postParams['account'],
-                  'amount' => (string)$postParams['amount'],
-                  "mobileNumber" => $postParams['mobileNumber'],
-                  "referenceNumber" => $postParams['referenceNumber'],
-                  "paymentType" => $postParams['paymentType']
-               ]);
+         $apiResponse = Http::timeout($configs['receiptingTimeout'])
+                                 ->withHeaders([
+                                       'Content-Type' => 'application/json',
+                                       'Accept' => '*/*',
+                                    ])
+                                 ->post($fullURL, [
+                                       'accountNumber' => $postParams['customerAccount'],
+                                       'amount' => (string)$postParams['amount'],
+                                       "mobileNumber" => $postParams['mobileNumber'],
+                                       "referenceNumber" => $postParams['referenceNumber'],
+                                       "paymentType" => $postParams['paymentType']
+                                    ]);
          if ($apiResponse->status() == 200) {
-               $apiResponse = $apiResponse->json();
-               $response['status']="SUCCESS";
-               $response['receiptNumber']=$apiResponse['data']['ReceiptNo'];
+            $apiResponse = $apiResponse->json();
+            $response['status']="SUCCESS";
+            $response['receiptNumber']=$apiResponse['data']['ReceiptNo'];
          } else {
-               if ($apiResponse->status() == 500) {
-                  $apiResponse = $apiResponse->json();
-                  throw new Exception($apiResponse['status']['message']);
-               } else {
-                  throw new Exception("SWASCO Remote Service responded with status code: " . $apiResponse->status(), 1);
-               }
+            if ($apiResponse->status() == 500) {
+               $apiResponse = $apiResponse->json();
+               throw new Exception($apiResponse['status']['message']);
+            } else {
+               throw new Exception("SWASCO Remote Service responded with status code: " . $apiResponse->status(), 1);
+            }
          }
       } catch (\Throwable $e) {
          $response['error']=$e->getMessage();
@@ -238,18 +152,18 @@ class Swasco implements IBillingClient
    public function postComplaint(array $postParams): String {
       $response ="";
       try {
-         $this->getConfigs($postParams['client_id']);
-         $fullURL = $this->baseURL . "navision/complaints";
-         $apiResponse = Http::timeout($this->swascoTimeout)
+         $configs = $this->getConfigs($postParams['client_id']);
+         $fullURL = $configs['baseURL'] . "navision/complaints";
+         $apiResponse = Http::timeout($configs['swascoTimeout'])
                               ->withHeaders([
-                                 'Content-Type' => 'application/json',
-                                 'Accept' => '*/*',
-                              ])
-                              ->post($fullURL, [
-                                                   'accountNumber' => $postParams['accountNumber'],
-                                                   'complaintCode' => $postParams['complaintCode'],
-                                                   "mobileNumber" => $postParams['mobileNumber']
-                                                ]);
+                                    'Content-Type' => 'application/json',
+                                    'Accept' => '*/*',
+                                 ])
+                              ->post($fullURL,[
+                                    'accountNumber' => $postParams['customerAccount'],
+                                    'complaintCode' => $postParams['complaintCode'],
+                                    "mobileNumber" => $postParams['mobileNumber']
+                                 ]);
 
          if ($apiResponse->status() == 200) {
                $apiResponse = $apiResponse->json();
@@ -275,18 +189,18 @@ class Swasco implements IBillingClient
 
 
          //$response = 'CASE2929292929';
-         $this->getConfigs($postParams['client_id']);
-         $fullURL = $this->baseURL . "navision/mobilenos";
-         $apiResponse = Http::timeout($this->swascoTimeout)
-               ->withHeaders([
-                  'Content-Type' => 'application/json',
-                  'Accept' => '*/*',
-               ])
-               ->post($fullURL, [
-                  'accountNumber' => $postParams['accountNumber'],
-                  'mobileNumber' => $postParams['mobileNumber'],
-                  'newMobileNumber' => $postParams['newMobileNumber'],
-               ]);
+         $configs = $this->getConfigs($postParams['client_id']);
+         $fullURL = $configs['baseURL'] . "navision/mobilenos";
+         $apiResponse = Http::timeout($configs['swascoTimeout'])
+                              ->withHeaders([
+                                    'Content-Type' => 'application/json',
+                                    'Accept' => '*/*',
+                                 ])
+                              ->post($fullURL, [
+                                    'accountNumber' => $postParams['customerAccount'],
+                                    'mobileNumber' => $postParams['mobileNumber'],
+                                    'newMobileNumber' => $postParams['newMobileNumber'],
+                                 ]);
          if ($apiResponse->status() == 200) {
                $apiResponse = $apiResponse->json();
                $response = $apiResponse['data']['referenceNo'];
@@ -316,13 +230,14 @@ class Swasco implements IBillingClient
       
    }
 
-   private function getConfigs(string $client_id)
+   private function getConfigs(string $client_id):array
    {
 
       $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
-      $this->swascoReceiptingTimeout = $clientCredentials['RECEIPTING_TIMEOUT'];
-      $this->swascoTimeout = $clientCredentials['REMOTE_TIMEOUT'];
-      $this->baseURL = $clientCredentials['POSTPAID_BASE_URL'];
+      $configs['receiptingTimeout'] = $clientCredentials['RECEIPTING_TIMEOUT'];
+      $configs['swascoTimeout'] = $clientCredentials['REMOTE_TIMEOUT'];
+      $configs['baseURL'] = $clientCredentials['POSTPAID_BASE_URL'];
+      return $configs;
 
    }
 

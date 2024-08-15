@@ -32,24 +32,16 @@ class PaymentReceiptService
 
          $thePayment = $this->paymentToReviewService->findById($data['id']);
          $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
+         if(!($paymentDTO->paymentStatus == 'PAID | NO TOKEN' || $paymentDTO->paymentStatus == 'PAID | NOT RECEIPTED')){
+            throw new Exception("Unexpected payment status - ".$paymentDTO->paymentStatus);
+         }
 
-         if($paymentDTO->accountType == "POST-PAID"){
-            if($paymentDTO->paymentStatus != 'PAID | NOT RECEIPTED' ){
-               throw new Exception("Unexpected payment status - ".$paymentDTO->paymentStatus);
-            }
-            if($paymentDTO->receiptNumber != ''){
-               throw new Exception("Payment appears receipted! Receipt number ".$paymentDTO->receiptNumber);
-            }
-         }else{
-            if(!($paymentDTO->paymentStatus == 'PAID | NO TOKEN' || $paymentDTO->paymentStatus == 'PAID | NOT RECEIPTED')){
-               throw new Exception("Unexpected payment status - ".$paymentDTO->paymentStatus);
-            }
-            if($paymentDTO->tokenNumber != '' && $paymentDTO->paymentStatus == 'PAID | NO TOKEN'){
-               throw new Exception("Token was already issued! Token number ".$paymentDTO->tokenNumber);
-            }
-            if($paymentDTO->receiptNumber != '' &&  $paymentDTO->paymentStatus == 'PAID | NOT RECEIPTED'){
-               throw new Exception("Payment appears receipted! Receipt number ".$paymentDTO->receiptNumber);
-            }
+         if($paymentDTO->paymentStatus == 'PAID | NOT RECEIPTED' && $paymentDTO->receiptNumber != ''){
+            throw new Exception("Payment appears receipted! Receipt number ".$paymentDTO->receiptNumber);
+         }
+
+         if($paymentDTO->paymentStatus == 'PAID | NO TOKEN' && $paymentDTO->tokenNumber != ''){
+            throw new Exception("Token was already issued! Token number ".$paymentDTO->tokenNumber);
          }
 
          if($paymentDTO->ppTransactionId == ''){
@@ -58,11 +50,13 @@ class PaymentReceiptService
 
          //Bind Receipting Handler
             $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
-            $theMenu = \is_null($theMenu)?null: (object)$theMenu->toArray();
             $receiptingHandler = $theMenu->receiptingHandler;
+            $billingClient = $theMenu->billingClient;
             if (\env('USE_RECEIPTING_MOCK') == "YES"){
                $receiptingHandler = "MockReceipting";
+               $billingClient = "MockBillingClient";
             }
+            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
             App::bind(\App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
          //
 
@@ -110,7 +104,7 @@ class PaymentReceiptService
          $thePayment = $this->paymentToReviewService->findById($id);
          $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
 
-         if($paymentDTO->accountType == "POST-PAID"){
+         if($paymentDTO->paymentStatus == 'PAID | NOT RECEIPTED'){
             if($paymentDTO->receiptNumber != ''){
                throw new Exception("Payment already receipted! Receipt number ".$paymentDTO->receiptNumber);
             }
@@ -121,7 +115,7 @@ class PaymentReceiptService
                $paymentDTO->receipt = "Payment successful\n" .
                      "Rcpt No.: " . $paymentDTO->receiptNumber . "\n" .
                      "Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-                     "Acc: " . $paymentDTO->accountNumber . "\n";
+                     "Acc: " . $paymentDTO->customerAccount . "\n";
                $paymentDTO->receipt .= "Date: " . Carbon::now()->format('d-M-Y') . "\n";
             //
          }else{
@@ -134,8 +128,7 @@ class PaymentReceiptService
             //consider a format receipt public method for each billing client
                $paymentDTO->receipt = "Payment successful\n" .
                      "Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-                     "Meter No: " . $paymentDTO->meterNumber . "\n" .
-                     "Acc: " . $paymentDTO->accountNumber . "\n".
+                     "Acc: " . $paymentDTO->customerAccount . "\n".
                      "Token: ". $paymentDTO->tokenNumber . "\n".
                      "Date: " . Carbon::now()->format('d-M-Y') . "\n";
             //

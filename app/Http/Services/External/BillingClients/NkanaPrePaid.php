@@ -5,17 +5,11 @@ use App\Http\Services\External\BillingClients\PrePaidVendor\PurchaseEncryptor;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use App\Http\Services\Web\Clients\BillingCredentialService;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 use Exception;
 
 class NkanaPrePaid implements IBillingClient
 {
-
-   private $purchasePreview = "platformcalculatefee";
-   private string $platformId;
-   private string $baseURL;
-   private string $rootKey;
 
    public function __construct(
          private BillingCredentialService $billingCredentialsService,
@@ -28,17 +22,17 @@ class NkanaPrePaid implements IBillingClient
       $response = [];
 
       try {
-         $this->getConfigs($params['client_id']);
+         $configs = $this->getConfigs($params['client_id']);
          $getData = [
-                        "function"=> $this->purchasePreview,
-                        "platformid" =>$this->platformId,
-                        "meternumber" => $params['meterNumber'],
+                        "function"=> "platformcalculatefee",
+                        "platformid" =>$configs['platformId'],
+                        "meternumber" => $params['customerAccount'],
                         "payment" => $params['paymentAmount'],
                      ];
 
          $apiResponse = Http::withHeaders([
                                     'Accept' => '*/*'
-                                 ])->get($this->baseURL, $getData);
+                                 ])->get($configs['baseURL'], $getData);
 
          if ($apiResponse->status() == 200) {
             $apiResponseString = $apiResponse->body(); // Get response data as BODY
@@ -50,7 +44,7 @@ class NkanaPrePaid implements IBillingClient
                if(\array_key_exists('errorcode',$apiResponseArray)){
                   switch ($apiResponseArray['errorcode']) {
                      case "0":
-                        $response['accountNumber'] = $apiResponseArray['identificationnumber'];
+                        $response['customerAccount'] = $apiResponseArray['identificationnumber'];
                         $response['name'] = $apiResponseArray['customername'];
                         $response['address'] = "KITWE";
                         $response['district'] = "KITWE";
@@ -129,18 +123,18 @@ class NkanaPrePaid implements IBillingClient
       ];
 
       try {
-         $this->getConfigs($postParams['client_id']);
+         $configs = $this->getConfigs($postParams['client_id']);
          $purchaseParameterString = $this->purchaseEncryptor->generatePurchaseString($postParams['transactionId'],
-                                                                     $postParams['paymentAmount'],  $this->rootKey);
+                                                                     $postParams['paymentAmount'],  $configs['rootKey']);
                                           
          $tokenParameters = [
                               "operatetype"=>"purchasebytransid",
-                              "platformid" =>$this->platformId,
-                              "meternumber" =>  $postParams['meterNumber'],
+                              "platformid" =>$configs['platformId'],
+                              "meternumber" =>  $postParams['customerAccount'],
                               "transid" => $postParams['transactionId'],
                               "purchaseparam" => $purchaseParameterString
                            ];
-         $apiResponse = Http::asForm()->post($this->baseURL, $tokenParameters);
+         $apiResponse = Http::asForm()->post($configs['baseURL'], $tokenParameters);
 
          if ($apiResponse->status() == 200) {
             $apiResponseString = $apiResponse->body(); // Get response data as BODY
@@ -229,14 +223,14 @@ class NkanaPrePaid implements IBillingClient
       return $response;
    }
 
-   private function getConfigs(string $client_id)
+   private function getConfigs(string $client_id):array
    {
 
       $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
-      $this->platformId = $clientCredentials['PREPAID_PLATFORMID'];
-      $this->rootKey = $clientCredentials['PREPAID_ROOTKEY'];
-      $this->baseURL =$clientCredentials['PREPAID_BASE_URL'];
-
+      $configs['platformId'] = $clientCredentials['PREPAID_PLATFORMID'];
+      $configs['rootKey'] = $clientCredentials['PREPAID_ROOTKEY'];
+      $configs['baseURL'] =$clientCredentials['PREPAID_BASE_URL'];
+      return $configs;
    }
 
 

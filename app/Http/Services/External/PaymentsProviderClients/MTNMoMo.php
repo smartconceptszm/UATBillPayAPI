@@ -52,15 +52,15 @@ class MTNMoMo implements IPaymentsProviderClient
          ]);
 
          if($mtnResponse->status()>=200 && $mtnResponse->status()<300 ){
-               $mainResponse['status']="SUBMITTED";
+            $mainResponse['status']="SUBMITTED";
          }else{
-               throw new Exception("Error on collect funds. MTN MoMo responded with status code: ".$mtnResponse->status().".", 2);
+            throw new Exception("Error on collect funds. MTN MoMo responded with status code: ".$mtnResponse->status().".", 2);
          }
       } catch (\Throwable $e) {
          if($e->getCode()==1 || $e->getCode()==2){
-               $mainResponse['error']=$e->getMessage();
+            $mainResponse['error']=$e->getMessage();
          }else{
-               $mainResponse['error']="Error on collect funds. MTN MoMo details: ".$e->getMessage();
+            $mainResponse['error']="Error on collect funds. MTN MoMo details: ".$e->getMessage();
          }
       }
       return (object)$mainResponse;
@@ -146,24 +146,25 @@ class MTNMoMo implements IPaymentsProviderClient
       try {
          $fullURL = $configs['baseURL']."token/";
          $apiResponse = Http::timeout($configs['timeout'])
-            ->withBasicAuth($configs['clientUserName'], $configs['clientPassword'])
-               ->withHeaders([
-                  'Ocp-Apim-Subscription-Key' => $configs['clientId'],
-                  'Accept' => '*/*'
-               ])->post($fullURL,[]);
+                              ->withBasicAuth($configs['clientUserName'], $configs['clientPassword'])
+                              ->withHeaders([
+                                    'Ocp-Apim-Subscription-Key' => $configs['clientId'],
+                                    'Accept' => '*/*'
+                                 ])
+                              ->post($fullURL,[]);
          
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
-               $apiResponse=$apiResponse->json();
-               $response['access_token']=$apiResponse['access_token'];
-               $response['expires_in']=$apiResponse['expires_in'];
+            $apiResponse=$apiResponse->json();
+            $response['access_token']=$apiResponse['access_token'];
+            $response['expires_in']=$apiResponse['expires_in'];
          } else{
-               throw new Exception("MTN API Get Token error. MTN MoMo responded with status code: ".$apiResponse->status().".", 1);
+            throw new Exception("MTN API Get Token error. MTN MoMo responded with status code: ".$apiResponse->status().".", 1);
          }
       } catch (\Throwable $e) {
          if ($e->getCode()==1) {
-               throw new Exception($e->getMessage(), 1);
+            throw new Exception($e->getMessage(), 1);
          } else {
-               throw new Exception("MTN API Get Token error. Details: ".$e->getMessage(), 1);
+            throw new Exception("MTN API Get Token error. Details: ".$e->getMessage(), 1);
          }
       }
       return $response;

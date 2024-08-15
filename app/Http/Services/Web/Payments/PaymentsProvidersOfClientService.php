@@ -22,8 +22,8 @@ class PaymentsProvidersOfClientService
                   ->join('payments_providers as pp','cw.payments_provider_id','=','pp.id')
                   ->select('cw.*','pp.shortName','pp.name')
                   ->where('cw.client_id', '=', $client_id)
-                  ->where('cw.paymentsActive', '=', 'YES')
-                  ->where('cw.paymentsMode', '=', 'UP')
+                  ->where('cw.paymentsActive','=','YES')
+                  ->where('cw.paymentsMode','=','UP')
                   ->get()->all();
          return $records;
       } catch (\Throwable $e) {

@@ -7,8 +7,7 @@ use App\Http\Services\Web\Clients\ClientMnoService;
 use App\Http\Services\Web\Clients\ClientService;
 use App\Http\Services\Web\Clients\MnoService;
 use App\Http\Services\Web\SMS\MessageService;
-use Illuminate\Support\Facades\DB;
-use App\Http\Services\Enums\MNOs;   
+use Illuminate\Support\Facades\DB;  
 use App\Http\DTOs\SMSTxDTO;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -28,16 +27,8 @@ class SMSService
       try {
          //Get client details
          $dto = $this->getClient($dto);
-         //Get receipient MNO
-         if(!$dto->mno_id){
-            $mnoName = MNOs::getMNO(\substr($dto->mobileNumber,0,5));
-            $mno = $this->mnoService->findOneBy(['name'=>$mnoName]);
-            $dto->mno_id = $mno->id;
-         }
          //Take Care of Charges
-         if($this->smsClient->channelChargeable()){
-            $dto = $this->getCharges($dto);
-         }
+         $dto = $this->getSMSChannel($dto);
          //Send the SMS
          $dto = $this->sendMessage($dto);
          // Save the Record
@@ -84,36 +75,36 @@ class SMSService
 
       if($dto->client_id!=''){
          $client = $this->clientService->findById($dto->client_id);
-         $dto->urlPrefix = $client->urlPrefix;
       }else{
          $client = $this->clientService->findOneBy(['shortName'=>$dto->shortName]);
-         $client = (object)$client->toArray();
          $dto->client_id = $client->id;
       }
       $dto->smsPayMode = $client->smsPayMode;
       $dto->shortName = $client->shortName;
+      $dto->urlPrefix = $client->urlPrefix;
       $dto->balance = $client->balance;
       return $dto;
 
    }
 
-   private function getCharges(BaseDTO $dto):BaseDTO|null
+   private function getSMSChannel(BaseDTO $dto):BaseDTO|null
    {
 
       //Get SMS Charge
          $ClientMnos = $this->ClientMnoService->findOneBy([
                                  'client_id'=>$dto->client_id,
-                                 'mno_id'=> $dto->mno_id
+                                 'smsActive'=> 'YES',
+                                 'smsMode'=> 'UP',
                               ]);
-         $ClientMnos = \is_null($ClientMnos)?null: (object)$ClientMnos->toArray();
          $dto->smsCharge = (float)$ClientMnos->smsCharge;
+         $dto->channel_id = (float)$ClientMnos->channel_id;
       //
 
       //Check if Client has enough balance
          if(($dto->smsPayMode == 'POST-PAID') || !($dto->balance < $dto->smsCharge)){
-               $dto->balance = $dto->balance - $dto->smsCharge;
+            $dto->balance = $dto->balance - $dto->smsCharge;
          }else{
-               throw new Exception("Insufficient balance to send SMS", 1);
+            throw new Exception("Insufficient balance to send SMS", 1);
          }
       //
       return $dto;

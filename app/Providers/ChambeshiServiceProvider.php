@@ -46,8 +46,8 @@ class ChambeshiServiceProvider extends ServiceProvider
       //
 
       //Billing Clients	PostPaid		
-         $this->app->singleton('chambeshiPostPaidEnquiry', function () {
-            return $this->app->make(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\ChambeshiPostPaidEnquiry::class);
+         $this->app->singleton('chambeshiPostPaid', function () {
+            return $this->app->make(\App\Http\Services\External\BillingClients\ChambeshiPostPaid::class);
          });
 
          $this->app->singleton('ReceiptPostPaidChambeshi', function () {
@@ -56,8 +56,8 @@ class ChambeshiServiceProvider extends ServiceProvider
       //
 
       //Billing Clients	PrePaid
-         $this->app->singleton('chambeshiPrePaidEnquiry', function () {
-            return $this->app->make(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\ChambeshiPrePaidEnquiry::class);
+         $this->app->singleton('chambeshiPrePaid', function () {
+            return $this->app->make(\App\Http\Services\External\BillingClients\ChambeshiPrePaid::class);
          });
 
          $this->app->singleton('ReceiptPrePaidChambeshi', function () {

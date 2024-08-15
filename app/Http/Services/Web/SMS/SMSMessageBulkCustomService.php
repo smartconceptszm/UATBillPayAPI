@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\Web\SMS;
 
-use App\Http\Services\Web\Clients\ClientService;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +14,6 @@ class SMSMessageBulkCustomService
 {
 
    public function __construct(
-         private ClientService $clientService,
          private BulkMessage $model
    ) {}
 
@@ -27,8 +25,8 @@ class SMSMessageBulkCustomService
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
          $records = DB::table('bulk_messages as m')
-                 ->select('*')
-                 ->where('m.client_id', '=', $dto->client_id);
+                           ->select('*')
+                           ->where('m.client_id', '=', $dto->client_id);
          if($dto->dateFrom && $dto->dateTo){
             $records =$records->whereBetween('m.created_at', [$dto->dateFrom, $dto->dateTo]);
          }
@@ -42,7 +40,9 @@ class SMSMessageBulkCustomService
 
    public function findById(string $id) : object|null {
       try {
-         return $this->model->findOrFail($id);
+         $item = $this->model->findOrFail($id);
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
@@ -50,7 +50,9 @@ class SMSMessageBulkCustomService
 
    public function findOneBy(array $criteria) : object|null {
       try {
-         return $this->model->where($criteria)->first();
+         $item = $this->model->where($criteria)->first();
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
@@ -59,30 +61,27 @@ class SMSMessageBulkCustomService
    public function create(array $data) : object|null {
       
       try {
+         
          $user = Auth::user(); 
          $data['type'] = 'BULKCUSTOM';
          $data['user_id'] = $user->id;
          $bulkSMS = $this->model->create($data);
-
-         $theClient = $this->clientService->findById($data['client_id']);
-
          $chunkedArr = \array_chunk($data['mobileNumbers'],15,false);
-         
          foreach ($chunkedArr as $mobileNumbersArr) {
             $arrSMSes=[];
             foreach ($mobileNumbersArr as $key => $value) {
                $arrSMSes[$key]= [
                                  'mobileNumber'=>$value['mobileNumber'],
-                                 'urlPrefix' => $theClient->urlPrefix,
                                  'client_id'=>$data['client_id'],
                                  'message'=>$value['message'],
                                  'bulk_id'=>$bulkSMS->id,
                                  'type'=>$bulkSMS->type
                            ];
             }
-            Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes,''),'','low');
+            Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes,$data['client_id']),'','low');
          }
          return (object)["description" => "Messages successfully submitted"];
+
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

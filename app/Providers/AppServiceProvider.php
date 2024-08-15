@@ -14,61 +14,113 @@ class AppServiceProvider extends ServiceProvider
    {
 
       //Menu Home
-         $this->app->singleton('DummyMenu', function () {
-            return $this->app->make(\App\Http\Services\USSD\Menus\DummyMenu::class);
-         });
-      //
-
-      //DUMMY MENU
          $this->app->singleton('ParentMenu', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\ParentMenu::class);
          });
       //
 
-      //Menu PayBill
-         $this->app->singleton('PayBill', function () {
-            return $this->app->make(\App\Http\Services\USSD\Menus\PayBill::class);
+      //DUMMY MENU
+         $this->app->singleton('DummyMenu', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\DummyMenu::class);
+         });
+      //
+
+      //PLACEHOLDER MENU
+         $this->app->singleton('PlaceHolder', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\PlaceHolderMenu::class);
+         });
+      //
+
+      //Menu Make Payment
+         $this->app->singleton('MakePayment', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\MakePayment::class);
+         });
+         $this->app->singleton('MakeOtherPayment', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\MakeOtherPayment::class);
          });
          //Menu Step Handlers
-            $this->app->singleton('PayBill_Step_1', function () {
-               return $this->app->make(\App\Http\Services\USSD\PayBill\PayBill_Step_1::class);
+            $this->app->singleton('MakePayment_Step_1', function () {
+               return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_1::class);
             });
-            $this->app->singleton('PayBill_Step_2', function () {
-               return $this->app->make(\App\Http\Services\USSD\PayBill\PayBill_Step_2::class);
+            $this->app->singleton('MakePayment_Step_2', function () {
+               return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_2::class);
             });
-            $this->app->singleton('PayBill_Step_3', function () {
-               return $this->app->make(\App\Http\Services\USSD\PayBill\PayBill_Step_3::class);
+            $this->app->singleton('MakePayment_Step_3', function () {
+               return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_3::class);
             });
-            $this->app->singleton('PayBill_Step_4', function () {
-               return $this->app->make(\App\Http\Services\USSD\PayBill\PayBill_Step_4::class);
+            $this->app->singleton('MakePayment_Step_4', function () {
+               return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_4::class);
             });
-            $this->app->singleton('PayBill_Step_5', function () {
-               return $this->app->make(\App\Http\Services\USSD\PayBill\PayBill_Step_5::class);
+            $this->app->singleton('MakePayment_Step_5', function () {
+               return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_5::class);
+            });
+            $this->app->singleton('MakePayment_Step_6', function () {
+               return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_6::class);
             });
          //
       //
 
-      //BuyUnits
-         $this->app->singleton('BuyUnits', function () {
-            return $this->app->make(\App\Http\Services\USSD\Menus\BuyUnits::class);
+      //Menu All Council Payments
+			$this->app->singleton('CouncilPayment', function () {
+				return $this->app->make(\App\Http\Services\USSD\Menus\CouncilPayment::class);
+			});
+			//Menu Step Handlers
+				$this->app->singleton('CouncilPayment_Step_1', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_1::class);
+				});
+				$this->app->singleton('CouncilPayment_Step_2', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_2::class);
+				});
+				$this->app->singleton('CouncilPayment_Step_3', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_3::class);
+				});
+				$this->app->singleton('CouncilPayment_Step_4', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_4::class);
+				});
+				$this->app->singleton('CouncilPayment_Step_5', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_5::class);
+				});
+			//
+         $this->app->singleton('CouncilPaymentSpoofer', function () {
+				return $this->app->make(\App\Http\Services\USSD\Menus\CouncilPaymentSpoofer::class);
+			});
+			//Menu Step Handlers
+				$this->app->singleton('CouncilPaymentSpoofer_Step_1', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPaymentSpoofer\CouncilPaymentSpoofer_Step_1::class);
+				});
+				$this->app->singleton('CouncilPaymentSpoofer_Step_2', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPaymentSpoofer\CouncilPaymentSpoofer_Step_2::class);
+				});
+				$this->app->singleton('CouncilPaymentSpoofer_Step_3', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPaymentSpoofer\CouncilPaymentSpoofer_Step_3::class);
+				});
+				$this->app->singleton('CouncilPaymentSpoofer_Step_4', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPaymentSpoofer\CouncilPaymentSpoofer_Step_4::class);
+				});
+				$this->app->singleton('CouncilPaymentSpoofer_Step_5', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPaymentSpoofer\CouncilPaymentSpoofer_Step_5::class);
+				});
+            $this->app->singleton('CouncilPaymentSpoofer_Step_6', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPaymentSpoofer\CouncilPaymentSpoofer_Step_6::class);
+				});
+				$this->app->singleton('CouncilPaymentSpoofer_Step_7', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPaymentSpoofer\CouncilPaymentSpoofer_Step_7::class);
+				});
+				$this->app->singleton('CouncilPaymentSpoofer_Step_8', function () {
+					return $this->app->make(\App\Http\Services\USSD\CouncilPaymentSpoofer\CouncilPaymentSpoofer_Step_8::class);
+				});
+			//
+
+		// 
+
+
+      //Shortcuts MENU
+         $this->app->singleton('MenuSpoofer', function () {
+            return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\MenuSpoofer::class);
          });
-         //Menu Step Handlers
-            $this->app->singleton('BuyUnits_Step_1', function () {
-               return $this->app->make(\App\Http\Services\USSD\BuyUnits\BuyUnits_Step_1::class);
-            });
-            $this->app->singleton('BuyUnits_Step_2', function () {
-               return $this->app->make(\App\Http\Services\USSD\BuyUnits\BuyUnits_Step_2::class);
-            });
-            $this->app->singleton('BuyUnits_Step_3', function () {
-               return $this->app->make(\App\Http\Services\USSD\BuyUnits\BuyUnits_Step_3::class);
-            });
-            $this->app->singleton('BuyUnits_Step_4', function () {
-               return $this->app->make(\App\Http\Services\USSD\BuyUnits\BuyUnits_Step_4::class);
-            });
-            $this->app->singleton('BuyUnits_Step_5', function () {
-               return $this->app->make(\App\Http\Services\USSD\BuyUnits\BuyUnits_Step_5::class);
-            });
-         //
+         $this->app->singleton('PayPostPaidBill', function () {
+            return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\PayPostPaidBill::class);
+         });
       //
 
       //Get last Token
@@ -158,6 +210,12 @@ class AppServiceProvider extends ServiceProvider
                return $this->app->make(\App\Http\Services\USSD\UpdateDetails\UpdateDetails_Step_5::class);
             });
          //
+
+         //Client Callers
+            $this->app->singleton('UpdateDetails_mock', function () {
+               return $this->app->make(\App\Http\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Local::class);
+            });
+         //
       //
 
       //USSD Survey
@@ -181,13 +239,10 @@ class AppServiceProvider extends ServiceProvider
 		//
 
       //Billing Clients
-         $this->app->singleton('MockEnquiry', function () {
-            return $this->app->make(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\MockEnquiry::class);
-         }); 
          $this->app->singleton('ReceiptingMock', function () {
             return $this->app->make(\App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptPaymentMock::class);
          });
-			$this->app->singleton('BillingMock', function () {
+			$this->app->singleton('MockBillingClient', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\BillingMock::class);
 			});            
 		//
@@ -223,8 +278,8 @@ class AppServiceProvider extends ServiceProvider
          $this->app->singleton('SystemError', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\SystemError::class);
          });
-         $this->app->singleton('PaymentProviderNotActivated', function () {
-            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\PaymentProviderNotActivated::class);
+         $this->app->singleton('WalletNotActivated', function () {
+            return $this->app->make(\App\Http\Services\USSD\ErrorResponses\WalletNotActivated::class);
          });
       //
 

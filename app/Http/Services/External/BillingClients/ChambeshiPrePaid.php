@@ -2,14 +2,13 @@
 
 namespace App\Http\Services\External\BillingClients;
 
-use \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService;
 use App\Http\Services\External\BillingClients\Chambeshi\Chambeshi;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use App\Http\Services\Web\Clients\BillingCredentialService;
 use Illuminate\Support\Facades\Http;
 use Exception;
 
-class ChambeshiPrePaid extends Chambeshi implements IBillingClient
+class ChambeshiPrePaid implements IBillingClient
 {
 
    private string $passwordVend;
@@ -18,8 +17,9 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
    private string $baseURL;
 
    public function __construct(
-         protected ChambeshiPaymentService $chambeshiPaymentService,
-         private BillingCredentialService $billingCredentialsService)
+         private BillingCredentialService $billingCredentialsService,
+         private Chambeshi $chambeshi
+      )
    {}
 
    public function getAccountDetails(array $params): array
@@ -32,7 +32,7 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
          $postData = [
                         "user_name"=> $this->username,
                         "password" =>$this->password,
-                        "meter_number" => $params['meterNumber'],
+                        "meter_number" => $params['customerAccount'],
                         "total_paid" =>$params['paymentAmount'],
                         "debt_percent" =>"50"
                      ];
@@ -46,10 +46,10 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
                $apiResponse = $apiResponse->json();
                switch ($apiResponse['result_code']) {
                   case 0:
-                     $response['accountNumber'] = $apiResponse['result']['customer_number'];
+                     $response['customerAccount'] = $apiResponse['result']['customer_number'];
                      $response['name'] = $apiResponse['result']['customer_name'];
                      $response['address'] = $apiResponse['result']['customer_addr'];
-                     $response['district'] = $this->getDistrict(\trim($apiResponse['result']['customer_number']));
+                     $response['district'] = $this->chambeshi->getDistrict(\trim($apiResponse['result']['customer_number']));
                      $response['mobileNumber'] = "";
                      $response['balance'] = \number_format((float)$apiResponse['result']['debt_remain'] + (float)$apiResponse['result']['monthly_charge'], 2, '.', ',') ;
                      break;
@@ -84,7 +84,6 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
       }
       return $response;
    }
-
    public function generateToken(Array $postParams): Array 
    {
 
@@ -124,6 +123,11 @@ class ChambeshiPrePaid extends Chambeshi implements IBillingClient
 
       return $response;
  
+   }
+
+   public function postPayment(array $postParams): array
+   {
+      return $this->chambeshi->postPayment($postParams);
    }
 
    private function setConfigs(string $client_id)

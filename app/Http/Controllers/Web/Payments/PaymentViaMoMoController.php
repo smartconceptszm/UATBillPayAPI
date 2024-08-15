@@ -13,10 +13,10 @@ class PaymentViaMoMoController extends Controller
    private $validationRules = [
                   'mobileNumber' => 'required|string|size:12',
                   'walletNumber' => 'required|string|size:12',
-                  'paymentAmount' => 'required',
-                  'wallet_id' => 'required',
-                  'client_id' => 'required',
-                  'menu_id' => 'required',
+                  'customerAccount' => 'required|string',
+                  'paymentAmount' => 'required|string',
+                  'wallet_id' => 'required|string',
+                  'menu_id' => 'required|string',
                ];
    public function __construct(
       private PaymentRequestService $paymentRequestService,
@@ -28,6 +28,7 @@ class PaymentViaMoMoController extends Controller
 
       try {
          //validate incoming request 
+         $params = $this->getParameters($request);
          $this->validate($request, $this->validationRules);
          $params = $this->getParameters($request);
          $params['channel'] = 'WEBSITE';

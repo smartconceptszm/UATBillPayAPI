@@ -2,9 +2,9 @@
 
 namespace App\Http\Services\USSD\ServiceApplications;
 
-use App\Http\Services\USSD\Utility\StepService_AccountNoMenu;
 use App\Http\Services\Web\MenuConfigs\ServiceTypeDetailService;
 use App\Http\Services\Web\MenuConfigs\ServiceTypeService;
+use App\Http\Services\Web\Clients\ClientMenuService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -13,7 +13,7 @@ class ServiceApplications_Step_2
 
    public function __construct(
       private ServiceTypeDetailService $serviceTypeDetails,
-      private StepService_AccountNoMenu $accountNoMenu,
+      private ClientMenuService $clientMenuService,
       private ServiceTypeService $serviceTypes)
    {}
 
@@ -24,16 +24,16 @@ class ServiceApplications_Step_2
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
             $theServiceType = $this->serviceTypes->findOneBy([
-                        'client_id'=>$txDTO->client_id,
-                        'order'=>$txDTO->subscriberInput
-                     ]); 
+                                                         'client_id'=>$txDTO->client_id,
+                                                         'order'=>$txDTO->subscriberInput
+                                                      ]); 
             
             if(!$theServiceType){
                throw new Exception("Returned empty service type",1);
             } 
-            $theServiceType = \is_null($theServiceType)?null: (object)$theServiceType->toArray();
             if($theServiceType->onExistingAccount == 'YES'){
-               $txDTO->response = $this->accountNoMenu->handle($txDTO);
+               $clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
+               $txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
             }else{
                $serviceAppQuestions = $this->serviceTypeDetails->findAll([
                      'service_type_id'=>$theServiceType->id

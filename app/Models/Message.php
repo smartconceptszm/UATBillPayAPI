@@ -12,7 +12,7 @@ class Message extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'mobileNumber','accountNumber','message','mno_id', 'client_id','bulk_id',
+      'mobileNumber','customerAccount','message','mno_id', 'client_id','bulk_id',
       'transaction_id','amount','type', 'status','user_id',
       'error'
    ];

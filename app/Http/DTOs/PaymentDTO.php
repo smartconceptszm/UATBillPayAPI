@@ -10,7 +10,7 @@ abstract class PaymentDTO extends BaseDTO
    public $payments_provider_id;
    public $ppTransactionId;
    public $surchargeAmount;
-   public $accountNumber;
+   public $customerAccount;
    public $paymentAmount;
    public $receiptAmount;
    public $transactionId;
@@ -19,9 +19,7 @@ abstract class PaymentDTO extends BaseDTO
    public $walletHandler;
    public $mobileNumber;
    public $walletNumber;
-   public $meterNumber;
    public $tokenNumber;
-   public $accountType;
    public $session_id;
    public $created_at;
    public $updated_at;

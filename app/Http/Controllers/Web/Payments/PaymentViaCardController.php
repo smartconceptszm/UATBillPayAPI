@@ -13,12 +13,13 @@ class PaymentViaCardController extends Controller
    private $validationRules = [
                   'mobileNumber' => 'required|string|size:12',
                   'walletNumber' => 'required|string|size:16',
-                  'cardHolderName' => 'required',
-                  'paymentAmount' => 'required',
-                  'cardExpiry' => 'required',
-                  'wallet_id' => 'required',
-                  'cardCVV' => 'required',
-                  'menu_id' => 'required'
+                  'customerAccount' => 'required|string',
+                  'cardHolderName' => 'required|string',
+                  'paymentAmount' => 'required|string',
+                  'cardExpiry' => 'required|string',
+                  'wallet_id' => 'required|string',
+                  'cardCVV' => 'required|string',
+                  'menu_id' => 'required|string'
                ];
    public function __construct(
       private PaymentRequestService $paymentRequestService,

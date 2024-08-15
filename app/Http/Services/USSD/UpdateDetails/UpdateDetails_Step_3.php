@@ -27,7 +27,12 @@ class UpdateDetails_Step_3
                      return ($record->order == 1);
                   }));
          $customerField = $customerField[0];  
-         $txDTO->response = $customerField->prompt;
+         $txDTO->response = "Enter ".$customerField->prompt;
+         if($customerField->placeHolder){
+            $txDTO->response .= "(e.g. ".$customerField->placeHolder.")";
+         }
+         $txDTO->response .= "\n";
+
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = 'InvalidInput';

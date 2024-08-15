@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\Survey;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -13,7 +13,7 @@ class Survey_Step_2
 {
 
    public function __construct(
-      private IEnquiryHandler $getCustomerAccount)
+      private EnquiryHandler $getCustomerAccount)
    {}
 
    public function run(BaseDTO $txDTO)
@@ -22,11 +22,7 @@ class Survey_Step_2
       try {
 
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-         if($txDTO->accountType == 'POST-PAID'){
-            $txDTO->accountNumber=$txDTO->subscriberInput;
-         }else{
-            $txDTO->meterNumber=$txDTO->subscriberInput;
-         }
+         $txDTO->customerAccount=$txDTO->subscriberInput;
          $txDTO = $this->getCustomerAccount->handle($txDTO);
          
          $txDTO->response = "Good ".$this->timeofDay().",\n". 

@@ -25,11 +25,7 @@ class Step_CreatePaymentRecord extends EfectivoPipelineContract
             $paymentDTO->id = $payment->id;
          }
       } catch (\Throwable $e) {
-         if(\substr($e->getMessage(),0,8) == "SQLSTATE"){
-            $paymentDTO->error = 'Duplicate initiate payment job. Session_id = '.$paymentDTO->session_id.". Details: ".$e->getMessage();
-         }else{
-            $paymentDTO->error = 'At creating payment record. '.$e->getMessage();
-         }
+         $paymentDTO->error = 'At creating payment record. '.$e->getMessage();
       }
       return $paymentDTO;
 

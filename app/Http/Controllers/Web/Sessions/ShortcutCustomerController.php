@@ -10,7 +10,7 @@ class ShortcutCustomerController extends Controller
 {
 
    protected $validationRules=[
-      'accountNumber' => 'required|string',
+      'customerAccount' => 'required|string',
       'mobileNumber' => 'required|string',
       'client_id' => 'required'
    ];

@@ -18,7 +18,7 @@ class Complaint_Swasco implements IComplaintClient
 
       try{
          return $this->billingClient->postComplaint([
-                              'accountNumber' => $complaintData['accountNumber'],
+                              'customerAccount' => $complaintData['customerAccount'],
                               'complaintCode' => $complaintData['complaintCode'],
                               'mobileNumber' => $complaintData['mobileNumber'],
                               'client_id' => $complaintData['client_id']

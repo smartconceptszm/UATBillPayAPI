@@ -38,7 +38,7 @@ class FireMoMoRequestMiddleware
 
                 $paymentDTO =  $this->momoDTO->fromSessionData($ussdParams);
                 $paymentDTO->customer = \json_decode(Cache::get($paymentDTO->urlPrefix.
-                                $paymentDTO->accountNumber,\json_encode([])), true);
+                                $paymentDTO->customerAccount,\json_encode([])), true);
                                 
                 Queue::later(Carbon::now()->addSeconds((int)\env($paymentDTO->walletHandler.
                                     '_SUBMIT_PAYMENT')), new InitiatePaymentJob($paymentDTO),'','high');

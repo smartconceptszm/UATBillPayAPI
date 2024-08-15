@@ -1,6 +1,6 @@
 <?php 
 //Sessions.
-   INSERT INTO `billpay`.`messages` (`id`,`mobileNumber`,`accountNumber`,`message`,`mno_id`,
+   INSERT INTO `billpay`.`messages` (`id`,`mobileNumber`,`customerAccount`,`message`,`mno_id`,
                      `client_id`,`bulk_id`,`transaction_id`,`amount`,`type`,
                      `status`,`user_id`,`error`,`created_at`,`updated_at`) 
                                        

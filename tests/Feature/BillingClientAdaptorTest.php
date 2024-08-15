@@ -19,13 +19,13 @@ class BillingClientAdaptorTest extends TestCase
 
         $txDTO = new \App\Http\DTOs\UssdDTO();
         $txDTO = $txDTO->fromArray([
-                                        'meterNumber'=>'0120030047597',
+                                        'customerAccount'=>'0120030047597',
                                         'paymentAmount'=>30.00
                                     ]);
 
         $response = $billingClientAdaptor->getAccountDetails($txDTO);
 
-        $this->assertTrue($response['accountNumber'] == "040010151");
+        $this->assertTrue($response['customerAccount'] == "040010151");
 
     }
 
@@ -44,7 +44,7 @@ class BillingClientAdaptorTest extends TestCase
 
         $response = $billingClientAdaptor->getAccountDetails($txDTO);
 
-        $this->assertTrue($response['accountNumber'] == "040010151");
+        $this->assertTrue($response['customerAccount'] == "040010151");
 
     }
 

@@ -31,7 +31,9 @@ class ChambeshiPaymentService
 
    public function findOneBy(array $criteria) : object|null {
       try {
-         return $this->model->where($criteria)->first();
+         $item = $this->model->where($criteria)->first();
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Exception $e) {
          throw new Exception($e->getMessage());
       }

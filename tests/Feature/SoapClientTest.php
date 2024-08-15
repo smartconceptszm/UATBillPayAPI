@@ -17,11 +17,11 @@ class SoapClientTest extends TestCase
     {   
 
         $txDTO = new UssdDTO();
-        $txDTO->accountNumber='1053780';
+        $txDTO->customerAccount='1053780';
         $billingClient = new KafubuPostPaidEnquiry(new KafubuPostPaid());
         $response=$billingClient->getAccountDetails($txDTO);
         
-        $this->assertTrue($response['accountNumber'] == "1053780");
+        $this->assertTrue($response['customerAccount'] == "1053780");
 
     }
 
@@ -41,7 +41,7 @@ class SoapClientTest extends TestCase
             ]
         );
         
-        $this->assertTrue($response['accountNumber'] == "1053780");
+        $this->assertTrue($response['customerAccount'] == "1053780");
 
     }
 

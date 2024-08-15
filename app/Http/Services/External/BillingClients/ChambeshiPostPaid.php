@@ -2,24 +2,20 @@
 
 namespace App\Http\Services\External\BillingClients;
 
-use \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService;
 use App\Http\Services\External\BillingClients\Chambeshi\ChambeshiAccountService;
 use App\Http\Services\External\BillingClients\Chambeshi\Chambeshi;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use Exception;
 
-class ChambeshiPostPaid extends Chambeshi implements IBillingClient
+class ChambeshiPostPaid implements IBillingClient
 {
     
    public function __construct(
-         protected ChambeshiPaymentService $chambeshiPaymentService,
-         private ChambeshiAccountService $chambeshiAccountService
+         private ChambeshiAccountService $chambeshiAccountService,
+         private Chambeshi $chambeshi,
+         
       )
-   {
-      parent::__construct(new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService(
-                                 new \App\Models\ChambeshiPayment()
-                              ));
-   }
+   {}
   
    public function getAccountDetails(array $params): array
    {
@@ -28,11 +24,11 @@ class ChambeshiPostPaid extends Chambeshi implements IBillingClient
 
       try {
 
-         $customer = $this->chambeshiAccountService->findOneBy(['AR_Acc'=>$params['accountNumber']]);
+         $customer = $this->chambeshiAccountService->findOneBy(['AR_Acc'=>$params['customerAccount']]);
          if($customer){
-            $district = $this->getDistrict(\trim($customer->AR_Acc));
+            $district = $this->chambeshi->getDistrict(\trim($customer->AR_Acc));
             $response = [
-                           "accountNumber" => \trim($customer->AR_Acc),
+                           "customerAccount" => \trim($customer->AR_Acc),
                            "name"=>\trim($customer->AR_Acc_Name),
                            "address"=>"",
                            "district" => $district,
@@ -52,6 +48,11 @@ class ChambeshiPostPaid extends Chambeshi implements IBillingClient
       }
 
       return $response;
+   }
+
+   public function postPayment(array $postParams): array
+   {
+      return $this->chambeshi->postPayment($postParams);
    }
 
 }

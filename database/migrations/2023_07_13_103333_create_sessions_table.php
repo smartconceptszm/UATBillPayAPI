@@ -21,8 +21,7 @@ return new class extends Migration
          $table->text('customerJourney')->nullable();
          $table->string('mobileNumber',12)->notNullable();
          $table->string('walletNumber',12)->nullable();
-         $table->string('accountNumber',50)->nullable();
-         $table->string('meterNumber',50)->nullable();
+         $table->string('customerAccount',50)->nullable();
          $table->string('district',50)->nullable();
          $table->float('paymentAmount',10,2)->default(0);
          $table->string('response',160)->nullable();

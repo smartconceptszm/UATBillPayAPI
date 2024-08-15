@@ -33,9 +33,12 @@ class ConfirmPaymentJob extends BaseJob
       //Bind Receipting Handler
          $theMenu = $clientMenuService->findById($this->paymentDTO->menu_id);
          $receiptingHandler = $theMenu->receiptingHandler;
+         $billingClient = $theMenu->billingClient;
          if (\env('USE_RECEIPTING_MOCK') == "YES"){
             $receiptingHandler = "MockReceipting";
+            $billingClient = "MockBillingClient";
          }
+         App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
          App::bind(\App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
       //
       
@@ -57,7 +60,7 @@ class ConfirmPaymentJob extends BaseJob
          App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClient);
       //
       //Handle Job Service
-         $confirmPayment->handle($this->paymentDTO);
+         return $confirmPayment->handle($this->paymentDTO);
       //
 
    }

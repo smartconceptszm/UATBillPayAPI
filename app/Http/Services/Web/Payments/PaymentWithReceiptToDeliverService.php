@@ -29,21 +29,12 @@ class PaymentWithReceiptToDeliverService
          $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
          if ($paymentDTO->paymentStatus == 'RECEIPTED' || $paymentDTO->paymentStatus == 'RECEIPT DELIVERED' ) {  
             if(!$paymentDTO->receipt){
-               if($paymentDTO->accountType == "POST-PAID"){
-                  //consider a format receipt public method for each billing client
-                  $paymentDTO->receipt = "Payment successful\n" .
-                     "Rcpt No.: " . $paymentDTO->receiptNumber . "\n" .
-                     "Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-                     "Acc: " . $paymentDTO->accountNumber . "\n";
-                  $paymentDTO->receipt.="Date: " . Carbon::parse($paymentDTO->updated_at)->format('d-M-Y'). "\n";
-               }else{
-                  $paymentDTO->receipt = "Payment successful\n" .
-                                    "Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-                                    "Meter No: " . $paymentDTO->meterNumber . "\n" .
-                                    "Acc: " . $paymentDTO->accountNumber . "\n".
-                                    "Token: ". $paymentDTO->tokenNumber . "\n";
-                  $paymentDTO->receipt.="Date: " . Carbon::parse($paymentDTO->updated_at)->format('d-M-Y'). "\n";
-               }
+               $paymentDTO->receipt = "Payment successful\n" .
+                                       "Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n";
+               $paymentDTO->receiptNumber ? $paymentDTO->receipt.= "Rcpt No.: ".$paymentDTO->receiptNumber."\n":"";
+               $paymentDTO->tokenNumber ? $paymentDTO->receipt.= "Token: ".$paymentDTO->tokenNumber."\n":"";
+               $paymentDTO->customerAccount ? $paymentDTO->receipt.= "Acc: " . $paymentDTO->customerAccount . "\n":"";
+               $paymentDTO->receipt.="Date: " . Carbon::parse($paymentDTO->updated_at)->format('d-M-Y'). "\n";
             }
 
             //Bind the SMS Clients

@@ -28,7 +28,9 @@ class SurveyService
 
    public function findById(string $id) : object|null {
       try {
-         return $this->model->findOrFail($id);
+         $item = $this->model->findOrFail($id);
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
@@ -36,7 +38,9 @@ class SurveyService
 
    public function findOneBy(array $criteria) : object|null {
       try {
-         return $this->model->where($criteria)->first();
+         $item = $this->model->where($criteria)->first();
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

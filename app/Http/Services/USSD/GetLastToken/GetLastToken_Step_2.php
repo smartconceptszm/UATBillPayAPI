@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\GetLastToken;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
 use App\Http\Services\Web\Payments\PaymentHistoryService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -11,8 +11,8 @@ class GetLastToken_Step_2
 {
 
    public function __construct(
-      private IEnquiryHandler $getCustomerAccount,
-      private PaymentHistoryService $paymentHistoryService)
+      private PaymentHistoryService $paymentHistoryService,
+      private EnquiryHandler $getCustomerAccount)
    {}
 
    public function run(BaseDTO $txDTO)
@@ -20,7 +20,7 @@ class GetLastToken_Step_2
 
       try {
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-         $txDTO->meterNumber = $txDTO->subscriberInput;
+         $txDTO->customerAccount = $txDTO->subscriberInput;
          $txDTO = $this->getCustomerAccount->handle($txDTO);
       } catch (\Throwable $e) {
             if($e->getCode()==1){
@@ -37,15 +37,15 @@ class GetLastToken_Step_2
          
          $payment = $this->paymentHistoryService->getLatestToken(
                                                          [
-                                                            'meterNumber' => $txDTO->meterNumber,
+                                                            'customerAccount' => $txDTO->customerAccount,
                                                             'client_id' => $txDTO->client_id
                                                          ]
                                                       );
          if($payment){
-            $payment = \is_null($payment)?null: (object)$payment->toArray();
+
             $txDTO->response = $payment->receipt;
          }else{
-            $txDTO->response = "NO Token found for Meter Number: ".$txDTO->meterNumber;
+            $txDTO->response = "NO Token found for Meter Number: ".$txDTO->customerAccount;
          }
 			$txDTO->lastResponse = true;
       } catch (\Throwable $e) {

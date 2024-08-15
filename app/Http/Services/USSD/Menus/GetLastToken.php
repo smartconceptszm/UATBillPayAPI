@@ -15,9 +15,8 @@ class GetLastToken implements IUSSDMenu
 
       try {     
          if (\count(\explode("*", $txDTO->customerJourney)) == 2) {
-            $enquiryHandler = \env('USE_BILLING_MOCK')=="YES"? 
-                        'MockEnquiry':$txDTO->enquiryHandler;
-            App::bind(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$enquiryHandler);
+            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'MockBillingClient':$txDTO->billingClient;	
+            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
          }
          $stepHandler = App::make('GetLastToken_Step_'.\count(\explode("*", $txDTO->customerJourney)));
          $txDTO = $stepHandler->run($txDTO);

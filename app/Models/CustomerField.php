@@ -11,7 +11,7 @@ class CustomerField extends Model
    use HasFactory, HasUuids;
    
    protected $fillable=[
-      'client_id','name','type','order','prompt'
+      'client_id','name','type','order','prompt','placeHolder'
    ];
 
    protected $casts = [

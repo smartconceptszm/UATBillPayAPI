@@ -18,9 +18,8 @@ class FaultsComplaints implements IUSSDMenu
          try {
             if (\count(\explode("*", $txDTO->customerJourney)) == 5) {
                //Bind selected Billing Client to the Interface
-                  $enquiryHandler = \env('USE_BILLING_MOCK')=="YES"? 
-                              'MockEnquiry':$txDTO->enquiryHandler;
-                  App::bind(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$enquiryHandler);
+                  $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'MockBillingClient':$txDTO->billingClient;	
+                  App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
                //
                //Bind the Complaint Creator Client 
                   App::bind(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient::class,'Complaint_'.$txDTO->urlPrefix);

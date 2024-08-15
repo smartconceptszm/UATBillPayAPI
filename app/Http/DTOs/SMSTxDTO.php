@@ -7,20 +7,19 @@ use App\Http\DTOs\BaseDTO;
 class SMSTxDTO extends BaseDTO
 {
    
+   public $customerAccount;
    public $transaction_id;
    public $mobileNumber;
-   public $accountNumber;
    public $smsPayMode;
+   public $channel_id;
    public $wallet_id;
    public $client_id;
    public $urlPrefix;
-   public $shortName;
    public $smsCharge;
    public $balance;
    public $user_id;
    public $message;
    public $status = 'INITIATED';
-   public $mno_id;
    public $type = 'SINGLE';
    public $error;
 
@@ -32,14 +31,12 @@ class SMSTxDTO extends BaseDTO
 
    public function fromPaymentDTO(BaseDTO $txDTO): BaseDTO
    {
+      $this->customerAccount = $txDTO->customerAccount;
       $this->transaction_id = $txDTO->transactionId;
-      $this->accountNumber = $txDTO->accountNumber;
       $this->mobileNumber = $txDTO->mobileNumber;
-      $this->urlPrefix = $txDTO->urlPrefix;
       $this->wallet_id = $txDTO->wallet_id;
       $this->client_id = $txDTO->client_id;
       $this->message = $txDTO->receipt;
-      $this->mno_id = $txDTO->mno_id;
       $this->status = 'INITIATED';
       $this->type = 'RECEIPT';
       $this->user_id = null;
@@ -49,14 +46,13 @@ class SMSTxDTO extends BaseDTO
 
    public function toSMSMessageData():array{
       return [
+            'customerAccount'=>$this->customerAccount,
             'transaction_id'=>$this->transaction_id,
-            'accountNumber'=>$this->accountNumber,
             'mobileNumber'=>$this->mobileNumber,
-            'client_id'=>$this->client_id,
-            'message'=>$this->message,
-            'mno_id'=>$this->mno_id,
-            'user_id'=>$this->user_id,
+            'channel_id'=>$this->channel_id,
             'amount'=>$this->smsCharge,
+            'message'=>$this->message,
+            'user_id'=>$this->user_id,
             'status'=>$this->status,
             'error'=>$this->error,
             'type'=>$this->type
@@ -66,11 +62,9 @@ class SMSTxDTO extends BaseDTO
    public function toSMSClientData():array{
       return [
             'transactionId'=>$this->transaction_id,
-            'clientShortName'=>$this->shortName,
             'mobileNumber'=>$this->mobileNumber,
-            'urlPrefix'=>$this->urlPrefix,
+            'channel_id'=>$this->channel_id,
             'wallet_id'=>$this->wallet_id,
-            'client_id'=>$this->client_id,
             'message'=>$this->message
          ];
    }

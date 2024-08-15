@@ -2,9 +2,9 @@
 
 namespace App\Http\Services\USSD\UpdateDetails;
 
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
 use App\Http\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient;
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
-use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
+use App\Http\Services\USSD\StepServices\ValidateCRMInput;
 use App\Http\Services\Web\MenuConfigs\CustomerFieldService;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
@@ -17,10 +17,10 @@ class UpdateDetails_Step_4
 {
 
    public function __construct(
-      private IEnquiryHandler $getCustomerAccount,
-      private StepService_ValidateCRMInput $validateCRMInput,
+      private ValidateCRMInput $validateCRMInput,
       private CustomerFieldService $customerFieldService,
-      private IUpdateDetailsClient $updateDetailsClient)
+      private IUpdateDetailsClient $updateDetailsClient,
+      private EnquiryHandler $getCustomerAccount)
    {} 
 
    public function run(BaseDTO $txDTO)
@@ -31,11 +31,11 @@ class UpdateDetails_Step_4
          $capturedUpdates = $capturedUpdates? $capturedUpdates:[];
          $order = \count($capturedUpdates) + 1;
          $customerFields = $this->customerFieldService->findAll([
-                                       'client_id' => $txDTO->client_id
-                                    ]);
+                                                'client_id' => $txDTO->client_id
+                                             ]);
          $customerField = \array_values(\array_filter($customerFields, function ($record) use($order){
-               return ($record->order == $order);
-            }));
+                                                            return ($record->order == $order);
+                                                         }));
          $customerField = $customerField[0]; 
          $txDTO->subscriberInput = $this->validateCRMInput->handle($customerField->type,$txDTO->subscriberInput);
          $capturedUpdates[$order] = $txDTO->subscriberInput;
@@ -43,7 +43,7 @@ class UpdateDetails_Step_4
             $txDTO = $this->getCustomerAccount->handle($txDTO);
             $txDTO->subscriberInput = \implode(";",\array_values($capturedUpdates));
             $customerFieldUpdate = [
-                                       'accountNumber' => $txDTO->accountNumber,
+                                       'customerAccount' => $txDTO->customerAccount,
                                        'mobileNumber' => $txDTO->mobileNumber,
                                        'client_id' => $txDTO->client_id,
                                        'district' => $txDTO->customer['district'],
@@ -57,13 +57,17 @@ class UpdateDetails_Step_4
             $txDTO->status='COMPLETED';
 
          }else{
-            Cache::put($txDTO->sessionId."Updates",\json_encode($capturedUpdates), 
+            Cache::put($txDTO->sessionId."Updates",\json_encode($capturedUpdates),  
                            Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
             $customerField = \array_values(\array_filter($customerFields, function ($record)use($order){
-                  return ($record->order == $order +1);
-               }));
+                                                               return ($record->order == $order +1);
+                                                            }));
             $customerField = $customerField[0]; 
-            $txDTO->response = $customerField->prompt;
+            $txDTO->response = "Enter ".$customerField->prompt;
+            if($customerField->placeHolder){
+               $txDTO->response .= "(e.g. ".$customerField->placeHolder.")";
+            }
+            $txDTO->response .= "\n";
             $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
             $txDTO->subscriberInput = \end($arrCustomerJourney);
             \array_pop($arrCustomerJourney);

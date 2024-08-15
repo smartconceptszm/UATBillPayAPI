@@ -17,20 +17,17 @@ class PaymentSessionService
             ->leftJoin('payments as p','p.session_id','=','s.id')
             ->leftJoin('client_wallets as cw','p.wallet_id','=','cw.id')
             ->leftJoin('payments_providers as pps','cw.payments_provider_id','=','pps.id')
-            ->select('s.id as session_id','s.sessionId','s.client_id','s.customerJourney','s.mobileNumber','s.accountNumber',
-                        's.meterNumber','s.district','s.status','s.created_at','p.id','p.reference',
+            ->select('s.id as session_id','s.sessionId','s.client_id','s.customerJourney','s.mobileNumber',
+                        's.customerAccount','s.district','s.status','s.created_at','p.id','p.reference',
                         'p.ppTransactionId','p.surchargeAmount','p.paymentAmount','p.receiptAmount',
                         'p.transactionId','p.receiptNumber','p.tokenNumber','p.receipt','p.channel',
-                        'p.paymentStatus','p.error','m.accountType','m.description as paymentType',
+                        'p.paymentStatus','p.error','m.description as paymentType',
                         'mnos.name as mno', 'pps.shortName as paymentProvider');
-         if(\array_key_exists('accountNumber',$criteria)){
-            $records = $records->where('s.accountNumber', '=', $dto->accountNumber);
+         if(\array_key_exists('customerAccount',$criteria)){
+            $records = $records->where('s.customerAccount', '=', $dto->customerAccount);
          }
          if(\array_key_exists('mobileNumber',$criteria)){
             $records = $records->where('s.mobileNumber', '=', $dto->mobileNumber);
-         }
-         if(\array_key_exists('meterNumber',$criteria)){
-            $records = $records->where('s.meterNumber', '=', $dto->meterNumber);
          }
          if(\array_key_exists('dateFrom',$criteria) && \array_key_exists('dateTo',$criteria)){
             $records =$records->whereBetween('s.created_at', [$dto->dateFrom." 00:00:00", $dto->dateTo." 23:59:59"]);
@@ -57,10 +54,10 @@ class PaymentSessionService
             ->leftJoin('client_wallets as cw','p.wallet_id','=','cw.id')
             ->leftJoin('payments_providers as pps','cw.payments_provider_id','=','pps.id')
             ->select('s.id as session_id','s.sessionId','s.client_id','s.customerJourney','s.mobileNumber',
-                        's.accountNumber','s.meterNumber','s.district','s.status','s.created_at','p.id',
                         'p.reference','p.ppTransactionId','p.surchargeAmount','p.paymentAmount',
                         'p.receiptAmount','p.transactionId','p.receiptNumber','p.tokenNumber',
-                        'p.receipt','p.channel','p.paymentStatus','p.error','m.accountType',
+                        's.customerAccount','s.district','s.status','s.created_at','p.id',
+                        'p.receipt','p.channel','p.paymentStatus','p.error',
                         'm.description as paymentType','mnos.name as mno', 
                         'pps.shortName as paymentProvider')
             ->where('s.id', '=', $id)

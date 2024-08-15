@@ -2,21 +2,22 @@
 
 namespace App\Http\Services\USSD\FaultsComplaints;
 
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
 use App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient;
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
 use App\Http\Services\Web\MenuConfigs\ComplaintSubTypeService;
 use App\Http\Services\Web\MenuConfigs\ComplaintTypeService;
+use App\Http\Services\Web\Payments\PaymentService;
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class FaultsComplaints_Step_5
 {
 
    public function __construct(
       private ComplaintSubTypeService $cSubTypeService,
-      private IEnquiryHandler $getCustomerAccount,
+      private EnquiryHandler $getCustomerAccount,
       private ComplaintTypeService $cTypeService,
-      private IComplaintClient $complaintClient)
+      private IComplaintClient $complaintClient,
+      private PaymentService $paymentService)
    {}
 
    public function run(BaseDTO $txDTO)
@@ -25,12 +26,15 @@ class FaultsComplaints_Step_5
       try{
          $arrCustomerJourney=\explode("*", $txDTO->customerJourney);
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-         if($txDTO->accountType == 'POST-PAID'){
-            $txDTO->accountNumber=$txDTO->subscriberInput;
-         }else{
-            $txDTO->meterNumber=$txDTO->subscriberInput;
-         }
+         $txDTO->customerAccount = $txDTO->subscriberInput;
          try {
+            $latestPayment = $this->paymentService->findOneBy(['customerAccount' => $txDTO->customerAccount]);
+            if($latestPayment){
+               $txDTO->paymentAmount =  \str_replace(",", "",$latestPayment->paymentAmount);
+            }
+            if(!$txDTO->paymentAmount){
+               $txDTO->paymentAmount = '100';
+            }
             $txDTO = $this->getCustomerAccount->handle($txDTO);
          } catch (\Throwable $e) {
             if($e->getCode()==1){
@@ -45,12 +49,10 @@ class FaultsComplaints_Step_5
                                     'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-3],
                                     'client_id'=>$txDTO->client_id,
                                  ]);
-         $theComplaint = \is_null($theComplaint)?null: (object)$theComplaint->toArray();
          $theSubType = $this->cSubTypeService->findOneBy([
                         'complaint_type_id'=>$theComplaint->id,
                         'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-2]
                      ]); 
-         $theSubType = \is_null($theSubType)?null: (object)$theSubType->toArray();
          if($theSubType->requiresDetails == 'YES'){
             $complaintInfo = \end($arrCustomerJourney);
          }else{
@@ -61,7 +63,7 @@ class FaultsComplaints_Step_5
                            'complaintCode' => $theSubType->code,
                            'district'=> $txDTO->customer['district'],
                            'address'=> $txDTO->customer['address'],
-                           'accountNumber'=>$txDTO->accountNumber,
+                           'customerAccount'=>$txDTO->customerAccount,
                            'mobileNumber'=>$txDTO->mobileNumber,
                            'client_id'=>$txDTO->client_id,
                            'urlPrefix'=>$txDTO->urlPrefix,

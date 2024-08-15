@@ -15,7 +15,7 @@ return new class extends Migration
       Schema::create('messages', function (Blueprint $table) {
          $table->uuid('id')->primary();
          $table->string('mobileNumber',12)->notNullable();
-         $table->string('accountNumber',20)->nullable();
+         $table->string('customerAccount',20)->nullable();
          $table->string('message',160)->notNullable();
          $table->string("mno_id",36)->notNullable();
          $table->string("client_id",36)->notNullable();

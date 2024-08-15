@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\ServiceApplications;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
 use App\Http\Services\Web\MenuConfigs\ServiceTypeDetailService;
 use App\Http\Services\Web\MenuConfigs\ServiceTypeService;
 use App\Http\DTOs\BaseDTO;
@@ -12,9 +12,9 @@ class ServiceApplications_Step_3
 {
 
    public function __construct(
-      protected IEnquiryHandler $getCustomerAccount,
-      protected ServiceTypeDetailService $serviceTypeDetails,
-      protected ServiceTypeService $serviceTypes)
+      private ServiceTypeDetailService $serviceTypeDetails,
+      private EnquiryHandler $getCustomerAccount,
+      private ServiceTypeService $serviceTypes)
    {}
 
    public function run(BaseDTO $txDTO)
@@ -23,18 +23,14 @@ class ServiceApplications_Step_3
       if(\count(\explode("*", $txDTO->customerJourney)) == 3){
          try {
             $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-				if($txDTO->accountType == 'POST-PAID'){
-					$txDTO->accountNumber=$txDTO->subscriberInput;
-				}else{
-					$txDTO->meterNumber=$txDTO->subscriberInput;
-				}
+				$txDTO->customerAccount=$txDTO->subscriberInput;
             $txDTO = $this->getCustomerAccount->handle($txDTO);
             $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
             $theServiceType = $this->serviceTypes->findOneBy([
                                     'client_id'=>$txDTO->client_id,
                                     'order'=>$arrCustomerJourney[2]
                                  ]); 
-            $theServiceType = \is_null($theServiceType)?null: (object)$theServiceType->toArray();
+
             $serviceAppQuestions = $this->serviceTypeDetails->findAll([
                                              'service_type_id'=>$theServiceType->id
                                           ]);

@@ -17,7 +17,8 @@ return new class extends Migration
          $table->string('name',50)->notNullable();
          $table->enum('type',['MOBILE','GENERAL'])->default('GENERAL')->notNullable();
          $table->unsignedTinyInteger('order')->notNullable();
-         $table->string('prompt',150)->nullable();
+         $table->string('prompt',150)->notNullable();
+         $table->string('placeHolder',150)->nullable();
          $table->timestamps();
          $table->unique(['client_id', 'name'],'client_customer_detail');
          $table->unique(['client_id', 'order'],'client_order');

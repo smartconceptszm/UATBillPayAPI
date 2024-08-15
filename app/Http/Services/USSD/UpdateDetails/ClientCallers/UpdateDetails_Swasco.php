@@ -17,13 +17,13 @@ class UpdateDetails_Swasco implements IUpdateDetailsClient
    {
 
       try{
-
+         $newMobileNumber = \substr($detailsData['updates'][1],2);
          return $this->billingClient->changeCustomerDetail([
-                                       'accountNumber' => $detailsData['accountNumber'],
-                                       "phoneNumber" => $detailsData['mobileNumber'],
-                                       'newMobileNo' => $detailsData['updates'][1],
-                                       'client_id' => $detailsData['client_id']
-                                    ]);
+                                    'customerAccount' => $detailsData['customerAccount'],
+                                    "phoneNumber" => $detailsData['mobileNumber'],
+                                    'newMobileNo' => $newMobileNumber,
+                                    'client_id' => $detailsData['client_id']
+                                 ]);
       } catch (\Throwable $e) {
          throw new Exception('At post updated customer details. '.$e->getMessage());
       }                                             

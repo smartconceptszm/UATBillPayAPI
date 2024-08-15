@@ -14,7 +14,7 @@ class ShortcutCustomer extends Model
    protected $table = "shortcut_customers";
 
    protected $fillable=[
-      'client_id','mobileNumber','accountNumber'
+      'client_id','mobileNumber','customerAccount'
    ];
    
    protected $casts = [

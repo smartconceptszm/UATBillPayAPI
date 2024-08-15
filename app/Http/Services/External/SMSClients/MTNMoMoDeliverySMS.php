@@ -28,15 +28,15 @@ class MTNMoMoDeliverySMS implements ISMSClient
          $token=$apiToken['access_token'];
          $fullURL = $configs['baseURL']."v1_0/requesttopay/".$mtnParams['transactionId']."/deliverynotification";
          $response = Http::timeout($configs['timeout'])
-               ->withHeaders([
-                        'X-Target-Environment'=>$configs['targetEnv'],
-                        'Content-Type' => 'application/json',
-                        'Ocp-Apim-Subscription-Key' => $configs['clientId']
-                  ])
-               ->withToken($token)
-               ->post($fullURL, [
-                     'notificationMessage'=>\substr(\str_replace("\n", " ", $mtnParams['message']),0,159)
-                  ]);
+                              ->withHeaders([
+                                       'X-Target-Environment'=>$configs['targetEnv'],
+                                       'Content-Type' => 'application/json',
+                                       'Ocp-Apim-Subscription-Key' => $configs['clientId']
+                                 ])
+                              ->withToken($token)
+                              ->post($fullURL, [
+                                    'notificationMessage'=>\substr(\str_replace("\n", " ", $mtnParams['message']),0,159)
+                                 ]);
          if($response->status()>=200 && $response->status()<300 ){
             $response = true;
          }else{

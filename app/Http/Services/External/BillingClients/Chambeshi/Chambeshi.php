@@ -2,12 +2,12 @@
 
 namespace App\Http\Services\External\BillingClients\Chambeshi;
 
-use Exception;
+use \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService;
 
-abstract class Chambeshi
+class Chambeshi
 {
 
-   protected $districts =[
+   private $districts =[
       "CHL"=>"Chilubi",
       "CHN"=>"Chinsali",
       "ISO"=>"Isoka",
@@ -24,8 +24,8 @@ abstract class Chambeshi
    ];
 
    public function __construct(
-        // protected ChambeshiPaymentService $chambeshiPaymentService,
-      )
+      private ChambeshiPaymentService $chambeshiPaymentService,
+   )
    {}
   
    public function postPayment(Array $postParams): Array 
@@ -52,11 +52,11 @@ abstract class Chambeshi
      
    }
 
-   public function getDistrict(String $accountNumber): string
+   public function getDistrict(String $customerAccount): string
    {
 
       try {
-         $arrAccountCharacter = \str_split($accountNumber);
+         $arrAccountCharacter = \str_split($customerAccount);
          $strCode = "";
          foreach ($arrAccountCharacter as $value) {
             if(\is_numeric($value)){

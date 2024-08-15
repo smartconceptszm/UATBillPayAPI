@@ -26,7 +26,7 @@ class ServiceApplication_Local implements IServiceApplicationClient
          try {
             $serviceTicket = $this->serviceAppService->create([
                                     'service_type_id' => $serviceApplicationData['service_type_id'],
-                                    'accountNumber' => $serviceApplicationData['accountNumber'],
+                                    'customerAccount' => $serviceApplicationData['customerAccount'],
                                     'mobileNumber' => $serviceApplicationData['mobileNumber'],
                                     'client_id' => $serviceApplicationData['client_id'],
                                     'status' => 'SUBMITTED',

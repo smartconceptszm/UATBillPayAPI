@@ -32,7 +32,7 @@ class MainDashboardService
                                  ->select('p.id','p.receiptAmount',
                                                    'pps.shortName as paymentsProvider','pps.colour')
                                  ->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo])
-                                 ->where('p.client_id', '=', $activeClient->id)
+                                 ->where('cw.client_id', '=', $activeClient->id)
                                  ->whereIn('p.paymentStatus', 
                                           ['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
                                  ->get();

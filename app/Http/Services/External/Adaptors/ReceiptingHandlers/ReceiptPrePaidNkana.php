@@ -3,7 +3,7 @@
 namespace App\Http\Services\External\Adaptors\ReceiptingHandlers;
 
 use App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\NkanaPrePaid;
+use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use App\Http\DTOs\BaseDTO;
@@ -12,7 +12,7 @@ class ReceiptPrePaidNkana implements IReceiptPayment
 {
 
 	public function __construct(
-		private NkanaPrePaid $billingClient)
+		private IBillingClient $billingClient)
 	{}
 
 	public function handle(BaseDTO $paymentDTO):BaseDTO
@@ -23,9 +23,9 @@ class ReceiptPrePaidNkana implements IReceiptPayment
 			//receiptNumber = transactionid in Nkana PrePaid Billing Client
 			$paymentDTO->receiptNumber =  \now()->timestamp.\strtoupper(Str::random(6));
 			$tokenParams = [
+								'customerAccount'=>$paymentDTO->customerAccount,
 								"paymentAmount" => $paymentDTO->receiptAmount,
 								"transactionId" => $paymentDTO->receiptNumber,
-								"meterNumber"=> $paymentDTO->meterNumber,
 								'client_id'=>$paymentDTO->client_id
 							];
 
@@ -34,10 +34,10 @@ class ReceiptPrePaidNkana implements IReceiptPayment
 			if($tokenResponse['status']=='SUCCESS'){
 				$paymentDTO->paymentStatus = "RECEIPTED";
 				$paymentDTO->tokenNumber = $tokenResponse['tokenNumber'];
-				$paymentDTO->receipt = "Payment successful\n" .
+				$paymentDTO->receipt = "\n"."Payment successful"."\n".
 											"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-											"Meter No: " . $paymentDTO->meterNumber . "\n" .
-											"Acc: " . $paymentDTO->accountNumber . "\n".
+											"Meter No: " . $paymentDTO->customerAccount . "\n" .
+											"Acc: " . $paymentDTO->customerAccount . "\n".
 											"Token: ". $paymentDTO->tokenNumber . "\n".
 											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{

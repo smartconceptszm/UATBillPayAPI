@@ -3,7 +3,7 @@
 namespace App\Http\Services\Web\Payments;
 
 use App\Http\Services\Web\Clients\ClientWalletService;
-use App\Http\Services\USSD\Utility\StepService_GetAmount;
+use App\Http\Services\USSD\StepServices\GetAmount;
 use App\Http\Services\Web\Sessions\SessionService;
 use App\Http\Services\Web\Clients\ClientService;
 use App\Http\Services\Web\Clients\MnoService;
@@ -21,7 +21,7 @@ class PaymentRequestService
 
    public function __construct(
       private ClientWalletService $ClientWalletService,
-      private StepService_GetAmount $getAmount,
+      private GetAmount $getAmount,
       private SessionService $sessionService,
       private ClientService $clientService,
       private MnoService $mnoService,
@@ -35,10 +35,10 @@ class PaymentRequestService
       try {
 
          $webDTO = $this->webDTO->fromArray($params);
-         $webDTO->sessionId = 'WEB.'.$webDTO->accountNumber.'D'.\date('ymd').'T'.\date('His');
+         $webDTO->sessionId = 'WEB.'.$webDTO->customerAccount.'D'.\date('ymd').'T'.\date('His');
          $webDTO = $this->getMNO($webDTO);
-         $webDTO = $this->getClient($webDTO);
          $webDTO = $this->getClientWallet($webDTO);
+         $webDTO = $this->getClient($webDTO);
          //Get payment amount
          $webDTO->subscriberInput = $webDTO->paymentAmount;
          [$webDTO->subscriberInput,$webDTO->paymentAmount] = $this->getAmount->handle($webDTO);
@@ -53,8 +53,7 @@ class PaymentRequestService
          Log::info('('.$paymentDTO->urlPrefix.') '.
                         'Web payment initiated: Phone: '.
                            $paymentDTO->mobileNumber.' - Account Number: '.
-                           $paymentDTO->accountNumber.' - Meter Number: '.
-                           $paymentDTO->meterNumber.' - Amount: '.
+                           $paymentDTO->customerAccount.' - Amount: '.
                            $paymentDTO->paymentAmount
                         );
 
@@ -78,8 +77,7 @@ class PaymentRequestService
 
       try {
          $mnoName = MNOs::getMNO(substr($webDTO->mobileNumber,0,5));
-         $mno = $this->mnoService->findOneBy(['name'=>$mnoName]); 
-         $mno = \is_null($mno)?null:(object)$mno->toArray();              
+         $mno = $this->mnoService->findOneBy(['name'=>$mnoName]);             
          $webDTO->mnoName = $mno->name;
          $webDTO->mno_id = $mno->id;
          return $webDTO;
@@ -89,23 +87,12 @@ class PaymentRequestService
 
    }
 
-   private function getClient(WebDTO $webDTO) : WebDTO
-   {
-      $client = $this->clientService->findById($webDTO->client_id);
-      $client = \is_null($client)?null:(object)$client->toArray();
-      $webDTO->shortCode = $client->shortCode;
-      $webDTO->urlPrefix = $client->urlPrefix;
-      $webDTO->testMSISDN = $client->testMSISDN;
-      $webDTO->clientSurcharge = $client->surcharge;
-      return $webDTO;
-   }
-
    private function getClientWallet(WebDTO $webDTO) : WebDTO
    {
 
       $clientWallet = $this->ClientWalletService->findById($webDTO->wallet_id);
-      $clientWallet = \is_null($clientWallet)?null:(object)$clientWallet->toArray();
       $webDTO->walletHandler = $clientWallet->handler;
+      $webDTO->client_id = $clientWallet->client_id;
       if($clientWallet->paymentsMode != 'UP'){
          throw new Exception(\env('MODE_MESSAGE'));
       }
@@ -115,6 +102,18 @@ class PaymentRequestService
       return $webDTO;
 
    }
+
+   private function getClient(WebDTO $webDTO) : WebDTO
+   {
+      $client = $this->clientService->findById($webDTO->client_id);
+      $webDTO->shortCode = $client->shortCode;
+      $webDTO->urlPrefix = $client->urlPrefix;
+      $webDTO->testMSISDN = $client->testMSISDN;
+      $webDTO->clientSurcharge = $client->surcharge;
+      return $webDTO;
+   }
+
+
 
 
 }

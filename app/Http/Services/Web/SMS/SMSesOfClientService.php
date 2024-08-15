@@ -19,9 +19,9 @@ class SMSesOfClientService
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
          $records = DB::table('messages')
-            ->select('*')
-            ->where('client_id', '=', $dto->client_id)
-            ->orderByDesc('created_at');
+                           ->select('*')
+                           ->where('client_id', '=', $dto->client_id)
+                           ->orderByDesc('created_at');
          if($dto->dateFrom && $dto->dateTo){
             $records = $records->whereBetween('created_at', [$dto->dateFrom, $dto->dateTo]);
          }

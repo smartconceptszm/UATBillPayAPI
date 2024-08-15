@@ -35,7 +35,7 @@ class HttpCallErrorsLogger
    public function handle(ResponseReceived $event)
    {
 
-      $mnos=['airtel','mtn','zamtel'];
+      $mnos=['airtel','mtn','zamtel','3gdirectpay'];
       if($event->response->status()<200 || $event->response->status()>299){
 
          $errorType='';
@@ -91,7 +91,6 @@ class HttpCallErrorsLogger
                   $adminMobileNumbers = \explode("*",\env('APP_ADMIN_MSISDN'));
                   $arrSMSes=[];
                   foreach ($adminMobileNumbers as $key => $mobileNumber) {
-                        $arrSMSes[$key]['urlPrefix']="scl";
                         $arrSMSes[$key]['shortName']="SCL";
                         $arrSMSes[$key]['type']="NOTIFICATION";
                         $arrSMSes[$key]['mobileNumber']=$mobileNumber;

@@ -19,8 +19,8 @@ class KafubuServiceProvider extends ServiceProvider
       //
 
       //Billing Clients - POST PAID
-         $this->app->singleton('kafubuPostPaidEnquiry', function () {
-            return $this->app->make(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\KafubuPostPaidEnquiry::class);
+         $this->app->singleton('kafubuPostPaid', function () {
+            return $this->app->make(\App\Http\Services\External\BillingClients\KafubuPostPaid::class);
          });
 
          $this->app->singleton('ReceiptPostPaidKafubu', function () {

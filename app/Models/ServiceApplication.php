@@ -12,7 +12,7 @@ class ServiceApplication extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'client_id','service_type_id','caseNumber', 'mobileNumber','accountNumber',
+      'client_id','service_type_id','caseNumber', 'mobileNumber','customerAccount',
       'status','assignedBy','assignedTo','resolution','comments'
    ];
 

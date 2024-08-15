@@ -11,7 +11,7 @@ class CustomerUpdateController extends Controller
 
 	protected $validationRules = [
 										'customer_detail_id' => 'required',
-										'accountNumber' => 'required|string',
+										'customerAccount' => 'required|string',
 										'mobileNumber' => 'required|string',
 										'client_id' => 'required'
 									];

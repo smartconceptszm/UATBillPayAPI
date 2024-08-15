@@ -14,10 +14,10 @@ class CheckBalance implements IUSSDMenu
 
       if($txDTO->error==''){
          try {
+
             if (\count(\explode("*", $txDTO->customerJourney)) == 2) {
-               $enquiryHandler = \env('USE_BILLING_MOCK')=="YES"? 
-                           'MockEnquiry':$txDTO->enquiryHandler;
-               App::bind(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$enquiryHandler);
+               $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'MockBillingClient':$txDTO->billingClient;	
+               App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
             }
             $stepHandler = App::make('CheckBalance_Step_'.count(explode("*", $txDTO->customerJourney)));
             $txDTO = $stepHandler->run($txDTO);

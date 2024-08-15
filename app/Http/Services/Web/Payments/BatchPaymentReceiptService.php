@@ -21,18 +21,20 @@ class BatchPaymentReceiptService
          $dto = (object)$data;
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
-         $records = DB::table('payments as p')->select('p.id');
+         $records = DB::table('payments as p')
+                              ->join('client_wallets as cw','p.wallet_id','=','cw.id')
+                              ->select('p.id');
          if($dto->dateFrom && $dto->dateTo){
             $records = $records->whereBetween('p.created_at',[$dto->dateFrom,$dto->dateTo]);
          }
-         $records = $records->where('p.client_id', '=', $dto->client_id)
+         $records = $records->where('cw.client_id', '=', $dto->client_id)
                               ->where('p.paymentStatus','=', 'RECEIPTED');
          $records = $records->get()->all();
          if (\sizeof($records) > 0) {
             $chunkedArr = \array_chunk($records,5,false);
             foreach ($chunkedArr as $value) {
                Queue::later(Carbon::now()->addSeconds(1),
-                              new BatchReceiptDeliveryJob($value, $user->urlPrefix),'','low');
+                              new BatchReceiptDeliveryJob($value),'','low');
             }
             return (object)['data' => 'Batch receipt delivery process initiated. Check status after a few minutes!'];
          } else {

@@ -16,7 +16,7 @@ class BillingClientKafubuTest extends TestCase
     {   
 
         $txDTO = new UssdDTO();
-        $txDTO->accountNumber='1053780';
+        $txDTO->customerAccount='1053780';
         $txDTO->client_id ='cba1c60c-240f-11ef-b077-8db5e354f7db';
         $billingClient = new KafubuPostPaidEnquiry(
                                     new KafubuPostPaid( new \App\Http\Services\Web\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
@@ -24,7 +24,7 @@ class BillingClientKafubuTest extends TestCase
                                 );
         $response=$billingClient->getAccountDetails($txDTO);
         
-        $this->assertTrue($response['accountNumber'] == "1053780");
+        $this->assertTrue($response['customerAccount'] == "1053780");
 
     }
 
@@ -47,7 +47,7 @@ class BillingClientKafubuTest extends TestCase
             ]
         );
         
-        $this->assertTrue($response['accountNumber'] == "1053780");
+        $this->assertTrue($response['customerAccount'] == "1053780");
 
     }
 

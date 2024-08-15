@@ -16,7 +16,7 @@ class InvalidAmount implements IErrorResponse
         try {  
             $txDTO->response = $txDTO->error;
             // $txDTO->response=   "Invalid amount. Amount must be at least ZMW ".
-            //                         Cache::get($txDTO->urlPrefix.$txDTO->accountNumber."_MinPaymentAmount").
+            //                         Cache::get($txDTO->urlPrefix.$txDTO->customerAccount."_MinPaymentAmount").
             //                         "\n\n<<Enter 0 to go back>>\n";
             // $txDTO->error=$txDTO->response;
             // $cacheValue = \json_encode([

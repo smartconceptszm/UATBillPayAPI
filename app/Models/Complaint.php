@@ -11,7 +11,7 @@ class Complaint extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'complaint_subtype_id','client_id','session_id','caseNumber', 'mobileNumber','accountNumber',
+      'complaint_subtype_id','client_id','session_id','caseNumber', 'mobileNumber','customerAccount',
       'district','address','details', 'status','assignedBy','assignedTo','resolution','comments'
    ];
    

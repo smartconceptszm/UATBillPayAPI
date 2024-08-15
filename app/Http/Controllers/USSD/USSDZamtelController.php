@@ -12,8 +12,7 @@ class USSDZamtelController extends USSDController
     {
 
         try {
-            // /swasco/Zamtel?&TransId=17BBB0D8480&Pid=0&RequestType=1&MSISDN=260956099652
-            // &SHORTCODE=5757&cellID=000000000000000&AppId=1&USSDString=*5757%23
+            // /swasco/Zamtel?&TransId=17BBB0D8480&Pid=0&RequestType=1&MSISDN=260956099652&SHORTCODE=5757&cellID=000000000000000&AppId=1&USSDString=*5757%23
 
             //Parse Parameters
             if ($request->input('RequestType') == '1') {

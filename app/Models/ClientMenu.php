@@ -13,9 +13,9 @@ class ClientMenu extends Model
    protected $table = "client_menus";
 
    protected $fillable=[
-      'client_id','parent_id','order','prompt','handler','billingClient','enquiryHandler', 
-      'description','isPayment','accountType','receiptingHandler','isDefault','isActive',
-      'onOneAccount','commonAccount','servicePoint','servicePointPrompt',
+      'client_id','parent_id','order','prompt','shortcut','handler','billingClient',
+      'billingClient','description','isPayment','receiptingHandler','isDefault',
+      'isActive','onOneAccount','commonAccount','customerAccountPrompt',
       'requiresReference','referencePrompt'
    ];
 
@@ -25,7 +25,6 @@ class ClientMenu extends Model
    ];
 
    protected $attributes = [
-      'accountType'  => 'POST-PAID',
       'requiresReference' => 'NO',
       'onOneAccount' => 'NO',
       'isPayment' => 'NO',

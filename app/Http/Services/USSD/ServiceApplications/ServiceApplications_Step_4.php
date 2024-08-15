@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\ServiceApplications;
 
 use App\Http\Services\USSD\ServiceApplications\ClientCallers\IServiceApplicationClient;
-use App\Http\Services\USSD\Utility\StepService_ValidateCRMInput;
+use App\Http\Services\USSD\StepServices\ValidateCRMInput;
 use App\Http\Services\Web\MenuConfigs\ServiceTypeDetailService;
 use App\Http\Services\Web\MenuConfigs\ServiceTypeService;
 use Illuminate\Support\Facades\Queue;
@@ -18,7 +18,7 @@ class ServiceApplications_Step_4
 
    public function __construct(
       private IServiceApplicationClient $serviceAppCreateClient,
-      private StepService_ValidateCRMInput $validateCRMInput,
+      private ValidateCRMInput $validateCRMInput,
       private ServiceTypeDetailService $serviceTypeDetails,
       private ServiceTypeService $serviceTypes)
    {} 
@@ -47,14 +47,14 @@ class ServiceApplications_Step_4
             $serviceAppResponses[$order] = $txDTO->subscriberInput;
             if(\count($serviceAppQuestions) == (\count($serviceAppResponses))){
                $txDTO->subscriberInput = \implode(";",\array_values($serviceAppResponses));
-               $surveyResponse = [
+               $serviceResponses = [
                                        'service_type_id' => $theServiceType->id,
-                                       'accountNumber' => $txDTO->accountNumber,
+                                       'customerAccount' => $txDTO->customerAccount,
                                        'mobileNumber' => $txDTO->mobileNumber,
                                        'client_id' => $txDTO->client_id,
                                        'responses' => $serviceAppResponses
                                     ];
-               $caseNumber = $this->serviceAppCreateClient->create($surveyResponse);
+               $caseNumber = $this->serviceAppCreateClient->create($serviceResponses);
                $txDTO->response = "Application for ".$theServiceType->name. " submitted. Reference number: ".
                                     $caseNumber; 
                $this->sendSMSNotification($txDTO);

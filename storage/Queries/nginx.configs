@@ -1,0 +1,174 @@
+ubuntu@ip-10-100-1-108:/etc/nginx/scl_includes$ cat nginxincludefile 
+    root /var/www/html;
+
+    index index.html index.htm index.nginx-debian.html index.php;
+
+    location / {
+        
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+
+   location /billpaymis {
+        try_files $uri $uri/ /billpaymis/index.html;
+    }
+
+    location /billpayadmin {
+        try_files $uri $uri/ /billpayadmin/index.html;
+    }
+   
+    location /swasco {
+            alias /var/www/BillPayAPI/public;
+            try_files $uri $uri/ @swasco;
+
+            location ~ \.php$ {
+                    include snippets/fastcgi-php.conf;
+                    fastcgi_param SCRIPT_FILENAME $request_filename;
+                    fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+            }
+     }
+
+     location @swasco {
+                rewrite /swasco/(.*)$ /swasco/index.php?/$1 last;
+     }
+
+     location /billpayapi {
+                alias /var/www/BillPayAPI/public;
+                try_files $uri $uri/ @billpayapi;
+
+                location ~ \.php$ {
+                        include snippets/fastcgi-php.conf;
+                        fastcgi_param SCRIPT_FILENAME $request_filename;
+                        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+                }
+     }
+
+     location @billpayapi {
+                rewrite /billpayapi/(.*)$ /billpayapi/index.php?/$1 last;
+      }
+
+        
+     location /lukanga {
+                alias /var/www/BillPayAPI/public;
+                try_files $uri $uri/ @lukanga;
+
+                location ~ \.php$ {
+                        include snippets/fastcgi-php.conf;
+                        fastcgi_param SCRIPT_FILENAME $request_filename;
+                        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+                }
+      }
+
+      location @lukanga {
+        rewrite /lukanga/(.*)$ /lukanga/index.php?/$1 last;
+      }
+
+       location /chambeshi {
+                alias /var/www/BillPayAPI/public;
+                try_files $uri $uri/ @chambeshi;
+
+                location ~ \.php$ {
+                        include snippets/fastcgi-php.conf;
+                        fastcgi_param SCRIPT_FILENAME $request_filename;
+                        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+                }
+      }
+
+      location @chambeshi {
+        rewrite /chambeshi/(.*)$ /chambeshi/index.php?/$1 last;
+      }
+
+
+      location /nkana {
+                alias /var/www/BillPayAPI/public;
+                try_files $uri $uri/ @nkana;
+
+                location ~ \.php$ {
+                        include snippets/fastcgi-php.conf;
+                        fastcgi_param SCRIPT_FILENAME $request_filename;
+                        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+                }
+      }
+
+      location @nkana {
+        rewrite /nkana/(.*)$ /nkana/index.php?/$1 last;
+      }
+
+      
+
+       location /kafubu {
+                alias /var/www/BillPayAPI/public;
+                try_files $uri $uri/ @kafubu;
+
+                location ~ \.php$ {
+                        include snippets/fastcgi-php.conf;
+                        fastcgi_param SCRIPT_FILENAME $request_filename;
+                        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+                }
+      }
+
+      location @kafubu {
+        rewrite /kafubu/(.*)$ /kafubu/index.php?/$1 last;
+      }
+
+
+      location /mulonga {
+                alias /var/www/BillPayAPI/public;
+                try_files $uri $uri/ @mulonga;
+
+                location ~ \.php$ {
+                        include snippets/fastcgi-php.conf;
+                        fastcgi_param SCRIPT_FILENAME $request_filename;
+                        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+                }
+      }
+
+      location @mulonga {
+        rewrite /mulonga/(.*)$ /mulonga/index.php?/$1 last;
+      }
+
+
+
+      location /scl {
+                alias /var/www/BillPayAPI/public;
+                try_files $uri $uri/ @scl;
+
+                location ~ \.php$ {
+                        include snippets/fastcgi-php.conf;
+                        fastcgi_param SCRIPT_FILENAME $request_filename;
+                        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+                }
+      }
+
+      location @scl {
+        rewrite /scl/(.*)$ /scl/index.php?/$1 last;
+      }
+
+
+
+      location /iaz {
+                alias /var/www/iaz/public;
+                try_files $uri $uri/ @iaz;
+
+                location ~ \.php$ {
+                        include snippets/fastcgi-php.conf;
+                        fastcgi_param SCRIPT_FILENAME $request_filename;
+                        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+                }
+     }
+
+     location @iaz {
+                rewrite /iaz/(.*)$ /iaz/index.php?/$1 last;
+     }
+
+    
+      location ~ \.php$ {
+            include snippets/fastcgi-php.conf;
+        
+            fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+       }
+
+
+      location ~ /\.ht {
+            deny all;
+      }

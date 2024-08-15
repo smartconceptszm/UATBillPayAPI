@@ -36,9 +36,27 @@ class AggregatedClientService
       }
    }
 
+   public function getAggregatedMenu(string $parent_id):array|null
+   {
+      try {
+         $records = DB::table('aggregated_clients as ag')
+                  ->join('clients as c','ag.client_id','=','c.id')
+                  ->select('ag.menuNo as order','c.name as prompt')
+                  ->where('ag.parent_id', '=', $parent_id)
+                  ->where('c.status', '=', 'ACTIVE')
+                  ->where('c.mode', '=', 'UP');
+         $records =$records->get();
+         return $records->all();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
    public function findById(string $id) : object|null {
       try {
-         return $this->model->findOrFail($id);
+         $item = $this->model->findOrFail($id);
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
@@ -46,7 +64,9 @@ class AggregatedClientService
 
    public function findOneBy(array $criteria) : object|null {
       try {
-         return $this->model->where($criteria)->first();
+         $item = $this->model->where($criteria)->first();
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

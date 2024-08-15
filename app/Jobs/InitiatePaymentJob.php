@@ -25,7 +25,7 @@ class InitiatePaymentJob extends BaseJob
       }
       App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
       //Handle the Job
-      $initiatePayment->handle($this->paymentDTO);
+      return $initiatePayment->handle($this->paymentDTO);
 
    }
 

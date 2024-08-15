@@ -22,8 +22,10 @@ class ClientMenuService
    }
 
    public function findById(string $id) : object|null {
-      try {
-         return $this->model->findOrFail($id);
+      try { 
+         $clientMenu = $this->model->findOrFail($id);
+         $clientMenu = \is_null($clientMenu)?null:(object)$clientMenu->toArray();
+         return $clientMenu;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
@@ -31,7 +33,9 @@ class ClientMenuService
 
    public function findOneBy(array $criteria) : object|null {
       try {
-         return $this->model->where($criteria)->first();
+         $clientMenu = $this->model->where($criteria)->first();
+         $clientMenu = \is_null($clientMenu)?null:(object)$clientMenu->toArray();
+         return $clientMenu;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

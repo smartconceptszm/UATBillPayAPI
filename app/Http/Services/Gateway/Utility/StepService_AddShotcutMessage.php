@@ -26,7 +26,7 @@ class StepService_AddShotcutMessage
 				//Create Record
 				$this->shortcutCustomerService->create([
 						'client_id'=> $paymentDTO->client_id,
-						'accountNumber' => $paymentDTO->accountNumber,
+						'customerAccount' => $paymentDTO->customerAccount,
 						'mobileNumber' => $paymentDTO->mobileNumber,
 					]);
 			}

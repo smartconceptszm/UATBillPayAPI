@@ -15,13 +15,12 @@ class CustomerController extends Controller
       private ClientMenuService $clientMenuService,
       private Request $request)
 	{
-      $billingEnquiryClient = 'MockEnquiry';
+      $billingClient = 'MockBillingClient';
       if(\env('USE_BILLING_MOCK')!="YES"){
          $clientMenuService = $this->clientMenuService->findById($request->input('menu_id'));
-         $clientMenuService = \is_null($clientMenuService)?null:(object)$clientMenuService->toArray();
-         $billingEnquiryClient = $clientMenuService->enquiryHandler;
+         $billingClient =  $clientMenuService->billingClient;
       }
-      App::bind(\App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler::class,$billingEnquiryClient);
+      App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
    }
 
    /**

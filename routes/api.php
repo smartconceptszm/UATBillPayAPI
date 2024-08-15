@@ -68,6 +68,12 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
             });
 
+            Route::group(['prefix' => '/mazabuka'], function (){
+               Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
+               Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
+               Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
+            });
+
             Route::group(['prefix' => '/mulonga'], function (){
                Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
                Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
@@ -81,6 +87,14 @@ Route::group(['middleware' => 'mode'], function (){
             });
       //End of Dev ROUTES
    //End
+
+   //USSD Routes
+      Route::get('/zamtelkwacha/callback', [\App\Http\Controllers\Web\Payments\MoMoCallbackController::class, 'zamtel']);
+      Route::get('/airtelmoney/callback', [\App\Http\Controllers\Web\Payments\MoMoCallbackController::class, 'airtel']);
+      Route::get('/mtnmomo/callback',[\App\Http\Controllers\Web\Payments\MoMoCallbackController::class, 'mtn']);
+   //
+
+   Route::post('/airtel/callback', );
 
    //Mobile/Web/External Routes
       Route::get('/app/services', [\App\Http\Controllers\Web\Payments\PaymentsMenuController::class, 'index']);
@@ -190,7 +204,7 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //
 
-         //Client PAYMENTS PROVIDERS
+         //Client Wallets
             Route::controller(\App\Http\Controllers\Web\Clients\ClientWalletController::class)->group(function () {
                Route::get('/clientwallets/findoneby', 'findOneBy');
                Route::put('/clientwallets/{id}', 'update');
@@ -216,7 +230,7 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //
 
-         //Client Wallet Credentials
+         //Aggregated Client
             Route::controller(\App\Http\Controllers\Web\Clients\AggregatedClientController::class)->group(function () {
                Route::get('/aggregatedclients/findoneby', 'findOneBy');
                Route::put('/aggregatedclients/{id}', 'update');
@@ -240,6 +254,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/complaintypes', 'index');
             });
          //
+
          //Complaint Types
             Route::get('complainttypesofclient', [\App\Http\Controllers\Web\MenuConfigs\ComplaintTypeController::class, 'index']);
             Route::controller(\App\Http\Controllers\Web\MenuConfigs\ComplaintTypeController::class)->group(function () {
@@ -250,6 +265,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/complainttypes', 'index');
             });
          //
+         
          //Complaint Sub Types
             Route::controller(\App\Http\Controllers\Web\MenuConfigs\ComplaintSubTypeController::class)->group(function () {
                Route::get('/complaintsubtypes/findoneby', 'findOneBy');

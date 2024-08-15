@@ -15,13 +15,14 @@ class PaymentToReviewService
          $dto = (object)$criteria;
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
-         $records = DB::table('payments')
-                        ->select('id','paymentStatus', 'error');
+         $records = DB::table('payments as p')
+                        ->join('client_wallets as cw','p.wallet_id','=','cw.id')
+                        ->select('p.id','p.paymentStatus', 'p.error');
          if($dto->dateFrom && $dto->dateTo){
-            $records =$records->whereBetween('created_at', [$dto->dateFrom, $dto->dateTo]);
+            $records =$records->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo]);
          }
-         $records =$records->whereIn('paymentStatus', ['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED'])
-                           ->where('client_id', '=', $dto->client_id)
+         $records =$records->whereIn('p.paymentStatus', ['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED'])
+                           ->where('cw.client_id', '=', $dto->client_id)
                            ->get();
          $providerErrors = $records->filter(
                function ($item) {
@@ -34,7 +35,7 @@ class PaymentToReviewService
                         || ($item->paymentStatus == "SUBMISSION FAILED")
                      ) 
                   {
-                        return $item;
+                     return $item;
                   }
                }
             )->values();
@@ -52,9 +53,9 @@ class PaymentToReviewService
                      ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                      ->join('sessions as s','p.session_id','=','s.id')
                      ->join('client_menus as cm','p.menu_id','=','cm.id')
-                     ->join('clients as c','s.client_id','=','c.id')
-                     ->select('p.*','s.sessionId','s.customerJourney','c.shortCode',
-                              'cm.billingClient','cm.accountType','c.urlPrefix','cw.handler as walletHandler')
+                     ->join('clients as c','cw.client_id','=','c.id')
+                     ->select('p.*','cw.client_id','s.sessionId','s.customerJourney','c.shortCode',
+                                 'c.urlPrefix','cw.handler as walletHandler')
                      ->where('p.id', '=', $id)
                      ->first();
       } catch (\Throwable $e) {

@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Http\Services\Web\Payments\PaymentWithReceiptToDeliverService;
-use App\Jobs\Middleware\SMSClientBindJobMiddleware;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\BaseJob;
 
@@ -18,8 +17,7 @@ class BatchReceiptDeliveryJob extends BaseJob
     * @return void
     */
    public function __construct(
-      private Array $transactions, 
-      public String $urlPrefix)
+      private Array $transactions)
    {}
 
    /**
@@ -27,9 +25,8 @@ class BatchReceiptDeliveryJob extends BaseJob
     *
     * @return array<int, object>
     */
-   public function middleware(): array
+   public function middleware()
    {
-      return [new SMSClientBindJobMiddleware()];
    }
 
    /**

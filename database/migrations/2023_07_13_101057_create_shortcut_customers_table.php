@@ -16,9 +16,9 @@ return new class extends Migration
          $table->uuid('id')->primary();
          $table->string('client_id',36)->notNullable();
          $table->string('mobileNumber',12)->notNullable();
-         $table->string('accountNumber',50)->notNullable();
+         $table->string('customerAccount',50)->notNullable();
          $table->timestamps();
-         $table->unique(['client_id','accountNumber', 'mobileNumber'],'accountNumber_mobileNumber');
+         $table->unique(['client_id','customerAccount', 'mobileNumber'],'customerAccount_mobileNumber');
       });
    }
 

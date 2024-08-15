@@ -20,7 +20,6 @@ class PaymentsMenuService
 
       try {
          $client = $this->clientService->findOneBy($criteria);
-         $client = \is_null($client)?null:(object)$client->toArray();  
          return $this->clientMenuService->findAll([
                               'client_id' =>  $client->id,
                               'isPayment' =>  "YES"

@@ -21,11 +21,10 @@ class MessageService
    {
 
       try {
-			$user = Auth::user(); 
-         $data['client_id'] = $user->client_id;
-         $data['urlPrefix'] = $user->urlPrefix;
+         $user = Auth::user(); 
+         $data['type'] = 'SINGLE';
 			$data['user_id'] = $user->id;
-			Queue::later(Carbon::now()->addSeconds(1),new SendSMSesJob([$data],$user->urlPrefix),'','low');
+			Queue::later(Carbon::now()->addSeconds(1),new SendSMSesJob([$data],$data['client_id']),'','low');
          return 'Message submitted';
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
@@ -44,7 +43,9 @@ class MessageService
 
    public function findById(string $id) : object|null {
       try {
-         return $this->model->findOrFail($id);
+         $item = $this->model->findOrFail($id);
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
@@ -52,7 +53,9 @@ class MessageService
 
    public function findOneBy(array $criteria) : object|null {
       try {
-         return $this->model->where($criteria)->first();
+         $item = $this->model->where($criteria)->first();
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

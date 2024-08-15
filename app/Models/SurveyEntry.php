@@ -12,8 +12,8 @@ class SurveyEntry extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'survey_id','caseNumber','mobileNumber','accountNumber',
-      'district', 'status','assignedBy','assignedTo','resolution','comments'
+      'survey_id','caseNumber','mobileNumber','customerAccount','district', 
+      'status','assignedBy','assignedTo','resolution','comments'
    ];
 
    protected $casts = [

@@ -22,8 +22,8 @@ class PaymentTransactionController extends Controller
       try {
          $this->response['data'] =  $this->paymentTransactionService->findAll($request->query());
       } catch (\Throwable $e) {
-            $this->response['status']['code'] = 500;
-            $this->response['status']['message'] = $e->getMessage();
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
       }
       return response()->json( $this->response);
 

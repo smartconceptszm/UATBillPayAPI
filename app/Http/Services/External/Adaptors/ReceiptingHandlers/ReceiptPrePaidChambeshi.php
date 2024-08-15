@@ -2,9 +2,9 @@
 
 namespace App\Http\Services\External\Adaptors\ReceiptingHandlers;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\ChambeshiPrePaidEnquiry;
+use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
 use App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\ChambeshiPrePaid;
+use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
@@ -12,8 +12,8 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 {
 
 	public function __construct(
-		private ChambeshiPrePaidEnquiry $chambeshiEnquiry,
-		private ChambeshiPrePaid $billingClient)
+		private EnquiryHandler $chambeshiEnquiry,
+		private IBillingClient $billingClient)
 	{}
 
 	public function handle(BaseDTO $paymentDTO):BaseDTO
@@ -31,7 +31,7 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 			$paymentDTO->paymentStatus = "PAID | NO TOKEN";
 			$tokenParams = [
 							"total_paid" => $paymentDTO->receiptAmount, 
-							"meter_number"=> $paymentDTO->meterNumber,
+							"meter_number"=> $paymentDTO->customerAccount,
 							'client_id'=>$paymentDTO->client_id,
 							"debt_percent"=> 50
 						];
@@ -46,16 +46,16 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 		}
 
 		if($paymentDTO->tokenNumber && $paymentDTO->paymentStatus == "PAID | NOT RECEIPTED"){
-			$paymentDTO->receiptNumber =  $paymentDTO->accountNumber."_".\now()->timestamp;
+			$paymentDTO->receiptNumber =  $paymentDTO->customerAccount."_".\now()->timestamp;
 			$receiptingParams=[
 					"TxDate"=> $paymentDTO->created_at,
-					"Account"=> $paymentDTO->accountNumber,  
+					"Account"=> $paymentDTO->customerAccount,  
 					"AccountName"=> $paymentDTO->customer['name'],
 					"Debt"=> 0,
 					"AmountPaid" => $paymentDTO->receiptAmount, 
 					"Phone#"=> $paymentDTO->mobileNumber,
 					"ReceiptNo"=> $paymentDTO->receiptNumber,
-					"Address"=> $paymentDTO->accountNumber,
+					"Address"=> $paymentDTO->customerAccount,
 					"District"=> $paymentDTO->district,
 					"TransactDescript"=> "2220 PREPAID. Token: ".$paymentDTO->tokenNumber,
 					"Mobile Network" => $paymentDTO->walletHandler, 
@@ -65,10 +65,10 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 
 			if($billingResponse['status'] == 'SUCCESS'){
 				$paymentDTO->paymentStatus = "RECEIPTED";
-				$paymentDTO->receipt = "Payment successful\n" .
+				$paymentDTO->receipt = "\n"."Payment successful"."\n".
 											"Rcpt No: " . $paymentDTO->receiptNumber . "\n" .
 											"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-											"Acc: " . $paymentDTO->accountNumber . "\n".
+											"Acc: " . $paymentDTO->customerAccount . "\n".
 											"Token: ". $paymentDTO->tokenNumber . "\n".
 											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{

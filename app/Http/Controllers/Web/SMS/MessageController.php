@@ -11,6 +11,7 @@ class MessageController extends Controller
 
    private $validationRules=[
             'mobileNumber' => 'required|string|size:12',
+            'client_id' => 'required|string',
             'message' => 'required|string'
          ];
 	public function __construct(

@@ -18,14 +18,13 @@ class UssdDTO extends BaseDTO
    public $fireMoMoRequest;
    public $customerJourney;
    public $enquiryHandler;
-   public $accountNumber;
+   public $customerAccount;
    public $paymentAmount;
+   public $billingClient;
    public $walletHandler;
    public $lastResponse;
    public $isNewRequest;
    public $mobileNumber;
-   public $meterNumber;
-   public $accountType;
    public $testMSISDN;
    public $menuPrompt;
    public $created_at;
@@ -36,7 +35,6 @@ class UssdDTO extends BaseDTO
    public $client_id;
    public $reference;
    public $errorType;
-   public $isPayment;
    public $shortCode;
    public $customer;
    public $district;
@@ -52,10 +50,9 @@ class UssdDTO extends BaseDTO
    public function toSessionData():array{
       return [
             'customerJourney'=>$this->customerJourney, 
-            'accountNumber'=>$this->accountNumber,
+            'customerAccount'=>$this->customerAccount,
             'paymentAmount'=>$this->paymentAmount,
             'mobileNumber'=>$this->mobileNumber,
-            'meterNumber'=>$this->meterNumber,
             'sessionId'=>$this->sessionId,
             'client_id'=>$this->client_id,
             'district'=>$this->district,

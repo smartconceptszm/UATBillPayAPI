@@ -24,7 +24,7 @@ class ClientDashboardService
                            ->select('p.id','p.paymentStatus','p.district','p.receiptAmount',
                                              'pps.shortName as paymentProvider','pps.colour')
                            ->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo])
-                           ->where('p.client_id', '=', $dto->client_id)
+                           ->where('cw.client_id', '=', $dto->client_id)
                            ->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED']);
             // $theSQLQuery = $thePayments->toSql();
             // $theBindings = $thePayments-> getBindings();
@@ -62,21 +62,23 @@ class ClientDashboardService
                $byPaymentStatus[] = [
                                        "paymentStatus" =>$key,
                                        "colour"=>$paymentStatusColours[$key],
-                                       "totalRevenue"=>$value->sum('receiptAmount')
+                                       "totalRevenue"=>$value->sum('receiptAmount'),
+                                       "noOfPayments" =>$value->count('id')
                                     ];
             }
 
          // Get all Days in Current Month
-            $theDateTo = Carbon::parse($dto->dateTo);
+               $theDateTo = Carbon::parse($dto->dateTo);
             $currentYear = $theDateTo->format('Y');
             $currentMonth = $theDateTo->format('m');
             $firstDayOfCurrentMonth = $currentYear . '-' . $currentMonth . '-01 00:00:00';
             $dailyTrends = DB::table('payments as p')
+                              ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                               ->select(DB::raw('dayofmonth(p.created_at) as dayOfTx,
                                                    COUNT(p.id) AS noOfPayments,
                                                       SUM(p.receiptAmount) as totalAmount'))
                               ->whereBetween('p.created_at',  [$firstDayOfCurrentMonth, $theDateTo])
-                              ->where('p.client_id', '=', $dto->client_id)
+                              ->where('cw.client_id', '=', $dto->client_id)
                               ->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED',
                                                                'RECEIPTED','RECEIPT DELIVERED'])
                               ->groupBy('dayOfTx')
@@ -105,7 +107,7 @@ class ClientDashboardService
                                                       month(p.created_at) as monthOfTx,
                                                       pps.shortName as paymentProvider,pps.colour'))
                                  ->whereBetween('p.created_at',  [$dateFrom, $dto->dateTo])
-                                 ->where('p.client_id', '=', $dto->client_id)
+                                 ->where('cw.client_id', '=', $dto->client_id)
                                  ->whereIn('p.paymentStatus', ['PAID | NOT RECEIPTED',
                                                                'RECEIPTED','RECEIPT DELIVERED'])
                                  ->groupBy('monthOfTx', 'paymentProvider', 'colour')
@@ -121,7 +123,7 @@ class ClientDashboardService
                   $firstRow = $value->first();
                   $byMonthOfyear[]= [
                                           "monthOfTx"=>$key,
-                                          "totalRevenue"=>$value->sum('totalAmount')
+                                          "totalAmount"=>$value->sum('totalAmount')
                                        ];
                }
 
@@ -130,6 +132,7 @@ class ClientDashboardService
                               'byPaymentStatus' => $byPaymentStatus,
                               'byDistrict' => $byDistrict,
                               'paymentsTrends' => $paymentsTrends->toArray(),
+                              'byMonthOfyear' => $byMonthOfyear,
                               'dailyTrends' => $dailyTrends->toArray(),
                            ];
          //

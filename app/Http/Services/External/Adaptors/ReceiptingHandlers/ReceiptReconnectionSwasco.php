@@ -3,7 +3,7 @@
 namespace App\Http\Services\External\Adaptors\ReceiptingHandlers;
 
 use App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment;
-use App\Http\Services\External\BillingClients\Swasco;
+use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
@@ -11,7 +11,7 @@ class ReceiptReconnectionSwasco implements IReceiptPayment
 {
 
     public function __construct(
-        private Swasco $billingClient)
+        private IBillingClient $billingClient)
     {}
 
     public function handle(BaseDTO $paymentDTO): BaseDTO
@@ -23,7 +23,7 @@ class ReceiptReconnectionSwasco implements IReceiptPayment
 			$receiptingParams = [ 
 										'mobileNumber'=> $paymentDTO->mobileNumber,
 										'referenceNumber' => $swascoTransactionRef,
-										'account' => $paymentDTO->accountNumber,
+										'account' => $paymentDTO->customerAccount,
 										'amount' => $paymentDTO->receiptAmount,
 										'client_id' => $paymentDTO->client_id,
 										'paymentType'=>"4",
@@ -34,10 +34,10 @@ class ReceiptReconnectionSwasco implements IReceiptPayment
 				$paymentDTO->receiptNumber = $billingResponse['receiptNumber'];
 				$paymentDTO->paymentStatus = "RECEIPTED";
 
-				$paymentDTO->receipt = "Payment successful\n" .
+				$paymentDTO->receipt = "\n"."Payment successful"."\n".
 											"Rcpt No: " . $paymentDTO->receiptNumber . "\n" .
 											"Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-											"Acc: " . $paymentDTO->accountNumber . "\n".
+											"Acc: " . $paymentDTO->customerAccount . "\n".
 											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{
 				$paymentDTO->error = "At post recoonection fee. ".$billingResponse['error'];

@@ -24,7 +24,7 @@ class AirtelMoney implements IPaymentsProviderClient
          ];
 
       try {
-         $mainResponse['transactionId'] = $this->getTransactionId($dto->accountNumber);
+         $mainResponse['transactionId'] = $this->getTransactionId($dto->customerAccount);
          $configs = $this->getConfigs($dto->wallet_id);
          $apiToken = $this->getToken($configs);
          $token = $apiToken['access_token'];
@@ -215,12 +215,12 @@ class AirtelMoney implements IPaymentsProviderClient
       return $response;
    }
 
-   private function getTransactionId(string $accountNumber): string
+   private function getTransactionId(string $customerAccount): string
    {
 
       $theDate = "D".\date('ymd');
       $theTime = "T".\date('His');
-      $theAccount = "A".$accountNumber;
+      $theAccount = "A".$customerAccount;
       $transactionId = $theAccount.$theDate.$theTime;
       if(\strlen($transactionId) > 25){
          $theAccount = \substr($theAccount,0,25-strlen($theDate.$theTime));

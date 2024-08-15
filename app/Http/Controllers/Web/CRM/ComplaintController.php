@@ -11,7 +11,7 @@ class ComplaintController extends Controller
 
    protected $validationRules = [
                   'complaint_subtype_id' => 'required|string',
-                  'accountNumber' => 'required|string',
+                  'customerAccount' => 'required|string',
                   'mobileNumber' => 'required|string',
                   'client_id' => 'required|string'
                ];
