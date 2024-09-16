@@ -12,11 +12,11 @@ class CustomerFieldUpdate extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'client_id','customer_field_id','caseNumber', 'mobileNumber','customerAccount',
+      'client_id','caseNumber', 'mobileNumber','customerAccount',
       'district','address','details', 'status','assignedBy','assignedTo',
       'resolution','comments'
    ];
-   
+
    protected $casts = [
       'created_at' => 'datetime:Y-m-d H:i:s',
       'updated_at' => 'datetime:Y-m-d H:i:s',

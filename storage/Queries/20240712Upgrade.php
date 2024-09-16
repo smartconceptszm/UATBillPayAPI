@@ -5,14 +5,16 @@
 
 client_menus:
                   servicePoint - Delete
-
-                  enquiryHandler - change to billingClient  
-                  update the 'billingCleint' values in the DB Table
-
-
+                  accountType - Delete
+                  enquiryHandler - delete  
+                  update the 'billingClient' values in the DB Table
                   servicePointPrompt - change to customerAccountPrompt
+                  shortcut - add field
 
 complaints:
+                  accountNumber - change to customerAccount
+
+shortcut_customers:
                   accountNumber - change to customerAccount
 
 customerFieldUpdates:
@@ -49,8 +51,14 @@ ServiceApplication:
 surveyEntries:
                   accountNumber - change to customerAccount
 
+client_mno_credentials:
+                  create table
 
 
+aggregated_client:   
+                     Streamline table by removing some fields
+
+                  
 INSERT INTO `billing_credentials` (`id`, `client_id`, `key`, `keyValue`, `description`, `created_at`, `updated_at`) VALUES
 (uuid(), '39d62960-7303-11ee-b8ce-fec6e52a2330', '151101', 'Residential  property rates', NULL, '2024-09-08 13:33:35', '2024-09-08 13:33:35');
 INSERT INTO `billing_credentials` (`id`, `client_id`, `key`, `keyValue`, `description`, `created_at`, `updated_at`) VALUES

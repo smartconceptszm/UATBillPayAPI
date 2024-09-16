@@ -13,14 +13,13 @@ class ClientMnoCredentials extends Model
 
    protected $table = "client_mno_credentials";
 
-   protected $fillable=[
-      'channel_id','key','keyValue','description'
-   ];
-
+   protected $fillable = [
+         'channel_id','key','keyValue','description'
+      ];
    
    protected $casts = [
-      'created_at' => 'datetime:Y-m-d H:i:s',
-      'updated_at' => 'datetime:Y-m-d H:i:s',
-   ];
+         'created_at' => 'datetime:Y-m-d H:i:s',
+         'updated_at' => 'datetime:Y-m-d H:i:s',
+      ];
 
 }

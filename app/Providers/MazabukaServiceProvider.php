@@ -19,7 +19,7 @@ class MazabukaServiceProvider extends ServiceProvider
 			});
 			
 			$this->app->singleton('ReceiptPostPaidMazabuka', function () {
-				return $this->app->make(\App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptPaymentMazabuka::class);
+				return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptPaymentMazabuka::class);
 			});
 		//
   

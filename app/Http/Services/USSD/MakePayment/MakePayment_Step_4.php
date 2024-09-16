@@ -2,10 +2,10 @@
 
 namespace App\Http\Services\USSD\MakePayment;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
 use App\Http\Services\Gateway\Utility\StepService_CalculatePaymentAmounts;
-use App\Http\Services\USSD\StepServices\GetAmount;
+use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\USSD\StepServices\GetAmount;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -40,7 +40,7 @@ class MakePayment_Step_4
       if($clientMenu->onOneAccount == 'NO'){
          try {
             $txDTO = $this->enquiryHandler->handle($txDTO);
-         } catch (\Throwable$e) {
+         } catch (\Throwable $e) {
             if($e->getCode()==1){
                $txDTO->errorType = 'InvalidAccount';
             }else{

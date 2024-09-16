@@ -9,6 +9,7 @@ use App\Http\Services\Web\Clients\BillingCredentialService;
 use App\Http\Services\Web\Payments\PaymentToReviewService;
 use App\Http\Services\Gateway\Utility\Step_LogStatus;
 use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Web\Clients\ClientMnoService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
@@ -23,6 +24,7 @@ class PaymentReceiptService
       private BillingCredentialService $billingCredentialService,
       private PaymentToReviewService $paymentToReviewService, 
       private ClientMenuService $clientMenuService,
+      private ClientMnoService $clientMnoService,
       private MoMoDTO $paymentDTO)
    {}
 
@@ -57,22 +59,7 @@ class PaymentReceiptService
                $billingClient = "MockBillingClient";
             }
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
-            App::bind(\App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
-         //
-
-         //Bind the SMS Clients
-            $billingCredentials = $this->billingCredentialService->getClientCredentials($paymentDTO->client_id);
-            $smsClientKey = '';
-            if(!$smsClientKey && (\env('SMS_SEND_USE_MOCK') == "YES")){
-               $smsClientKey = 'MockSMSDelivery';
-            }
-            if(!$smsClientKey && ($billingCredentials['HAS_OWNSMS'] == 'YES')){
-               $smsClientKey = \strtoupper($paymentDTO->urlPrefix).'SMS';
-            }
-            if(!$smsClientKey){
-               $smsClientKey = \env('SMPP_CHANNEL');
-            }
-            App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClientKey);
+            App::bind(\App\Http\Services\External\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
          //
          
          if($user = Auth::user()){
@@ -133,21 +120,6 @@ class PaymentReceiptService
                      "Date: " . Carbon::now()->format('d-M-Y') . "\n";
             //
          }
-
-         //Bind the SMS Clients
-            $billingCredentials = $this->billingCredentialService->getClientCredentials($paymentDTO->client_id);
-            $smsClientKey = '';
-            if(!$smsClientKey && (\env('SMS_SEND_USE_MOCK') == "YES")){
-               $smsClientKey = 'MockSMSDelivery';
-            }
-            if(!$smsClientKey && ($billingCredentials['HAS_OWNSMS'] == 'YES')){
-               $smsClientKey = \strtoupper($paymentDTO->urlPrefix).'SMS';
-            }
-            if(!$smsClientKey){
-               $smsClientKey = \env('SMPP_CHANNEL');
-            }
-            App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClientKey);
-         //
 
          $paymentDTO = App::make(Pipeline::class)
                      ->send($paymentDTO)

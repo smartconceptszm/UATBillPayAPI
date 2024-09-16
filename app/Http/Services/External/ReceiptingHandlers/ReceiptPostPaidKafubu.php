@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Services\External\Adaptors\ReceiptingHandlers;
+namespace App\Http\Services\External\ReceiptingHandlers;
 
-use App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment;
+use App\Http\Services\External\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;

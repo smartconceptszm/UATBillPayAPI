@@ -16,8 +16,6 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string("client_id",36)->notNullable();
             $table->string("mno_id",36)->notNullable();
-            $table->enum('smsMode',['UP','DOWN'])->default('DOWN')->notNullable();
-            $table->enum('smsActive',['YES','NO'])->default('NO')->notNullable();
             $table->string('handler',50)->notNullable();
             $table->float('smsCharge',10,2)->default(0);
             $table->timestamps();

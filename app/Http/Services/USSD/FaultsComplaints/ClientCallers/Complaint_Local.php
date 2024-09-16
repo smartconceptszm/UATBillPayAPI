@@ -26,6 +26,7 @@ class Complaint_Local implements IComplaintClient
 
 			$arrSMSes = [
 					[
+						'customerAccount' => $complaintData['customerAccount'],
 						'mobileNumber' => $complaintData['mobileNumber'],
 						'client_id' => $complaintData['client_id'],
 						'urlPrefix' => $urlPrefix,

@@ -2,9 +2,9 @@
 
 namespace App\Http\Services\USSD\FaultsComplaints;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
 use App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient;
 use App\Http\Services\Web\MenuConfigs\ComplaintSubTypeService;
+use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\Web\MenuConfigs\ComplaintTypeService;
 use App\Http\Services\Web\Payments\PaymentService;
 use App\Http\DTOs\BaseDTO;

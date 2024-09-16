@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Jobs\Middleware\SMSClientBindJobMiddleware;
 use App\Http\Services\Web\SMS\SMSService;
 use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\SMSTxDTO;
@@ -11,15 +10,13 @@ use App\Jobs\BaseJob;
 class SendSMSesJob extends BaseJob
 {
 
-   public $timeout = 600;
+   // public $timeout = 600;
    /**
     * Create a new job instance.
     *
     * @return void
     */
-   public function __construct(
-      private Array $arrSMSes, 
-      public String $client_id = '')
+   public function __construct(private Array $arrSMSes)
    {}
 
 
@@ -28,10 +25,8 @@ class SendSMSesJob extends BaseJob
     *
     * @return array<int, object>
     */
-   public function middleware(): array
-   {
-      return [new SMSClientBindJobMiddleware(new \App\Http\Services\Web\Clients\ClientMnoService(new \App\Models\ClientMno()))];
-   }
+   public function middleware()
+   {}
 
    /**
     * Execute the job.

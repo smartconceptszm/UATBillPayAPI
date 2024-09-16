@@ -24,21 +24,11 @@ class ParentMenu implements IUSSDMenu
 		if($txDTO->error==''){
 			try {
 
-				$menus = [];
-				if($txDTO->isNewRequest == '1'){
-					$client = $this->clientService->findById($txDTO->client_id);
-					if($client->ussdAggregator == 'YES'){
-						$menus = $this->aggregatedClientService->getAggregatedMenu($client->id);
-					}
-				}
-
-				if(!$menus){
-					$menus = $this->clientMenuService->findAll([
-													'client_id'=>$txDTO->client_id,
-													'parent_id'=>$txDTO->menu_id,
-													'isActive' => 'YES'
-												]);
-				}
+				$menus = $this->clientMenuService->findAll([
+												'client_id'=>$txDTO->client_id,
+												'parent_id'=>$txDTO->menu_id,
+												'isActive' => 'YES'
+											]);
 
 				$prompt = $txDTO->menuPrompt."\n";
 				foreach ($menus as $menu) {

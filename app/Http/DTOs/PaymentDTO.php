@@ -36,7 +36,6 @@ abstract class PaymentDTO extends BaseDTO
 
    public $customerJourney;   
    public $clientSurcharge;
-   public $enquiryHandler;
    public $testMSISDN;
    public $sessionId;
    public $urlPrefix;

@@ -61,8 +61,8 @@ class UserLogin implements UserProvider
 					->join('clients as c','c.id','=','u.client_id')
 					->where([['u.id', '=', $identifier]])
 					->where([['u.status', '=', 'ACTIVE']])
-					->select('u.id','u.client_id','u.username','u.password','u.fullnames',
-									'u.email','r.name as name','c.name as client','c.urlPrefix')
+					->select('u.id','u.client_id','u.username','u.password','u.fullnames','u.email',
+									'r.name as name','c.name as client','c.urlPrefix','c.ussdAggregator')
 					->get();
 
 		if(\count($query)>0){
@@ -129,8 +129,8 @@ class UserLogin implements UserProvider
 						->join('clients as c','c.id','=','u.client_id')
 						->where([['u.username', '=', $credentials['username']]])
 						->where([['u.status', '=', 'ACTIVE']])
-						->select('u.id','u.client_id','u.username','u.password','u.fullnames',
-										'u.email','r.name as name','c.name as client','c.urlPrefix');
+						->select('u.id','u.client_id','u.username','u.password','u.fullnames','u.email',
+											'r.name as name','c.name as client','c.urlPrefix','c.ussdAggregator');
 
 		// $queryString = $query->toSql();
 		$query = $query->get();

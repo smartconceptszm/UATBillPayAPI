@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\GetLastToken;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
+use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\Web\Payments\PaymentHistoryService;
 use App\Http\DTOs\BaseDTO;
 use Exception;

@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\Log;
 class Kannel implements ISMSClient
 {
 
-    public function channelChargeable():bool
-    {
-        return true;
-    }
-    
     /**
      * Send sms message.
      *

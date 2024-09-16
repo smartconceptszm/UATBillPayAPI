@@ -43,7 +43,7 @@ class ClientMnoCredentialController extends Controller
   {
 
      try {
-        $this->response['data'] = $this->clientMnoCredentials->findAll(['wallet_id'=>$id]);
+        $this->response['data'] = $this->clientMnoCredentials->findAll(['channel_id'=>$id]);
      } catch (\Throwable $e) {
            $this->response['status']['code'] = 500;
            $this->response['status']['message'] = $e->getMessage();

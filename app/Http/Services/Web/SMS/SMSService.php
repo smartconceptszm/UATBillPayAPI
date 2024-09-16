@@ -2,12 +2,14 @@
 
 namespace App\Http\Services\Web\SMS;
 
-use App\Http\Services\External\SMSClients\ISMSClient;
 use App\Http\Services\Web\Clients\ClientMnoService;
 use App\Http\Services\Web\Clients\ClientService;
 use App\Http\Services\Web\Clients\MnoService;
 use App\Http\Services\Web\SMS\MessageService;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;  
+use App\Http\Services\Enums\MNOs;
 use App\Http\DTOs\SMSTxDTO;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -15,10 +17,14 @@ use Exception;
 class SMSService
 {
 
+   private $channelChargeable = false;
+
    public function __construct(
-      private MessageService $messageService, private ISMSClient $smsClient, 
-      private ClientMnoService $ClientMnoService, private MnoService $mnoService, 
-      private ClientService $clientService,private SMSTxDTO $smsTxDTO )
+      private ClientMnoService $clientMnoService, 
+      private MessageService $messageService,
+      private ClientService $clientService,
+      private MnoService $mnoService,
+      private SMSTxDTO $smsTxDTO)
    {}
 
    public function send(BaseDTO $dto):BaseDTO|null
@@ -27,6 +33,8 @@ class SMSService
       try {
          //Get client details
          $dto = $this->getClient($dto);
+         //Get MNO details
+         $dto = $this->getMNO($dto);
          //Take Care of Charges
          $dto = $this->getSMSChannel($dto);
          //Send the SMS
@@ -35,7 +43,7 @@ class SMSService
          DB::beginTransaction();
          try {
             $sms = $this->messageService->create($dto->toSMSMessageData());
-            if($sms->status == 'DELIVERED' && $this->smsClient->channelChargeable()){
+            if($sms->status == 'DELIVERED' && $this->channelChargeable){
                $this->clientService->update(['balance'=>$dto->balance],$dto->client_id);
             }
             DB::commit();
@@ -77,12 +85,25 @@ class SMSService
          $client = $this->clientService->findById($dto->client_id);
       }else{
          $client = $this->clientService->findOneBy(['shortName'=>$dto->shortName]);
-         $dto->client_id = $client->id;
       }
       $dto->smsPayMode = $client->smsPayMode;
       $dto->shortName = $client->shortName;
       $dto->urlPrefix = $client->urlPrefix;
       $dto->balance = $client->balance;
+      $dto->client_id = $client->id;
+      return $dto;
+
+   }
+
+   private function getMNO(BaseDTO $dto):BaseDTO|null
+   {
+
+      if($dto->mno_id){
+         return $dto;
+      }
+      $mnoName = MNOs::getMNO(substr($dto->mobileNumber,0,5));
+      $mno = $this->mnoService->findOneBy(['name' => $mnoName]);
+      $dto->mno_id = $mno->id;
       return $dto;
 
    }
@@ -90,19 +111,26 @@ class SMSService
    private function getSMSChannel(BaseDTO $dto):BaseDTO|null
    {
 
-      //Get SMS Charge
-         $ClientMnos = $this->ClientMnoService->findOneBy([
-                                 'client_id'=>$dto->client_id,
-                                 'smsActive'=> 'YES',
-                                 'smsMode'=> 'UP',
-                              ]);
-         $dto->smsCharge = (float)$ClientMnos->smsCharge;
-         $dto->channel_id = (float)$ClientMnos->channel_id;
-      //
+      if(\env('SMS_SEND_USE_MOCK') == "YES"){
+         $dto->handler = 'MockSMSDelivery';
+         return $dto;
+      }
 
+      if( $dto->handler = Cache::get($dto->transaction_id."_smsClient",'')){
+         return $dto;
+      }
+
+      $clientMNOs = $this->clientMnoService->findOneBy([
+                                                   'client_id' => $dto->client_id,
+                                                   'mno_id' => $dto->mno_id
+                                                ]);
+      $dto->smsCharge = (float)$clientMNOs->smsCharge;
+      $dto->handler = $clientMNOs->handler;
+      $dto->channel_id = $clientMNOs->id;
       //Check if Client has enough balance
-         if(($dto->smsPayMode == 'POST-PAID') || !($dto->balance < $dto->smsCharge)){
+         if(($dto->smsPayMode == 'POST-PAID') || ($dto->balance > $dto->smsCharge)){
             $dto->balance = $dto->balance - $dto->smsCharge;
+            $this->channelChargeable = true;
          }else{
             throw new Exception("Insufficient balance to send SMS", 1);
          }
@@ -113,9 +141,12 @@ class SMSService
 
    private function sendMessage(BaseDTO $dto):BaseDTO|null
    {
+
       //Send the SMS
          if(!$dto->error){
-            if($this->smsClient->send($dto->toSMSClientData())){
+            //
+            $smsClient = App::make($dto->handler);
+            if($smsClient->send($dto->toSMSClientData())){
                $dto->status = "DELIVERED";
             }else{
                $dto->error = "SMS message not delivered by SMS Server.";
@@ -123,7 +154,6 @@ class SMSService
             } 
          }
       //
-
       return $dto;
 
    }

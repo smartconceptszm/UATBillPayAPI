@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services\External\Adaptors\BillingEnquiryHandlers;
+namespace App\Http\Services\External\BillingClients;
 
 use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Facades\Queue;
@@ -16,7 +16,6 @@ class EnquiryHandler
 		private IBillingClient $billingClient)
 	{}
 
-
 	function handle(BaseDTO $txDTO): BaseDTO
 	{
 
@@ -30,7 +29,7 @@ class EnquiryHandler
 			Cache::forget($txDTO->urlPrefix.'_BillingErrorCount');
 		} catch (\Throwable $e) {
 			if($e->getCode()==1 || $e->getCode()==4){
-				throw new \Throwable($e->getMessage(), $e->getCode());
+				throw new \Exception($e->getMessage(), $e->getCode());
 			}else{
 				$billingServiceErrorCount = (int)Cache::get($txDTO->urlPrefix.'_BillingErrorCount');
 				if($billingServiceErrorCount){
@@ -60,7 +59,7 @@ class EnquiryHandler
 					Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1,
 												Carbon::now()->addMinutes((int)env('BILLING_ERROR_CACHE')));
 				}
-				throw new \Throwable($e->getMessage(), 2);
+				throw new \Exception($e->getMessage(), 2);
 			}   
 		}
       

@@ -9,7 +9,7 @@ use App\Jobs\BaseJob;
 class BatchReceiptDeliveryJob extends BaseJob
 {
 
-   public $timeout = 600;
+   // public $timeout = 600;
 
    /**
     * Create a new job instance.

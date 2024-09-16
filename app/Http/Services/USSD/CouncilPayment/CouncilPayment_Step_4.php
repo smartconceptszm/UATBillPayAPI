@@ -44,6 +44,7 @@ class CouncilPayment_Step_4
       $txDTO->response .= "Name: ".$txDTO->reference."\n";
       $txDTO->response .= "Enter\n". 
                            "1. Confirm\n".
+                           "2. Use different wallet\n".
                            "0. Back";
                            
       $cacheValue = \json_encode([

@@ -24,7 +24,7 @@ class UserLoginDTO extends BaseDTO implements JsonSerializable
       'password' => 'required|string',
    ];
 
-   public function jsonSerialize(){
+   public function jsonSerialize():mixed{
       return [
          'expires_in' => $this->expires_in,
          'token_type' => $this->token_type,

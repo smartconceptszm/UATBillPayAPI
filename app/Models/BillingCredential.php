@@ -17,7 +17,6 @@ class BillingCredential extends Model
       'client_id','key','keyValue','description'
    ];
 
-   
    protected $casts = [
       'created_at' => 'datetime:Y-m-d H:i:s',
       'updated_at' => 'datetime:Y-m-d H:i:s',

@@ -14,8 +14,8 @@ class ClientMenu extends Model
 
    protected $fillable=[
       'client_id','parent_id','order','prompt','shortcut','handler','billingClient',
-      'billingClient','description','isPayment','receiptingHandler','isDefault',
-      'isActive','onOneAccount','commonAccount','customerAccountPrompt',
+      'description','isPayment','receiptingHandler','isDefault','isActive',
+      'onOneAccount','commonAccount','customerAccountPrompt',
       'requiresReference','referencePrompt'
    ];
 

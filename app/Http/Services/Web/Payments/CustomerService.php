@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\Web\Payments;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
+use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\DTOs\MoMoDTO;
 use Exception;
 

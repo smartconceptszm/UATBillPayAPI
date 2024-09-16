@@ -12,11 +12,10 @@ class Message extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'mobileNumber','customerAccount','message','mno_id', 'client_id','bulk_id',
-      'transaction_id','amount','type', 'status','user_id',
-      'error'
-   ];
-   
+                        'mobileNumber','customerAccount','message','mno_id', 'client_id','bulk_id',
+                        'transaction_id','amount','type', 'status','user_id','error'
+                     ];
+
    protected $casts = [
          'created_at' => 'datetime:Y-m-d H:i:s',
          'updated_at' => 'datetime:Y-m-d H:i:s',

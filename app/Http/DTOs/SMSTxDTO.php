@@ -16,9 +16,11 @@ class SMSTxDTO extends BaseDTO
    public $client_id;
    public $urlPrefix;
    public $smsCharge;
+   public $handler;
    public $balance;
    public $user_id;
    public $message;
+   public $mno_id;
    public $status = 'INITIATED';
    public $type = 'SINGLE';
    public $error;
@@ -37,6 +39,7 @@ class SMSTxDTO extends BaseDTO
       $this->wallet_id = $txDTO->wallet_id;
       $this->client_id = $txDTO->client_id;
       $this->message = $txDTO->receipt;
+      $this->mno_id = $txDTO->mno_id;
       $this->status = 'INITIATED';
       $this->type = 'RECEIPT';
       $this->user_id = null;
@@ -49,10 +52,11 @@ class SMSTxDTO extends BaseDTO
             'customerAccount'=>$this->customerAccount,
             'transaction_id'=>$this->transaction_id,
             'mobileNumber'=>$this->mobileNumber,
-            'channel_id'=>$this->channel_id,
+            'client_id'=>$this->client_id,
             'amount'=>$this->smsCharge,
             'message'=>$this->message,
             'user_id'=>$this->user_id,
+            'mno_id'=>$this->mno_id,
             'status'=>$this->status,
             'error'=>$this->error,
             'type'=>$this->type

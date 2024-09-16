@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\USSD\StepServices;
 
+use App\Http\Services\Enums\MNOs;
 use Exception;
 
 class ValidateCRMInput 
@@ -15,7 +16,11 @@ class ValidateCRMInput
          if(\strlen($input)!=10){
             throw new Exception("Invalid mobile number", 1);
          }
-         $input = "26".$input;
+         if(MNOs::getMNO("26".\substr($input,0,3))){
+            $input = "26".$input;
+         }else{
+            throw new Exception("Invalid mobile number", 1);
+         }
       }
 
       if($crmFieldType == "GENERAL"){

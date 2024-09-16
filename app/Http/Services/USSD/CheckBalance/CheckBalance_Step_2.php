@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\CheckBalance;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
+use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
 use App\Http\Services\Web\Clients\PaymentsProviderService;
 use App\Http\Services\Web\Clients\ClientMenuService;

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Services\USSD\CouncilPaymentSpoofer;
+namespace App\Http\Services\USSD\CouncilPayment;
 
 use App\Http\DTOs\BaseDTO;
 
-class CouncilPaymentSpoofer_Step_8
+class CouncilPayment_Step_7
 {
 
 	public function run(BaseDTO $txDTO)

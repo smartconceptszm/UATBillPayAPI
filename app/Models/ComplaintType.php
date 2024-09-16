@@ -11,12 +11,14 @@ class ComplaintType extends Model
 
    use HasFactory, HasUuids;
 
+
+   protected $fillable=[
+         'client_id','code','name', 'order'
+      ];
+
    protected $casts = [
          'created_at' => 'datetime:Y-m-d H:i:s',
          'updated_at' => 'datetime:Y-m-d H:i:s',
-      ];
-   protected $fillable=[
-         'client_id','code','name', 'order'
       ];
 
 }

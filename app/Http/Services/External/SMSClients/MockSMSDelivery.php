@@ -6,11 +6,6 @@ use App\Http\Services\External\SMSClients\ISMSClient;
 
 class MockSMSDelivery implements ISMSClient
 {
-    
-   public function channelChargeable():bool
-   {
-      return false;
-   }
 
    /**
     * Send sms message.

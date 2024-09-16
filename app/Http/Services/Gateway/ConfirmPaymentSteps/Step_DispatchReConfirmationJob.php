@@ -18,7 +18,7 @@ class Step_DispatchReConfirmationJob extends EfectivoPipelineContract
          if( $paymentDTO->paymentStatus == "PAYMENT FAILED"){
             $paymentDTO->status = "COMPLETED";
             Queue::later(Carbon::now()->addMinutes((int)\env('PAYMENT_REVIEW_DELAY'))
-                                                ,new ReConfirmPaymentJob($paymentDTO),'','high');
+                                       ,new ReConfirmPaymentJob($paymentDTO),'','high');
          }else{
             $paymentDTO->status = "REVIEWED";
          }

@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\Web\Clients\BillingCredentialService;
 use App\Http\Services\Web\Clients\ClientMenuService;
 use App\Http\Services\Gateway\ReConfirmPayment;
 use Illuminate\Support\Facades\App;
@@ -20,7 +19,6 @@ class ReConfirmPaymentJob extends BaseJob
    {}
 
    public function handle(ReConfirmPayment $reConfirmPayment, 
-      BillingCredentialService $billingCredentialService,
       ClientMenuService $clientMenuService)
    {
 
@@ -41,22 +39,7 @@ class ReConfirmPaymentJob extends BaseJob
             $billingClient = "MockBillingClient";
          }
          App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
-         App::bind(\App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
-      //
-
-      //Bind the SMS Client
-         $billingCredentials = $billingCredentialService->getClientCredentials($this->paymentDTO->client_id);
-         $smsClient = '';
-         if(!$smsClient && (\env('SMS_SEND_USE_MOCK') == "YES")){
-               $smsClient = 'MockSMSDelivery';
-         }
-         if(!$smsClient && ($billingCredentials['HAS_OWNSMS'] == 'YES')){
-               $smsClient = \strtoupper($this->paymentDTO->urlPrefix).'SMS';
-         }
-         if(!$smsClient){
-               $smsClient = \env('SMPP_CHANNEL');
-         }
-         App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClient);
+         App::bind(\App\Http\Services\External\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
       //
       
       //Handle Job Service

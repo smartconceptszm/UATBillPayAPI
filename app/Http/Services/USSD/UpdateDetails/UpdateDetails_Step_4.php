@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\UpdateDetails;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\EnquiryHandler;
+use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient;
 use App\Http\Services\USSD\StepServices\ValidateCRMInput;
 use App\Http\Services\Web\MenuConfigs\CustomerFieldService;

@@ -16,17 +16,20 @@ class ReConfirmPayment
       try {
          for ($i = 0; $i < (int)\env('PAYMENT_REVIEW_THRESHOLD'); $i++) {
             $paymentDTO->error = '';
-            $paymentDTO = App::make(Pipeline::class)
-                     ->send($paymentDTO)
-                     ->through(
-                        [
-                           \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
-                           \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
-                           \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
-                           \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
-                        ]
-                     )
-                     ->thenReturn();
+            if(!(\strpos($paymentDTO->error,'Zamtel'))){
+               $paymentDTO = App::make(Pipeline::class)
+                                    ->send($paymentDTO)
+                                    ->through(
+                                       [
+                                          \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
+                                          \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
+                                          \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
+                                          \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
+                                       ]
+                                    )
+                                    ->thenReturn();
+            }
+
             if($paymentDTO->paymentStatus == "PAYMENT FAILED"){
                if(!(
                      (\strpos($paymentDTO->error,'on get transaction status'))

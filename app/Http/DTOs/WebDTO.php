@@ -16,7 +16,6 @@ class WebDTO extends BaseDTO
    public $customerAccount;
    public $subscriberInput;
    public $clientSurcharge;
-   public $enquiryHandler;
    public $paymentAmount;
    public $walletHandler;
    public $billingClient;

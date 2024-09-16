@@ -7,6 +7,7 @@ use App\Http\Services\Gateway\Utility\Step_UpdateTransaction;
 use App\Http\Services\Web\Clients\BillingCredentialService;
 use App\Http\Services\Web\Payments\PaymentToReviewService;
 use App\Http\Services\Gateway\Utility\Step_LogStatus;
+use App\Http\Services\Web\Clients\ClientMnoService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
@@ -20,6 +21,7 @@ class PaymentWithReceiptToDeliverService
    public function __construct(
       private BillingCredentialService $billingCredentialService,
       private PaymentToReviewService $paymentToReviewService,
+      private ClientMnoService $clientMnoService,
       private MoMoDTO $paymentDTO)
    {}
 
@@ -36,21 +38,6 @@ class PaymentWithReceiptToDeliverService
                $paymentDTO->customerAccount ? $paymentDTO->receipt.= "Acc: " . $paymentDTO->customerAccount . "\n":"";
                $paymentDTO->receipt.="Date: " . Carbon::parse($paymentDTO->updated_at)->format('d-M-Y'). "\n";
             }
-
-            //Bind the SMS Clients
-               $billingCredentials = $this->billingCredentialService->getClientCredentials($paymentDTO->client_id);
-               $smsClientKey = '';
-               if(!$smsClientKey && (\env('SMS_SEND_USE_MOCK') == "YES")){
-                  $smsClientKey = 'MockSMSDelivery';
-               }
-               if(!$smsClientKey && ($billingCredentials['HAS_OWNSMS'] == 'YES')){
-                  $smsClientKey = \strtoupper($paymentDTO->urlPrefix).'SMS';
-               }
-               if(!$smsClientKey){
-                  $smsClientKey = \env('SMPP_CHANNEL');
-               }
-               App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClientKey);
-            //
 
             if($user = Auth::user()){
                $paymentDTO->user_id = $user->id;

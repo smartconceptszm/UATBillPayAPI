@@ -18,11 +18,13 @@ class PaymentSessionService
             ->leftJoin('client_wallets as cw','p.wallet_id','=','cw.id')
             ->leftJoin('payments_providers as pps','cw.payments_provider_id','=','pps.id')
             ->select('s.id as session_id','s.sessionId','s.client_id','s.customerJourney','s.mobileNumber',
-                        's.customerAccount','s.district','s.status','s.created_at','p.id','p.reference',
-                        'p.ppTransactionId','p.surchargeAmount','p.paymentAmount','p.receiptAmount',
-                        'p.transactionId','p.receiptNumber','p.tokenNumber','p.receipt','p.channel',
-                        'p.paymentStatus','p.error','m.description as paymentType',
-                        'mnos.name as mno', 'pps.shortName as paymentProvider');
+                        's.customerAccount','s.district','s.response','s.status','s.created_at','p.id',
+                        'p.reference','p.ppTransactionId','p.surchargeAmount','p.paymentAmount',
+                        'p.receiptAmount','p.transactionId','p.receiptNumber','p.tokenNumber',
+                        'p.receipt','p.channel','p.paymentStatus','p.error','s.menu_id',
+                        'm.description as paymentType','mnos.name as mno','s.mno_id',
+                         'pps.shortName as paymentProvider');
+
          if(\array_key_exists('customerAccount',$criteria)){
             $records = $records->where('s.customerAccount', '=', $dto->customerAccount);
          }

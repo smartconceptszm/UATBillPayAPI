@@ -24,7 +24,7 @@ class MessageService
          $user = Auth::user(); 
          $data['type'] = 'SINGLE';
 			$data['user_id'] = $user->id;
-			Queue::later(Carbon::now()->addSeconds(1),new SendSMSesJob([$data],$data['client_id']),'','low');
+			Queue::later(Carbon::now()->addSeconds(1),new SendSMSesJob([$data]),'','low');
          return 'Message submitted';
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

@@ -14,15 +14,18 @@ class ClientMnoCredentialsService
 
    public function findAll(array $criteria = null):array|null
    {
+
       try {
          return $this->model->where($criteria)->get()->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
+      
    }
 
    public function getSMSCredentials(string $channel_id):array|null
    {
+
       try {
          $smsCredentials = [];
          $records = $this->model->where(['channel_id'=>$channel_id])->get()->all();
@@ -35,6 +38,7 @@ class ClientMnoCredentialsService
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
+
    }
 
    public function findById(string $id) : object|null {

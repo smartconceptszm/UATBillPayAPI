@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Services\External\Adaptors\ReceiptingHandlers;
+namespace App\Http\Services\External\ReceiptingHandlers;
 
-use App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment;
+use App\Http\Services\External\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use App\Http\DTOs\BaseDTO;
 
-class ReceiptPrePaidNkana implements IReceiptPayment
+class ReceiptPrePaidLukanga implements IReceiptPayment
 {
 
 	public function __construct(
@@ -20,17 +20,15 @@ class ReceiptPrePaidNkana implements IReceiptPayment
 
 		if(!$paymentDTO->tokenNumber){
 			$paymentDTO->paymentStatus = "PAID | NO TOKEN";
-			//receiptNumber = transactionid in Nkana PrePaid Billing Client
-			$paymentDTO->receiptNumber =  \now()->timestamp.\strtoupper(Str::random(6));
+			//receiptNumber = transactionid in Lukanga PrePaid Billing Client
+			$paymentDTO->receiptNumber =  now()->timestamp.\strtoupper(Str::random(6)); 
 			$tokenParams = [
 								'customerAccount'=>$paymentDTO->customerAccount,
 								"paymentAmount" => $paymentDTO->receiptAmount,
 								"transactionId" => $paymentDTO->receiptNumber,
 								'client_id'=>$paymentDTO->client_id
 							];
-
-			$tokenResponse=$this->billingClient->generateToken($tokenParams);
-
+			$tokenResponse = $this->billingClient->generateToken($tokenParams);
 			if($tokenResponse['status']=='SUCCESS'){
 				$paymentDTO->paymentStatus = "RECEIPTED";
 				$paymentDTO->tokenNumber = $tokenResponse['tokenNumber'];
@@ -41,10 +39,10 @@ class ReceiptPrePaidNkana implements IReceiptPayment
 											"Token: ". $paymentDTO->tokenNumber . "\n".
 											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{
-				$paymentDTO->receiptNumber = '';
+				$paymentDTO->receiptNumber =  '';
 				$paymentDTO->error = $tokenResponse['error'];
 			}
-			
+
 		}
 
 

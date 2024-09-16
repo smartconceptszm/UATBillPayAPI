@@ -17,7 +17,6 @@ class ClientMnoController extends Controller
 		private ClientMnoService $clientMno)
 	{}
 
-
    /**
     * Display a listing of the resource.
    */
@@ -41,13 +40,13 @@ class ClientMnoController extends Controller
   public function mnosofclient(Request $request, string $id)
   {
 
-     try {
-        $this->response['data'] = $this->clientMno->findAll(['client_id'=>$id]);
-     } catch (\Throwable $e) {
-           $this->response['status']['code'] = 500;
-           $this->response['status']['message'] = $e->getMessage();
-     }
-     return response()->json($this->response);
+      try {
+         $this->response['data'] = $this->clientMno->findAll(['client_id'=>$id]);
+      } catch (\Throwable $e) {
+            $this->response['status']['code'] = 500;
+            $this->response['status']['message'] = $e->getMessage();
+      }
+      return response()->json($this->response);
 
   }
 

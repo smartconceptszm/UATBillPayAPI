@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Services\External\Adaptors\ReceiptingHandlers;
+namespace App\Http\Services\External\ReceiptingHandlers;
 
-use App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment;
+use App\Http\Services\External\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use App\Http\Services\Web\Clients\BillingCredentialService;
 use App\Http\Services\Web\Clients\ClientMenuService;
@@ -46,6 +46,7 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
 									"For: (".$billingCredential->key.") - ".$billingCredential->keyValue."\n".
 									"Name: ".$paymentDTO->reference."\n".
 									"Date: " . Carbon::now()->format('d-M-Y') . "\n";
+									
 			}else{
 				$paymentDTO->error = "At Council payment. ".$billingResponse['error'];
 			}

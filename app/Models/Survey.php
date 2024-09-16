@@ -12,7 +12,7 @@ class Survey extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'client_id','name','description', 'order'
+      'client_id','name','description', 'isActive'
    ];
 
    protected $casts = [

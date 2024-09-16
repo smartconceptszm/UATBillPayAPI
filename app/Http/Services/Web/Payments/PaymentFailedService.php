@@ -5,6 +5,7 @@ namespace App\Http\Services\Web\Payments;
 use App\Http\Services\Web\Clients\BillingCredentialService;
 use App\Http\Services\Web\Payments\PaymentToReviewService;
 use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Web\Clients\ClientMnoService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,7 @@ class PaymentFailedService
       private BillingCredentialService $billingCredentialService,
       private PaymentToReviewService $paymentToReviewService,
       private ClientMenuService $clientMenuService,
+      private ClientMnoService $clientMnoService,
       private MoMoDTO $paymentDTO)
    {}
 
@@ -70,6 +72,7 @@ class PaymentFailedService
    public function update(string $id):string{
 
       try {
+         
          $thePayment = $this->paymentToReviewService->findById($id);
          $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
          if($user = Auth::user()){
@@ -94,22 +97,7 @@ class PaymentFailedService
                $billingClient = "MockBillingClient";
             }
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
-            App::bind(\App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
-         //
-   
-         //Bind the SMS Client
-            $billingCredentials = $this->billingCredentialService->getClientCredentials($paymentDTO->client_id);
-            $smsClient = '';
-            if(!$smsClient && (\env('SMS_SEND_USE_MOCK') == "YES")){
-                  $smsClient = 'MockSMSDelivery';
-            }
-            if(!$smsClient && ($billingCredentials['HAS_OWNSMS'] == 'YES')){
-                  $smsClient = \strtoupper($paymentDTO->urlPrefix).'SMS';
-            }
-            if(!$smsClient){
-                  $smsClient = \env('SMPP_CHANNEL');
-            }
-            App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClient);
+            App::bind(\App\Http\Services\External\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
          //
          
          //Reconfirm/Review the payment Transaction

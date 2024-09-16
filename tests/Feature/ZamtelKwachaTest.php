@@ -1,38 +1,47 @@
 <?php
 
-use App\Http\Services\External\PaymentsProviderClients\ZamtelKwacha;
 use Tests\TestCase;
 
 class ZamtelKwachaTest extends TestCase
 {
 
     public function _testRequestPayment()
-    {   
-        //9b9fe666-1ff3-11ef-b077-8db5e354f7db
-        $zamtelClient=new ZamtelKwacha();
-        $response = $zamtelClient->requestPayment((object)[]);
+    {  
+
+        $momoParams=[];
+        $momoParams['wallet_id']="9d03fefd-3445-45a9-961d-6e9764959f2e";
+        $momoParams['transactionId']="";
+        $momoParams['customerAccount']="1048506";
+        $momoParams['paymentAmount']='1.10';
+        $momoParams['walletNumber']= '260958662444';
+
+
+
+        $zamKwachaClient = new \App\Http\Services\External\PaymentsProviderClients\ZamtelKwacha(
+                                            new \App\Http\Services\Web\Clients\ClientWalletCredentialsService( new \App\Models\ClientWalletCredential()),
+                                            new \App\Http\Services\Web\Clients\ClientWalletService(new \App\Models\ClientWallet())
+        );
+
+        $response = $zamKwachaClient->requestPayment((object)$momoParams);
         $this->assertTrue($response['status']=="SUCCESS");
 
     }
 
-    public function _testConfirmPayment()
+    public function testConfirmPayment()
     {   
 
-        $strClientName="LUKANGA";
         $momoParams=[];
-        $momoParams['transactionId']=substr("+260956099652",3,9).date('YmdHis');
-        $momoParams['paymentAmount']='1.77';
-        $momoParams['mobileNumber']="+260956099652";
-        $momoParams['configs']=[
-                'baseURL'=>\env('ZAMTEL_BASE_URL'),
-                'shortCode'=>\env($strClientName.'_ZAMTEL_SHORTCODE'),
-                'clientId'=>\env($strClientName.'_ZAMTEL_THIRDPARTYID'),
-                'clientSecret'=>\env($strClientName.'_ZAMTEL_PASSWORD')
-            ];
-        $zamtelClient=new ZamtelKwacha();
-        $response = $zamtelClient->confirmPayment((object)$momoParams);
+        $momoParams['wallet_id']="9d03fefd-3445-45a9-961d-6e9764959f2e";
+        $momoParams['transactionId']="000007919002";
+        $zamKwachaClient = new \App\Http\Services\External\PaymentsProviderClients\ZamtelKwacha(
+                                            new \App\Http\Services\Web\Clients\ClientWalletCredentialsService( new \App\Models\ClientWalletCredential()),
+                                            new \App\Http\Services\Web\Clients\ClientWalletService(new \App\Models\ClientWallet())
+                                );
+        $response = $zamKwachaClient->confirmPayment((object)$momoParams);
         $this->assertTrue($response['status']=="SUCCESS");
 
+
+        
     }
 
 }

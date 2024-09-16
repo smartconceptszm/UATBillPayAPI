@@ -54,8 +54,8 @@ class PaymentToReviewService
                      ->join('sessions as s','p.session_id','=','s.id')
                      ->join('client_menus as cm','p.menu_id','=','cm.id')
                      ->join('clients as c','cw.client_id','=','c.id')
-                     ->select('p.*','cw.client_id','s.sessionId','s.customerJourney','c.shortCode',
-                                 'c.urlPrefix','cw.handler as walletHandler')
+                     ->select('p.*','cw.client_id','s.sessionId','s.mno_id','s.customerJourney',
+                                 'c.shortCode','c.urlPrefix','cw.handler as walletHandler')
                      ->where('p.id', '=', $id)
                      ->first();
       } catch (\Throwable $e) {

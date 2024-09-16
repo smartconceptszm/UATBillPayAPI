@@ -15,11 +15,6 @@ class MTNMoMoDeliverySMS implements ISMSClient
       private ClientWalletCredentialsService $clientWalletCredentialsService) 
    {}
 
-   public function channelChargeable():bool
-   {
-      return false;
-   }
-
    public function send(array $mtnParams): bool{
       $response = false;
       try {

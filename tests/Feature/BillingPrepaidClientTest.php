@@ -12,19 +12,20 @@ class BillingPrepaidClientTest extends TestCase
 
     public function _testGetPrePaidAccountDetails()
     {   
-
-        $billingClient = new \App\Http\Services\External\BillingClients\LukangaPrePaid(
-                                new \App\Http\Services\Web\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
-                                new App\Http\Services\External\BillingClients\PrePaidVendor\PurchaseEncryptor()
-                            );
+        // new \App\Http\Services\Web\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
+        // new App\Http\Services\External\BillingClients\PrePaidVendor\PurchaseEncryptor()
+        $billingClient = new \App\Http\Services\External\BillingClients\ChambeshiPrePaid(
+                                    new \App\Http\Services\Web\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
+                                    new \App\Http\Services\External\BillingClients\Chambeshi\Chambeshi(new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService(new \App\Models\ChambeshiPayment()))
+                                );
 
         $response = $billingClient->getAccountDetails([
-                                        'customerAccount'=>'0120210635195',
-                                        'client_id'=>'39d62460-7303-11ee-b8ce-fec6e52a2330',
-                                        'paymentAmount'=>20000.00,
+                                        'customerAccount'=>'0166209919108',
+                                        'client_id'=>'39d62802-7303-11ee-b8ce-fec6e52a2330',
+                                        'paymentAmount'=>70.00,
                                     ]);
 
-        $this->assertTrue($response['customerAccount'] == "KMH42801");
+        $this->assertTrue($response['customerAccount'] == "MPI80570");
 
     }
 
@@ -36,9 +37,18 @@ class BillingPrepaidClientTest extends TestCase
             "total_paid" => '20.00',
             "debt_percent"=> 50
         ];
-        $billingClient = \app('chambeshiPrePaid');
-        $response=$billingClient->generateToken($tokenParams);
-        $this->assertTrue($response['customerAccount'] == "040010151");
+        $billingClient = new \App\Http\Services\External\BillingClients\ChambeshiPrePaid(
+                    new \App\Http\Services\Web\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
+                    new \App\Http\Services\External\BillingClients\Chambeshi\Chambeshi(new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService(new \App\Models\ChambeshiPayment()))
+                );
+
+        $response = $billingClient->getAccountDetails([
+                        'customerAccount'=>'0166209919108',
+                        'client_id'=>'39d62802-7303-11ee-b8ce-fec6e52a2330',
+                        'paymentAmount'=>70.00,
+                    ]);
+
+        $this->assertTrue($response['customerAccount'] == "MPI80570");
     }
 
 

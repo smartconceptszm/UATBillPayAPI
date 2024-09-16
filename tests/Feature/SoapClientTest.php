@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\KafubuPostPaidEnquiry;
-use App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptPostPaidKafubu;
+use App\Http\Services\External\ReceiptingHandlers\ReceiptPostPaidKafubu;
 use App\Http\Services\External\BillingClients\KafubuPostPaid;
 use App\Http\DTOs\UssdDTO;
 use Tests\TestCase;

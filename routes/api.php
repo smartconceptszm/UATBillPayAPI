@@ -88,13 +88,11 @@ Route::group(['middleware' => 'mode'], function (){
       //End of Dev ROUTES
    //End
 
-   //USSD Routes
-      Route::get('/zamtelkwacha/callback', [\App\Http\Controllers\Web\Payments\MoMoCallbackController::class, 'zamtel']);
-      Route::get('/airtelmoney/callback', [\App\Http\Controllers\Web\Payments\MoMoCallbackController::class, 'airtel']);
-      Route::get('/mtnmomo/callback',[\App\Http\Controllers\Web\Payments\MoMoCallbackController::class, 'mtn']);
+   //MoMo Callback Routes
+      Route::post('/zamtelkwacha/callback', [\App\Http\Controllers\Web\Payments\MoMoCallbackController::class, 'zamtel']);
+      Route::post('/airtelmoney/callback', [\App\Http\Controllers\Web\Payments\MoMoCallbackController::class, 'airtel']);
+      Route::post('/mtnmomo/callback',[\App\Http\Controllers\Web\Payments\MoMoCallbackController::class, 'mtn']);
    //
-
-   Route::post('/airtel/callback', );
 
    //Mobile/Web/External Routes
       Route::get('/app/services', [\App\Http\Controllers\Web\Payments\PaymentsMenuController::class, 'index']);
@@ -134,6 +132,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::put('/payments/{id}', 'update');
             });
          //
+
          //Clients
             Route::controller(\App\Http\Controllers\Web\Clients\ClientController::class)->group(function () {
                Route::get('/clients/findoneby', 'findOneBy');
@@ -191,7 +190,19 @@ Route::group(['middleware' => 'mode'], function (){
             Route::controller(\App\Http\Controllers\Web\Clients\MnosOfClientController::class)->group(function () {
                Route::get('/mnosofclient/{id}', 'index');
             });
+         //
 
+         //SMS Channel Credentials
+            Route::controller(\App\Http\Controllers\Web\Clients\ClientMnoCredentialController::class)->group(function () {
+               Route::get('/smschannelcredentials/findoneby', 'findOneBy');
+               Route::put('/smschannelcredentials/{id}', 'update');
+               Route::get('/smschannelcredentials/{id}', 'show');
+               Route::post('/smschannelcredentials', 'store');
+               Route::get('/smschannelcredentials', 'index');
+            });
+            Route::controller(\App\Http\Controllers\Web\Clients\ClientMnoCredentialController::class)->group(function () {
+               Route::get('/credentialsofsmschannel/{id}', 'credentialsofsmschannel');
+            });
          //
 
          //PAYMENTS PROVIDERS
@@ -203,6 +214,20 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/paymentsproviders', 'index');
             });
          //
+
+         //PAYMENTS PROVIDER Credentials
+            Route::controller(\App\Http\Controllers\Web\Clients\PaymentsProviderCredentialController::class)->group(function () {
+               Route::get('/paymentsprovidercredentials/findoneby', 'findOneBy');
+               Route::put('/paymentsprovidercredentials/{id}', 'update');
+               Route::get('/paymentsprovidercredentials/{id}', 'show');
+               Route::post('/paymentsprovidercredentials', 'store');
+               Route::get('/paymentsprovidercredentials', 'index');
+            });
+            Route::controller(\App\Http\Controllers\Web\Clients\PaymentsProviderCredentialController::class)->group(function () {
+               Route::get('/credentialsofpaymentsprovider/{id}', 'credentialsofpaymentsprovider');
+            });
+         //
+               
 
          //Client Wallets
             Route::controller(\App\Http\Controllers\Web\Clients\ClientWalletController::class)->group(function () {
@@ -329,6 +354,7 @@ Route::group(['middleware' => 'mode'], function (){
             Route::get('sessionsofclient', [\App\Http\Controllers\Web\Sessions\SessionofClientController::class, 'index']);
 
          //
+
          // RBAC ROUTES 
             Route::get('usersofclient/{id}', [\App\Http\Controllers\Web\Auth\UsersOfClientController::class, 'index']);      
             Route::get('groupsofuser/{id}', [\App\Http\Controllers\Web\Auth\GroupsOfUserController::class, 'index']);

@@ -14,10 +14,9 @@ class ClientMno extends Model
    protected $table = "client_mnos";
 
    protected $fillable=[
-      'client_id','mno_id','smsMode','smsActive','handler','smsCharge'
+      'client_id','mno_id','handler','smsCharge'
    ];
 
-   
    protected $casts = [
       'created_at' => 'datetime:Y-m-d H:i:s',
       'updated_at' => 'datetime:Y-m-d H:i:s',

@@ -14,11 +14,17 @@ class CouncilPayment_Step_5
 
    public function run(BaseDTO $txDTO)
    {
-      $txDTO = $this->confirmToPay->handle($txDTO);
+
+      if($txDTO->subscriberInput == '2'){
+         $txDTO->response="Enter the mobile money number to pay from(e.g 09xx xxxxxx/07xx xxxxxx)\n";
+      }else{
+         $txDTO = $this->confirmToPay->handle($txDTO);
+      }
       if($txDTO->error !=''){
          $txDTO->error = 'Council payment step 5. '.$txDTO->error;
       }
       return $txDTO;
+      
    }
     
 }

@@ -22,9 +22,9 @@ class CreateNewSession
    {
 
       $homeMenu = $this->clientMenuService->findOneBy([
-                        'client_id' => $txDTO->client_id,
-                        'parent_id' =>'0'
-                     ]);
+                                 'client_id' => $txDTO->client_id,
+                                 'parent_id' =>'0'
+                              ]);
       $txDTO->billingClient = $homeMenu->billingClient; 
       $txDTO->menuPrompt = $homeMenu->prompt;
       $txDTO->handler = $homeMenu->handler; 
@@ -45,13 +45,14 @@ class CreateNewSession
       $selectedMenu = $this->clientMenuService->findOneBy([
                                                    'order' => $arrInputs[1],
                                                    'client_id' => $txDTO->client_id,
-                                                   'parent_id' => $homeMenu->id
+                                                   'parent_id' => $homeMenu->id,
+                                                   'isActive' => 'YES'
                                                 ]);
-      if($selectedMenu){
-         if(($selectedMenu->isActive == 'YES' && $selectedMenu->shortcut) || ($selectedMenu->isActive == 'NO' && $selectedMenu->shortcut == 'MenuSpoofer')){
-            $shortCut = App::make($selectedMenu->shortcut);
-            $txDTO = $shortCut->handle($txDTO, $selectedMenu);
-         }
+      if($selectedMenu && $selectedMenu->shortcut){
+         $shortCut = App::make($selectedMenu->shortcut);
+         $txDTO = $shortCut->handle($txDTO, $selectedMenu);
+      }else{
+         $txDTO->subscriberInput = $txDTO->shortCode;
       }
       return $txDTO;
        

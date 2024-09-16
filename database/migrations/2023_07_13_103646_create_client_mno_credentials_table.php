@@ -13,7 +13,7 @@ return new class extends Migration
    {
       Schema::create('client_mno_credentials', function (Blueprint $table) {
          $table->uuid('id')->primary();
-         $table->string("chaneel_id",36)->notNullable();
+         $table->string("channel_id",36)->notNullable();
          $table->string("key",50)->notNullable();
          $table->string("keyValue",150)->notNullable();
          $table->string("description",150)->nullable();

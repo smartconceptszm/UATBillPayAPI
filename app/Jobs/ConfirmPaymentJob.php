@@ -2,23 +2,23 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\Web\Clients\BillingCredentialService;
 use App\Http\Services\Web\Clients\ClientMenuService;
 use App\Http\Services\Gateway\ConfirmPayment;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 use App\Jobs\BaseJob;
 
 class ConfirmPaymentJob extends BaseJob
 {
 
-   public $timeout = 600;
+   // public $timeout = 600;
    public function __construct(
       private BaseDTO $paymentDTO)
    {}
 
    public function handle(ConfirmPayment $confirmPayment,
-      BillingCredentialService $billingCredentialService,
       ClientMenuService $clientMenuService)
    {
 
@@ -39,25 +39,14 @@ class ConfirmPaymentJob extends BaseJob
             $billingClient = "MockBillingClient";
          }
          App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
-         App::bind(\App\Http\Services\External\Adaptors\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
+         App::bind(\App\Http\Services\External\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
       //
-      
-      //Bind the SMS Client
-         $billingCredentials = $billingCredentialService->getClientCredentials($this->paymentDTO->client_id);
-         $smsClient = '';
-         if(!$smsClient && (\env('SMS_SEND_USE_MOCK') == "YES")){
-               $smsClient = 'MockSMSDelivery';
+
+      //SMS handling
+         if(\env($this->paymentDTO->walletHandler.'_HAS_FREESMS') == "YES"){
+            Cache::put($this->paymentDTO->transactionId.'_smsClient',
+                           $this->paymentDTO->walletHandler.'DeliverySMS',Carbon::now()->addSeconds(2));
          }
-         if(!$smsClient && \env($this->paymentDTO->walletHandler.'_HAS_FREESMS') == "YES"){
-               $smsClient = $this->paymentDTO->walletHandler.'DeliverySMS';
-         }
-         if(!$smsClient && ($billingCredentials['HAS_OWNSMS'] == 'YES')){
-               $smsClient = \strtoupper($this->paymentDTO->urlPrefix).'SMS';
-         }
-         if(!$smsClient){
-               $smsClient = \env('SMPP_CHANNEL');
-         }
-         App::bind(\App\Http\Services\External\SMSClients\ISMSClient::class,$smsClient);
       //
       //Handle Job Service
          return $confirmPayment->handle($this->paymentDTO);

@@ -18,8 +18,8 @@ class USSDService
             ->send($txDTO)
             ->through(
                [
-                  \App\Http\Services\USSD\Step_IdentifyClient::class,
-                  \App\Http\Services\USSD\Step_IdentifyMenu::class,
+                  \App\Http\Services\USSD\Step_GetClient::class,
+                  \App\Http\Services\USSD\Step_GetMenu::class,
                   \App\Http\Services\USSD\Step_HandleMenu::class,
                   \App\Http\Services\USSD\Step_TrimResponse::class,
                   \App\Http\Services\USSD\Step_HandleErrorResponse::class,

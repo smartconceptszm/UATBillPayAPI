@@ -13,7 +13,7 @@ class BulkMessage extends Model
    protected $fillable=[
       'client_id','user_id','mobileNumbers', 'message','type' 
    ];
-   
+
    protected $casts = [
          'created_at' => 'datetime:Y-m-d H:i:s',
          'updated_at' => 'datetime:Y-m-d H:i:s',

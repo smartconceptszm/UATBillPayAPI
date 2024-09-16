@@ -12,7 +12,7 @@ class USSDFaultComplaintTest extends TestCase
    {
       //Main Menu
       $urlPrefix = 'nkana';
-      $sessionId = '100005066';
+      $sessionId = '100005091';
       $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=2021&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=1');
       $response->assertStatus(200);
 

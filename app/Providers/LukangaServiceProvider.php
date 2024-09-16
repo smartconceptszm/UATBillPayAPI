@@ -24,7 +24,7 @@ class LukangaServiceProvider extends ServiceProvider
          });
 
          $this->app->singleton('ReceiptPostPaidLukanga', function () {
-            return $this->app->make(\App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptPostPaidLukanga::class);
+            return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptPostPaidLukanga::class);
          });
 
       //
@@ -35,7 +35,7 @@ class LukangaServiceProvider extends ServiceProvider
          });
 
          $this->app->singleton('ReceiptPrePaidLukanga', function () {
-            return $this->app->make(\App\Http\Services\External\Adaptors\ReceiptingHandlers\ReceiptPrePaidLukanga::class);
+            return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptPrePaidLukanga::class);
          });
          
       //

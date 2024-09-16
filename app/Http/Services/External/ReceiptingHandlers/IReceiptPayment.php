@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services\External\Adaptors\ReceiptingHandlers;
+namespace App\Http\Services\External\ReceiptingHandlers;
 
 use App\Http\DTOs\BaseDTO;
 

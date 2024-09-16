@@ -4,6 +4,7 @@ namespace App\Http\Services\USSD\ShortcutMenus;
 
 use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
 use App\Http\Services\Web\Sessions\ShortcutCustomerService;
+use App\Http\Services\Web\Clients\ClientMenuService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -11,20 +12,27 @@ class PayPostPaidBill
 {
 
    public function __construct(
+      private ShortcutCustomerService $shortcutCustomerService,
       private CheckPaymentsEnabled $checkPaymentsEnabled,
-      private ShortcutCustomerService $shortcutCustomerService)
+      private ClientMenuService $clientMenuService)
    {}
    
-   public function handle(BaseDTO $txDTO, object $selectedMenu)
+   public function handle(BaseDTO $txDTO)
    {
 
-      $arrInputs = explode("*", $txDTO->subscriberInput);
       $customer = $this->shortcutCustomerService->findOneBy([
                                                          'mobileNumber' => $txDTO->mobileNumber,
                                                          'client_id' => $txDTO->client_id
                                                       ]);  
                                                       
-      if (!\is_null($customer)) { 
+      if ($customer) { 
+         $arrInputs = explode("*", $txDTO->subscriberInput);
+         $selectedMenu = $this->clientMenuService->findOneBy([
+                                                      'order' => $arrInputs[1],
+                                                      'client_id' => $txDTO->client_id,
+                                                      'parent_id' => $txDTO->menu_id,
+                                                      'isActive' => "YES"
+                                                   ]);
          $txDTO->billingClient = $selectedMenu->billingClient; 
          $txDTO->menuPrompt = $selectedMenu->prompt;
          $txDTO->handler = $selectedMenu->handler; 
@@ -33,17 +41,10 @@ class PayPostPaidBill
          if(!$momoPaymentStatus['enabled']){
             throw new Exception($momoPaymentStatus['responseText'], 2);
          }
-         if (\count($arrInputs) == 2) {
-            $txDTO->subscriberInput = $customer->accountNumber;
-            $txDTO->customerJourney = $arrInputs[0] . "*" . $arrInputs[1];
-            return $txDTO;
-         }
-         if (\count($arrInputs) == 3) {
-            $txDTO->subscriberInput = $arrInputs[2];
-            $txDTO->accountNumber = $customer->accountNumber;
-            $txDTO->customerJourney = $arrInputs[0] . "*" . $arrInputs[1] . "*" . $customer->accountNumber;
-            return $txDTO;
-         }
+         $txDTO->subscriberInput = $arrInputs[2];
+         $txDTO->customerAccount = $customer->customerAccount;
+         $txDTO->customerJourney = $arrInputs[0] . "*" . $arrInputs[1] . "*" .
+                                       $customer->customerAccount. "*" . $customer->customerAccount;
       }
       return $txDTO;
        

@@ -12,9 +12,10 @@ class MnosOfClientService
 
       try {
          $records = DB::table('client_mnos as cm')
-                  ->join('mnos as m','cm.mno_id','=','m.id')
-                  ->select('cm.*','m.name')
-                  ->where('cm.client_id', '=', $client_id);
+                           ->join('clients as c','cm.client_id','=','c.id')
+                           ->join('mnos as m','cm.mno_id','=','m.id')
+                           ->select('cm.*','m.name as mno','c.name as client')
+                           ->where('cm.client_id', '=', $client_id);
          $records =$records->get();
          return $records->all();
       } catch (\Throwable $e) {
