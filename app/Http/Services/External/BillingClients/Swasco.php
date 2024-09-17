@@ -125,7 +125,7 @@ class Swasco implements IBillingClient
                                        'Accept' => '*/*',
                                     ])
                                  ->post($fullURL, [
-                                       'accountNumber' => $postParams['customerAccount'],
+                                       'accountNumber' => $postParams['account'],
                                        'amount' => (string)$postParams['amount'],
                                        "mobileNumber" => $postParams['mobileNumber'],
                                        "referenceNumber" => $postParams['referenceNumber'],

@@ -156,7 +156,7 @@ class KafubuPostPaid implements IBillingClient
                 'recDate' => \date('Ymd'),
                 'mcno' => $this->cashierNo,
                 'operator' => $this->operator,
-                'account' => $postParams['customerAccount'],
+                'account' => $postParams['account'],
                 'incomeCode' => 'ZZ',
                 'payType' => 'B',
                 'recTime' => '',

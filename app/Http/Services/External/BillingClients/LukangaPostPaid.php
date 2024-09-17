@@ -160,7 +160,7 @@ class LukangaPostPaid implements IBillingClient
                 'receiptDate' => \date('Ymd'),
                 'cashierNo' => $this->cashierNo,
                 'operator' => $this->operator,
-                'account' => $postParams['customerAccount'],
+                'account' => $postParams['account'],
                 'reference' => $postParams['reference'],
                 'incomeCode' => 'zz',
                 'paytype' => 'C',
