@@ -41,7 +41,7 @@ class EnquiryHandler
 								$adminMobileNumbers = \explode("*",\env('APP_ADMIN_MSISDN'));
 								if($txDTO->testMSISDN){
 									$clientMobileNumbers = \explode("*",$txDTO->testMSISDN);
-									$adminMobileNumbers=\array_merge($adminMobileNumbers,$clientMobileNumbers);
+									$adminMobileNumbers=\array_merge($clientMobileNumbers,$adminMobileNumbers);
 								}
 								
 								$arrSMSes=[];
