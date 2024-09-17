@@ -37,9 +37,13 @@ class EnquiryHandler
 						Cache::increment($txDTO->urlPrefix.'_BillingErrorCount');
 					}else{
 						//Send Notification here
-								$clientMobileNumbers = \explode("*",$txDTO->testMSISDN);
+								
 								$adminMobileNumbers = \explode("*",\env('APP_ADMIN_MSISDN'));
-								$adminMobileNumbers=\array_merge($adminMobileNumbers,$clientMobileNumbers);
+								if($txDTO->testMSISDN){
+									$clientMobileNumbers = \explode("*",$txDTO->testMSISDN);
+									$adminMobileNumbers=\array_merge($adminMobileNumbers,$clientMobileNumbers);
+								}
+								
 								$arrSMSes=[];
 								foreach ($adminMobileNumbers as $key => $mobileNumber) {
 									$arrSMSes[$key]['message']=\strtoupper($txDTO->urlPrefix).
