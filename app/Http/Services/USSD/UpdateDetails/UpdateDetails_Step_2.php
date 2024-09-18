@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\UpdateDetails;
 
-use App\Http\Services\External\Adaptors\BillingEnquiryHandlers\IEnquiryHandler;
+use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\Web\MenuConfigs\CustomerFieldService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -12,7 +12,7 @@ class UpdateDetails_Step_2
 
    public function __construct(
       private CustomerFieldService $customerFieldService,
-      private IEnquiryHandler $getCustomerAccount)
+      private EnquiryHandler $getCustomerAccount)
    {}
 
    public function run(BaseDTO $txDTO)

@@ -20,8 +20,8 @@ class UpdateDetails_Swasco implements IUpdateDetailsClient
          $newMobileNumber = \substr($detailsData['updates'][1],2);
          return $this->billingClient->changeCustomerDetail([
                                     'customerAccount' => $detailsData['customerAccount'],
-                                    "phoneNumber" => $detailsData['mobileNumber'],
-                                    'newMobileNo' => $newMobileNumber,
+                                    "mobileNumber" => $detailsData['mobileNumber'],
+                                    'newMobileNumber' => $newMobileNumber,
                                     'client_id' => $detailsData['client_id']
                                  ]);
       } catch (\Throwable $e) {

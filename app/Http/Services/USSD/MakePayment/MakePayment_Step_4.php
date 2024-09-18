@@ -32,7 +32,7 @@ class MakePayment_Step_4
          }else{
             $txDTO->errorType = 'SystemError';
          }
-         $txDTO->error = 'Make payment step 4. '. $e->getMessage();
+         $txDTO->error = $e->getMessage();
          return $txDTO;
       }
 
@@ -46,7 +46,7 @@ class MakePayment_Step_4
             }else{
                $txDTO->errorType = 'SystemError';
             }
-            $txDTO->error = 'Make payment step 4. '.$e->getMessage();
+            $txDTO->error = $e->getMessage();
             return $txDTO;
          }
       }
