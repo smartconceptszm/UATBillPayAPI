@@ -146,7 +146,7 @@ class ZamtelKwacha implements IPaymentsProviderClient
                      <api:Request>
                         <req:Header>
                               <req:Version>1.0</req:Version>
-                              <req:CommandID>InitTrans_Customer Pay Org Bill</req:CommandID>
+                              <req:CommandID>InitTrans_Customer Pay Organization Bill</req:CommandID>
                               <req:OriginatorConversationID>'.$dto->transactionId.'</req:OriginatorConversationID>
                               <req:Caller>
                                  <req:CallerType>2</req:CallerType>

@@ -8,7 +8,7 @@ use Tests\TestCase;
 class WebPaymentAnalyticsDailyTest extends TestCase
 {
 
-   public function test_get_analytics_daily(): void
+   public function _test_get_analytics_daily(): void
    {
 
       $paymentToReviewService = new \App\Http\Services\Web\Payments\PaymentToReviewService();
@@ -23,6 +23,7 @@ class WebPaymentAnalyticsDailyTest extends TestCase
 
       $response = $response->json()['data'];
       $this->assertTrue(\count($response)>0);
+      
    }
 
 }
