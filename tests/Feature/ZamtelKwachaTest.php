@@ -27,10 +27,9 @@ class ZamtelKwachaTest extends TestCase
 
     }
 
-    public function _testConfirmPayment()
+    public function testConfirmPayment()
     {   
 
-        $momoParams=[];
         $momoParams=[];
         $momoParams['wallet_id']="9d03fefd-3445-45a9-961d-6e9764959f2e";
         $momoParams['transactionId']="";
