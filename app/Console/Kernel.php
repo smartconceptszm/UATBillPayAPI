@@ -5,8 +5,6 @@ namespace App\Console;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Log;
-
 
 class Kernel extends ConsoleKernel
 {
@@ -24,7 +22,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(
                         App::make(\App\Http\ScheduledTasks\GenerateDailyAnalytics::class)
-                            )->timezone('Africa/Lusaka')->everyFiveMinutes();//->dailyAt("00:20");
+                            )->timezone('Africa/Lusaka')->dailyAt("00:20");
 
         $schedule->call(
                             App::make(\App\Http\ScheduledTasks\GenerateMonthlyAnalytics::class)
