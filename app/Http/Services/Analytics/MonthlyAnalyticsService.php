@@ -42,6 +42,7 @@ class MonthlyAnalyticsService
          $endOfMonth = $theDate->endOfMonth();
          $theDay = (string)$endOfMonth->day;
          $dateTo = $theYear . '-' . $theMonth . '-' .$theDay. ' 23:59:59';
+         Log::info('(SCL) Monthly transaction analytics job launched for: '.$endOfMonth->format('Y-F'));
          $clients = $this->clientService->findAll(['status'=>'ACTIVE']);
          foreach ($clients as $client) {
             //Step 1 - Get Payment Type Monthly transactions totals
