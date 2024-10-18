@@ -38,8 +38,9 @@ class MonthlyAnalyticsService
       try {
          $theYear = $theDate->year;
          $theMonth = \strlen((string)$theDate->month)==2?$theDate->month:"0".(string)$theDate->month;
-         $theDay = \strlen((string)$theDate->day)==2?$theDate->day:"0".(string)$theDate->day;
          $dateFrom = $theYear . '-' . $theMonth . '-01 00:00:00';
+         $endOfMonth = $theDate->endOfMonth();
+         $theDay = (string)$endOfMonth->day;
          $dateTo = $theYear . '-' . $theMonth . '-' .$theDay. ' 23:59:59';
          $clients = $this->clientService->findAll(['status'=>'ACTIVE']);
          foreach ($clients as $client) {

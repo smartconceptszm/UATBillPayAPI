@@ -12,12 +12,13 @@ class WebPaymentAnalyticsMonthlyTest extends TestCase
    {
 
      
-      $theDate = Carbon::create("2024-07-31");
+      $theDate = Carbon::create("2024-07-8");
       
 
       $MonthlyAnalyticsService = new \App\Http\Services\Analytics\MonthlyAnalyticsService(
-         new \App\Http\Services\Clients\ClientService( new \App\Models\Client())
-      );
+                                             new \App\Models\DashboardPaymentsProviderTotals(),
+                                             new \App\Http\Services\Clients\ClientService(new \App\Models\Client())
+                                       );
 
       $response = $MonthlyAnalyticsService->generate($theDate);
 
