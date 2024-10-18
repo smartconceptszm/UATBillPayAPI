@@ -148,7 +148,7 @@ class RegularAnalyticsService
             foreach ($paymentProviderTotals as $paymentProviderTotal) {
                $paymentProviderRecords[] = ['client_id' => $paymentDTO->client_id,'year' => $theYear, 'month' => $theMonth,
                                                 'numberOfTransactions' => $paymentProviderTotal->numberOfTransactions,
-                                                'paymentsProvider' => $paymentProviderTotal->payments_provider_id, 
+                                                'payments_provider_id' => $paymentProviderTotal->payments_provider_id, 
                                                 'totalAmount'=>$paymentProviderTotal->totalAmount];
             }
 
