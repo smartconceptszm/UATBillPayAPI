@@ -152,7 +152,7 @@ class MonthlyAnalyticsService
          Log::info($e->getMessage());
          return false;
       }
-
+      Log::info('(SCL) Monthly transaction analytics job executed for: '.$theDate->format('Y-F'));
       return true;
       
    }
