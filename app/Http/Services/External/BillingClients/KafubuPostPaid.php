@@ -3,7 +3,7 @@
 namespace App\Http\Services\External\BillingClients;
 
 use App\Http\Services\External\BillingClients\IBillingClient;
-use App\Http\Services\Web\Clients\BillingCredentialService;
+use App\Http\Services\Clients\BillingCredentialService;
 use App\Http\Services\Utility\XMLtoArrayParser;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;

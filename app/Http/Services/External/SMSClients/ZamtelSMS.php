@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\External\SMSClients;
 
-use App\Http\Services\Web\Clients\ClientMnoCredentialsService;
+use App\Http\Services\Clients\ClientMnoCredentialsService;
 use App\Http\Services\External\SMSClients\ISMSClient;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;

@@ -12,12 +12,15 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('dashboard_payments_provider_totals', function (Blueprint $table) {
-         $table->uuid('id')->primary();
+         $table->id();
          $table->string('client_id',36)->notNullable();
+         $table->unsignedInteger('year')->notNullable();
+         $table->unsignedInteger('month')->notNullable();
          $table->string('payments_provider_id',36)->notNullable();
-         $table->unsignedInteger('numberOfTransactions')->nullable();
+         $table->unsignedInteger('numberOfTransactions')->default(0);
          $table->float('totalAmount',10,2)->default(0);
          $table->timestamps();
+         $table->unique(['client_id','year','month','payments_provider_id'],'clientProviderMonth');
       });
    }
 

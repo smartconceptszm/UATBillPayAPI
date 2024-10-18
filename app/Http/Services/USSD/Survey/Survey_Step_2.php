@@ -36,8 +36,9 @@ class Survey_Step_2
                               'must'=>false,
                               'steps'=>1,
                         ]);                    
+         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
          Cache::put($txDTO->sessionId."handleBack",$cacheValue, 
-               Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
+               Carbon::now()->addMinutes(intval($billpaySettings['SESSION_CACHE'])));
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = 'InvalidAccount';

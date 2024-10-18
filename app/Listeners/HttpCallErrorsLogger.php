@@ -2,10 +2,10 @@
 
 namespace App\Listeners;
 
-use App\Http\Services\Web\Clients\BillingCredentialService;
+use App\Http\Services\Clients\BillingCredentialService;
 use App\Http\Services\Utility\PsrMessageToStringConvertor;
 use Illuminate\Http\Client\Events\ResponseReceived;
-use App\Http\Services\Web\Clients\ClientService;
+use App\Http\Services\Clients\ClientService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Log;
@@ -35,7 +35,8 @@ class HttpCallErrorsLogger
    public function handle(ResponseReceived $event)
    {
 
-      $mnos=['airtel','mtn','zamtel','3gdirectpay'];
+      $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+      $paymentsproviders=['airtel','mtn','zamtel','3gdirectpay'];
       if($event->response->status()<200 || $event->response->status()>299){
 
          $errorType='';
@@ -55,14 +56,14 @@ class HttpCallErrorsLogger
             }
          }
 
-         foreach ($mnos as $mno) {
-            if(\strpos($event->request->url(),$mno)){
+         foreach ($paymentsproviders as $paymentsprovider) {
+            if(\strpos($event->request->url(),$paymentsprovider)){
                if(\strpos($event->request->url(),'sms')){
-                  $logString.=\strtoupper($mno)." SMS";
-                  $errorType=\strtoupper($mno)."SMS";
+                  $logString.=\strtoupper($paymentsprovider)." SMS";
+                  $errorType=\strtoupper($paymentsprovider)."SMS";
                }else{
-                  $logString.=\strtoupper($mno)." MONEY";
-                  $errorType=\strtoupper($mno)."MONEY";
+                  $logString.=\strtoupper($paymentsprovider)." MONEY";
+                  $errorType=\strtoupper($paymentsprovider)."MONEY";
                }
                break;
             }
@@ -81,14 +82,15 @@ class HttpCallErrorsLogger
          $logString.="\n\n*******************************\n";
          Log::error($logString);
 
+         
          $httpErrorCount = (int)Cache::get($errorType.'_ErrorCount');
-         if($httpErrorCount){
-            if (($httpErrorCount+1) < (int)\env('HTTP_ERROR_THRESHOLD')) {
+         if($httpErrorCount){       
+            if (($httpErrorCount+1) < (int)$billpaySettings['HTTP_ERROR_THRESHOLD']) {
                Cache::increment($errorType.'_ErrorCount');
             }else{
                $httpErrorCount = 1;
                //Send Notification here
-                  $adminMobileNumbers = \explode("*",\env('APP_ADMIN_MSISDN'));
+                  $adminMobileNumbers = \explode("*",$billpaySettings['APP_ADMIN_MSISDN']);
                   $arrSMSes=[];
                   foreach ($adminMobileNumbers as $key => $mobileNumber) {
                         $arrSMSes[$key]['shortName']="SCL";
@@ -96,22 +98,23 @@ class HttpCallErrorsLogger
                         $arrSMSes[$key]['mobileNumber']=$mobileNumber;
                         $arrSMSes[$key]['message']="Http calls to ".$errorType
                                                    ." have failed over 5 times in the last ".
-                                                   env('HTTP_ERROR_CACHE')." minutes!";
+                                                   $billpaySettings['HTTP_ERROR_CACHE']." minutes!";
                   }
                   Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes),'','low');
                //
-               Cache::put($errorType.'_ErrorCount', $httpErrorCount, Carbon::now()->addMinutes((int)env('HTTP_ERROR_CACHE')));
+               Cache::put($errorType.'_ErrorCount', $httpErrorCount, Carbon::now()->addMinutes((int)$billpaySettings['HTTP_ERROR_CACHE']));
             } 
          }else{
-            Cache::put($errorType.'_ErrorCount', 1, Carbon::now()->addMinutes((int)env('HTTP_ERROR_CACHE')));
+            Cache::put($errorType.'_ErrorCount', 1, Carbon::now()->addMinutes((int)$billpaySettings['HTTP_ERROR_CACHE']));
          }
       }else{
 
          $logString="";
-         foreach ($mnos as $mno) {
-            if(\strpos($event->request->url(),$mno) && \env(\strtoupper($mno).'_LOG_ALL')=='YES'){
-               $logString=\strtoupper($mno)." MONEY";
-               $errorType=\strtoupper($mno)."MONEY";
+
+         foreach ($paymentsproviders as $paymentsprovider) {
+            if(\strpos($event->request->url(),$paymentsprovider) && $billpaySettings['HTTP_CALLS_LOG_ALL']=='YES'){
+               $logString=\strtoupper($paymentsprovider)." MONEY";
+               $errorType=\strtoupper($paymentsprovider)."MONEY";
                break;
             }
          }

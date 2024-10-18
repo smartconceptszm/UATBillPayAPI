@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\USSD;
 
 use App\Http\Controllers\USSD\USSDController;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 
 class USSDZamtelController extends USSDController
@@ -53,8 +54,9 @@ class USSDZamtelController extends USSDController
             $responseText .= '&USSDString=' . $this->ussdDTO->response;
             $this->ussdDTO->response=$responseText;
         } catch (\Throwable $e) {
+            $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
             $this->ussdDTO->error = 'Error: At Zamtel controller level. '.$e->getMessage();
-            $this->ussdDTO->response = \env('ERROR_MESSAGE');
+            $this->ussdDTO->response =$billpaySettings['ERROR_MESSAGE'];
             $this->ussdDTO->lastResponse = true;
         }
         return $this->responder($request);

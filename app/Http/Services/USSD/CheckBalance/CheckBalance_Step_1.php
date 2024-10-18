@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\CheckBalance;
 
-use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\DTOs\BaseDTO;
 
 class CheckBalance_Step_1 

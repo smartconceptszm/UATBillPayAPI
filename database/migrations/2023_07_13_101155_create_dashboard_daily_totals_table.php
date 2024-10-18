@@ -12,13 +12,15 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('dashboard_daily_totals', function (Blueprint $table) {
-         $table->uuid('id')->primary();
+         $table->id();
          $table->string('client_id',36)->notNullable();
-         $table->string('day',2)->notNullable();
-         $table->unsignedBigInteger('numberOfTransactions')->nullable();
+         $table->unsignedInteger('year',4)->notNullable();
+         $table->unsignedInteger('month',2)->notNullable();
+         $table->unsignedInteger('day')->notNullable();
+         $table->unsignedInteger('numberOfTransactions')->default(0);
          $table->float('totalAmount',10,2)->default(0);
          $table->timestamps();
-         $table->unique(['client_id','day'],'client_day');
+         $table->unique(['client_id','year','month','day'],'client_day');
       });
    }
 

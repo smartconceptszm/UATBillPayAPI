@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\Gateway\Utility;
 
-use App\Http\Services\Web\Sessions\ShortcutCustomerService;
+use App\Http\Services\Sessions\ShortcutCustomerService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 

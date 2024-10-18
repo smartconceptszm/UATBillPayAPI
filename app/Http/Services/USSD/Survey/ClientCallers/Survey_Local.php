@@ -3,9 +3,9 @@
 namespace App\Http\Services\USSD\Survey\ClientCallers;
 
 use App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient;
-use App\Http\Services\Web\MenuConfigs\SurveyQuestionService;
-use App\Http\Services\Web\CRM\SurveyEntryDetailService;
-use App\Http\Services\Web\CRM\SurveyEntryService;
+use App\Http\Services\MenuConfigs\SurveyQuestionService;
+use App\Http\Services\CRM\SurveyEntryDetailService;
+use App\Http\Services\CRM\SurveyEntryService;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;

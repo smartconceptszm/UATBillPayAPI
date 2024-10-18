@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\Menus;
 
-use App\Http\Services\Web\Clients\ClientService;
+use App\Http\Services\Clients\ClientService;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use App\Http\DTOs\BaseDTO;
 

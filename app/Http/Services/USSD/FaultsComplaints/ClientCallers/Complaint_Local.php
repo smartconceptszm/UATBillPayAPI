@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\FaultsComplaints\ClientCallers;
 
 use App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient;
-use App\Http\Services\Web\CRM\ComplaintService;
+use App\Http\Services\CRM\ComplaintService;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Carbon;
 use App\Jobs\SendSMSesJob;

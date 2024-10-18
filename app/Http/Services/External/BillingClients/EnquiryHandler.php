@@ -31,14 +31,15 @@ class EnquiryHandler
 			if($e->getCode()==1 || $e->getCode()==4){
 				throw new \Exception($e->getMessage(), $e->getCode());
 			}else{
+				$billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
 				$billingServiceErrorCount = (int)Cache::get($txDTO->urlPrefix.'_BillingErrorCount');
 				if($billingServiceErrorCount){
-					if (($billingServiceErrorCount+1) < (int)\env('BILLING_ERROR_THRESHOLD')) {
+					if (($billingServiceErrorCount+1) < (int)$billpaySettings['BILLING_ERROR_THRESHOLD']) {
 						Cache::increment($txDTO->urlPrefix.'_BillingErrorCount');
 					}else{
 						//Send Notification here
 								
-								$adminMobileNumbers = \explode("*",\env('APP_ADMIN_MSISDN'));
+								$adminMobileNumbers = \explode("*",$billpaySettings['APP_ADMIN_MSISDN']);
 								if($txDTO->testMSISDN){
 									$clientMobileNumbers = \explode("*",$txDTO->testMSISDN);
 									$adminMobileNumbers=\array_merge($clientMobileNumbers,$adminMobileNumbers);
@@ -57,11 +58,11 @@ class EnquiryHandler
 													new SendSMSesJob($arrSMSes,$txDTO->client_id),'','low');
 						//
 						Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1, 
-													Carbon::now()->addMinutes((int)env('BILLING_ERROR_CACHE')));
+													Carbon::now()->addMinutes((int)$billpaySettings['BILLING_ERROR_CACHE']));
 					}
 				}else{
 					Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1,
-												Carbon::now()->addMinutes((int)env('BILLING_ERROR_CACHE')));
+												Carbon::now()->addMinutes((int)$billpaySettings['BILLING_ERROR_CACHE']));
 				}
 				throw new \Exception($e->getMessage(), 2);
 			}   

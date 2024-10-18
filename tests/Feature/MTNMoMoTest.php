@@ -15,7 +15,7 @@ class MTNMoMoTest extends TestCase
       $momoParams['customerAccount']="1101000186";
       $momoParams['paymentAmount']='1.10';
       $momoParams['walletNumber']= '260965199175';
-      $mtnClient=new MTNMoMo(new \App\Http\Services\Web\Clients\ClientWalletCredentialsService(new \App\Models\ClientWalletCredential()));
+      $mtnClient=new MTNMoMo(new \App\Http\Services\Clients\ClientWalletCredentialsService(new \App\Models\ClientWalletCredential([]),));
       $response = $mtnClient->requestPayment((object)$momoParams);
       $this->assertTrue($response['status']=="SUCCESS");
 
@@ -27,7 +27,7 @@ class MTNMoMoTest extends TestCase
       $momoParams=[];
       $momoParams['wallet_id']="d617b452-7307-11ee-b8ce-fec6e52a2330";
       $momoParams['transactionId']="eccab365-3b44-4b51-951c-6a92d2b9ec2a";
-      $mtnClient=new MTNMoMo(new \App\Http\Services\Web\Clients\ClientWalletCredentialsService(new \App\Models\ClientWalletCredential()));
+      $mtnClient=new MTNMoMo(new \App\Http\Services\Clients\ClientWalletCredentialsService(new \App\Models\ClientWalletCredential()));
       $response = $mtnClient->confirmPayment((object)$momoParams);
       $this->assertTrue($response['status']=="SUCCESS");
 
@@ -41,7 +41,7 @@ class MTNMoMoTest extends TestCase
       $momoParams['wallet_id']="d617b452-7307-11ee-b8ce-fec6e52a2330";
       $momoParams['message'] = "Testing notification delivery for an MTN Transaction. Number : ".
                                                                $momoParams['transactionId'];
-      $mtnClient=new MTNMoMo(new \App\Http\Services\Web\Clients\ClientWalletCredentialsService(new \App\Models\ClientWalletCredential()));
+      $mtnClient=new MTNMoMo(new \App\Http\Services\Clients\ClientWalletCredentialsService(new \App\Models\ClientWalletCredential()));
       $response = $mtnClient->deliverNotification($momoParams);
       $this->assertTrue($response['status']=="SUCCESS");
 

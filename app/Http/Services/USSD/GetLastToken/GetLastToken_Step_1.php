@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\GetLastToken;
 
-use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 

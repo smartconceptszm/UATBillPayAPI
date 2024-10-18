@@ -12,10 +12,10 @@ class BillingPrepaidClientTest extends TestCase
 
     public function _testGetPrePaidAccountDetails()
     {   
-        // new \App\Http\Services\Web\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
+        // new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
         // new App\Http\Services\External\BillingClients\PrePaidVendor\PurchaseEncryptor()
         $billingClient = new \App\Http\Services\External\BillingClients\ChambeshiPrePaid(
-                                    new \App\Http\Services\Web\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
+                                    new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
                                     new \App\Http\Services\External\BillingClients\Chambeshi\Chambeshi(new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService(new \App\Models\ChambeshiPayment()))
                                 );
 
@@ -38,7 +38,7 @@ class BillingPrepaidClientTest extends TestCase
             "debt_percent"=> 50
         ];
         $billingClient = new \App\Http\Services\External\BillingClients\ChambeshiPrePaid(
-                    new \App\Http\Services\Web\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
+                    new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
                     new \App\Http\Services\External\BillingClients\Chambeshi\Chambeshi(new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService(new \App\Models\ChambeshiPayment()))
                 );
 

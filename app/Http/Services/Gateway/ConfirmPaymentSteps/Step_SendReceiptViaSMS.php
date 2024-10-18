@@ -3,7 +3,7 @@
 namespace App\Http\Services\Gateway\ConfirmPaymentSteps;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
-use App\Http\Services\Web\SMS\SMSService;
+use App\Http\Services\SMS\SMSService;
 use App\Http\DTOs\SMSTxDTO;
 use App\Http\DTOs\BaseDTO;
 

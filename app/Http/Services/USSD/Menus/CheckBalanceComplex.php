@@ -16,7 +16,8 @@ class CheckBalanceComplex implements IUSSDMenu
          try {
             $stepCount = \count(\explode("*", $txDTO->customerJourney)) -1;
             if ($stepCount == 2) {
-               $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'MockBillingClient':$txDTO->billingClient;	
+               $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+               $billingClient = $billpaySettings['USE_BILLING_MOCK']=="YES"? 'MockBillingClient':$txDTO->billingClient;		
                App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
             }
             $stepHandler = App::make('CheckBalance_Step_'.$stepCount);

@@ -156,15 +156,6 @@ return [
     */
 
     'providers' => ServiceProvider::defaultProviders()->merge([
-        /*
-         * Package Service Providers...
-         */
-            App\Providers\ChambeshiServiceProvider::class,
-            App\Providers\KafubuServiceProvider::class,
-            App\Providers\LukangaServiceProvider::class,
-            App\Providers\MazabukaServiceProvider::class,
-            App\Providers\NkanaServiceProvider::class,
-            App\Providers\SwascoServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -174,6 +165,16 @@ return [
             App\Providers\EventServiceProvider::class,
             App\Providers\RouteServiceProvider::class,
             App\Providers\AppServiceProvider::class,
+        /*
+         * Billpay Service Providers...
+         */
+            App\Providers\BillpaySettingsServiceProvider::class,
+            App\Providers\ChambeshiServiceProvider::class,
+            App\Providers\KafubuServiceProvider::class,
+            App\Providers\LukangaServiceProvider::class,
+            App\Providers\MazabukaServiceProvider::class,
+            App\Providers\NkanaServiceProvider::class,
+            App\Providers\SwascoServiceProvider::class
     ])->toArray(),
 
     /*

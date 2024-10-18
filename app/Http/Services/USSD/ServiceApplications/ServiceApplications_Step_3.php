@@ -3,8 +3,8 @@
 namespace App\Http\Services\USSD\ServiceApplications;
 
 use App\Http\Services\External\BillingClients\EnquiryHandler;
-use App\Http\Services\Web\MenuConfigs\ServiceTypeDetailService;
-use App\Http\Services\Web\MenuConfigs\ServiceTypeService;
+use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
+use App\Http\Services\MenuConfigs\ServiceTypeService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 

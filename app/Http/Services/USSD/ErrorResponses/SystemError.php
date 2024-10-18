@@ -12,7 +12,8 @@ class SystemError implements IErrorResponse
 	{
 
 		try {    
-			$txDTO->response = \env('ERROR_MESSAGE');
+			$billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+			$txDTO->response = $billpaySettings['ERROR_MESSAGE'];
 			$txDTO->lastResponse = true;
 		} catch (\Throwable $e) {
 			$txDTO->error = 'At Generate system error response. '.$e->getMessage();

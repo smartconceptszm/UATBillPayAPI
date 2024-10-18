@@ -3,9 +3,9 @@
 namespace App\Http\Services\USSD\StepServices;
 
 use App\Http\Services\USSD\StepServices\CreateNewSession;
-use App\Http\Services\Web\Clients\ClientMenuService;
-use App\Http\Services\Web\Sessions\SessionService;
-use App\Http\Services\Web\Clients\ClientService;
+use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Sessions\SessionService;
+use App\Http\Services\Clients\ClientService;
 use Illuminate\Support\Facades\Cache;
 use App\Http\DTOs\BaseDTO;
 use Exception;

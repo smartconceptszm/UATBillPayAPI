@@ -2,9 +2,9 @@
 
 namespace App\Http\Services\USSD\ServiceApplications;
 
-use App\Http\Services\Web\MenuConfigs\ServiceTypeDetailService;
-use App\Http\Services\Web\MenuConfigs\ServiceTypeService;
-use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
+use App\Http\Services\MenuConfigs\ServiceTypeService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 

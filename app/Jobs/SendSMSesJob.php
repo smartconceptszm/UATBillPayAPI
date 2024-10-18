@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\Web\SMS\SMSService;
+use App\Http\Services\SMS\SMSService;
 use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\SMSTxDTO;
 use App\Jobs\BaseJob;

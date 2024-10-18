@@ -12,7 +12,8 @@ class ClientBlocked implements IErrorResponse
 	{
 
 		try {    
-			$txDTO->response=\env('BLOCKED_MESSAGE')." ".
+			$billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+			$txDTO->response = $billpaySettings['BLOCKED_MESSAGE']." ".
 										\strtoupper($txDTO->urlPrefix);
 			$txDTO->error=$txDTO->response; 
 			$txDTO->lastResponse= true;

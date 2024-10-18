@@ -2,7 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Clients\PaymentsProviderCredentialService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Gateway\ConfirmPayment;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\App;
@@ -18,13 +19,15 @@ class ConfirmPaymentJob extends BaseJob
       private BaseDTO $paymentDTO)
    {}
 
-   public function handle(ConfirmPayment $confirmPayment,
-      ClientMenuService $clientMenuService)
+   public function handle(PaymentsProviderCredentialService $paymentsProviderCredentialService,
+                              ConfirmPayment $confirmPayment, ClientMenuService $clientMenuService)
    {
+
+      $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
 
       //Bind the PaymentsProvider Client Wallet 
          $walletHandler = $this->paymentDTO->walletHandler;
-         if(\env("WALLET_USE_MOCK") == 'YES'){
+         if($billpaySettings['WALLET_USE_MOCK'] == 'YES'){
             $walletHandler = 'MockWallet';
          }
          App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
@@ -34,7 +37,7 @@ class ConfirmPaymentJob extends BaseJob
          $theMenu = $clientMenuService->findById($this->paymentDTO->menu_id);
          $receiptingHandler = $theMenu->receiptingHandler;
          $billingClient = $theMenu->billingClient;
-         if (\env('USE_RECEIPTING_MOCK') == "YES"){
+         if ($billpaySettings['USE_RECEIPTING_MOCK'] == "YES"){
             $receiptingHandler = "MockReceipting";
             $billingClient = "MockBillingClient";
          }
@@ -43,7 +46,8 @@ class ConfirmPaymentJob extends BaseJob
       //
 
       //SMS handling
-         if(\env($this->paymentDTO->walletHandler.'_HAS_FREESMS') == "YES"){
+         $paymentsProviderCredentials = $paymentsProviderCredentialService->getProviderCredentials($this->paymentDTO->payments_provider_id);
+         if($paymentsProviderCredentials[$this->paymentDTO->walletHandler.'_HAS_FREESMS'] == "YES"){
             Cache::put($this->paymentDTO->transactionId.'_smsClient',
                            $this->paymentDTO->walletHandler.'DeliverySMS',Carbon::now()->addSeconds(2));
          }

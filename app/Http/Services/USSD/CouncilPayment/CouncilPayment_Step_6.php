@@ -5,7 +5,7 @@ namespace App\Http\Services\USSD\CouncilPayment;
 use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
 use App\Http\Services\USSD\StepServices\ValidateCRMInput;
 use App\Http\Services\USSD\StepServices\ConfirmToPay;
-use App\Http\Services\Web\Clients\MnoService;
+use App\Http\Services\Clients\MnoService;
 use App\Http\Services\Enums\MNOs;
 use App\Http\DTOs\BaseDTO;
 use Exception;

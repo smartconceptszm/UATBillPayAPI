@@ -15,13 +15,6 @@ class InvalidInput implements IErrorResponse
 
 		try {    
 			$txDTO->response = $txDTO->error;
-			// $txDTO->response = $txDTO->error.".\n\n<<Enter 0 to go back>>\n";
-			// $cacheValue = \json_encode([
-			// 						'must'=>true,
-			// 						'steps'=>1,
-			// 				]);
-			// Cache::put($txDTO->sessionId."handleBack",$cacheValue, 
-			// 				Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
 			$txDTO->lastResponse = true;
 		} catch (\Throwable $e) {
 			$txDTO->error = 'At Generate invalid input response. '.$e->getMessage();

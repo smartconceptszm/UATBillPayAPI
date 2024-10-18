@@ -3,9 +3,9 @@
 namespace App\Http\Services\USSD\CheckBalance;
 
 use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
-use App\Http\Services\Web\Clients\BillingCredentialService;
-use App\Http\Services\Web\Payments\PaymentHistoryService;
-use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Clients\BillingCredentialService;
+use App\Http\Services\Payments\PaymentHistoryService;
+use App\Http\Services\Clients\ClientMenuService;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 use Exception;

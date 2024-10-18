@@ -3,20 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class DashboardDailyTotals extends Model
 {
 
-   use HasFactory, HasUuids;
+   use HasFactory;
 
    protected $table = "dashboard_daily_totals";
 
    protected $fillable=[
-                  'client_id','day','numberOfTransactions', 'totalAmount'
+                  'client_id','year','month','day','numberOfTransactions', 'totalAmount'
                ];
-
+               
    protected $casts = [
       'created_at' => 'datetime:Y-m-d H:i:s',
       'updated_at' => 'datetime:Y-m-d H:i:s',

@@ -11,8 +11,9 @@ class MaintenanceMode implements IErrorResponse
 	public function handle(BaseDTO $txDTO):BaseDTO
 	{
 
-		try {    
-			$txDTO->response = \env('MODE_MESSAGE');
+		try {   
+			$billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true); 
+			$txDTO->response = $billpaySettings['MODE_MESSAGE'];
 			$txDTO->error=$txDTO->response;
 			$txDTO->lastResponse = true;
 		} catch (\Throwable $e) {

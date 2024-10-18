@@ -3,7 +3,9 @@
 namespace App\Http\Services\External\PaymentsProviderClients;
 
 use App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient;
-use App\Http\Services\Web\Clients\ClientWalletCredentialsService;
+use App\Http\Services\Clients\PaymentsProviderCredentialService;
+use App\Http\Services\Clients\ClientWalletCredentialsService;
+use App\Http\Services\Clients\ClientWalletService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
 use Exception;
@@ -12,7 +14,9 @@ class DPOPay implements IPaymentsProviderClient
 {
 
    public function __construct(
-      private ClientWalletCredentialsService $clientWalletCredentialsService) 
+      private PaymentsProviderCredentialService $paymentsProviderCredentialService,
+      private ClientWalletCredentialsService $clientWalletCredentialsService,
+      private ClientWalletService $clientWalletService) 
    {}
     
    public function requestPayment(object $dto):object
@@ -200,14 +204,17 @@ class DPOPay implements IPaymentsProviderClient
    {
 
       $walletCredentials = $this->clientWalletCredentialsService->getWalletCredentials($wallet_id);   
+      $clientWallet = $this->clientWalletService->findById($wallet_id);
+      $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($clientWallet->payments_provider_id);
+
       return [
             'serviceDescription'=>$walletCredentials['DPO_ServiceDescription'],
             'companyToken'=>$walletCredentials['DPO_CompanyToken'],
             'serviceType'=>$walletCredentials['DPO_ServiceType'],
             'companyRef'=>$walletCredentials['DPO_CompanyRef'],
             'currency'=>$walletCredentials['DPO_Currency'],
-            'timeout'=>\env('DPOPay_Http_Timeout'),
-            'baseURL'=>\env('DPOPay_BASE_URL')
+            'timeout'=>$paymentsProviderCredentials['DPOPay_Http_Timeout'],
+            'baseURL'=>$paymentsProviderCredentials['DPOPay_BASE_URL']
          ];
 
    }

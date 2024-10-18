@@ -4,8 +4,8 @@ namespace App\Http\Services\External\ReceiptingHandlers;
 
 use App\Http\Services\External\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
-use App\Http\Services\Web\Clients\BillingCredentialService;
-use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Clients\BillingCredentialService;
+use App\Http\Services\Clients\ClientMenuService;
 
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;

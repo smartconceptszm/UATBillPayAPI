@@ -9,9 +9,9 @@ class ReceiptPaymentTest extends TestCase
    public function _testReceiptPayment()
    { 
 
-      $paymentReceiptService = new \App\Http\Services\Web\Payments\PaymentReceiptService(
-                                          new \App\Http\Services\Web\Payments\PaymentToReviewService(),
-                                          new \App\Http\Services\Web\Clients\ClientMenuService(new \App\Models\ClientMenu([])),
+      $paymentReceiptService = new \App\Http\Services\Payments\PaymentReceiptService(
+                                          new \App\Http\Services\Payments\PaymentToReviewService(),
+                                          new \App\Http\Services\Clients\ClientMenuService(new \App\Models\ClientMenu([])),
                                           new \App\Http\DTOs\GatewayDTO()
       );
 

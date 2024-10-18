@@ -13,15 +13,14 @@ class WebClientDashboardTest extends TestCase
 
       //Login
       $username = 'swascodev';
-      $password = '1';
-      $dateFrom = '2024-07-01';
-      $dateTo = '2024-07-31';
+      $password = '1    1';
+      $theMonth = '2024-08';
       $response = $this->post('/login',['username' => $username,'password' =>$password]);
       $response = $response->json()['data'];
 
       $response = $this->withHeaders([
                               'Authorization' => 'Bearer ' . $response['token'],
-                        ])->get('/clientdashboard?client_id='.$response['client_id'].'&dateFrom='.$dateFrom.'&dateTo='. $dateTo);
+                        ])->get('/clientdashboard?client_id='.$response['client_id'].'&theMonth='.$theMonth);
 
       $response = $response->json()['data'];
       $this->assertTrue(\count($response)>0);

@@ -10,7 +10,7 @@ class UtilityTest extends TestCase
     public function _testFunction()
     {   
 
-        $paymentHistoryService = new \App\Http\Services\Web\Payments\PaymentHistoryService();
+        $paymentHistoryService = new \App\Http\Services\Payments\PaymentHistoryService();
 
         $payment = $paymentHistoryService->getLatestToken(
                             [

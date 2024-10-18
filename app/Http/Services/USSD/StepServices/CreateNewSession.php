@@ -2,9 +2,9 @@
 
 namespace App\Http\Services\USSD\StepServices;
 
-use App\Http\Services\Web\Sessions\ShortcutCustomerService;
-use App\Http\Services\Web\Clients\ClientMenuService;
-use App\Http\Services\Web\Sessions\SessionService;
+use App\Http\Services\Sessions\ShortcutCustomerService;
+use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Sessions\SessionService;
 use Illuminate\Support\Facades\App;
 use App\Http\DTOs\BaseDTO;
 use Exception;

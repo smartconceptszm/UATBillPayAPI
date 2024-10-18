@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\USSD;
 
 use App\Http\Controllers\USSD\USSDController;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 
 class USSDAirtelController extends USSDController
@@ -37,8 +38,9 @@ class USSDAirtelController extends USSDController
          $this->ussdDTO = $this->ussdService->handle($this->ussdDTO);
 
       } catch (\Throwable $e) {
+         $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
          $this->ussdDTO->error = 'Error: At Airtel controller level. '.$e->getMessage();
-         $this->ussdDTO->response = \env('ERROR_MESSAGE');
+         $this->ussdDTO->response =$billpaySettings['ERROR_MESSAGE'];
          $this->ussdDTO->lastResponse = true;
       }
       return $this->responder($request);

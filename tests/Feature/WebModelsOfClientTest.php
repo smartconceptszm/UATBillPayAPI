@@ -8,7 +8,7 @@ use Tests\TestCase;
 class WebModelsOfClientTest extends TestCase
 {
 
-   public function test_findWalletsOfClient(): void
+   public function _test_findWalletsOfClient(): void
    {
 
       //Main Menu

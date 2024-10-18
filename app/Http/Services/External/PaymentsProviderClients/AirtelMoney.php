@@ -3,7 +3,9 @@
 namespace App\Http\Services\External\PaymentsProviderClients;
 
 use App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient;
-use App\Http\Services\Web\Clients\ClientWalletCredentialsService;
+use App\Http\Services\Clients\PaymentsProviderCredentialService;
+use App\Http\Services\Clients\ClientWalletCredentialsService;
+use App\Http\Services\Clients\ClientWalletService;
 use Illuminate\Support\Facades\Http;
 use Exception;
 
@@ -11,7 +13,9 @@ class AirtelMoney implements IPaymentsProviderClient
 {
 
    public function __construct(
-      private ClientWalletCredentialsService $clientWalletCredentialsService) 
+      private PaymentsProviderCredentialService $paymentsProviderCredentialService,
+      private ClientWalletCredentialsService $clientWalletCredentialsService,
+      private ClientWalletService $clientWalletService) 
    {}
 
    public function requestPayment(object $dto):object
@@ -241,7 +245,7 @@ class AirtelMoney implements IPaymentsProviderClient
       return $transactionId;
    }
 
-   private function getErrorMessage(String $errorCode): string
+   public function getErrorMessage(String $errorCode): string
    {
       $errorMessage = "Not reachable";
       switch ($errorCode) {
@@ -294,16 +298,17 @@ class AirtelMoney implements IPaymentsProviderClient
    private function getConfigs(string $wallet_id):array
    {
 
-
       $walletCredentials = $this->clientWalletCredentialsService->getWalletCredentials($wallet_id);
-
+      $clientWallet = $this->clientWalletService->findById($wallet_id);
+      $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($clientWallet->payments_provider_id);
+      
       return [
             'tx_reference'=>$walletCredentials['AIRTEL_TXREFERENCE'],
             'clientSecret'=>$walletCredentials['AIRTEL_SECRET'],
             'clientId'=>$walletCredentials['AIRTEL_ID'],
-            'grantType'=>\env('AIRTEL_GRANT_TYPE'),
-            'timeout'=>\env('AIRTEL_Http_Timeout'),
-            'baseURL'=>\env('AIRTEL_BASE_URL')
+            'grantType'=>$paymentsProviderCredentials['AIRTEL_GRANT_TYPE'],
+            'timeout'=>$paymentsProviderCredentials['AIRTEL_Http_Timeout'],
+            'baseURL'=>$paymentsProviderCredentials['AIRTEL_BASE_URL']
          ];
    }
     

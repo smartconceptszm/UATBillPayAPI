@@ -3,18 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class DashboardPaymentStatusTotals extends Model
 {
 
-   use HasFactory, HasUuids;
+   use HasFactory;
 
-   protected $table = "dashboard_payments_status_totals";
+   protected $table = "dashboard_payment_status_totals";
 
    protected $fillable=[
-                  'client_id','paymentStatus','numberOfTransactions', 'totalAmount'
+                  'client_id','year','month','paymentStatus','numberOfTransactions', 'totalAmount'
                ];
 
    protected $casts = [

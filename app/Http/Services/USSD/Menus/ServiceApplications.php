@@ -17,7 +17,8 @@ class ServiceApplications implements IUSSDMenu
       if ($txDTO->error == '') {
          try {
             if (\count(\explode("*", $txDTO->customerJourney)) == 3) {
-               $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'MockBillingClient':$txDTO->billingClient;	
+               $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+               $billingClient = $billpaySettings['USE_BILLING_MOCK']=="YES"? 'MockBillingClient':$txDTO->billingClient;		
                App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
             }
             if (\count(\explode("*", $txDTO->customerJourney)) == 5) {

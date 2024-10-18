@@ -3,8 +3,8 @@
 namespace App\Http\Services\USSD\ShortcutMenus;
 
 use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
-use App\Http\Services\Web\Sessions\ShortcutCustomerService;
-use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Sessions\ShortcutCustomerService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 

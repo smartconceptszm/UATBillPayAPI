@@ -2,10 +2,11 @@
 
 namespace App\Http\Services\USSD;
 
-use App\Http\Services\Web\Clients\AggregatedClientService; 
+use App\Http\Services\Clients\AggregatedClientService; 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
-use App\Http\Services\Web\Sessions\SessionService;
-use App\Http\Services\Web\Clients\ClientService; 
+use App\Http\Services\Sessions\SessionService;
+use App\Http\Services\Clients\ClientService; 
+use Illuminate\Support\Facades\Cache;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -31,15 +32,17 @@ class Step_GetClient extends EfectivoPipelineContract
          $txDTO->urlPrefix = $client->urlPrefix;
          $txDTO->client_id = $client->id;
          
+         $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
+
          if($client->mode != 'UP'){
             $txDTO->error = 'System in Maintenance Mode';
-            $txDTO->response = \env('MODE_MESSAGE');
+            $txDTO->response = $billpaySettings['MODE_MESSAGE'];
             $txDTO->exitPipeline = true;
             $txDTO->lastResponse = true;
          }
 
          if($client->status != 'ACTIVE'){
-            $txDTO->response=\env('BLOCKED_MESSAGE')." ".\strtoupper($txDTO->urlPrefix);
+            $txDTO->response=$billpaySettings['BLOCKED_MESSAGE']." ".\strtoupper($txDTO->urlPrefix);
             $txDTO->error = 'Client is blocked';
             $txDTO->lastResponse = true;
             $txDTO->exitPipeline = true;

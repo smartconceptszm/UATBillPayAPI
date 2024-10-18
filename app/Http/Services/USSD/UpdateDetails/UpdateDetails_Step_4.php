@@ -5,7 +5,7 @@ namespace App\Http\Services\USSD\UpdateDetails;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient;
 use App\Http\Services\USSD\StepServices\ValidateCRMInput;
-use App\Http\Services\Web\MenuConfigs\CustomerFieldService;
+use App\Http\Services\MenuConfigs\CustomerFieldService;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
@@ -57,8 +57,9 @@ class UpdateDetails_Step_4
             $txDTO->status='COMPLETED';
 
          }else{
+            $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
             Cache::put($txDTO->sessionId."Updates",\json_encode($capturedUpdates),  
-                           Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
+                           Carbon::now()->addMinutes(intval($billpaySettings['SESSION_CACHE'])));
             $customerField = \array_values(\array_filter($customerFields, function ($record)use($order){
                                                                return ($record->order == $order +1);
                                                             }));

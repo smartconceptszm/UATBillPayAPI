@@ -9,7 +9,7 @@ class DPOPayTest extends TestCase
     public function _testRequestPayment()
     {   
         //
-        $dpoPayClient=new DPOPay(new \App\Http\Services\Web\Clients\ClientWalletCredentialsService(new \App\Models\ClientWalletCredential()));
+        $dpoPayClient=new DPOPay(new \App\Http\Services\Clients\ClientWalletCredentialsService(new \App\Models\ClientWalletCredential()));
         $response = $dpoPayClient->requestPayment((object)[
                         'wallet_id'=>'9b9fe666-1ff3-11ef-b077-8db5e354f7db',
                         'transactionDate' => '2024/07/02 13:45',
@@ -26,7 +26,7 @@ class DPOPayTest extends TestCase
     public function _testConfirmPayment()
     {   
         //
-        $dpoPayClient=new DPOPay(new \App\Http\Services\Web\Clients\ClientWalletCredentialsService(new \App\Models\ClientWalletCredential()));
+        $dpoPayClient=new DPOPay(new \App\Http\Services\Clients\ClientWalletCredentialsService(new \App\Models\ClientWalletCredential()));
         $response = $dpoPayClient->confirmPayment((object)[
                         'wallet_id'=>'9b9fe666-1ff3-11ef-b077-8db5e354f7db',
                         'transactionId' => '0996278A-4AC0-4C2F-9D0D-C6083DF13430',

@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\USSD\CouncilPayment;
 
-use App\Http\Services\Web\Clients\BillingCredentialService;
-use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Clients\ClientRevenueCodeService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -11,7 +11,7 @@ class CouncilPayment_Step_2
 {
 
    public function __construct(
-      private BillingCredentialService $billingCredentials,
+      private ClientRevenueCodeService $clientRevenueCodeService,
       private ClientMenuService $clientMenuService)
    {}
 
@@ -21,9 +21,9 @@ class CouncilPayment_Step_2
       try {    
          $clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
-         $billingCredential = $this->billingCredentials->findOneBy(['client_id' =>$txDTO->client_id,
-                                                                     'key' =>$txDTO->subscriberInput]);
-         if($billingCredential){
+         $revenueCode = $this->clientRevenueCodeService->findOneBy(['menu_id' =>$txDTO->menu_id,
+                                                                     'code' =>$txDTO->subscriberInput]);
+         if($revenueCode){
             $txDTO->customerAccount = $txDTO->subscriberInput;
             if($clientMenu->requiresReference == 'YES'){
                $txDTO->response = "Enter ".$clientMenu->referencePrompt.":\n";
@@ -38,7 +38,7 @@ class CouncilPayment_Step_2
 
       } catch (\Throwable $e) {
          if($e->getCode()==1){
-            $txDTO->errorType = 'InvalidAmount';
+            $txDTO->errorType = 'InvalidAccount';
          }else{
             $txDTO->errorType = 'SystemError';
          }

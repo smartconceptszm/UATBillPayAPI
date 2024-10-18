@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\UpdateDetails;
 
-use App\Http\Services\Web\MenuConfigs\CustomerFieldService;
+use App\Http\Services\MenuConfigs\CustomerFieldService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 

@@ -17,10 +17,12 @@ class MaintenanceMode
 
     public function handle($request, Closure $next)
     {
-        if(\env("APP_MODE")==='UP'){
+
+        $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+        if($billpaySettings['APP_MODE']==='UP'){
             return $next($request);
         }else{
-            return response(\env("MODE_MESSAGE"));
+            return response($billpaySettings['MODE_MESSAGE']);
         }
         
     }

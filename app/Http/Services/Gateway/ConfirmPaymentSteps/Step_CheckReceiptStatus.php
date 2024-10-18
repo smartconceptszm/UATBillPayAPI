@@ -3,7 +3,7 @@
 namespace App\Http\Services\Gateway\ConfirmPaymentSteps;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
-use App\Http\Services\Web\Payments\PaymentService;
+use App\Http\Services\Payments\PaymentService;
 use App\Http\DTOs\BaseDTO;
 
 class Step_CheckReceiptStatus extends EfectivoPipelineContract

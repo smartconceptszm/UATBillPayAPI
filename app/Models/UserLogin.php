@@ -54,7 +54,7 @@ class UserLogin implements UserProvider
 	public function retrieveById($identifier)
 	{
 
-		$query=DB::table($this->table.' as u')
+		$query = DB::table($this->table.' as u')
 					->join('user_groups as ug','u.id','=','ug.user_id')
 					->join('group_rights as gr','ug.group_id','=','gr.group_id')
 					->join('rights as r','r.id','=','gr.right_id')

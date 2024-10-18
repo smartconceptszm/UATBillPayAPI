@@ -32,7 +32,9 @@ class Step_TrimResponse extends EfectivoPipelineContract
 
 	private function trim(string $response, string $sessionId):string
 	{
-		
+
+		$billingSettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
+
 		$strFirstSegment = \substr($response,0,145);
 		$lastSegment = '';
 		$positionOfLastPeriod = \strrpos($strFirstSegment,'.');
@@ -56,7 +58,7 @@ class Step_TrimResponse extends EfectivoPipelineContract
 						'steps'=>1,
 					]);
 			Cache::put($sessionId."handleBack",$cacheValue, 
-					Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
+					Carbon::now()->addMinutes(intval($billingSettings['SESSION_CACHE'])));
 		}
 		if(\strlen($lastSegment)<153){
 			// if(!(\strpos($lastSegment,"Back"))){
@@ -65,7 +67,7 @@ class Step_TrimResponse extends EfectivoPipelineContract
 		}
 
 		Cache::put($sessionId."responseNext",$lastSegment, 
-							Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
+							Carbon::now()->addMinutes(intval($billingSettings['SESSION_CACHE'])));
 		return $strFirstSegment;
 
 	}

@@ -285,18 +285,18 @@ class AppServiceProvider extends ServiceProvider
       //
 
       //SMS Clients
-         $this->app->singleton('MTNDeliverySMS', function () {
-            return $this->app->make(\App\Http\Services\External\SMSClients\MTNMoMoDeliverySMS::class);
-         });
          $this->app->singleton('MockSMSDelivery', function () {
-            return $this->app->make(\App\Http\Services\External\SMSClients\MockSMSDelivery::class);
-         });
+               return $this->app->make(\App\Http\Services\External\SMSClients\MockSMSDelivery::class);
+            });
+         $this->app->singleton('MTNDeliverySMS', function () {
+               return $this->app->make(\App\Http\Services\External\SMSClients\MTNMoMoDeliverySMS::class);
+            });
+         $this->app->singleton('MTNSMS', function () {
+               return $this->app->make(\App\Http\Services\External\SMSClients\MTNSMS::class);
+            });
 			$this->app->singleton('ZamtelSMS', function () {
-            return $this->app->make(\App\Http\Services\External\SMSClients\ZamtelSMS::class);
+               return $this->app->make(\App\Http\Services\External\SMSClients\ZamtelSMS::class);
 				});
-			$this->app->singleton('Kannel', function () {
-            return $this->app->make(\App\Http\Services\External\SMSClients\Kannel::class);
-			});
       //
 
       //Scheduled Task Classes

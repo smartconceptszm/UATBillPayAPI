@@ -3,9 +3,9 @@
 namespace App\Http\Services\USSD\Survey;
 
 use App\Http\Services\USSD\StepServices\ValidateCRMInput;
-use App\Http\Services\Web\MenuConfigs\SurveyQuestionListItemService;
+use App\Http\Services\MenuConfigs\SurveyQuestionListItemService;
 use App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient;
-use App\Http\Services\Web\MenuConfigs\SurveyQuestionService;
+use App\Http\Services\MenuConfigs\SurveyQuestionService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -70,8 +70,9 @@ class Survey_Step_5
             $txDTO->lastResponse = true;
             $txDTO->status='COMPLETED';
          }else{
+            $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
             Cache::put($txDTO->sessionId."SurveyResponses",\json_encode($surveyResponses), 
-                           Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
+                           Carbon::now()->addMinutes(intval($billpaySettings['SESSION_CACHE'])));
             $surveyQuestion = \array_values(\array_filter($surveyQuestions, function ($record)use($order){
                                                                return ($record->order == $order +1);
                                                             }));

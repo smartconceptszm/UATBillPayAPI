@@ -3,9 +3,9 @@
 namespace App\Http\Services\USSD\CouncilPayment;
 
 use App\Http\Services\Gateway\Utility\StepService_CalculatePaymentAmounts;
-use App\Http\Services\Web\Clients\BillingCredentialService;
+use App\Http\Services\Clients\BillingCredentialService;
 use App\Http\Services\USSD\StepServices\GetAmount;
-use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Clients\ClientMenuService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -51,9 +51,9 @@ class CouncilPayment_Step_4
                'must'=>false,
                'steps'=>2,
          ]);         
-
+      $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
       Cache::put($txDTO->sessionId."handleBack",$cacheValue, 
-         Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
+         Carbon::now()->addMinutes(intval($billpaySettings['SESSION_CACHE'])));
 
       return $txDTO;
       

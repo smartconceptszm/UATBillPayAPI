@@ -1,0 +1,77 @@
+<?php
+
+namespace App\Http\Services\SMS;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
+use Exception;
+
+class SMSDashboardService
+{
+
+   public function findAll(array $criteria):array|null
+   {
+      
+      try {
+         $user = Auth::user(); 
+         $criteria['client_id'] = $user->client_id;
+         $dto = (object)$criteria;
+         $dto->dateFrom = $dto->dateFrom." 00:00:00";
+         $dto->dateTo = $dto->dateTo." 23:59:59";
+         //Get all in Date Range
+            $theSMSs = DB::table('messages as sms')
+               ->join('mnos as m','sms.mno_id','=','m.id')
+               ->select('sms.*','m.name as mno','m.colour')
+               ->where('sms.status', '=', 'DELIVERED')
+               ->where('sms.client_id', '=', $dto->client_id)
+               ->whereBetween('sms.created_at', [$dto->dateFrom,$dto->dateTo])
+               ->get();
+            $groupedData = $theSMSs->groupBy('type');
+            $byType=[];
+            foreach ($groupedData as $key => $value) {
+               $byType[] = [
+                     "type"=>$key,
+                     "totalMessages" => $value->count('id')
+                  ];
+            }
+
+            $groupedData = $theSMSs->groupBy('mno');
+            $byMNO=[];
+            foreach ($groupedData as $key => $value) {
+               $firstRow = $value->first();
+               $byMNO[]= [
+                     "mno"=>$key,
+                     "colour"=>$firstRow->colour,
+                     "totalMessages"=>$value->count('id')
+                  ];
+            }
+         // Get all Days in Current Month
+            $theDateTo = Carbon::parse($dto->dateTo);
+            $currentYear = $theDateTo->format('Y');
+            $currentMonth = $theDateTo->format('m');
+            $firstDayOfCurrentMonth = $currentYear . '-' . $currentMonth . '-01 00:00:00';
+            $dailyTrends = DB::table('messages as sms')
+               ->select(DB::raw('dayofmonth(sms.created_at) as dayOfSMS,
+                                    COUNT(sms.id) AS noOfSMSs'))
+               ->where('sms.status', '=', 'DELIVERED')
+               ->where('sms.client_id', '=', $dto->client_id)
+               ->whereBetween('sms.created_at', [$firstDayOfCurrentMonth, $dto->dateTo])
+               ->groupBy('dayOfSMS')
+               ->orderBy('dayOfSMS')
+               ->get();
+         //
+         $response=[
+               'byMNO' => $byMNO,
+               'byType' => $byType,
+               'dailyTrends' => $dailyTrends->toArray(),
+            ];
+
+         return $response;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+      
+   }
+
+}

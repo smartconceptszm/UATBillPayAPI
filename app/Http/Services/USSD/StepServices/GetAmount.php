@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\USSD\StepServices;
 
-use App\Http\Services\Web\Clients\ClientWalletCredentialsService;
-use App\Http\Services\Web\Clients\ClientWalletService;
+use App\Http\Services\Clients\ClientWalletCredentialsService;
+use App\Http\Services\Clients\ClientWalletService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -37,7 +37,8 @@ class GetAmount
       $maxPaymentAmount = (float)$walletCredentials['MAX_PAYMENT_AMOUNT'];
       $minPaymentAmount = (float)$walletCredentials['MIN_PAYMENT_AMOUNT'];
 
-      $testMSISDN = \explode("*", \env('APP_ADMIN_MSISDN')."*".$txDTO->testMSISDN);
+      $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+      $testMSISDN = \explode("*", $billpaySettings['APP_ADMIN_MSISDN']."*".$txDTO->testMSISDN);
 
       if ((($amount< $minPaymentAmount) || $amount > $maxPaymentAmount) && !(\in_array($txDTO->mobileNumber, $testMSISDN))) {
          throw new Exception("Amount either below the minimum or above the maximum amount allowed", 1);

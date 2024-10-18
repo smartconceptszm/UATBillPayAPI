@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\Web\Payments\PaymentWithReceiptToDeliverService;
+use App\Http\Services\Payments\PaymentWithReceiptToDeliverService;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\BaseJob;
 

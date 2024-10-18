@@ -4,7 +4,7 @@ namespace App\Http\Services\USSD\MakePayment;
 
 use App\Http\Services\Gateway\Utility\StepService_CalculatePaymentAmounts;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
-use App\Http\Services\Web\Clients\ClientMenuService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\USSD\StepServices\GetAmount;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
@@ -87,9 +87,10 @@ class MakePayment_Step_4
       $cacheValue = \json_encode([
                'must'=>false,
                'steps'=>2,
-         ]);                    
+         ]);  
+      $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);                  
       Cache::put($txDTO->sessionId."handleBack",$cacheValue, 
-         Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
+         Carbon::now()->addMinutes(intval($billpaySettings['SESSION_CACHE'])));
       return $txDTO;
 
    }

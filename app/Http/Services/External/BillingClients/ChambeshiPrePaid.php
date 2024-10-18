@@ -4,7 +4,7 @@ namespace App\Http\Services\External\BillingClients;
 
 use App\Http\Services\External\BillingClients\Chambeshi\Chambeshi;
 use App\Http\Services\External\BillingClients\IBillingClient;
-use App\Http\Services\Web\Clients\BillingCredentialService;
+use App\Http\Services\Clients\BillingCredentialService;
 use Illuminate\Support\Facades\Http;
 use Exception;
 

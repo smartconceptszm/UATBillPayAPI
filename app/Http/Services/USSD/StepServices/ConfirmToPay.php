@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\USSD\StepServices;
 
-use App\Http\Services\Web\Clients\PaymentsProviderService;
-use App\Http\Services\Web\Clients\ClientWalletService;
+use App\Http\Services\Clients\PaymentsProviderService;
+use App\Http\Services\Clients\ClientWalletService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 

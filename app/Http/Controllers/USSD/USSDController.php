@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\USSD;
 
-use App\Http\Services\Web\Clients\MnoService;
+use App\Http\Services\Clients\MnoService;
 use App\Http\Services\USSD\USSDService;
 use App\Http\Controllers\Controller;
 use App\Http\DTOs\UssdDTO;

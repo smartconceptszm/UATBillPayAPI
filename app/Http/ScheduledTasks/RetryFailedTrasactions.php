@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\ScheduledTasks;
 
-use App\Http\Services\Web\Payments\PaymentFailedService;
+use App\Http\Services\Payments\PaymentFailedService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;

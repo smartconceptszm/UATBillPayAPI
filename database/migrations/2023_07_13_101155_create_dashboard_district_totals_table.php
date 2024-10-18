@@ -12,13 +12,15 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('dashboard_district_totals', function (Blueprint $table) {
-         $table->uuid('id')->primary();
+         $table->id();
          $table->string('client_id',36)->notNullable();
-         $table->string('district',50)->notNullable();
-         $table->unsignedInteger('numberOfTransactions')->nullable();
+         $table->unsignedInteger('year',4)->notNullable();
+         $table->unsignedInteger('month',2)->notNullable();
+         $table->string('district',150)->notNullable();
+         $table->unsignedInteger('numberOfTransactions')->default(0);
          $table->float('totalAmount',10,2)->default(0);
          $table->timestamps();
-         $table->unique(['client_id','district'],'client_district');
+         $table->unique(['client_id','year','month','district'],'client_district');
       });
    }
 

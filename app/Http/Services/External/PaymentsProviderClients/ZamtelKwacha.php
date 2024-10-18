@@ -3,8 +3,9 @@
 namespace App\Http\Services\External\PaymentsProviderClients;
 
 use App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient;
-use App\Http\Services\Web\Clients\ClientWalletCredentialsService;
-use App\Http\Services\Web\Clients\ClientWalletService;
+use App\Http\Services\Clients\PaymentsProviderCredentialService;
+use App\Http\Services\Clients\ClientWalletCredentialsService;
+use App\Http\Services\Clients\ClientWalletService;
 use Illuminate\Support\Facades\Http;
 use Exception;
 
@@ -12,6 +13,7 @@ class ZamtelKwacha implements IPaymentsProviderClient
 {
 
    public function __construct(
+      private PaymentsProviderCredentialService $paymentsProviderCredentialService,
       private ClientWalletCredentialsService $clientWalletCredentialsService,
       private ClientWalletService $clientWalletService) 
    {}
@@ -186,15 +188,16 @@ class ZamtelKwacha implements IPaymentsProviderClient
    private function getConfigs(string $wallet_id):array
    {
       $walletCredentials = $this->clientWalletCredentialsService->getWalletCredentials($wallet_id);
-      //$theWallet = $this->clientWalletService->findById($wallet_id);
-   
+      $clientWallet = $this->clientWalletService->findById($wallet_id);
+      $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($clientWallet->payments_provider_id);
+
       return [
             'THIRDPARTYID'=>$walletCredentials['ZAMTEL_THIRDPARTYID'],
             'PASSWORD'=>$walletCredentials['ZAMTEL_PASSWORD'],
             'SHORTCODE'=>$walletCredentials['ZAMTEL_SHORTCODE'],
-            'timeout'=>\env('ZAMTEL_Http_Timeout'),
-            'baseURL'=>\env('ZAMTEL_BASE_URL'),
-            'statusBaseURL'=>\env('ZAMTEL_STATUS_BASE_URL')
+            'timeout'=> $paymentsProviderCredentials['ZAMTEL_Http_Timeout'],
+            'baseURL'=> $paymentsProviderCredentials['ZAMTEL_BASE_URL'],
+            'statusBaseURL'=> $paymentsProviderCredentials['ZAMTEL_STATUS_BASE_URL']
          ];
    }
     

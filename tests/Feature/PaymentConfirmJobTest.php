@@ -34,8 +34,8 @@ class PaymentConfirmJobTest extends TestCase
          ]);
       $confirmPaymentJob = new \App\Jobs\ConfirmPaymentJob($paymentDTO);
       $response  = $confirmPaymentJob->handle(new \App\Http\Services\Gateway\ConfirmPayment(),
-                                                new \App\Http\Services\Web\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
-                                                new \App\Http\Services\Web\Clients\ClientMenuService(new \App\Models\ClientMenu)
+                                                new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
+                                                new \App\Http\Services\Clients\ClientMenuService(new \App\Models\ClientMenu)
                                              );
       $this->assertTrue($response->paymentStatus == 'SUBMITTED');
 

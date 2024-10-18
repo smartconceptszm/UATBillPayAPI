@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\Gateway\Utility;
 
-use App\Http\Services\Web\Clients\ClientWalletService;
+use App\Http\Services\Clients\ClientWalletService;
 use App\Http\DTOs\BaseDTO;
 
 class StepService_CalculatePaymentAmounts

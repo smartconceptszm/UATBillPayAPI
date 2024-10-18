@@ -2,7 +2,9 @@
 
 namespace App\Http\Services\External\SMSClients;
 
-use App\Http\Services\Web\Clients\ClientWalletCredentialsService;
+use App\Http\Services\Clients\PaymentsProviderCredentialService;
+use App\Http\Services\Clients\ClientWalletCredentialsService;
+use App\Http\Services\Clients\ClientWalletService;
 use App\Http\Services\External\SMSClients\ISMSClient;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +14,9 @@ class MTNMoMoDeliverySMS implements ISMSClient
 {
 
    public function __construct(
-      private ClientWalletCredentialsService $clientWalletCredentialsService) 
+      private PaymentsProviderCredentialService $paymentsProviderCredentialService,
+      private ClientWalletCredentialsService $clientWalletCredentialsService,
+      private ClientWalletService $clientWalletService) 
    {}
 
    public function send(array $mtnParams): bool{
@@ -80,15 +84,17 @@ class MTNMoMoDeliverySMS implements ISMSClient
    {
       
       $walletCredentials = $this->clientWalletCredentialsService->getWalletCredentials($wallet_id);
-
+      $clientWallet = $this->clientWalletService->findById($wallet_id);
+      $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($clientWallet->payments_provider_id);
+      
       return [
                'clientId'=>$walletCredentials['MTN_OCPKEY'],
                'clientUserName'=>$walletCredentials['MTN_USERNAME'],
                'clientPassword'=>$walletCredentials['MTN_PASSWORD'],
-               'targetEnv'=>\env('MTN_TARGET_ENVIRONMENT'),
-               'timeout'=>\env('MTN_Http_Timeout'),
-               'txCurrency'=>\env('MTN_CURRENCY'),
-               'baseURL'=>\env('MTN_BASE_URL')
+               'targetEnv'=>$paymentsProviderCredentials['MTN_TARGET_ENVIRONMENT'],
+               'timeout'=>$paymentsProviderCredentials['MTN_Http_Timeout'],
+               'txCurrency'=>$paymentsProviderCredentials['MTN_CURRENCY'],
+               'baseURL'=>$paymentsProviderCredentials['MTN_BASE_URL']
             ];
    }
 

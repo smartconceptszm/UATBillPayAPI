@@ -4,8 +4,8 @@ namespace App\Http\Services\USSD\ServiceApplications;
 
 use App\Http\Services\USSD\ServiceApplications\ClientCallers\IServiceApplicationClient;
 use App\Http\Services\USSD\StepServices\ValidateCRMInput;
-use App\Http\Services\Web\MenuConfigs\ServiceTypeDetailService;
-use App\Http\Services\Web\MenuConfigs\ServiceTypeService;
+use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
+use App\Http\Services\MenuConfigs\ServiceTypeService;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
@@ -62,8 +62,9 @@ class ServiceApplications_Step_4
                $txDTO->status='COMPLETED';
 
             }else{
+               $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);	
                Cache::put($txDTO->sessionId."ServicaAppResponses",\json_encode($serviceAppResponses), 
-                              Carbon::now()->addMinutes(intval(\env('SESSION_CACHE'))));
+                              Carbon::now()->addMinutes(intval($billpaySettings['SESSION_CACHE'])));
                $applicationQuestion = \array_values(\array_filter($serviceAppQuestions, function ($record)use($order){
                      return ($record->order == $order +1);
                   }));

@@ -4,6 +4,7 @@ namespace App\Http\Services\Gateway\ConfirmPaymentSteps;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Cache;
 use App\Jobs\ReConfirmPaymentJob;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -15,9 +16,11 @@ class Step_DispatchReConfirmationJob extends EfectivoPipelineContract
    {
 
       try {
+
          if( $paymentDTO->paymentStatus == "PAYMENT FAILED"){
             $paymentDTO->status = "COMPLETED";
-            Queue::later(Carbon::now()->addMinutes((int)\env('PAYMENT_REVIEW_DELAY'))
+            $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
+            Queue::later(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY'])
                                        ,new ReConfirmPaymentJob($paymentDTO),'','high');
          }else{
             $paymentDTO->status = "REVIEWED";

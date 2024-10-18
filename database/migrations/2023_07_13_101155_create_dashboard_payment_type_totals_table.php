@@ -12,13 +12,15 @@ return new class extends Migration
    public function up(): void
    {
       Schema::create('dashboard_payment_type_totals', function (Blueprint $table) {
-         $table->uuid('id')->primary();
+         $table->id();
          $table->string('client_id',36)->notNullable();
-         $table->string('menu_id',36)->notNullable();
-         $table->string('day',2)->notNullable();
-         $table->unsignedInteger('numberOfTransactions')->nullable();
+         $table->unsignedInteger('year')->notNullable();
+         $table->unsignedInteger('month')->notNullable();
+         $table->string('paymentType',150)->notNullable();
+         $table->unsignedInteger('numberOfTransactions')->default(0);
          $table->float('totalAmount',10,2)->default(0);
          $table->timestamps();
+         $table->unique(['client_id','year','month','paymentType'],'client_menu_month');
       });
    }
 

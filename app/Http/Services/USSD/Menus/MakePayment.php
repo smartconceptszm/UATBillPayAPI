@@ -15,7 +15,8 @@ class MakePayment implements IUSSDMenu
       try {     
          $step = \count(\explode("*", $txDTO->customerJourney));
          if ($step == 4) {
-            $billingClient = \env('USE_BILLING_MOCK')=="YES"? 'MockBillingClient':$txDTO->billingClient;	
+            $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+            $billingClient = $billpaySettings['USE_BILLING_MOCK']=="YES"? 'MockBillingClient':$txDTO->billingClient;	
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
          }
          if($step >3){

@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Gateway;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pipeline\Pipeline;
@@ -14,22 +15,20 @@ class ReConfirmPayment
    {
 
       try {
-         for ($i = 0; $i < (int)\env('PAYMENT_REVIEW_THRESHOLD'); $i++) {
+         $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
+         for ($i = 0; $i < (int)$billpaySettings['PAYMENT_REVIEW_THRESHOLD']; $i++) {
             $paymentDTO->error = '';
-            if(!(\strpos($paymentDTO->error,'Zamtel'))){
-               $paymentDTO = App::make(Pipeline::class)
-                                    ->send($paymentDTO)
-                                    ->through(
-                                       [
-                                          \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
-                                          \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
-                                          \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
-                                          \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
-                                       ]
-                                    )
-                                    ->thenReturn();
-            }
-
+            $paymentDTO = App::make(Pipeline::class)
+                                 ->send($paymentDTO)
+                                 ->through(
+                                    [
+                                       \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
+                                       \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
+                                       \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
+                                       \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
+                                    ]
+                                 )
+                                 ->thenReturn();
             if($paymentDTO->paymentStatus == "PAYMENT FAILED"){
                if(!(
                      (\strpos($paymentDTO->error,'on get transaction status'))
