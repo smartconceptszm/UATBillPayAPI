@@ -67,7 +67,7 @@ class DailyAnalyticsService
          Log::info($e->getMessage());
          return false;
       }
-      
+      Log::info('(SCL) Daily transaction analytics service executed for: '.$theDate->format('d F Y'));
       return true;
 
    }

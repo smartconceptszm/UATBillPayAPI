@@ -23,11 +23,11 @@ class PaymentsAnalyticsDailyBulk extends BaseJob
       $endOfMonth = $theDate->endOfMonth();
       $daysDone = 0;
       while ($startOfMonth <= $endOfMonth) {
-         Queue::later(Carbon::now()->addSeconds(1),new PaymentsAnalyticsDailySingle($startOfMonth));
+         Queue::later(Carbon::now()->addSeconds($daysDone*5),new PaymentsAnalyticsDailySingle($startOfMonth),'','high');
          $daysDone += 1;
          $startOfMonth->addDay();
       }
-      Log::info('(SCL) '.$daysDone. ' Daily transaction analytics jobs dispatched for the month: '.$endOfMonth->format('Y-F'));
+      Log::info('(SCL) '.$daysDone. ' Daily transaction analytics Jobs dispatched for the month: '.$endOfMonth->format('Y-F'));
       
    }
 

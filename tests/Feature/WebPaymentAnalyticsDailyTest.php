@@ -8,16 +8,17 @@ use Tests\TestCase;
 class WebPaymentAnalyticsDailyTest extends TestCase
 {
 
-   public function _test_get_analytics_daily(): void
+   public function test_get_analytics_daily(): void
    {
 
      
-      $theDate = Carbon::create("2024-08-30");
+      $theDate = Carbon::create("2024-09-19");
       
 
       $DailyAnalyticsService = new \App\Http\Services\Analytics\DailyAnalyticsService(
-         new \App\Http\Services\Clients\ClientService( new \App\Models\Client())
-      );
+               new \App\Models\DashboardDailyTotals(),
+               new \App\Http\Services\Clients\ClientService(new \App\Models\Client())
+            );
 
       $response = $DailyAnalyticsService->generate($theDate);
 
