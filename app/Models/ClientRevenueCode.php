@@ -11,7 +11,8 @@ class ClientRevenueCode extends Model
 
    protected $table = "client_revenue_codes";
 
-   protected $fillable=['menu_id','code','order','name','description'];
+   protected $fillable=['menu_id','code','order','name','amountFixed',
+                                          'requiredAmount','description'];
 
    protected $casts = [
       'created_at' => 'datetime:Y-m-d H:i:s',

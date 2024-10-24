@@ -65,8 +65,9 @@ class BillpaySettingsService
                   unset($data[$key]);
             }
          }
+         $record = $this->model->create($data);
          $this->refreshCache();
-        return $this->model->create($data);
+         return $record;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

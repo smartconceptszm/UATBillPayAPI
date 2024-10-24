@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\USSD\Menus;
 
-use App\Http\Services\Clients\AggregatedClientService; 
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Clients\ClientService;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
@@ -13,7 +12,6 @@ class ParentMenu implements IUSSDMenu
 {
 
 	public function __construct(
-		private AggregatedClientService $aggregatedClientService,
 		private ClientMenuService $clientMenuService,
 		private ClientService $clientService) 
 	{}

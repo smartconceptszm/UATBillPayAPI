@@ -13,10 +13,16 @@ class ModelServiceTest extends TestCase
     */
    public function _test_FindOneBy(): void
    {
+      $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+      $modelService = new \App\Http\Services\Clients\ClientService(new \App\Models\Client());
+      $client = $modelService->findOneBy(['urlPrefix'=>'Nkana']);
+      $testMSISDN = \explode("*", $billpaySettings['APP_ADMIN_MSISDN']."*".$client->testMSISDN);
+      $testMSISDN = array_filter($testMSISDN,function($entry){
+                                    return $entry !== "";
+                                 });
       
-      $modelService = new \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiAccountService(new \App\Models\ChambeshiAccount());
-      $response = $modelService->findOneBy(['AR_Acc'=>'KCT10482']);
-      $response->assertStatus(200);
+      $this->assertTrue($testMSISDN);
+      // $client->assertStatus(200);
 
    }
 

@@ -13,13 +13,15 @@ class CouncilPayment implements IUSSDMenu
    {
 
       try {     
-         $step = \count(\explode("*", $txDTO->customerJourney));
+         $step = \count(\explode("*", $txDTO->customerJourney)) - 1;
          if($step >3){
             $coustomerJourney = explode("*", $txDTO->customerJourney);
-            $txDTO->reference = $coustomerJourney[3];
+            $txDTO->reference = $coustomerJourney[4];
          }
+         
          $stepHandler = App::make('CouncilPayment_Step_'.$step);
          $txDTO = $stepHandler->run($txDTO);
+
       } catch (\Throwable $e) {
          $txDTO->error = 'At Council Payment menu. '.$e->getMessage();
          $txDTO->errorType = 'SystemError';

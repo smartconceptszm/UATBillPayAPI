@@ -16,7 +16,7 @@ class DashboardPaymentTypeTotals extends Model
                   'client_id','year','month','paymentType','numberOfTransactions', 'totalAmount'
                ];
 
-   protected $casts = [
+   protected $casts =[
       'created_at' => 'datetime:Y-m-d H:i:s',
       'updated_at' => 'datetime:Y-m-d H:i:s',
    ];

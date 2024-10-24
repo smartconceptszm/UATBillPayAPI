@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string("menu_id",36)->notNullable();
             $table->string("code",50)->notNullable();
             $table->string('name',150)->notNullable();
+            $table->enum('amountFixed',['YES','NO'])->default('NO')->notNullable();
+            $table->float('requiredAmount',10,2)->default(0);
             $table->string('description',150)->notNullable();
             $table->timestamps();
             $table->unique(['menu_id', 'code'],'menu_revenueCode');

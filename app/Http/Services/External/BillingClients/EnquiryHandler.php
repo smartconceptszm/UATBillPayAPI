@@ -39,12 +39,10 @@ class EnquiryHandler
 					}else{
 						//Send Notification here
 								
-								$adminMobileNumbers = \explode("*",$billpaySettings['APP_ADMIN_MSISDN']);
-								if($txDTO->testMSISDN){
-									$clientMobileNumbers = \explode("*",$txDTO->testMSISDN);
-									$adminMobileNumbers=\array_merge($clientMobileNumbers,$adminMobileNumbers);
-								}
-								
+								$adminMobileNumbers = \explode("*",$billpaySettings['APP_ADMIN_MSISDN']."*".$txDTO->testMSISDN);
+								$adminMobileNumbers = array_filter($adminMobileNumbers,function($entry){
+																			return $entry !== "";
+																		});
 								$arrSMSes=[];
 								foreach ($adminMobileNumbers as $key => $mobileNumber) {
 									$arrSMSes[$key]['message']=\strtoupper($txDTO->urlPrefix).

@@ -21,39 +21,44 @@ class RegularAnalyticsService
       
       //Process the request
       try {
-         $dateFrom = \substr($paymentDTO->created_at,0,10)." 00:00:00";
-         $dateTo = \substr($paymentDTO->created_at,0,10)." 23:59:59";
-
          $theDate = Carbon::parse($paymentDTO->created_at);
+         $startOfMonth = $theDate->copy()->startOfMonth();
+         $dateFrom = $theDate->copy()->startOfDay();
+         $dateTo = $theDate->copy()->endOfDay();
+         $theMonth = $theDate->month;
          $theYear = $theDate->year;
-         $theMonth = \strlen((string)$theDate->month)==2?$theDate->month:"0".(string)$theDate->month;
-         $startOfMonth = $theYear . '-' . $theMonth . '-01 00:00:00';
+         $theDay = $theDate->day;
 
-         //Step 1 Get Daily transactions totals
+         //Step 1 Generate Daily transactions totals
             $dailyTotals = DB::table('payments as p')
                                  ->join('client_wallets as cw','p.wallet_id','=','cw.id')
-                                 ->select(DB::raw('dayofmonth(p.created_at) as day,
+                                 ->select(DB::raw('cw.payments_provider_id,
                                                       COUNT(p.id) AS numberOfTransactions,
                                                          SUM(p.receiptAmount) as totalAmount'))
                                  ->whereBetween('p.created_at', [$dateFrom, $dateTo])
                                  ->where('cw.client_id', '=', $paymentDTO->client_id)
                                  ->whereIn('p.paymentStatus', 
                                           ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
-                                 ->groupBy('day')
+                                 ->groupBy('payments_provider_id')
                                  ->get();
             if($dailyTotals->isNotEmpty()){
-               $dailyTotals =$dailyTotals[0];
+               $dailyTotalRecords =[];
+               foreach ($dailyTotals as $dailyTotal) {
+                  $dailyTotalRecords[] = ['client_id' => $paymentDTO->client_id,'payments_provider_id' => $dailyTotal->payments_provider_id, 
+                                             'numberOfTransactions' => $dailyTotal->numberOfTransactions,
+                                             'totalAmount'=>$dailyTotal->totalAmount, 'year' => $theYear, 
+                                             'dateOfTransaction' => $theDate->format('Y-m-d'),                           
+                                             'month' => $theMonth, 'day' => $theDay];
+               }
+   
                DashboardDailyTotals::upsert(
-                        [
-                           ['client_id' => $paymentDTO->client_id, 'year' => $theYear, 'month' => $theMonth, 'day' => $dailyTotals->day,
-                              'numberOfTransactions' => $dailyTotals->numberOfTransactions,'totalAmount'=>$dailyTotals->totalAmount]
-                        ],
-                        ['client_id','year','month','day'],
-                        ['numberOfTransactions','totalAmount']
-                     );
+                        $dailyTotalRecords,
+                        ['client_id','payments_provider_id', 'dateOfTransaction'],
+                        ['numberOfTransactions','totalAmount','year','month','day']
+                  );
             }
          //
-         //Step 2 - Get Payment Type Monthly transactions totals
+         //Step 2 - Generate Payment Type Monthly transactions totals
             $menuTotals = DB::table('payments as p')
                               ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                               ->join('client_menus as cm','p.menu_id','=','cm.id')
@@ -79,7 +84,7 @@ class RegularAnalyticsService
                      ['numberOfTransactions','totalAmount']
                );
          //
-         //Step 3 - Get Payment Status Monthly transactions totals
+         //Step 3 - Generate Payment Status Monthly transactions totals
             $paymentStatusTotals = DB::table('payments as p')
                               ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                               ->join('client_menus as cm','p.menu_id','=','cm.id')
@@ -106,7 +111,7 @@ class RegularAnalyticsService
                      ['numberOfTransactions','totalAmount']
                );
          //
-         //Step 4 - Get District Monthly transactions totals
+         //Step 4 - Generate District Monthly transactions totals
             $districtTotals = DB::table('payments as p')
                               ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                               ->select(DB::raw('p.district,
@@ -132,7 +137,7 @@ class RegularAnalyticsService
                      ['numberOfTransactions','totalAmount']
                );
          //
-         //Step 5 - Get Payments Provider Monthly transactions totals
+         //Step 5 - Generate Payments Provider Monthly transactions totals
             $paymentProviderTotals = DB::table('payments as p')
                               ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                               ->select(DB::raw('cw.payments_provider_id,

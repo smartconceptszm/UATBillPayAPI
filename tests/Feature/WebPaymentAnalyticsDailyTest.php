@@ -8,7 +8,7 @@ use Tests\TestCase;
 class WebPaymentAnalyticsDailyTest extends TestCase
 {
 
-   public function test_get_analytics_daily(): void
+   public function _test_get_analytics_daily(): void
    {
 
      

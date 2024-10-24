@@ -13,6 +13,7 @@ class PaymentTransactionService
    {
 
       try {
+         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
          $user = Auth::user(); 
          $criteria['client_id'] = $user->client_id;
          $dto = (object)$criteria;
@@ -32,7 +33,9 @@ class PaymentTransactionService
          // $theSQLQuery = $records->toSql();
          // $theBindings = $records-> getBindings();
          // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
-         $records = $records->orderByDesc('p.created_at')->get();
+         $records = $records->orderByDesc('p.created_at')
+                           ->limit((int)$billpaySettings['PAYMENTS_QUERY_LIMIT'])
+                           ->get();
          return $records->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

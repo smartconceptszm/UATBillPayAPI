@@ -110,9 +110,7 @@ Route::group(['middleware' => 'mode'], function (){
          //Analaytics
             Route::get('maindashboard', [\App\Http\Controllers\Analytics\MainDashboardController::class, 'index']);
             Route::get('clientdashboard', [\App\Http\Controllers\Analytics\ClientDashboardController::class, 'index']);
-
-            // Route::get('maindashboard', [\App\Http\Controllers\Clients\MainDashboardController::class, 'index']);
-            // Route::get('clientdashboard', [\App\Http\Controllers\Clients\ClientDashboardController::class, 'index']);
+            Route::get('clientmonthlydashboard', [\App\Http\Controllers\Analytics\ClientMonthlyDashboardController::class, 'index']);
 
             Route::controller(\App\Http\Controllers\Analytics\DailyAnalyticsController::class)->group(function () {
                Route::get('/analytics/daily', 'index');

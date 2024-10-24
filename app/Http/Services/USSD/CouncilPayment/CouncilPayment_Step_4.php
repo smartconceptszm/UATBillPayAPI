@@ -2,8 +2,7 @@
 
 namespace App\Http\Services\USSD\CouncilPayment;
 
-use App\Http\Services\Gateway\Utility\StepService_CalculatePaymentAmounts;
-use App\Http\Services\Clients\BillingCredentialService;
+use App\Http\Services\Clients\ClientRevenueCodeService;
 use App\Http\Services\USSD\StepServices\GetAmount;
 use App\Http\Services\Clients\ClientMenuService;
 use Illuminate\Support\Facades\Cache;
@@ -15,8 +14,7 @@ class CouncilPayment_Step_4
 {
 
    public function __construct(
-      private StepService_CalculatePaymentAmounts $calculatePaymentAmounts,
-      private BillingCredentialService $billingCredentials,
+      private ClientRevenueCodeService $revenueCodeService,
       private ClientMenuService $clientMenuService,
       private GetAmount $getAmount
    ){}
@@ -36,12 +34,19 @@ class CouncilPayment_Step_4
          return $txDTO;
       }
 
+      $theMenu = $this->clientMenuService->findById($txDTO->menu_id);
+      $parentMenu = $this->clientMenuService->findById($theMenu->parent_id);
+      if($theMenu->onOneAccount =="YES"){
+         $theService = "For: (".$theMenu->commonAccount.") - ".$parentMenu->prompt.": ".$theMenu->prompt."\n";
+      }else{
+         $revenueCode = $this->revenueCodeService->findOneBy(['menu_id' =>$txDTO->menu_id,
+                                                                     'code' =>$txDTO->customerAccount]);
+         $theService = "For: (".$revenueCode->code.") - ".$parentMenu->prompt.": ".$revenueCode->name."\n";
+      }
+
       $txDTO->response = "Pay ZMW ".$txDTO->subscriberInput."\n";
-      $customerJourney = \explode("*", $txDTO->customerJourney);
-      $billingCredential = $this->billingCredentials->findOneBy(['client_id' =>$txDTO->client_id,
-                                                                     'key' =>$customerJourney[2]]);
-      $txDTO->response .= "For: (".$billingCredential->key.") - ".$billingCredential->keyValue."\n";
-      $txDTO->response .= "Name: ".$txDTO->reference."\n";
+      $txDTO->response .= $theService;
+      $txDTO->response .= "Ref: ".$txDTO->reference."\n";
       $txDTO->response .= "Enter\n". 
                            "1. Confirm\n".
                            "2. Use different wallet\n".

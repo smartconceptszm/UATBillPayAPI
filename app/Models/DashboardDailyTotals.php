@@ -13,8 +13,9 @@ class DashboardDailyTotals extends Model
    protected $table = "dashboard_daily_totals";
 
    protected $fillable=[
-                  'client_id','year','month','day','numberOfTransactions', 'totalAmount'
-               ];
+                        'client_id','payments_provider_id','dateOfTransaction','year',
+                        'month','day','numberOfTransactions', 'totalAmount'
+                     ];
                
    protected $casts = [
       'created_at' => 'datetime:Y-m-d H:i:s',

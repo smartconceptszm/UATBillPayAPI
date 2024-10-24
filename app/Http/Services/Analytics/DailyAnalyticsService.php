@@ -32,36 +32,44 @@ class DailyAnalyticsService
    {
       
       try {
+         $dateFrom = $theDate->copy()->startOfDay();
+         $dateTo = $theDate->copy()->endOfDay();
+         $theMonth = $theDate->month;
          $theYear = $theDate->year;
-         $theMonth = \strlen((string)$theDate->month)==2?$theDate->month:"0".(string)$theDate->month;
-         $theDay = \strlen((string)$theDate->day)==2?$theDate->day:"0".(string)$theDate->day;
-         $dateFrom = $theYear . '-' . $theMonth . '-' .$theDay. ' 00:00:00';
-         $dateTo = $theYear . '-' . $theMonth . '-' .$theDay. ' 23:59:59';
+         $theDay = $theDate->day;
+
          $clients = $this->clientService->findAll(['status'=>'ACTIVE']);
          foreach ($clients as $client) {
+
             $dailyTotals = DB::table('payments as p')
                                  ->join('client_wallets as cw','p.wallet_id','=','cw.id')
-                                 ->select(DB::raw('dayofmonth(p.created_at) as day,
+                                 ->select(DB::raw('cw.payments_provider_id,
                                                       COUNT(p.id) AS numberOfTransactions,
                                                          SUM(p.receiptAmount) as totalAmount'))
                                  ->whereBetween('p.created_at', [$dateFrom, $dateTo])
                                  ->where('cw.client_id', '=', $client->id)
                                  ->whereIn('p.paymentStatus', 
                                           ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
-                                 ->groupBy('day')
+                                 ->groupBy('payments_provider_id')
                                  ->get();
             
             if($dailyTotals->isNotEmpty()){
-               $dailyTotals =$dailyTotals[0];
+               $dailyTotalRecords =[];
+               foreach ($dailyTotals as $dailyTotal) {
+                  $dailyTotalRecords[] = ['client_id' => $client->id,'payments_provider_id' => $dailyTotal->payments_provider_id, 
+                                             'numberOfTransactions' => $dailyTotal->numberOfTransactions,
+                                             'year' => $theYear,'month' => $theMonth, 'day' => $theDay,
+                                             'dateOfTransaction' => $theDate->format('Y-m-d'),
+                                             'totalAmount'=>$dailyTotal->totalAmount,];
+               }
+   
                DashboardDailyTotals::upsert(
-                        [
-                           ['client_id' => $client->id, 'year' => $theYear, 'month' => $theMonth, 'day' => $dailyTotals->day,
-                              'numberOfTransactions' => $dailyTotals->numberOfTransactions,'totalAmount'=>$dailyTotals->totalAmount]
-                        ],
-                        ['client_id','year','month','day'],
-                        ['numberOfTransactions','totalAmount']
-                     );
+                        $dailyTotalRecords,
+                        ['client_id','payments_provider_id','dateOfTransaction'],
+                        ['numberOfTransactions','totalAmount','year','month','day']
+                  );
             }
+
          }
       } catch (\Throwable $e) {
          Log::info($e->getMessage());

@@ -45,7 +45,7 @@ class MonthlyAnalyticsService
          Log::info('(SCL) Monthly transaction analytics job launched for: '.$endOfMonth->format('Y-F'));
          $clients = $this->clientService->findAll(['status'=>'ACTIVE']);
          foreach ($clients as $client) {
-            //Step 1 - Get Payment Type Monthly transactions totals
+            //Step 1 - Generate Payment Type Monthly transactions totals
                $menuTotals = DB::table('payments as p')
                      ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                      ->join('client_menus as cm','p.menu_id','=','cm.id')
@@ -71,7 +71,7 @@ class MonthlyAnalyticsService
                                                 ['numberOfTransactions','totalAmount']
                                              );
             //
-            //Step 2 - Get Payment Status Monthly transactions totals
+            //Step 2 - Generate Payment Status Monthly transactions totals
                $paymentStatusTotals = DB::table('payments as p')
                      ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                      ->select(DB::raw('p.paymentStatus,
@@ -97,7 +97,7 @@ class MonthlyAnalyticsService
                                                 ['numberOfTransactions','totalAmount']
                                              );
             //
-            //Step 3 - Get District Monthly transactions totals
+            //Step 3 - Generate District Monthly transactions totals
                $districtTotals = DB::table('payments as p')
                      ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                      ->select(DB::raw('p.district,
@@ -123,7 +123,7 @@ class MonthlyAnalyticsService
                                           ['numberOfTransactions','totalAmount']
                                        );
             //
-            //Step 4 - Get Payments Provider Monthly transactions totals
+            //Step 4 - Generate Payments Provider Monthly transactions totals
                $paymentProviderTotals = DB::table('payments as p')
                      ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                      ->select(DB::raw('cw.payments_provider_id,
