@@ -34,7 +34,7 @@ class ClientDashboardService
                               ->whereBetween('ddt.dateOfTransaction', [$dateFrom, $dateTo])
                               ->where('ddt.client_id', '=', $dto->client_id)
                               ->groupBy('paymentsProvider')
-                              // ->groupBy('colour')
+                              ->groupBy('colour')
                               ->orderByDesc('totalRevenue');
             // $theSQLQuery = $thePayments->toSql();
             // $theBindings = $thePayments-> getBindings();
