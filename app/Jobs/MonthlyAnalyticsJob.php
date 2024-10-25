@@ -6,7 +6,7 @@ use App\Http\Services\Analytics\MonthlyAnalyticsService;
 use Illuminate\Support\Carbon;
 use App\Jobs\BaseJob;
 
-class MonthlyAnalytics extends BaseJob
+class MonthlyAnalyticsJob extends BaseJob
 {
 
    public function __construct(

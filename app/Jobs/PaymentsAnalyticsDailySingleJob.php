@@ -6,7 +6,7 @@ use App\Http\Services\Analytics\DailyAnalyticsService;
 use Illuminate\Support\Carbon;
 use App\Jobs\BaseJob;
 
-class PaymentsAnalyticsDailySingle extends BaseJob
+class PaymentsAnalyticsDailySingleJob extends BaseJob
 {
 
    public function __construct(

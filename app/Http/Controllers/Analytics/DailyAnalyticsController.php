@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Analytics;
 
 use App\Http\Services\Analytics\DailyAnalyticsService;
-use App\Jobs\PaymentsAnalyticsDailyBulk;
+use App\Jobs\PaymentsAnalyticsDailyBulkJob;
 use Illuminate\Support\Facades\Queue;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
@@ -33,7 +33,7 @@ class DailyAnalyticsController extends Controller
    {
 
       try {
-         Queue::later(Carbon::now()->addSeconds(1),new PaymentsAnalyticsDailyBulk($request->input('date')),'','high');
+         Queue::later(Carbon::now()->addSeconds(1),new PaymentsAnalyticsDailyBulkJob($request->input('date')),'','high');
          $this->response['data'] = ['Message' => "Job submitted"];
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;

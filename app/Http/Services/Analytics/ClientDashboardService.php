@@ -40,6 +40,7 @@ class ClientDashboardService
             // $theBindings = $thePayments-> getBindings();
             // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
             $byPaymentProvider = $thePayments->get();
+
             $totalRevenue = $byPaymentProvider->reduce(function ($totalRevenue, $item) {
                                                 return $totalRevenue + $item->totalRevenue;
                                           });
@@ -60,7 +61,6 @@ class ClientDashboardService
          //
          //2. Daily Totals over the Month
             $thePayments = DB::table('dashboard_daily_totals as ddt')
-                              ->select('dt.*')
                               ->select(DB::raw('ddt.day,
                                                 SUM(ddt.numberOfTransactions) AS totalTransactions,
                                                 SUM(ddt.totalAmount) as totalRevenue'))

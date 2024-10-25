@@ -6,17 +6,17 @@ use App\Http\Services\Analytics\RegularAnalyticsService;
 use App\Http\DTOs\BaseDTO;
 use App\Jobs\BaseJob;
 
-class PaymentsAnalyticsRegular extends BaseJob
+class PaymentsAnalyticsRegularJob extends BaseJob
 {
 
    public function __construct(
       private BaseDTO $paymentDTO)
    {}
 
-   public function handle(RegularAnalyticsService $RegularAnalyticsService)
+   public function handle(RegularAnalyticsService $regularAnalyticsService)
    {
 
-      $RegularAnalyticsService->generate($this->paymentDTO);
+      $regularAnalyticsService->generate($this->paymentDTO);
       
    }
 

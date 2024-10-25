@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Analytics;
 use App\Http\Services\Analytics\MonthlyAnalyticsService;
 use Illuminate\Support\Facades\Queue;
 use App\Http\Controllers\Controller;
-use App\Jobs\MonthlyAnalytics;
+use App\Jobs\MonthlyAnalyticsJob;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 use Exception;
@@ -34,7 +34,7 @@ class MonthlyAnalyticsController extends Controller
    {
 
       try {
-         Queue::later(Carbon::now()->addSeconds(1),new MonthlyAnalytics($request->input('date')),'','high');
+         Queue::later(Carbon::now()->addSeconds(1),new MonthlyAnalyticsJob($request->input('date')),'','high');
          $this->response['data'] = ['Message' => "Monthly Analytics Job dispatched"];
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
