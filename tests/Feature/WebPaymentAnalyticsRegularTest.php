@@ -17,7 +17,7 @@ class WebPaymentAnalyticsRegularTest extends TestCase
       $thePayment = $paymentToReviewService->findById('9bee8d37-f29d-46f3-af42-7c462e8423cd');
       $paymentDTO = $paymentDTO->fromArray(\get_object_vars($thePayment));
 
-      $RegularAnalyticsService= new \App\Http\Services\Analytics\RegularAnalyticsService();
+      $RegularAnalyticsService= new \App\Http\Services\Analytics\RegularAnalyticsService(new \App\Http\Services\Analytics\AnalyticsGeneratorService());
 
       $response = $RegularAnalyticsService->generate( $paymentDTO);
 

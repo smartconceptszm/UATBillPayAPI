@@ -13,15 +13,14 @@ class WebMainDashboardTest extends TestCase
 
       //Login
       $username = 'smartdev';
-      $password = '1';
-      $dateFrom = '2024-01-01';
-      $dateTo = '2024-01-31';
+      $password = '1    1';
+      $theMonth = '2024-10';
       $response = $this->post('/login',['username' => $username,'password' =>$password]);
       $response = $response->json()['data'];
 
       $response = $this->withHeaders([
                               'Authorization' => 'Bearer ' . $response['token'],
-                        ])->get('/maindashboard?client_id='.$response['client_id'].'&dateFrom='.$dateFrom.'&dateTo='. $dateTo);
+                        ])->get('/maindashboard?client_id='.$response['client_id'].'&theMonth='.$theMonth);
 
       $response = $response->json()['data'];
       $this->assertTrue(\count($response)>0);

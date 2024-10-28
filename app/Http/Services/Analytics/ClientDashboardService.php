@@ -26,15 +26,14 @@ class ClientDashboardService
          $theMonth = $endOfMonth->month;
 
          //1. Payments Provider Totals for Month
-            $thePayments = DB::table('dashboard_daily_totals as ddt')
-                              ->join('payments_providers as p','ddt.payments_provider_id','=','p.id')
+            $thePayments = DB::table('dashboard_payments_provider_totals as ppt')
+                              ->join('payments_providers as p','ppt.payments_provider_id','=','p.id')
                               ->select(DB::raw('p.shortName as paymentsProvider,p.colour,
-                                                   SUM(ddt.numberOfTransactions) AS totalTransactions,
-                                                      SUM(ddt.totalAmount) as totalRevenue'))
-                              ->whereBetween('ddt.dateOfTransaction', [$dateFrom, $dateTo])
-                              ->where('ddt.client_id', '=', $dto->client_id)
-                              ->groupBy('paymentsProvider')
-                              ->groupBy('colour')
+                                                   SUM(ppt.numberOfTransactions) AS totalTransactions,
+                                                      SUM(ppt.totalAmount) as totalRevenue'))
+                              ->whereBetween('ppt.dateOfTransaction', [$dateFrom, $dateTo])
+                              ->where('ppt.client_id', '=', $dto->client_id)
+                              ->groupBy('paymentsProvider','colour')
                               ->orderByDesc('totalRevenue');
             // $theSQLQuery = $thePayments->toSql();
             // $theBindings = $thePayments-> getBindings();
@@ -44,6 +43,7 @@ class ClientDashboardService
             $totalRevenue = $byPaymentProvider->reduce(function ($totalRevenue, $item) {
                                                 return $totalRevenue + $item->totalRevenue;
                                           });
+
             $paymentsSummary = $byPaymentProvider->map(function ($item) {
                                                       return [
                                                          'paymentsProvider'=>$item->paymentsProvider,
@@ -60,14 +60,14 @@ class ClientDashboardService
 
          //
          //2. Daily Totals over the Month
-            $thePayments = DB::table('dashboard_daily_totals as ddt')
-                              ->select(DB::raw('ddt.day,
+            $thePayments = DB::table('dashboard_payment_status_totals as ddt')
+                              ->select(DB::raw('ddt.year,ddt.month,ddt.day,
                                                 SUM(ddt.numberOfTransactions) AS totalTransactions,
                                                 SUM(ddt.totalAmount) as totalRevenue'))
                               ->where('ddt.year', '=',  $theYear)
                               ->where('ddt.month', '=',  $theMonth)
                               ->where('ddt.client_id', '=', $dto->client_id)
-                              ->groupBy('day')
+                              ->groupBy('day','month','year')
                               ->orderBy('day');
             $dailyTrends = $thePayments->get();
             $dailyLabels = $dailyTrends->map(function ($item) {
@@ -86,11 +86,14 @@ class ClientDashboardService
             $myMonth = $startDate->format('m');
             $monthsCollection = collect([['month'=>$myMonth,'year'=>$myYear]]);
             $paymentsTrends = DB::table('dashboard_payments_provider_totals as ppt')
-                              ->join('payments_providers as p','ppt.payments_provider_id','=','p.id')
-                              ->select('ppt.*','p.shortName as paymentsProvider','p.colour')
-                              ->where('ppt.client_id', '=', $dto->client_id)
-                              ->where('ppt.year', '=',  $myYear)
-                              ->where('ppt.month', '=',  $myMonth);
+                                    ->join('payments_providers as p','ppt.payments_provider_id','=','p.id')
+                                    ->select(DB::raw('p.shortName as paymentsProvider,p.colour,
+                                                         ppt.year,ppt.month,
+                                                         SUM(ppt.numberOfTransactions) AS totalTransactions,
+                                                            SUM(ppt.totalAmount) as totalRevenue'))
+                                    ->where('ppt.client_id', '=', $dto->client_id)
+                                    ->where('ppt.year', '=',  $myYear)
+                                    ->where('ppt.month', '=',  $myMonth);
 
             for ($i=1; $i < 12; $i++) { 
                $startDate = $startDate->addMonth();
@@ -104,7 +107,8 @@ class ClientDashboardService
                                                                ->where('ppt.client_id','=', $client_id);
                                                    });
             }
-            $paymentsTrends = $paymentsTrends//->orderBy('paymentsProvider')
+            $paymentsTrends = $paymentsTrends->groupBy('month','year')
+                                             ->groupBy('paymentsProvider','colour')
                                              ->orderBy('year')
                                              ->orderBy('month');
             // $theSQLQuery = $paymentsTrends->toSql();
@@ -120,8 +124,8 @@ class ClientDashboardService
                                                             return $item->month == (int)$record['month'];
                                                       });
                                     if($recordsForMonth->isNotEmpty()){
-                                       return $recordsForMonth->reduce(function ($totalRevenue, $item) {
-                                                                        return $totalRevenue + $item->totalAmount;
+                                       return $recordsForMonth->reduce(function ($totalAmount, $item) {
+                                                                        return $totalAmount + $item->totalRevenue;
                                                                   });
                                     }else{
                                        return 0;
@@ -152,7 +156,7 @@ class ClientDashboardService
                                                                                           );
                                                                                  });
                                                             if($providerRecordForMonthInFocus){
-                                                               return $providerRecordForMonthInFocus->totalAmount;
+                                                               return $providerRecordForMonthInFocus->totalRevenue;
                                                             }else{
                                                                return 0;
                                                             }
@@ -171,12 +175,72 @@ class ClientDashboardService
 
 
          //
+         //4. District Totals for Month
+            $thePayments = DB::table('dashboard_district_totals as ddt')
+                              ->select(DB::raw('ddt.district,
+                                                SUM(ddt.numberOfTransactions) AS totalTransactions,
+                                                SUM(ddt.totalAmount) as totalRevenue'))
+                              ->whereBetween('ddt.dateOfTransaction', [$dateFrom, $dateTo])
+                              ->where('ddt.client_id', '=', $dto->client_id)
+                              ->groupBy('ddt.district');
+            $byDistrict = $thePayments->get();
+            $districtLabels = $byDistrict->map(function ($item) {
+                                                return $item->district;
+                                             });
+            $districtData = $byDistrict->map(function ($item) {
+                                             return $item->totalRevenue;
+                                          });
+         //
+         //5. Payment Type Totals for Month
+            $thePayments = DB::table('dashboard_payment_type_totals as ptt')
+                           ->select(DB::raw('ptt.paymentType,
+                                                SUM(ptt.numberOfTransactions) AS totalTransactions,
+                                                SUM(ptt.totalAmount) as totalRevenue'))
+                           ->whereBetween('ptt.dateOfTransaction', [$dateFrom, $dateTo])
+                           ->where('ptt.client_id', '=', $dto->client_id)
+                           ->groupBy('paymentType');
+            $menuTotals = $thePayments->get();
+            $paymentTypeLabels = $menuTotals->map(function ($item) {
+                                                return $item->paymentType."(".$item->totalTransactions.")";
+                                             });
+            $paymentTypeData = $menuTotals->map(function ($item) {
+                                                return $item->totalRevenue;
+                                             });
+         //
+         //6. Payments Status Totals for Month
+            $thePayments = DB::table('dashboard_payment_status_totals as pst')
+            ->select(DB::raw('pst.paymentStatus,
+                                          SUM(pst.numberOfTransactions) AS totalTransactions,
+                                          SUM(pst.totalAmount) as totalRevenue'))
+                              ->whereBetween('pst.dateOfTransaction', [$dateFrom, $dateTo])
+                              ->where('pst.client_id', '=', $dto->client_id)
+                              ->groupBy('paymentStatus')
+                              ->orderBy('paymentStatus');
+            $thePayments = $thePayments->get();
+
+            $paymentStatusData = $thePayments->map(function ($item) {
+                                                      return $item->totalRevenue;
+                                                });
+            $paymentStatusLabels = $thePayments->map(function ($item) {
+                                                   return $item->paymentStatus."(".$item->totalTransactions.")";
+                                             });
+            $paymentStatusColours = $thePayments->map(function ($item) use($billpaySettings) {
+                                                return $billpaySettings[$item->paymentStatus.'_COLOUR'];
+                                          });        
+         //
          $response = [
                         'paymentsSummary' => $paymentsSummary,
                         'dailyLabels' => $dailyLabels,
                         'dailyData' =>$dailyData,
                         'paymentsTrendsData' => $paymentsTrendsData,
                         'paymentsTrendsLabels' => $paymentsTrendsLabels,
+                        'districtLabels' => $districtLabels,
+                        'districtData' => $districtData,
+                        'paymentStatusData' => $paymentStatusData,
+                        'paymentStatusLabels' => $paymentStatusLabels,
+                        'paymentStatusColours' => $paymentStatusColours,
+                        'paymentTypeLabels' =>$paymentTypeLabels,
+                        'paymentTypeData' =>$paymentTypeData 
                      ];
    
          return $response;

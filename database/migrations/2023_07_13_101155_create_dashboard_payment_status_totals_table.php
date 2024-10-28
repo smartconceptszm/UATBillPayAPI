@@ -14,15 +14,17 @@ return new class extends Migration
       Schema::create('dashboard_payment_status_totals', function (Blueprint $table) {
          $table->id();
          $table->string('client_id',36)->notNullable();
-         $table->unsignedInteger('year')->notNullable();
-         $table->unsignedInteger('month')->notNullable();
          $table->enum('paymentStatus',['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED',
                         'RECEIPT DELIVERED'])
                         ->default('RECEIPT DELIVERED')->notNullable();
+         $table->date('dateOfTransaction');
+         $table->unsignedInteger('year')->notNullable();
+         $table->unsignedInteger('month')->notNullable();
+         $table->unsignedInteger('day',2)->notNullable();
          $table->unsignedInteger('numberOfTransactions')->nullable();
          $table->float('totalAmount',10,2)->default(0);
          $table->timestamps();
-         $table->unique(['client_id','year','month','paymentStatus'],'clientpaymentStatusMonth');
+         $table->unique(['client_id','paymentStatus','dateOfTransaction'],'client_paymentstatus_day');
       });
    }
 

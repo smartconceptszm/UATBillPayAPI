@@ -13,7 +13,7 @@ class DashboardPaymentStatusTotals extends Model
    protected $table = "dashboard_payment_status_totals";
 
    protected $fillable=[
-                  'client_id','year','month','paymentStatus','numberOfTransactions', 'totalAmount'
+                  'client_id','paymentStatus','dateOfTransaction','year','month','day','numberOfTransactions', 'totalAmount'
                ];
 
    protected $casts = [

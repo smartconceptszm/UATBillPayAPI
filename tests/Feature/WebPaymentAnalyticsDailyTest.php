@@ -12,15 +12,15 @@ class WebPaymentAnalyticsDailyTest extends TestCase
    {
 
      
-      $theDate = Carbon::create("2024-09-19");
+      $theDate = Carbon::create("2024-10-18");
       
 
-      $DailyAnalyticsService = new \App\Http\Services\Analytics\DailyAnalyticsService(
-               new \App\Models\DashboardDailyTotals(),
-               new \App\Http\Services\Clients\ClientService(new \App\Models\Client())
-            );
+      $dailyAnalyticsService = new \App\Http\Services\Analytics\DailyAnalyticsService(
+                                       new \App\Http\Services\Analytics\AnalyticsGeneratorService(),
+                                       new \App\Http\Services\Clients\ClientService( new \App\Models\Client())
+                                    );
 
-      $response = $DailyAnalyticsService->generate($theDate);
+      $response = $dailyAnalyticsService->generate($theDate);
 
       $this->assertTrue($response);
 

@@ -5,15 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class DashboardDailyTotals extends Model
+class DashboardHourlyTotals extends Model
 {
 
    use HasFactory;
 
-   protected $table = "dashboard_daily_totals";
+   protected $table = "dashboard_hourly_totals";
 
    protected $fillable=[
-                        'client_id','payments_provider_id','dateOfTransaction','year',
+                        'client_id','dateOfTransaction','hour','year',
                         'month','day','numberOfTransactions', 'totalAmount'
                      ];
                

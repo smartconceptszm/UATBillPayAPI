@@ -13,10 +13,9 @@ class DashboardDistrictTotals extends Model
    protected $table = "dashboard_district_totals";
 
    protected $fillable=[
-                  'client_id','year','month','district','numberOfTransactions', 'totalAmount'
+                  'client_id','district','dateOfTransaction','year','month','day','numberOfTransactions', 'totalAmount'
                ];
-
-
+               
    protected $casts = [
       'created_at' => 'datetime:Y-m-d H:i:s',
       'updated_at' => 'datetime:Y-m-d H:i:s',

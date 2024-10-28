@@ -21,14 +21,55 @@ class MainDashboardService
             $thePayments = DB::table('dashboard_payments_provider_totals as ppt')
                            ->join('clients as c','ppt.client_id','=','c.id')
                            ->join('payments_providers as p','ppt.payments_provider_id','=','p.id')
-                           ->select('ppt.*','c.name','c.urlPrefix','p.shortName as paymentsProvider','p.colour')
+                           ->select(DB::raw('c.id,c.urlPrefix,c.name, p.shortName as paymentsProvider,p.colour,
+                                                SUM(ppt.numberOfTransactions) AS totalTransactions,
+                                                   SUM(ppt.totalAmount) as totalRevenue'))
                            ->where('ppt.year', '=',  $theYear)
                            ->where('ppt.month', '=',  $theMonth)
-                           ->orderBy('ppt.totalAmount','desc')
+                           ->groupBy('c.id','c.urlPrefix','c.name')
+                           ->groupBy('paymentsProvider','p.colour')
+                           ->orderBy('totalRevenue','desc')
                            ->get();
-            $groupedData = $thePayments->groupBy('urlPrefix');
+            if($thePayments->isNotEmpty()){
+               $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+               $paymentsByClient = $thePayments->groupBy('urlPrefix');
+               $paymentsSummary = $paymentsByClient->map(function ($client) use ($billpaySettings) {
+
+                                    $clientDetails = $client->get(0);
+                                    
+                                    $formattedData = $client->map(function ($item) {
+                                                   return [
+                                                      'paymentsProvider'=>$item->paymentsProvider,
+                                                      'totalTransactions'=>$item->totalTransactions,
+                                                      'totalAmount'=>$item->totalRevenue,
+                                                      'colour'=>$item->colour
+                                                   ];
+                                                });
+                                    $totalRevenue = $client->reduce(function ($totalRevenue, $item) {
+                                                   return $totalRevenue + $item->totalRevenue;
+                                             }); 
+                                    $totalTransactions = $client->reduce(function ($transactions, $item) {
+                                                   return $transactions + $item->totalTransactions;
+                                             }); 
+                                    $formattedData->prepend([
+                                             'paymentsProvider'=>'TOTAL',
+                                             'totalTransactions'=>$totalTransactions,
+                                             'totalAmount'=> $totalRevenue,
+                                             'colour'=>$billpaySettings['ANALYTICS_PROVIDER_TOTALS_COLOUR']
+                                       ]);
+                                    
+                                    return [
+                                             'urlPrefix'=>$clientDetails->urlPrefix,
+                                             'name'=>$clientDetails->name,
+                                             'id'=>$clientDetails->id,
+                                             'data'=>$formattedData->toArray()
+                                          ];
+                                 });
+               return $paymentsSummary;
+            }else{
+               return [];
+            }
          //
-         return $groupedData;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

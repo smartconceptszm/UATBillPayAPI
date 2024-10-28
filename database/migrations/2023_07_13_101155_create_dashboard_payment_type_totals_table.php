@@ -14,13 +14,15 @@ return new class extends Migration
       Schema::create('dashboard_payment_type_totals', function (Blueprint $table) {
          $table->id();
          $table->string('client_id',36)->notNullable();
+         $table->string('paymentType',150)->notNullable();
+         $table->date('dateOfTransaction');
          $table->unsignedInteger('year')->notNullable();
          $table->unsignedInteger('month')->notNullable();
-         $table->string('paymentType',150)->notNullable();
+         $table->unsignedInteger('day',2)->notNullable();
          $table->unsignedInteger('numberOfTransactions')->default(0);
          $table->float('totalAmount',10,2)->default(0);
          $table->timestamps();
-         $table->unique(['client_id','year','month','paymentType'],'client_menu_month');
+         $table->unique(['client_id','paymentType','dateOfTransaction',],'client_menu_day');
       });
    }
 

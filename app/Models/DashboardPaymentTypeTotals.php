@@ -13,7 +13,7 @@ class DashboardPaymentTypeTotals extends Model
    protected $table = "dashboard_payment_type_totals";
 
    protected $fillable=[
-                  'client_id','year','month','paymentType','numberOfTransactions', 'totalAmount'
+                  'client_id','paymentType','dateOfTransaction','year','month','day','numberOfTransactions', 'totalAmount'
                ];
 
    protected $casts =[

@@ -18,15 +18,10 @@ class Kernel extends ConsoleKernel
         //     new \App\Http\ScheduledTasks\ClearFailedJobs();
         // })->timezone('Africa/Lusaka')->dailyAt("00:30");
 
-
-
         $schedule->call(
                         App::make(\App\Http\ScheduledTasks\GenerateDailyAnalytics::class)
-                            )->timezone('Africa/Lusaka')->dailyAt("00:20");
-
-        $schedule->call(
-                            App::make(\App\Http\ScheduledTasks\GenerateMonthlyAnalytics::class)
-                                )->timezone('Africa/Lusaka')->monthlyOn(1, '00:40');
+                    )->timezone('Africa/Lusaka')->dailyAt("00:20");
+                    
     }
 
     /**

@@ -14,13 +14,15 @@ return new class extends Migration
       Schema::create('dashboard_district_totals', function (Blueprint $table) {
          $table->id();
          $table->string('client_id',36)->notNullable();
+         $table->string('district',150)->notNullable();
+         $table->date('dateOfTransaction');
          $table->unsignedInteger('year',4)->notNullable();
          $table->unsignedInteger('month',2)->notNullable();
-         $table->string('district',150)->notNullable();
+         $table->unsignedInteger('day',2)->notNullable();
          $table->unsignedInteger('numberOfTransactions')->default(0);
          $table->float('totalAmount',10,2)->default(0);
          $table->timestamps();
-         $table->unique(['client_id','year','month','district'],'client_district');
+         $table->unique(['client_id','district','dateOfTransaction'],'client_district_day');
       });
    }
 

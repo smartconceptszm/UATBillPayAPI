@@ -19,13 +19,13 @@ class PaymentsAnalyticsDailyBulkJob extends BaseJob
    {
 
       $theDate = Carbon::parse($this->theDate);
-      $startOfMonth = $theDate->copy()->startOfMonth(); 
+      $dayOfMonth = $theDate->copy()->startOfMonth(); 
       $endOfMonth = $theDate->endOfMonth();
       $daysDone = 0;
-      while ($startOfMonth <= $endOfMonth) {
-         Queue::later(Carbon::now()->addSeconds($daysDone*5),new PaymentsAnalyticsDailySingleJob($startOfMonth),'','high');
+      while ($dayOfMonth <= $endOfMonth) {
+         Queue::later(Carbon::now()->addSeconds($daysDone*30),new PaymentsAnalyticsDailySingleJob($dayOfMonth),'','high');
          $daysDone += 1;
-         $startOfMonth->addDay();
+         $dayOfMonth->addDay();
       }
       Log::info('(SCL) '.$daysDone. ' Daily transaction analytics Jobs dispatched for the month: '.$endOfMonth->format('Y-F'));
       
