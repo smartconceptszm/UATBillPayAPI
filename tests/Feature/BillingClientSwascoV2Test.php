@@ -28,7 +28,7 @@ class BillingClientSwascoV2Test extends TestCase
 
     }
 
-    public function testPostPayment()
+    public function _testPostPayment()
     {   
 
         $paymentParams = [

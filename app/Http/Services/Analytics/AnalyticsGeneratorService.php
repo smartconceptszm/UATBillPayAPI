@@ -10,8 +10,6 @@ use App\Models\DashboardHourlyTotals;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
-
-
 class AnalyticsGeneratorService
 {
 
@@ -19,9 +17,9 @@ class AnalyticsGeneratorService
    {
       
       try {
-         
+
          $theDate = $params['theDate'];
-         //Step 1 Generate Payments Provider transactions totals
+         //Step 1 Generate Payments Provider Daily transactions totals
             $paymentsProviderTotals = DB::table('payments as p')
                                  ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                                  ->select(DB::raw('cw.payments_provider_id,
@@ -37,10 +35,10 @@ class AnalyticsGeneratorService
                $paymentsProviderTotalRecords =[];
                foreach ($paymentsProviderTotals as $paymentsProviderTotal) {
                   $paymentsProviderTotalRecords[] = ['client_id' => $params['client_id'],'month' => $params['theMonth'],'day' => $params['theDay'], 
+                                                      'dateOfTransaction' => $theDate->format('Y-m-d'),'year' => $params['theYear'],
                                                       'payments_provider_id' => $paymentsProviderTotal->payments_provider_id, 
                                                       'numberOfTransactions' => $paymentsProviderTotal->numberOfTransactions,
-                                                      'totalAmount'=>$paymentsProviderTotal->totalAmount, 'year' => $params['theYear'], 
-                                                      'dateOfTransaction' => $theDate->format('Y-m-d')];
+                                                      'totalAmount'=>$paymentsProviderTotal->totalAmount,];
                }
    
                DashboardPaymentsProviderTotals::upsert(
@@ -50,7 +48,7 @@ class AnalyticsGeneratorService
                      );
             }
          //
-         //Step 2 - Generate District Monthly transactions totals
+         //Step 2 - Generate District Daily transactions totals
             $districtTotals = DB::table('payments as p')
                                     ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                                     ->select(DB::raw('p.district,
@@ -78,7 +76,7 @@ class AnalyticsGeneratorService
                      ['numberOfTransactions','totalAmount','year','month','day']
                   );
          //
-         //Step 3 - Generate Payment Type Monthly transactions totals
+         //Step 3 - Generate Payment Type Daily transactions totals
             $menuTotals = DB::table('payments as p')
                               ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                               ->join('client_menus as cm','p.menu_id','=','cm.id')
@@ -105,7 +103,7 @@ class AnalyticsGeneratorService
                      ['numberOfTransactions','totalAmount','year','month','day']
                );
          //
-         //Step 4 - Generate Payment Status Monthly transactions totals
+         //Step 4 - Generate Payment Status Daily transactions totals
             $paymentStatusTotals = DB::table('payments as p')
                               ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                               ->select(DB::raw('p.paymentStatus,

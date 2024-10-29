@@ -10,6 +10,8 @@ use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\Gateway\Utility\Step_LogStatus;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Clients\ClientMnoService;
+use App\Jobs\PaymentsAnalyticsRegularJob;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
@@ -79,7 +81,12 @@ class PaymentReceiptService
                            ]
                         )
                         ->thenReturn();
-                        
+      
+         $theDate = Carbon::parse($paymentDTO->created_at);
+         if(!$theDate->isToday()){
+            Queue::later(Carbon::now()->addSeconds(1),new PaymentsAnalyticsRegularJob($paymentDTO),'','high');
+         }
+
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

@@ -16,15 +16,15 @@ class DailyDashboardService
          $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
          $dto = (object)$criteria;
          $theDate = Carbon::parse($dto->theDate);
-         $dateFrom = $theDate->copy()->startOfDay();
-         $dateTo = $theDate->copy()->endOfDay();
+         $dateFrom = $theDate->format('Y-m-d');
+
          //1. Payments Provider Totals for Day
             $thePayments = DB::table('dashboard_payments_provider_totals as ppt')
                               ->join('payments_providers as p','ppt.payments_provider_id','=','p.id')
                               ->select('p.shortName as paymentsProvider','p.colour',
                                           'ppt.numberOfTransactions AS totalTransactions',
                                              'ppt.totalAmount as totalRevenue')
-                              ->whereBetween('ppt.dateOfTransaction', [$dateFrom, $dateTo])
+                              ->where('ppt.dateOfTransaction', '=', $dateFrom)
                               ->where('ppt.client_id', '=', $dto->client_id)
                               ->orderByDesc('totalRevenue');
             // $theSQLQuery = $thePayments->toSql();
@@ -53,7 +53,7 @@ class DailyDashboardService
             $hourlyTrends = DB::table('dashboard_hourly_totals as dht')
                            ->select('dht.hour','dht.numberOfTransactions',
                                        'dht.totalAmount')
-                           ->whereBetween('dht.dateOfTransaction', [$dateFrom, $dateTo])
+                           ->where('dht.dateOfTransaction', '=', $dateFrom)
                            ->where('dht.client_id', '=', $dto->client_id)
                            ->orderBy('dht.hour');
             $hourlyTrends = $hourlyTrends->get();
@@ -69,7 +69,7 @@ class DailyDashboardService
                      ->select('ddt.district',
                                        'ddt.numberOfTransactions AS totalTransactions',
                                        'ddt.totalAmount as totalRevenue')
-                     ->whereBetween('ddt.dateOfTransaction', [$dateFrom, $dateTo])
+                     ->where('ddt.dateOfTransaction', '=', $dateFrom)
                      ->where('ddt.client_id', '=', $dto->client_id)
                      ->orderBy('ddt.district');
             $byDistrict = $thePayments->get();
@@ -85,7 +85,7 @@ class DailyDashboardService
                                  ->select('ptt.paymentType',
                                              'ptt.numberOfTransactions AS totalTransactions',
                                               'ptt.totalAmount as totalRevenue')
-                                 ->whereBetween('ptt.dateOfTransaction', [$dateFrom, $dateTo])
+                                 ->where('ptt.dateOfTransaction', '=', $dateFrom)
                                  ->where('ptt.client_id', '=', $dto->client_id)
                                  ->orderBy('paymentType');
             $menuTotals = $thePayments->get();
@@ -101,7 +101,7 @@ class DailyDashboardService
                                     ->select('pst.paymentStatus',
                                                 'pst.numberOfTransactions AS totalTransactions',
                                                 'pst.totalAmount as totalRevenue')
-                                    ->whereBetween('pst.dateOfTransaction', [$dateFrom, $dateTo])
+                                    ->where('pst.dateOfTransaction', '=', $dateFrom)
                                     ->where('pst.client_id', '=', $dto->client_id)
                                     ->orderBy('pst.paymentStatus');
             $thePayments = $thePayments->get();
@@ -117,17 +117,17 @@ class DailyDashboardService
                                  });        
          //
          $response = [
-            'paymentsSummary' => $paymentsSummary,
-            'hourlyLabels' => $hourlyLabels,
-            'hourlyData' =>$hourlyData,
-            'districtLabels' => $districtLabels,
-            'districtData' => $districtData,
-            'paymentStatusData' => $paymentStatusData,
-            'paymentStatusLabels' => $paymentStatusLabels,
-            'paymentStatusColours' => $paymentStatusColours,
-            'paymentTypeLabels' =>$paymentTypeLabels,
-            'paymentTypeData' =>$paymentTypeData 
-         ];
+                        'paymentsSummary' => $paymentsSummary,
+                        'hourlyLabels' => $hourlyLabels,
+                        'hourlyData' =>$hourlyData,
+                        'districtLabels' => $districtLabels,
+                        'districtData' => $districtData,
+                        'paymentStatusData' => $paymentStatusData,
+                        'paymentStatusLabels' => $paymentStatusLabels,
+                        'paymentStatusColours' => $paymentStatusColours,
+                        'paymentTypeLabels' =>$paymentTypeLabels,
+                        'paymentTypeData' =>$paymentTypeData 
+                     ];
 
          return $response;
       } catch (\Throwable $e) {

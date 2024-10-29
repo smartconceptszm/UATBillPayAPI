@@ -17,11 +17,12 @@ class ClientDashboardService
          $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
          $dto = (object)$criteria;
          $dateFrom = Carbon::parse($dto->dateFrom);
-         $dateFrom = $dateFrom->copy()->startOfDay();
+         $dateFrom = $dateFrom->format('Y-m-d');
          $dateTo = Carbon::parse($dto->dateTo);
-         $dateTo = $dateTo->copy()->endOfDay();
+         $dateTo = $dateTo->format('Y-m-d');
 
-         $endOfMonth = $dateTo->copy()->endOfMonth();
+         $endOfMonth = Carbon::parse($dto->dateTo);
+         $endOfMonth = $endOfMonth->copy()->endOfMonth();;
          $theYear = (string)$endOfMonth->year;
          $theMonth = $endOfMonth->month;
 
@@ -60,13 +61,13 @@ class ClientDashboardService
 
          //
          //2. Daily Totals over the Month
-            $thePayments = DB::table('dashboard_payment_status_totals as ddt')
-                              ->select(DB::raw('ddt.year,ddt.month,ddt.day,
-                                                SUM(ddt.numberOfTransactions) AS totalTransactions,
-                                                SUM(ddt.totalAmount) as totalRevenue'))
-                              ->where('ddt.year', '=',  $theYear)
-                              ->where('ddt.month', '=',  $theMonth)
-                              ->where('ddt.client_id', '=', $dto->client_id)
+            $thePayments = DB::table('dashboard_payment_status_totals as pst')
+                              ->select(DB::raw('pst.year,pst.month,pst.day,
+                                                SUM(pst.numberOfTransactions) AS totalTransactions,
+                                                SUM(pst.totalAmount) as totalRevenue'))
+                              ->where('pst.year', '=',  $theYear)
+                              ->where('pst.month', '=',  $theMonth)
+                              ->where('pst.client_id', '=', $dto->client_id)
                               ->groupBy('day','month','year')
                               ->orderBy('day');
             $dailyTrends = $thePayments->get();

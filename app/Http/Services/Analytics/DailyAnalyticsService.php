@@ -20,14 +20,22 @@ class DailyAnalyticsService
    {
       
       try {
+
+         $dateFrom = $theDate->copy()->startOfDay();
+         $dateFrom = $dateFrom->format('Y-m-d H:i:s');
+         $dateTo = $theDate->copy()->endOfDay();
+         $dateTo = $dateTo->format('Y-m-d H:i:s');
+
          $params = [
-            'client_id' => '',
-            'theDate' => $theDate,
-            'dateFrom' => $theDate->copy()->startOfDay(),
-            'dateTo' => $theDate->copy()->endOfDay(),
-            'theMonth' => $theDate->month,
-            'theYear' => $theDate->year,
-            'theDay' => $theDate->day];
+                     'theMonth' => $theDate->month,
+                     'theYear' => $theDate->year,
+                     'theDay' => $theDate->day,
+                     'dateFrom' => $dateFrom,
+                     'dateTo' => $dateTo,
+                     'theDate' => $theDate,
+                     'client_id' => ''
+                  ];
+
          $clients = $this->clientService->findAll(['status'=>'ACTIVE']);
          foreach ($clients as $client) {
             $params['client_id'] = $client->id;

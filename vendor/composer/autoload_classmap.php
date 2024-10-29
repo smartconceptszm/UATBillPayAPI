@@ -6956,6 +6956,7 @@ return array(
     'Tests\\Feature\\WebMainDashboardTest' => $baseDir . '/tests/Feature/WebMainDashboardTest.php',
     'Tests\\Feature\\WebModelsOfClientTest' => $baseDir . '/tests/Feature/WebModelsOfClientTest.php',
     'Tests\\Feature\\WebPaymentAnalyticsDailyTest' => $baseDir . '/tests/Feature/WebPaymentAnalyticsDailyTest.php',
+    'Tests\\Feature\\WebPaymentAnalyticsGeneratorTest' => $baseDir . '/tests/Feature/WebPaymentAnalyticsGeneratorTest.php',
     'Tests\\Feature\\WebPaymentAnalyticsRegularTest' => $baseDir . '/tests/Feature/WebPaymentAnalyticsRegularTest.php',
     'Tests\\Feature\\WebPaymentFailedBatchReviewTest' => $baseDir . '/tests/Feature/WebPaymentFailedBatchReviewTest.php',
     'Tests\\Feature\\WebPaymentFailedTest' => $baseDir . '/tests/Feature/WebPaymentFailedTest.php',

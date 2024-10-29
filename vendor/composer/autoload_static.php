@@ -7493,6 +7493,7 @@ class ComposerStaticInit4e18f2a8200f24ce56abd683a0e3a523
         'Tests\\Feature\\WebMainDashboardTest' => __DIR__ . '/../..' . '/tests/Feature/WebMainDashboardTest.php',
         'Tests\\Feature\\WebModelsOfClientTest' => __DIR__ . '/../..' . '/tests/Feature/WebModelsOfClientTest.php',
         'Tests\\Feature\\WebPaymentAnalyticsDailyTest' => __DIR__ . '/../..' . '/tests/Feature/WebPaymentAnalyticsDailyTest.php',
+        'Tests\\Feature\\WebPaymentAnalyticsGeneratorTest' => __DIR__ . '/../..' . '/tests/Feature/WebPaymentAnalyticsGeneratorTest.php',
         'Tests\\Feature\\WebPaymentAnalyticsRegularTest' => __DIR__ . '/../..' . '/tests/Feature/WebPaymentAnalyticsRegularTest.php',
         'Tests\\Feature\\WebPaymentFailedBatchReviewTest' => __DIR__ . '/../..' . '/tests/Feature/WebPaymentFailedBatchReviewTest.php',
         'Tests\\Feature\\WebPaymentFailedTest' => __DIR__ . '/../..' . '/tests/Feature/WebPaymentFailedTest.php',
