@@ -134,7 +134,7 @@ class ClientDashboardService
                                  });
 
             $paymentsTrendsLabels  = $monthsCollection->map(function ($record){
-                                             $theDate = Carbon::createFromFormat('Y-m',$record['year'].'-'.$record['month']);
+                                             $theDate = Carbon::createFromFormat('Y-m-d',$record['year'].'-'.$record['month'].'-01');
                                              return $theDate->format('M Y');
                                           });
 

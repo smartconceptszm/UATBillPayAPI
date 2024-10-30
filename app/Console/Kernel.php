@@ -21,7 +21,7 @@ class Kernel extends ConsoleKernel
         $schedule->call(
                         App::make(\App\Http\ScheduledTasks\GenerateDailyAnalytics::class)
                     )->timezone('Africa/Lusaka')->dailyAt("00:20");
-                    
+
     }
 
     /**
