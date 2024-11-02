@@ -16,7 +16,7 @@ class GenerateDailyAnalytics
 	{
 
 		try {
-			Log::info("Scheduled task (Generate Daily Analytics) invoked");
+			Log::info("(SCL) The Scheduled task: Generate Daily Analytics was invoked");
 			$this->dailyAnalyticsService->generate(Carbon::yesterday());
 		} catch (\Exception $e) {
 			Log::error("In Generate Daily Analytics, scheduled task: " . $e->getMessage());

@@ -59,12 +59,13 @@ class FaultsComplaints_Step_5
             $complaintInfo = "";
          }
          $complaintData = [
-                           'complaint_subtype_id'=>$theSubType->id,
-                           'complaintCode' => $theSubType->code,
+                           'customerAccount'=>$txDTO->customerAccount,
                            'district'=> $txDTO->customer['district'],
                            'address'=> $txDTO->customer['address'],
-                           'customerAccount'=>$txDTO->customerAccount,
+                           'complaint_subtype_id'=>$theSubType->id,
+                           'complaintCode' => $theSubType->code,
                            'mobileNumber'=>$txDTO->mobileNumber,
+                           'created_at'=>$txDTO->created_at,
                            'client_id'=>$txDTO->client_id,
                            'urlPrefix'=>$txDTO->urlPrefix,
                            'details'=>$complaintInfo,

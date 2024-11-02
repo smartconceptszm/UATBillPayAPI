@@ -184,7 +184,7 @@ class DPOPay implements IPaymentsProviderClient
    private function getChargeCardXML(array $configs,  object $dto):string
    {
 
-      $cardExpiry = Carbon::createFromFormat('Y-m',$dto->cardExpiry);
+      $cardExpiry = Carbon::createFromFormat('Y-m-d',$dto->cardExpiry.'-01');
       $cardExpiry = $cardExpiry->format('my');
 
       return '<?xml version="1.0" encoding="utf-8"?>

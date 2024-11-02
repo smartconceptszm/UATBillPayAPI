@@ -45,12 +45,13 @@ class ComplaintService
    public function create(array $data) : object|null {
       try {
          foreach ( $data as $key => $value) {
-            if($value == ''){
-                  unset($data[$key]);
+            if ($this->model->hasColumn($key) && $value != '') {
+               $this->model->$key = $value;
             }
          }
-         $data['caseNumber'] = $data['customerAccount'].'_'.date('YmdHis');
-        return $this->model->create($data);
+         $this->model->caseNumber = $data['customerAccount'].'_'.date('YmdHis');
+         $this->model->save();
+        return $this->model;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

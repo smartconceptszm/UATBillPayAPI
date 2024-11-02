@@ -14,7 +14,7 @@ class MainDashboardService
       
       try {
          $dto = (object)$criteria;
-         $theDate = Carbon::createFromFormat('Y-m',$dto->theMonth);
+         $theDate = Carbon::createFromFormat('Y-m-d',$dto->theMonth.'-01');
          $theYear = (string)$theDate->year;
          $theMonth = \strlen((string)$theDate->month)==2?$theDate->month:"0".(string)$theDate->month;
          //Get all in Date Range

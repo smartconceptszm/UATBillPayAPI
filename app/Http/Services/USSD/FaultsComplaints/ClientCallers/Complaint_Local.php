@@ -20,20 +20,17 @@ class Complaint_Local implements IComplaintClient
 	{
 		try{
 			$urlPrefix = $complaintData['urlPrefix'];
-			unset($complaintData['complaintCode']);
-			unset($complaintData['urlPrefix']);
 			$complaint = $this->complaintService->create($complaintData);
-
 			$arrSMSes = [
-					[
-						'customerAccount' => $complaintData['customerAccount'],
-						'mobileNumber' => $complaintData['mobileNumber'],
-						'client_id' => $complaintData['client_id'],
-						'urlPrefix' => $urlPrefix,
-						'message' => "Complaint(Fault) successfully submitted. Case number: ".$complaint->caseNumber,
-						'type' => 'NOTIFICATION',
-					]
-				];
+								[
+									'customerAccount' => $complaintData['customerAccount'],
+									'mobileNumber' => $complaintData['mobileNumber'],
+									'client_id' => $complaintData['client_id'],
+									'urlPrefix' => $urlPrefix,
+									'message' => "Complaint(Fault) successfully submitted. Case number: ".$complaint->caseNumber,
+									'type' => 'NOTIFICATION',
+								]
+							];
 			Queue::later(Carbon::now()->addSeconds(3), 
 								new SendSMSesJob($arrSMSes,$urlPrefix),'','low');
 

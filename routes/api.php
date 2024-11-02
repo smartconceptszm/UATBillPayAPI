@@ -114,7 +114,8 @@ Route::group(['middleware' => 'mode'], function (){
 
             Route::controller(\App\Http\Controllers\Analytics\DailyAnalyticsController::class)->group(function () {
                Route::get('/analytics/daily', 'index');
-               Route::post('/analytics/daily', 'generate');
+               Route::post('/analytics/onemonth', 'oneMonth');
+               Route::post('/analytics/oneday', 'oneDay');
             });
          //
 

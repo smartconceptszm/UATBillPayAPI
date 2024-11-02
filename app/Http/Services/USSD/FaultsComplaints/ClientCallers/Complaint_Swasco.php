@@ -21,6 +21,7 @@ class Complaint_Swasco implements IComplaintClient
                               'customerAccount' => $complaintData['customerAccount'],
                               'complaintCode' => $complaintData['complaintCode'],
                               'mobileNumber' => $complaintData['mobileNumber'],
+                              'created_at' => $complaintData['mobileNumber'],
                               'client_id' => $complaintData['client_id']
                            ]);
       } catch (\Throwable $e) {

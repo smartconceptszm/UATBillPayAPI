@@ -24,6 +24,7 @@ class ReceiptReconnectionSwasco implements IReceiptPayment
 										'mobileNumber'=> $paymentDTO->mobileNumber,
 										'referenceNumber' => $swascoTransactionRef,
 										'account' => $paymentDTO->customerAccount,
+										'created_at' => $paymentDTO->created_at,
 										'amount' => $paymentDTO->receiptAmount,
 										'client_id' => $paymentDTO->client_id,
 										'paymentType'=>"4",

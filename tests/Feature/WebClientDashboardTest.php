@@ -8,13 +8,13 @@ use Tests\TestCase;
 class WebClientDashboardTest extends TestCase
 {
 
-   public function _test_get_client_dashboard(): void
+   public function test_get_client_dashboard(): void
    {
 
       //Login
-      $username = 'chambeshidev';
+      $username = 'nkanadev';
       $password = '1    1';
-      $dateFrom = '2024-10-01';
+      $dateFrom = '2024-11-01';
       $dateTo= '2024-10-31';
       $response = $this->post('/login',['username' => $username,'password' =>$password]);
       $response = $response->json()['data'];

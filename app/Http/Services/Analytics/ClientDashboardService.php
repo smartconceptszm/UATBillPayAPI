@@ -45,6 +45,8 @@ class ClientDashboardService
                                                 return $totalRevenue + $item->totalRevenue;
                                           });
 
+            $totalRevenue = $totalRevenue?$totalRevenue:0;
+
             $paymentsSummary = $byPaymentProvider->map(function ($item) {
                                                       return [
                                                          'paymentsProvider'=>$item->paymentsProvider,
