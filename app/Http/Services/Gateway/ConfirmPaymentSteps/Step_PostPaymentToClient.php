@@ -2,10 +2,8 @@
 
 namespace App\Http\Services\Gateway\ConfirmPaymentSteps;
 
-use App\Http\Services\Clients\PaymentsProviderCredentialService;
 use App\Http\Services\External\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
-use App\Http\Services\Clients\ClientWalletService;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
 use App\Jobs\PaymentsAnalyticsRegularJob;
@@ -16,9 +14,7 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
 {
 
    public function __construct(
-      private PaymentsProviderCredentialService $paymentsProviderCredentialService,
-      private ClientWalletService $clientWalletService,
-      private IReceiptPayment $receiptPayment)
+               private IReceiptPayment $receiptPayment)
    {}
 
    protected function stepProcess(BaseDTO $paymentDTO)
@@ -32,9 +28,7 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
                $dashboardCache = (int)$billpaySettings['DASHBOARD_CACHE_'.strtoupper($paymentDTO->urlPrefix)]; 
                $clientPaymentCount = (int)Cache::get($paymentDTO->client_id.'_PaymentStatusCount');
                if(($clientPaymentCount + 1) == $dashboardCache){
-                  $clientWallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
-                  $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($clientWallet->payments_provider_id);
-                  Queue::later(Carbon::now()->addSeconds((int)$paymentsProviderCredentials[$paymentDTO->walletHandler.'_PAYSTATUS_CHECK']),new PaymentsAnalyticsRegularJob($paymentDTO),'','high');
+                  Queue::later(Carbon::now()->addSeconds(1),new PaymentsAnalyticsRegularJob($paymentDTO),'','high');
                   Cache::put($paymentDTO->client_id.'_PaymentStatusCount', 0, Carbon::now()->addMinutes((int)$billpaySettings['DASHBOARD_CACHE']));
                }else{
                   Cache::increment($paymentDTO->client_id.'_PaymentStatusCount');
