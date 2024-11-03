@@ -6,6 +6,7 @@ use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Jobs\PaymentsAnalyticsRegularJob;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
@@ -16,6 +17,10 @@ class Step_RefreshAnalytics extends EfectivoPipelineContract
    {
 
       try {
+            if($paymentDTO->urlPrefix == 'nkana'){
+               Log::info('(SCL) SMS Refresh Analytics run for Nkana'); 
+               Log::info('(SCL) Nkana paymentDTO: '.json_encode(\get_object_vars($paymentDTO))); 
+            }
             $paymentStatusArr = ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'];
             if(in_array($paymentDTO->paymentStatus,$paymentStatusArr)){
                $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
