@@ -768,6 +768,7 @@ class ComposerStaticInit4e18f2a8200f24ce56abd683a0e3a523
         'App\\Http\\Services\\Gateway\\Utility\\StepService_AddShotcutMessage' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/Utility/StepService_AddShotcutMessage.php',
         'App\\Http\\Services\\Gateway\\Utility\\StepService_CalculatePaymentAmounts' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/Utility/StepService_CalculatePaymentAmounts.php',
         'App\\Http\\Services\\Gateway\\Utility\\Step_LogStatus' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/Utility/Step_LogStatus.php',
+        'App\\Http\\Services\\Gateway\\Utility\\Step_RefreshAnalytics' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/Utility/Step_RefreshAnalytics.php',
         'App\\Http\\Services\\Gateway\\Utility\\Step_UpdateTransaction' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/Utility/Step_UpdateTransaction.php',
         'App\\Http\\Services\\MenuConfigs\\ComplaintSubTypeService' => __DIR__ . '/../..' . '/app/Http/Services/MenuConfigs/ComplaintSubTypeService.php',
         'App\\Http\\Services\\MenuConfigs\\ComplaintTypeService' => __DIR__ . '/../..' . '/app/Http/Services/MenuConfigs/ComplaintTypeService.php',

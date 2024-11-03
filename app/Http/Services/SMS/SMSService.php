@@ -112,7 +112,7 @@ class SMSService
    {
 
       $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
-      if($billpaySettings['SMS_SEND_USE_MOCK'] == "YES"){
+      if($billpaySettings['SMS_SEND_USE_MOCK_'.strtoupper($dto->urlPrefix)] == "YES"){
          $dto->handler = 'MockSMSDelivery';
          return $dto;
       }

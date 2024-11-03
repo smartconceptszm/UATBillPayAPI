@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Gateway;
 
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Gateway\CustomerService;
+use App\Http\Services\Clients\ClientService;
 use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
@@ -14,11 +15,13 @@ class CustomerController extends Controller
 
 	public function __construct(
       private ClientMenuService $clientMenuService,
+      private ClientService $clientService,
       private Request $request)
 	{
       $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
+      $client = $this->clientService->findById($request->input('client_id'));
       $billingClient = 'MockBillingClient';
-      if($billpaySettings['USE_BILLING_MOCK']!="YES"){
+      if($billpaySettings['USE_BILLING_MOCK_'.strtoupper($client->urlPrefix)]!="YES"){
          $clientMenuService = $this->clientMenuService->findById($request->input('menu_id'));
          $billingClient =  $clientMenuService->billingClient;
       }

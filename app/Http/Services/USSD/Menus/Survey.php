@@ -17,7 +17,7 @@ class Survey implements IUSSDMenu
          try {
             if (\count(\explode("*", $txDTO->customerJourney)) == 2 || \count(\explode("*", $txDTO->customerJourney)) == 5) {
                $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-               $billingClient = $billpaySettings['USE_BILLING_MOCK']=="YES"? 'MockBillingClient':$txDTO->billingClient;		
+               $billingClient = $billpaySettings['USE_BILLING_MOCK_'.strtoupper($txDTO->urlPrefix)]=="YES"? 'MockBillingClient':$txDTO->billingClient;		
                App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
             }
             if (\count(\explode("*", $txDTO->customerJourney)) == 5) {

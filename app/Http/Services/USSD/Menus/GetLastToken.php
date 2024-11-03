@@ -16,7 +16,7 @@ class GetLastToken implements IUSSDMenu
       try {     
          if (\count(\explode("*", $txDTO->customerJourney)) == 2) {
             $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-            $billingClient = $billpaySettings['USE_BILLING_MOCK']=="YES"? 'MockBillingClient':$txDTO->billingClient;		
+            $billingClient = $billpaySettings['USE_BILLING_MOCK_'.strtoupper($txDTO->urlPrefix)]=="YES"? 'MockBillingClient':$txDTO->billingClient;		
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
          }
          $stepHandler = App::make('GetLastToken_Step_'.\count(\explode("*", $txDTO->customerJourney)));

@@ -6,13 +6,10 @@ use App\Http\Services\Clients\BillingCredentialService;
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Clients\ClientMnoService;
-use App\Jobs\PaymentsAnalyticsRegularJob;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pipeline\Pipeline;
-use Illuminate\Support\Carbon;
 use App\Http\DTOs\MoMoDTO;
 use Exception;
 
@@ -86,7 +83,7 @@ class PaymentFailedService
          $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
          //Bind the PaymentsProviderClient
             $walletHandler = $paymentDTO->walletHandler;
-            if($billpaySettings['WALLET_USE_MOCK'] == 'YES'){
+            if($billpaySettings['WALLET_USE_MOCK_'.strtoupper($paymentDTO->urlPrefix)] == 'YES'){
                $walletHandler = 'MockWallet';
             }
             App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
@@ -96,7 +93,7 @@ class PaymentFailedService
             $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
             $receiptingHandler = $theMenu->receiptingHandler;
             $billingClient = $theMenu->billingClient;
-            if ($billpaySettings['USE_RECEIPTING_MOCK'] == "YES"){
+            if ($billpaySettings['USE_RECEIPTING_MOCK_'.strtoupper($paymentDTO->urlPrefix)] == "YES"){
                $receiptingHandler = "MockReceipting";
                $billingClient = "MockBillingClient";
             }
@@ -114,7 +111,8 @@ class PaymentFailedService
                         \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
                         \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
                         \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,  
-                        \App\Http\Services\Gateway\Utility\Step_LogStatus::class 
+                        \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
+                        \App\Http\Services\Gateway\Utility\Step_RefreshAnalytics::class 
                      ]
                   )
                   ->thenReturn();
@@ -122,11 +120,6 @@ class PaymentFailedService
                $logMessage = $paymentDTO->receipt;
             }else{
                $logMessage = $paymentDTO->error;
-            }
-
-            $theDate = Carbon::parse($paymentDTO->created_at);
-            if(!$theDate->isToday()){
-               Queue::later(Carbon::now()->addSeconds(1),new PaymentsAnalyticsRegularJob($paymentDTO),'','high');
             }
 
             return $logMessage;

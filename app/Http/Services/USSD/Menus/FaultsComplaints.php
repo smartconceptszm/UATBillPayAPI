@@ -19,7 +19,7 @@ class FaultsComplaints implements IUSSDMenu
             if (\count(\explode("*", $txDTO->customerJourney)) == 5) {
                //Bind selected Billing Client to the Interface
                   $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-                  $billingClient = $billpaySettings['USE_BILLING_MOCK']=="YES"? 'MockBillingClient':$txDTO->billingClient;	
+                  $billingClient = $billpaySettings['USE_BILLING_MOCK_'.strtoupper($txDTO->urlPrefix)]=="YES"? 'MockBillingClient':$txDTO->billingClient;	
                   App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
                //
                //Bind the Complaint Creator Client 

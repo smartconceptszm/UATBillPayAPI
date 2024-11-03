@@ -49,7 +49,8 @@ class ReConfirmPayment
                      ->through(
                         [
                            \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,  
-                           \App\Http\Services\Gateway\Utility\Step_LogStatus::class 
+                           \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
+                           \App\Http\Services\Gateway\Utility\Step_RefreshAnalytics::class 
                         ]
                      )
                      ->thenReturn();

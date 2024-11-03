@@ -16,12 +16,12 @@ class UpdateDetails implements IUSSDMenu
       if ($txDTO->error == '') {
          try {
             $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-            $billingClient = $billpaySettings['USE_BILLING_MOCK']=="YES"? 'MockBillingClient':$txDTO->billingClient;	
+            $billingClient = $billpaySettings['USE_BILLING_MOCK_'.strtoupper($txDTO->urlPrefix)]=="YES"? 'MockBillingClient':$txDTO->billingClient;	
             if (\count(\explode("*", $txDTO->customerJourney)) == 2) {
                App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
             }
             if (\count(\explode("*", $txDTO->customerJourney)) == 4) {
-               $clientCaller = $billpaySettings['USE_BILLING_MOCK']=="YES"? 'mock':$txDTO->urlPrefix;
+               $clientCaller = $billpaySettings['USE_BILLING_MOCK_'.strtoupper($txDTO->urlPrefix)]=="YES"? 'mock':$txDTO->urlPrefix;
                App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
                App::bind(\App\Http\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient::class,'UpdateDetails_'.$clientCaller);
             }

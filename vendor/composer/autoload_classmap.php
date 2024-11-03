@@ -231,6 +231,7 @@ return array(
     'App\\Http\\Services\\Gateway\\Utility\\StepService_AddShotcutMessage' => $baseDir . '/app/Http/Services/Gateway/Utility/StepService_AddShotcutMessage.php',
     'App\\Http\\Services\\Gateway\\Utility\\StepService_CalculatePaymentAmounts' => $baseDir . '/app/Http/Services/Gateway/Utility/StepService_CalculatePaymentAmounts.php',
     'App\\Http\\Services\\Gateway\\Utility\\Step_LogStatus' => $baseDir . '/app/Http/Services/Gateway/Utility/Step_LogStatus.php',
+    'App\\Http\\Services\\Gateway\\Utility\\Step_RefreshAnalytics' => $baseDir . '/app/Http/Services/Gateway/Utility/Step_RefreshAnalytics.php',
     'App\\Http\\Services\\Gateway\\Utility\\Step_UpdateTransaction' => $baseDir . '/app/Http/Services/Gateway/Utility/Step_UpdateTransaction.php',
     'App\\Http\\Services\\MenuConfigs\\ComplaintSubTypeService' => $baseDir . '/app/Http/Services/MenuConfigs/ComplaintSubTypeService.php',
     'App\\Http\\Services\\MenuConfigs\\ComplaintTypeService' => $baseDir . '/app/Http/Services/MenuConfigs/ComplaintTypeService.php',

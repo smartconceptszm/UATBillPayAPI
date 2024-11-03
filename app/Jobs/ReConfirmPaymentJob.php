@@ -31,7 +31,7 @@ class ReConfirmPaymentJob extends BaseJob
 
          //Bind the PaymentsProviderClient
             $paymentsProviderClient = $this->paymentDTO->walletHandler;
-            if($billpaySettings['WALLET_USE_MOCK'] == 'YES'){
+            if($billpaySettings['WALLET_USE_MOCK_'.strtoupper($this->paymentDTO->urlPrefix)] == 'YES'){
                $paymentsProviderClient = 'MockWallet';
             }
             App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$paymentsProviderClient);
@@ -41,7 +41,7 @@ class ReConfirmPaymentJob extends BaseJob
             $theMenu = $clientMenuService->findById($this->paymentDTO->menu_id);
             $receiptingHandler = $theMenu->receiptingHandler;
             $billingClient = $theMenu->billingClient;
-            if ($billpaySettings['USE_RECEIPTING_MOCK']== "YES"){
+            if ($billpaySettings['USE_RECEIPTING_MOCK_'.strtoupper($this->paymentDTO->urlPrefix)]== "YES"){
                $receiptingHandler = "MockReceipting";
                $billingClient = "MockBillingClient";
             }

@@ -4,12 +4,11 @@ namespace App\Http\Services\Payments;
 
 use App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS;
 use App\Http\Services\Gateway\Utility\Step_UpdateTransaction;
+use App\Http\Services\Gateway\Utility\Step_RefreshAnalytics; 
 use App\Http\Services\Clients\BillingCredentialService;
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\Gateway\Utility\Step_LogStatus;
 use App\Http\Services\Clients\ClientMnoService;
-use App\Jobs\PaymentsAnalyticsRegularJob;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
@@ -52,15 +51,11 @@ class PaymentWithReceiptToDeliverService
                            [
                               Step_SendReceiptViaSMS::class,
                               Step_UpdateTransaction::class,  
-                              Step_LogStatus::class 
+                              Step_LogStatus::class,
+                              Step_RefreshAnalytics::class
                            ]
                         )
                         ->thenReturn();
-         }
-
-         $theDate = Carbon::parse($paymentDTO->created_at);
-         if(!$theDate->isToday()){
-            Queue::later(Carbon::now()->addSeconds(1),new PaymentsAnalyticsRegularJob($paymentDTO),'','high');
          }
 
       } catch (\Throwable $e) {
