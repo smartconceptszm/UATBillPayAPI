@@ -22,6 +22,12 @@ class RegularAnalyticsService
       
       //Process the request
       try {
+
+         if($paymentDTO->urlPrefix == 'nkana'){
+            Log::info('(SCL) Regular Analytics Service run for Nkana'); 
+            Log::info('(SCL) Nkana paymentDTO: '.json_encode(\get_object_vars($paymentDTO))); 
+         }
+
          $theDate = Carbon::parse($paymentDTO->created_at);
          $dateFrom = $theDate->copy()->startOfDay();
          $dateFrom = $dateFrom->format('Y-m-d H:i:s');
