@@ -17,12 +17,15 @@ class Step_RefreshAnalytics extends EfectivoPipelineContract
    {
 
       try {
-            if($paymentDTO->urlPrefix == 'nkana'){
-               Log::info('(SCL) SMS Refresh Analytics run for Nkana'); 
-               Log::info('(SCL) Nkana paymentDTO: '.json_encode(\get_object_vars($paymentDTO))); 
-            }
             $paymentStatusArr = ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'];
             if(in_array($paymentDTO->paymentStatus,$paymentStatusArr)){
+
+
+               if($paymentDTO->urlPrefix == 'nkana'){
+                  Log::info('(SCL) SMS Refresh Analytics run for Nkana'); 
+                  Log::info('(SCL) Nkana paymentDTO: '.json_encode(\get_object_vars($paymentDTO))); 
+               }
+
                $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
                $dashboardCache = (int)$billpaySettings['DASHBOARD_CACHE_'.strtoupper($paymentDTO->urlPrefix)]; 
                $clientPaymentCount = (int)Cache::get($paymentDTO->client_id.'_PaymentStatusCount');
