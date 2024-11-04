@@ -19,17 +19,10 @@ class Step_RefreshAnalytics extends EfectivoPipelineContract
       try {
             $paymentStatusArr = ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'];
             if(in_array($paymentDTO->paymentStatus,$paymentStatusArr)){
-
                $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
                $dashboardCache = (int)$billpaySettings['DASHBOARD_CACHE_'.strtoupper($paymentDTO->urlPrefix)]; 
                $clientPaymentCount = (int)Cache::get($paymentDTO->client_id.'_PaymentStatusCount');
                if(($clientPaymentCount + 1) >= $dashboardCache){
-
-                  if($paymentDTO->urlPrefix == 'nkana'){
-                     Log::info('(SCL) SMS Refresh Analytics run for Nkana'); 
-                     Log::info('(SCL) Nkana paymentDTO: '.json_encode(\get_object_vars($paymentDTO))); 
-                  }
-                  
                   Queue::later(Carbon::now()->addSeconds(1),new PaymentsAnalyticsRegularJob($paymentDTO),'','high');
                   Cache::put($paymentDTO->client_id.'_PaymentStatusCount', 0, Carbon::now()->addMinutes((int)$billpaySettings['DASHBOARD_CACHE']));
                }else{

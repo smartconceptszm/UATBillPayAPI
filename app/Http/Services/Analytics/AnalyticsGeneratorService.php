@@ -18,10 +18,6 @@ class AnalyticsGeneratorService
       
       try {
 
-         if($params['client_id'] == '39d62961-7303-11ee-b8ce-fec6e52a2330'){
-            Log::info('(SCL) Analytics Generator Service run for Nkana'); 
-            Log::info('(SCL) Nkana params: '.json_encode($params)); 
-         }
          $theDate = $params['theDate'];
          //Step 1 Generate Payments Provider Daily transactions totals
             $paymentsProviderTotals = DB::table('payments as p')
@@ -170,10 +166,7 @@ class AnalyticsGeneratorService
          Log::info($e->getMessage());
          return false;
       }
-      if($params['client_id'] == '39d62961-7303-11ee-b8ce-fec6e52a2330'){
-         Log::info('(SCL) Analytics Generator Service completed for Nkana'); 
-         Log::info('(SCL) Nkana params: '.json_encode($params)); 
-      }
+
       return true;
       
    }
