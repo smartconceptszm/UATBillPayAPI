@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\CRM;
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Complaint;
 use Exception;
@@ -45,7 +46,7 @@ class ComplaintService
    public function create(array $data) : object|null {
       try {
          foreach ( $data as $key => $value) {
-            if ($this->model->hasColumn($key) && $value != '') {
+            if (Schema::hasColumn($this->model->getTable(), $key) && $value != '') {
                $this->model->$key = $value;
             }
          }
