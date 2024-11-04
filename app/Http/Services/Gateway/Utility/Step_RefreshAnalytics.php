@@ -23,7 +23,7 @@ class Step_RefreshAnalytics extends EfectivoPipelineContract
                $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
                $dashboardCache = (int)$billpaySettings['DASHBOARD_CACHE_'.strtoupper($paymentDTO->urlPrefix)]; 
                $clientPaymentCount = (int)Cache::get($paymentDTO->client_id.'_PaymentStatusCount');
-               if(($clientPaymentCount + 1) == $dashboardCache){
+               if(($clientPaymentCount + 1) >= $dashboardCache){
 
                   if($paymentDTO->urlPrefix == 'nkana'){
                      Log::info('(SCL) SMS Refresh Analytics run for Nkana'); 
