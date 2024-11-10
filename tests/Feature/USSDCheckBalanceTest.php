@@ -13,7 +13,7 @@ class USSDCheckBalanceTest extends TestCase
       //Main Menu
       $urlPrefix = 'swasco';
       $menuNo = '2';
-      $sessionId = '100005074';
+      $sessionId = '100005075';
       $customerAccount = 'liv0005559';
       $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=2022&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=1');
       $response->assertStatus(200);

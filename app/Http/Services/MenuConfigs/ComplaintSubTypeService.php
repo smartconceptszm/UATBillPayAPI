@@ -3,6 +3,7 @@
 namespace App\Http\Services\MenuConfigs;
 
 use App\Http\Services\CRM\ComplaintService;
+use Illuminate\Support\Facades\Schema;
 use App\Models\ComplaintSubType;
 use Exception;
 
@@ -47,11 +48,12 @@ class ComplaintSubTypeService
    public function create(array $data) : object|null {
       try {
          foreach ( $data as $key => $value) {
-            if($value == ''){
-                  unset($data[$key]);
+            if (Schema::hasColumn($this->model->getTable(), $key) && $value != '') {
+               $this->model->$key = $value;
             }
          }
-        return $this->model->create($data);
+         $this->model->save();
+         return $this->model;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

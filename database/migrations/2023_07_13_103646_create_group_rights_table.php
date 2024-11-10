@@ -16,6 +16,7 @@ return new class extends Migration
          $table->string("group_id",36)->notNullable();
          $table->string("right_id",36)->notNullable();
          $table->timestamps();
+         $table->unique(['group_id','right_id'],'group_right');
       });
    }
 

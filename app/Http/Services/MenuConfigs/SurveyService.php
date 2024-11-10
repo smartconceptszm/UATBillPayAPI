@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\MenuConfigs;
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Arr;
 use App\Models\Survey;
@@ -51,14 +52,15 @@ class SurveyService
          $user = Auth::user(); 
          $data['client_id'] = $user->client_id;
          foreach ( $data as $key => $value) {
-            if($value == ''){
-                  unset($data[$key]);
+            if (Schema::hasColumn($this->model->getTable(), $key) && $value != '') {
+               $this->model->$key = $value;
             }
          }
          if(Arr::exists($data, 'isActive')){
-            $data['isActive'] = 'NO';
+            $this->model->isActive = 'NO';
          }
-         return $this->model->create($data);
+         $this->model->save();
+         return $this->model;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

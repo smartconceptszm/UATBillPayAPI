@@ -24,6 +24,8 @@ return new class extends Migration
          $table->string('resolution')->nullable();
          $table->string('comments')->nullable();
          $table->timestamps();
+         $table->index(['survey_id']);
+         $table->index(['created_at']);
       });
    }
 

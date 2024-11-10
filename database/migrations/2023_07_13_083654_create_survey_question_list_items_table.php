@@ -17,8 +17,8 @@ return new class extends Migration
 			$table->string('survey_question_list_type_id',36)->notNullable();
 			$table->string('value',30)->notNullable();
 			$table->unsignedTinyInteger('order')->notNullable();
-			$table->unique(['survey_question_list_type_id', 'order'],'list_type_order');
 			$table->timestamps();
+			$table->unique(['survey_question_list_type_id', 'order'],'list_type_order');
 		});
 	
 	}

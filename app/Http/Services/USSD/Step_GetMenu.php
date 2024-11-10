@@ -4,10 +4,12 @@ namespace App\Http\Services\USSD;
 
 use App\Http\Services\USSD\StepServices\GetExistingSession;
 use App\Http\Services\USSD\StepServices\CreateNewSession;
+
+
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use Illuminate\Support\Facades\App;
+use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class Step_GetMenu extends EfectivoPipelineContract
 {
@@ -22,14 +24,19 @@ class Step_GetMenu extends EfectivoPipelineContract
 
       try {
 
-         if($txDTO->isNewRequest == '1'){
-            $txDTO = $this->newSession->handle($txDTO);
-         }else{
-            $txDTO = $this->existingSession->handle($txDTO);
-         }
+         $txDTO = App::make(Pipeline::class)
+            ->send($txDTO)
+            ->through(
+               [
+                  \App\Http\Services\USSD\Sessions\Step_NewSession::class,
+                  \App\Http\Services\USSD\Sessions\Step_ExistingSession::class
+               ]
+            )
+            ->thenReturn();
 
       } catch (\Throwable $e) {
          switch ($e->getCode()) {
+
             case 1:
                $txDTO->error = $e->getMessage();
                $txDTO->errorType = 'InvalidInput';

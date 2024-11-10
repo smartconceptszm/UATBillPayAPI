@@ -27,6 +27,11 @@ return new class extends Migration
          $table->unsignedBigInteger('user_id')->nullable();
          $table->text('error')->nullable();
          $table->timestamps();
+         $table->index('mno_id');
+         $table->index('client_id');
+         $table->index('status');
+         $table->index('created_at');
+
       });
 
    }

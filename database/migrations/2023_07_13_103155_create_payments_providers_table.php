@@ -21,6 +21,8 @@ return new class extends Migration
          $table->string('contactNo')->nullable();
          $table->string('logo')->nullable();
          $table->timestamps();
+         $table->unique('shortName','indx_shortName');
+         $table->unique('name','name_unique');
       });
    }
 

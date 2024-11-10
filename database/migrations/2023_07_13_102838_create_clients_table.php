@@ -25,6 +25,10 @@ return new class extends Migration
          $table->text('testMSISDN')->nullable();
          $table->enum('status',['ACTIVE','BLOCKED'])->default('ACTIVE')->notNullable();
          $table->timestamps();
+         $table->unique('shortName','clients_shortname_unique');
+         $table->unique('urlPrefix','clients_urlprefix_unique');
+         $table->unique('name','clients_name_unique');
+
       });
    }
 

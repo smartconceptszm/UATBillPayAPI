@@ -20,8 +20,8 @@ return new class extends Migration
 			$table->string('prompt',150)->notNullable();
 			$table->enum('type',['MOBILE','LIST','DATE','NATIONALID','ONEWORD','GENERAL'])->default('GENERAL')->notNullable();
 			$table->string('survey_question_list_type_id')->nullable();
-			$table->unique(['survey_id', 'order'],'survey_question_order');
 			$table->timestamps();
+			$table->unique(['survey_id', 'order'],'survey_question_order');
 		});
 	
 	}

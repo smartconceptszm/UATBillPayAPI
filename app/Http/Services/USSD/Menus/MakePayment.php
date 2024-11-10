@@ -20,8 +20,8 @@ class MakePayment implements IUSSDMenu
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
          }
          if($step >3){
-            $coustomerJourney = explode("*", $txDTO->customerJourney);
-            $txDTO->reference = $coustomerJourney[3];
+            $customerJourney = explode("*", $txDTO->customerJourney);
+            $txDTO->reference = $customerJourney[3];
          }
          $stepHandler = App::make('MakePayment_Step_'.$step);
          $txDTO = $stepHandler->run($txDTO);

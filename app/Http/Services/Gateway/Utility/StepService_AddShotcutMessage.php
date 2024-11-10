@@ -17,18 +17,18 @@ class StepService_AddShotcutMessage
 	{
 
 		try {
-			//Records in Cutomers Table UNIQUE on Phone_Number
+			//Records in Customers Table UNIQUE on Phone_Number
 			$customer = $this->shortcutCustomerService->findOneBy([
-							'client_id'=>$paymentDTO->client_id,
-							'mobileNumber'=>$paymentDTO->mobileNumber
-						]);
+																'client_id'=>$paymentDTO->client_id,
+																'mobileNumber'=>$paymentDTO->mobileNumber
+															]);
 			if (!$customer) {
 				//Create Record
 				$this->shortcutCustomerService->create([
-						'client_id'=> $paymentDTO->client_id,
-						'customerAccount' => $paymentDTO->customerAccount,
-						'mobileNumber' => $paymentDTO->mobileNumber,
-					]);
+																'client_id'=> $paymentDTO->client_id,
+																'customerAccount' => $paymentDTO->customerAccount,
+																'mobileNumber' => $paymentDTO->mobileNumber,
+															]);
 			}
 			//Notify customer about Shortcut
 			$arrCustomerJourney= \explode("*", $paymentDTO->customerJourney);

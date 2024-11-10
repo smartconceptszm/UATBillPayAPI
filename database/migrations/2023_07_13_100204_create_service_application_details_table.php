@@ -17,6 +17,7 @@ return new class extends Migration
          $table->string('service_type_detail_id',36)->notNullable();
          $table->string('value')->nullable();
          $table->timestamps();
+         $table->unique(['service_application_id','service_type_detail_id'],'service_application_detail');
       });
    }
 

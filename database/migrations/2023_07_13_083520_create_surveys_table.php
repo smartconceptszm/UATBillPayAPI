@@ -20,6 +20,7 @@ return new class extends Migration
          $table->string('description',150)->nullable();
          $table->enum('isActive',['YES','NO'])->default('NO')->notNullable();
          $table->timestamps();
+         $table->index(['client_id']);
       });
 
    }

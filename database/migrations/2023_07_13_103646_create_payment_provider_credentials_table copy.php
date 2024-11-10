@@ -17,8 +17,8 @@ return new class extends Migration
          $table->string("key",50)->notNullable();
          $table->string("keyValue",150)->notNullable();
          $table->string("description",150)->nullable();
-         $table->unique(['payments_provider_id','key'],'payments_provider_credential');
          $table->timestamps();
+         $table->unique(['payments_provider_id','key'],'paymentsProviderKey');
       });
    }
 

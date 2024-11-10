@@ -35,13 +35,8 @@ class ParentMenu implements IUSSDMenu
 				$prompt .= "\n";
 				$txDTO->response = $prompt;
 			} catch (\Throwable $e) {
-				if($e->getCode() == 1) {
-					$txDTO->error = $e->getMessage();
-					$txDTO->errorType = 'WalletNotActivated';
-				}else{
-					$txDTO->error = 'At handle parent menu. '.$e->getMessage();
-					$txDTO->errorType = 'SystemError';
-				}
+				$txDTO->error = 'At handle parent menu. '.$e->getMessage();
+				$txDTO->errorType = 'SystemError';
 			}  
 		} 
 		return $txDTO;

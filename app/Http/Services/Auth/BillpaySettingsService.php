@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Auth;
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use App\Models\BillpaySettings;
 use Exception;
@@ -60,14 +61,16 @@ class BillpaySettingsService
 
    public function create(array $data) : object|null {
       try {
+
          foreach ( $data as $key => $value) {
-            if($value == ''){
-                  unset($data[$key]);
+            if (Schema::hasColumn($this->model->getTable(), $key) && $value != '') {
+               $this->model->$key = $value;
             }
          }
-         $record = $this->model->create($data);
+         $this->model->save();
          $this->refreshCache();
-         return $record;
+         return $this->model;
+         
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

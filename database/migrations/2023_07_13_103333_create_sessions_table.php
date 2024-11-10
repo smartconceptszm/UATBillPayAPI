@@ -30,6 +30,10 @@ return new class extends Migration
          $table->text('error')->nullable();
          $table->timestamps();
          $table->unique(['sessionId', 'mobileNumber'],'session_mobileNumber');
+         $table->index(['customerAccount']);
+         $table->index(['mobileNumber']);
+         $table->index(['meterNumber']);
+         $table->index(['client_id']);
          $table->index(['mno_id']);
          $table->index(['menu_id']);
          $table->index(['created_at']);

@@ -17,6 +17,7 @@ return new class extends Migration
          $table->string('survey_question_id',36)->notNullable();
          $table->string('answer')->notNullable();
          $table->timestamps();
+         $table->unique(['survey_entry_id','survey_question_id'],'survey_entry_id');
       });
    }
 

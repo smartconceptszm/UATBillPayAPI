@@ -3,6 +3,7 @@
 namespace App\Http\Services\Auth;
 
 use App\Http\Services\Auth\UserGroupService;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Group;
 use Exception;
@@ -47,11 +48,12 @@ class GroupService
    public function create(array $data) : object|null {
       try {
          foreach ( $data as $key => $value) {
-            if($value == ''){
-                  unset($data[$key]);
+            if (Schema::hasColumn($this->model->getTable(), $key) && $value != '') {
+               $this->model->$key = $value;
             }
          }
-        return $this->model->create($data);
+         $this->model->save();
+         return $this->model;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

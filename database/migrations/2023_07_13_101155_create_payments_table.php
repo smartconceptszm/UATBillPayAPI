@@ -40,6 +40,10 @@ return new class extends Migration
          $table->text('error')->nullable();
          $table->string('user_id',36)->nullable();
          $table->timestamps();
+         $table->index(['client_id','paymentStatus','receiptAmount','wallet_id','created_at'],'paymentsSearch');
+         $table->index('customerAccount');
+         $table->index('mobileNumber');
+         $table->index('session_id');
       });
    }
 

@@ -24,6 +24,13 @@ return new class extends Migration
          $table->string('resolution')->nullable();
          $table->string('comments')->nullable();
          $table->timestamps();
+         $table->unique('caseNumber','service_applications_casenumber_unique');
+         $table->index('client_id');
+         $table->index('service_type_id');
+         $table->index('customerAccount');
+         $table->index('created_at');
+
+         
       });
    }
 

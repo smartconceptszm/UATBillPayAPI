@@ -31,6 +31,7 @@ return new class extends Migration
          $table->enum('requiresReference',['YES','NO'])->default('NO')->notNullable();
          $table->string('referencePrompt',150)->nullable();
          $table->timestamps();
+         $table->unique(['client_id','parent_id','order'],'menu_order');
       });
    }
 

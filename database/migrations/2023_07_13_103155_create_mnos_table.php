@@ -21,6 +21,7 @@ return new class extends Migration
          $table->string('contactNo')->nullable();
          $table->string('logo')->nullable();
          $table->timestamps();
+         $table->unique('name','mnos_name_unique');
       });
    }
 

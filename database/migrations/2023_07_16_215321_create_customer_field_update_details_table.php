@@ -17,6 +17,7 @@ return new class extends Migration
          $table->string('customer_field_id',36)->notNullable();
          $table->string('value')->nullable();
          $table->timestamps();
+         $table->unique(['customer_field_update_id','customer_field_id'],'customer_update_entry');
       });
    }
 

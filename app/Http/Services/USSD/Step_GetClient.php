@@ -6,9 +6,7 @@ use App\Http\Services\Clients\AggregatedClientService;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Sessions\SessionService;
 use App\Http\Services\Clients\ClientService; 
-use Illuminate\Support\Facades\Cache;
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class Step_GetClient extends EfectivoPipelineContract
 {
@@ -32,7 +30,7 @@ class Step_GetClient extends EfectivoPipelineContract
          $txDTO->urlPrefix = $client->urlPrefix;
          $txDTO->client_id = $client->id;
          
-         $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
+         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
 
          if($client->mode != 'UP'){
             $txDTO->error = 'System in Maintenance Mode';

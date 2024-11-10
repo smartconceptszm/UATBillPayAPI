@@ -14,9 +14,9 @@ class CheckBalance_Step_3
 {
 
    public function __construct( 
-      private CheckPaymentsEnabled $checkPaymentsEnabled,
       private BillingCredentialService $billingCredentialService,
       private PaymentHistoryService $paymentHistoryService,
+      private CheckPaymentsEnabled $checkPaymentsEnabled,
       private ClientMenuService $clientMenuService
    ){}
 

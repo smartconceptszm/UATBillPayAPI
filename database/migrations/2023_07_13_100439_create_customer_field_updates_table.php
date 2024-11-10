@@ -24,6 +24,10 @@ return new class extends Migration
          $table->string('resolution')->nullable();
          $table->string('comments')->nullable();
          $table->timestamps();
+         $table->unique('caseNumber','customer_field_updates_casenumber_unique');
+         $table->index('client_id');
+         $table->index('created_at');
+         $table->index('status');
       });
    }
 

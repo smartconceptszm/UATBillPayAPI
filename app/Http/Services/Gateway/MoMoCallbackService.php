@@ -7,6 +7,7 @@ namespace App\Http\Services\Gateway;
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\Clients\ClientMenuService;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\MoMoDTO;
 use Exception;
@@ -24,9 +25,13 @@ class MoMoCallbackService
       
       try {
          
+      
          $thePayment = $this->paymentToReviewService->findByTransactionId($callbackParams['id']);
          $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
          $paymentDTO->ppTransactionId = $callbackParams['airtel_money_id'];
+
+         Log::info("(".$paymentDTO->urlPrefix.") Airtel money callback executed on wallet: ".$paymentDTO->mobileNumber);
+
          if($callbackParams['status_code'] == 'TS'){
             //Bind Receipting Handler
                $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
@@ -71,6 +76,7 @@ class MoMoCallbackService
                            ->thenReturn();
          }
          
+   
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

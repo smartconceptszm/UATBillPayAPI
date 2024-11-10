@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Gateway;
 
 use App\Http\Services\Gateway\MoMoCallbackService;
-use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
 
 class MoMoCallbackController extends Controller

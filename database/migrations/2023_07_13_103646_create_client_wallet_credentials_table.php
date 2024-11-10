@@ -17,8 +17,8 @@ return new class extends Migration
          $table->string("key",50)->notNullable();
          $table->string("keyValue",150)->notNullable();
          $table->string("description",150)->nullable();
-         $table->unique(['wallet_id','key'],'client_wallet_key');
          $table->timestamps();
+         $table->unique(['wallet_id','key'],'WalletKey');
       });
    }
 
