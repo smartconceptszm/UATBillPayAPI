@@ -38,11 +38,11 @@ class ComplaintDashboardService
                   ];
             }
 
-            $groupedData = $theComplaints->groupBy('district');
-            $byDistrict=[];
+            $groupedData = $theComplaints->groupBy('revenuePoint');
+            $byRevenuePoint=[];
             foreach ($groupedData as $key => $value) {
-               $byDistrict[]= [
-                     "district"=>$key,
+               $byRevenuePoint[]= [
+                     "revenuePoint"=>$key,
                      "totalComplaints"=>$value->count('id')
                   ];
             }
@@ -61,7 +61,7 @@ class ComplaintDashboardService
                ->get();
          //
          $response=[
-               'byDistrict' => $byDistrict,
+               'byRevenuePoint' => $byRevenuePoint,
                'byType' => $byType,
                'dailyTrends' => $dailyTrends->toArray(),
             ];

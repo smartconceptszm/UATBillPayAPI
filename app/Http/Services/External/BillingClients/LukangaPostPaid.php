@@ -121,7 +121,7 @@ class LukangaPostPaid implements IBillingClient
                 "customerAccount" => $customerBalance['account'],
                 "name" => $theCustomer['name'],
                 "address" => $fullAddress,
-                "district" => $theCustomer['deptDesc'],
+                "revenuePoint" => $theCustomer['deptDesc'],
                 "mobileNumber" => $theCustomer['cell'],
                 "balance" => \number_format($theBalance, 2, '.', ','),
             ];

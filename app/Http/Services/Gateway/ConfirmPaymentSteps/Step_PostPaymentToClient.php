@@ -2,8 +2,9 @@
 
 namespace App\Http\Services\Gateway\ConfirmPaymentSteps;
 
-use App\Http\Services\External\ReceiptingHandlers\IReceiptPayment;
+use App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
+use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Http\DTOs\BaseDTO;
 
 class Step_PostPaymentToClient extends EfectivoPipelineContract
@@ -17,8 +18,15 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
    {
       
       try {
-         if(($paymentDTO->paymentStatus == 'PAID | NOT RECEIPTED') || ($paymentDTO->paymentStatus == 'PAID | NO TOKEN')){
-            $paymentDTO = $this->receiptPayment->handle($paymentDTO);
+         if(($paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value) || 
+                                             ($paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value)){
+            
+            if($paymentDTO->receiptNumber  != ''){
+               $paymentDTO->paymentStatus = PaymentStatusEnum::Receipted->value;
+            }else{
+               $paymentDTO = $this->receiptPayment->handle($paymentDTO);
+            }
+            
          }
       } catch (\Throwable $e) {
          $paymentDTO->error='At post payment step. '.$e->getMessage();

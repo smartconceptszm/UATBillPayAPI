@@ -64,19 +64,19 @@ class DailyDashboardService
                                              return $item->totalAmount;
                                           });
          //
-         //3. District Totals for Day
-            $thePayments = DB::table('dashboard_district_totals as ddt')
-                     ->select('ddt.district',
-                                       'ddt.numberOfTransactions AS totalTransactions',
-                                       'ddt.totalAmount as totalRevenue')
-                     ->where('ddt.dateOfTransaction', '=', $dateFrom)
-                     ->where('ddt.client_id', '=', $dto->client_id)
-                     ->orderBy('ddt.district');
-            $byDistrict = $thePayments->get();
-            $districtLabels = $byDistrict->map(function ($item) {
-                                       return $item->district;
+         //3. RevenuePoint Totals for Day
+            $thePayments = DB::table('dashboard_revenue_point_totals as drpt')
+                     ->select('drpt.revenuePoint',
+                                       'drpt.numberOfTransactions AS totalTransactions',
+                                       'drpt.totalAmount as totalRevenue')
+                     ->where('drpt.dateOfTransaction', '=', $dateFrom)
+                     ->where('drpt.client_id', '=', $dto->client_id)
+                     ->orderBy('drpt.revenuePoint');
+            $byRevenuePoint = $thePayments->get();
+            $revenuePointLabels = $byRevenuePoint->map(function ($item) {
+                                       return $item->revenuePoint;
                                     });
-            $districtData = $byDistrict->map(function ($item) {
+            $revenuePointData = $byRevenuePoint->map(function ($item) {
                                     return $item->totalRevenue;
                                  });
          //
@@ -116,17 +116,35 @@ class DailyDashboardService
                                        return $billpaySettings[$item->paymentStatus.'_COLOUR'];
                                  });        
          //
+         //6. Revenue Collector Totals for Day
+            $thePayments = DB::table('dashboard_revenue_collector_totals as drct')
+                     ->select('drct.revenueCollector',
+                                       'drct.numberOfTransactions AS totalTransactions',
+                                       'drct.totalAmount as totalRevenue')
+                     ->where('drct.dateOfTransaction', '=', $dateFrom)
+                     ->where('drct.client_id', '=', $dto->client_id)
+                     ->orderBy('drct.revenueCollector');
+            $byRevenueCollector = $thePayments->get();
+            $revenueCollectorLabels = $byRevenueCollector->map(function ($item) {
+                                       return $item->revenueCollector;
+                                    });
+            $revenueCollectorData = $byRevenueCollector->map(function ($item) {
+                                    return $item->totalRevenue;
+                                 });
+         //
          $response = [
                         'paymentsSummary' => $paymentsSummary,
                         'hourlyLabels' => $hourlyLabels,
                         'hourlyData' =>$hourlyData,
-                        'districtLabels' => $districtLabels,
-                        'districtData' => $districtData,
+                        'revenuePointLabels' => $revenuePointLabels,
+                        'revenuePointData' => $revenuePointData,
                         'paymentStatusData' => $paymentStatusData,
                         'paymentStatusLabels' => $paymentStatusLabels,
                         'paymentStatusColours' => $paymentStatusColours,
                         'paymentTypeLabels' =>$paymentTypeLabels,
-                        'paymentTypeData' =>$paymentTypeData 
+                        'paymentTypeData' =>$paymentTypeData,
+                        'revenueCollectorLabels' =>$revenueCollectorLabels,
+                        'revenueCollectorData' =>$revenueCollectorData  
                      ];
 
          return $response;

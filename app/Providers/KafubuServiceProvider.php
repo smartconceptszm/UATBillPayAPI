@@ -24,7 +24,7 @@ class KafubuServiceProvider extends ServiceProvider
          });
 
          $this->app->singleton('ReceiptPostPaidKafubu', function () {
-            return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptPostPaidKafubu::class);
+            return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidKafubu::class);
          });
 
       //

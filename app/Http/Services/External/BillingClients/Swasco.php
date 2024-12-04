@@ -11,7 +11,7 @@ use Exception;
 class Swasco implements IBillingClient
 {
 
-   private $districts =[
+   private $revenuePoints =[
       "BAT"=>"BATOKA",
       "CHI"=>"CHISEKESI",
       "CHK"=>"CHIKANKATA",
@@ -60,7 +60,7 @@ class Swasco implements IBillingClient
          if ($apiResponse->status() == 200) {
             $apiResponse = $apiResponse->json();
             $response = $apiResponse['data']['customer'];
-            $response['district']=$this->getDistrict(\substr($response['accountNumber'],0,3));
+            $response['revenuePoint']=$this->getRevenuePoint(\substr($response['accountNumber'],0,3));
          } else {
             if ($apiResponse->status() == 404 || $apiResponse->status() == 500) {
                $apiResponse = $apiResponse->json();
@@ -219,11 +219,11 @@ class Swasco implements IBillingClient
       return $response;
    }
 
-   public function getDistrict(String $code): string
+   public function getRevenuePoint(String $code): string
    {
       
-      if(\array_key_exists($code,$this->districts)){
-         return $this->districts[$code];
+      if(\array_key_exists($code,$this->revenuePoints)){
+         return $this->revenuePoints[$code];
       }else{
          return "OTHER";
       }

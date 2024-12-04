@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Gateway;
 
+use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -19,17 +20,17 @@ class ReConfirmPayment
          for ($i = 0; $i < (int)$billpaySettings['PAYMENT_REVIEW_THRESHOLD']; $i++) {
             $paymentDTO->error = '';
             $paymentDTO = App::make(Pipeline::class)
-                                 ->send($paymentDTO)
-                                 ->through(
-                                    [
-                                       \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
-                                       \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
-                                       \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
-                                       \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
-                                    ]
-                                 )
-                                 ->thenReturn();
-            if($paymentDTO->paymentStatus == "PAYMENT FAILED"){
+                           ->send($paymentDTO)
+                           ->through(
+                              [
+                                 \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
+                                 \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
+                                 \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
+                                 \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
+                              ]
+                           )
+                           ->thenReturn();
+            if($paymentDTO->paymentStatus == PaymentStatusEnum::Payment_Failed->value){
                if(!(
                      (\strpos($paymentDTO->error,'on get transaction status'))
                      || (\strpos($paymentDTO->error,'Token error'))

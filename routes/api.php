@@ -110,7 +110,8 @@ Route::group(['middleware' => 'mode'], function (){
          //Analaytics
             Route::get('maindashboard', [\App\Http\Controllers\Analytics\MainDashboardController::class, 'index']);
             Route::get('clientdashboard', [\App\Http\Controllers\Analytics\ClientDashboardController::class, 'index']);
-            Route::get('dailylydashboard', [\App\Http\Controllers\Analytics\DailyDashboardController::class, 'index']);
+            Route::get('dailydashboard', [\App\Http\Controllers\Analytics\DailyDashboardController::class, 'index']);
+            Route::get('userdashboard', [\App\Http\Controllers\Analytics\UserDashboardController::class, 'index']);
 
             Route::controller(\App\Http\Controllers\Analytics\DailyAnalyticsController::class)->group(function () {
                Route::get('/analytics/daily', 'index');
@@ -122,11 +123,12 @@ Route::group(['middleware' => 'mode'], function (){
          //Payment Transactions Related Routes
             Route::get('paymenttransactions', [\App\Http\Controllers\Payments\PaymentTransactionController::class, 'index']);
             Route::get('paymentsnotreceipted', [\App\Http\Controllers\Payments\PaymentNotReceiptedController::class, 'index']);
-            Route::post('receipts', [\App\Http\Controllers\Payments\PaymentReceiptController::class, 'store']);
-            Route::put('receipts/{id}', [\App\Http\Controllers\Payments\PaymentReceiptController::class, 'update']);
+            Route::post('receipts', [\App\Http\Controllers\Payments\ReceiptController::class, 'store']);
+            Route::post('tokens', [\App\Http\Controllers\Payments\TokenController::class, 'store']);
+            Route::put('receipts/{id}', [\App\Http\Controllers\Payments\ReceiptController::class, 'update']);
 
             Route::put('paymentreceipts/{id}', [\App\Http\Controllers\Payments\PaymentWithReceiptToDeliverController::class, 'update']);
-            Route::post('batchpaymentreceipts', [\App\Http\Controllers\Payments\BatchPaymentReceiptController::class, 'store']);
+            Route::post('batchpaymentreceipts', [\App\Http\Controllers\Payments\BatchReceiptController::class, 'store']);
 
             Route::get('failedpayments', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'index']);
             Route::put('failedpayments/{id}', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'update']);
@@ -188,6 +190,19 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //
 
+         //SMS Provider Credentials
+            Route::controller(\App\Http\Controllers\Clients\SMSProviderCredentialController::class)->group(function () {
+               Route::get('/smsprovidercredentials/findoneby', 'findOneBy');
+               Route::put('/smsprovidercredentials/{id}', 'update');
+               Route::get('/smsprovidercredentials/{id}', 'show');
+               Route::post('/smsprovidercredentials', 'store');
+               Route::get('/smsprovidercredentials', 'index');
+            });
+            Route::controller(\App\Http\Controllers\Clients\SMSProviderCredentialController::class)->group(function () {
+               Route::get('/smsprovidercredentials/{id}', 'credentialsofsmsprovider');
+            });
+         //
+
          //Client MNOs
             Route::controller(\App\Http\Controllers\Clients\ClientMnoController::class)->group(function () {
                Route::get('/clientmnos/findoneby', 'findOneBy');
@@ -196,21 +211,20 @@ Route::group(['middleware' => 'mode'], function (){
                Route::post('/clientmnos', 'store');
                Route::get('/clientmnos', 'index');
             });
-
             Route::controller(\App\Http\Controllers\Clients\MnosOfClientController::class)->group(function () {
                Route::get('/mnosofclient/{id}', 'index');
             });
          //
 
          //SMS Channel Credentials
-            Route::controller(\App\Http\Controllers\Clients\ClientMnoCredentialController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Clients\SMSChannelCredentialsController::class)->group(function () {
                Route::get('/smschannelcredentials/findoneby', 'findOneBy');
                Route::put('/smschannelcredentials/{id}', 'update');
                Route::get('/smschannelcredentials/{id}', 'show');
                Route::post('/smschannelcredentials', 'store');
                Route::get('/smschannelcredentials', 'index');
             });
-            Route::controller(\App\Http\Controllers\Clients\ClientMnoCredentialController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Clients\SMSChannelCredentialsController::class)->group(function () {
                Route::get('/credentialsofsmschannel/{id}', 'credentialsofsmschannel');
             });
          //
@@ -222,6 +236,16 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/paymentsproviders/{id}', 'show');
                Route::post('/paymentsproviders', 'store');
                Route::get('/paymentsproviders', 'index');
+            });
+         //
+
+         //SMS PROVIDERS
+            Route::controller(\App\Http\Controllers\Clients\SMSProviderController::class)->group(function () {
+               Route::get('/smsproviders/findoneby', 'findOneBy');
+               Route::put('/smsproviders/{id}', 'update');
+               Route::get('/smsproviders/{id}', 'show');
+               Route::post('/smsproviders', 'store');
+               Route::get('/smsproviders', 'index');
             });
          //
 
@@ -264,6 +288,19 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //
 
+         //Client SMS Channels
+            Route::controller(\App\Http\Controllers\Clients\ClientSMSChannelController::class)->group(function () {
+               Route::get('/clientsmschannels/findoneby', 'findOneBy');
+               Route::put('/clientsmschannels/{id}', 'update');
+               Route::get('/clientsmschannels/{id}', 'show');
+               Route::post('/clientsmschannels', 'store');
+               Route::get('/clientsmschannels', 'index');
+            });
+            Route::controller(\App\Http\Controllers\Clients\ClientSMSChannelController::class)->group(function () {
+               Route::get('/smschannelsofclient/{id}', 'smschannelsofclient');
+            });   
+         //
+
          //Aggregated Client
             Route::controller(\App\Http\Controllers\Clients\AggregatedClientController::class)->group(function () {
                Route::get('/aggregatedclients/findoneby', 'findOneBy');
@@ -290,6 +327,19 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //   
    
+         //Client Revenue Points
+            Route::controller(\App\Http\Controllers\Clients\ClientRevenuePointController::class)->group(function () {
+               Route::get('/revenuepoints/findoneby', 'findOneBy');
+               Route::put('/revenuepoints/{id}', 'update');
+               Route::get('/revenuepoints/{id}', 'show');
+               Route::post('/revenuepoints', 'store');
+               Route::get('/revenuepoints', 'index');
+            });
+            Route::controller(\App\Http\Controllers\Clients\ClientRevenuePointController::class)->group(function () {
+               Route::get('/revenuepointsofclient/{client_id}', 'revenuePointsOfClient');
+            });
+         // 
+
          //Complaint
             Route::get('complaintsdashboard', [\App\Http\Controllers\CRM\ComplaintDashboardController::class, 'index']);
             Route::get('complaintsofclient', [\App\Http\Controllers\CRM\ComplaintsOfClientController::class, 'index']);

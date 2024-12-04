@@ -27,32 +27,9 @@ class CardDTO extends PaymentDTO
    }
 
    public function toPaymentData():array{
-      
-      $cardNumber = 'VISA-****-****-'.substr($this->walletNumber,-4);
-      return [
-            'ppTransactionId'=>$this->ppTransactionId,
-            'surchargeAmount'=>$this->surchargeAmount,
-            'customerAccount'=>$this->customerAccount,
-            'paymentAmount'=>$this->paymentAmount,
-            'transactionId'=>$this->transactionId,
-            'receiptAmount'=>$this->receiptAmount,
-            'paymentStatus'=>$this->paymentStatus,
-            'receiptNumber'=>$this->receiptNumber,
-            'mobileNumber'=>$this->mobileNumber,
-            'tokenNumber'=>$this->tokenNumber,
-            'session_id'=>$this->session_id,
-            'wallet_id'=>$this->wallet_id,         
-            'reference'=>$this->reference,
-            'district'=>$this->district,
-            'walletNumber'=>$cardNumber,
-            'menu_id'=>$this->menu_id,
-            'channel'=>$this->channel,
-            'receipt'=>$this->receipt, 
-            'user_id'=>$this->user_id,
-            'status'=>$this->status,
-            'error'=>$this->error,
-            'id'=>$this->id
-         ]; 
+      $paymentData = $this->getCommonPaymentData();
+      $paymentData['walletNumber'] = 'VISA-****-****-' . substr($this->walletNumber, -4);
+      return $paymentData;
    }
 
    public function toProviderParams():object{

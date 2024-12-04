@@ -29,7 +29,7 @@ class MockWallet implements IPaymentsProviderClient
    {
 
       return (object)[
-            'status' => "PAID | NOT RECEIPTED",
+            'status' => "PAYMENT SUCCESSFUL",
             'ppTransactionId' => 'MP'.date('ymd').".".date('Hi').".".strtoupper(Str::random(6)),
             'error' => '',
          ];

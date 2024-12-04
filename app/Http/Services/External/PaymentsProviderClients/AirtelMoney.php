@@ -139,7 +139,7 @@ class AirtelMoney implements IPaymentsProviderClient
                            if (\array_key_exists('transaction', $apiResponse['data'])) {
                               if (\array_key_exists('status', $apiResponse['data']['transaction'])) {
                                  if($apiResponse['data']['transaction']['status'] == "TS"){
-                                       $response['status'] = "PAID | NOT RECEIPTED";
+                                       $response['status'] = "PAYMENT SUCCESSFUL";
                                        $response['ppTransactionId'] = $apiResponse['data']['transaction']['airtel_money_id'];
                                  }else{
                                        if (\array_key_exists('message', $apiResponse['data']['transaction'])) {
@@ -152,7 +152,7 @@ class AirtelMoney implements IPaymentsProviderClient
                               }
                            }
                      }
-                     if($response['status'] != "PAID | NOT RECEIPTED"){
+                     if($response['status'] != "PAYMENT SUCCESSFUL"){
                         throw new Exception("Error on get transaction status. Response data not available.", 2);
                      }
                   } else {

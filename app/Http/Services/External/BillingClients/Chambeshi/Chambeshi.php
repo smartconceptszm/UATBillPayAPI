@@ -7,7 +7,7 @@ use \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService
 class Chambeshi
 {
 
-   private $districts =[
+   private $revenuePoints =[
       "CHL"=>"Chilubi",
       "CHN"=>"Chinsali",
       "ISO"=>"Isoka",
@@ -52,7 +52,7 @@ class Chambeshi
      
    }
 
-   public function getDistrict(String $customerAccount): string
+   public function getRevenuePoint(String $customerAccount): string
    {
 
       try {
@@ -65,8 +65,8 @@ class Chambeshi
                $strCode .= \strtoupper($value); 
             }
          }
-         if(\array_key_exists($strCode,$this->districts)){
-            return $this->districts[$strCode];
+         if(\array_key_exists($strCode,$this->revenuePoints)){
+            return $this->revenuePoints[$strCode];
          }else{
             return "OTHER";
          }

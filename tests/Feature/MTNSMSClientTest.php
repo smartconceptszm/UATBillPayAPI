@@ -17,7 +17,7 @@ class MTNSMSClientTest extends TestCase
                   'transactionId' => 'ALIV0017400D240913T035853',
                   'channel_id' => 'd617b452-7307-11ee-b8ce-fec6e52a2330'
                ];
-      $mtnSMSClient = new \App\Http\Services\External\SMSClients\MTNSMS(new \App\Http\Services\Clients\ClientMnoCredentialsService(new \App\Models\ClientMnoCredentials([])));
+      $mtnSMSClient = new \App\Http\Services\External\SMSClients\MTNSMS(new \App\Http\Services\Clients\SMSChannelCredentialsService(new \App\Models\SMSChannelCredentials([])));
       $response = $mtnSMSClient->send($params);
       $this->assertTrue($response);
 

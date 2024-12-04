@@ -36,8 +36,8 @@ class ServiceApplications_Step_2
                $txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
             }else{
                $serviceAppQuestions = $this->serviceTypeDetails->findAll([
-                     'service_type_id'=>$theServiceType->id
-                  ]);
+                                                                           'service_type_id'=>$theServiceType->id
+                                                                        ]);
                $applicationQuestion = \array_values(\array_filter($serviceAppQuestions, function ($record){
                                                 return ($record->order == 1);
                                              }));

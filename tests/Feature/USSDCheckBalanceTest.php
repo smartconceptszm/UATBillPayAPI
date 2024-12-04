@@ -11,7 +11,7 @@ class USSDCheckBalanceTest extends TestCase
    public function _test_airtel(): void
    {
       //Main Menu
-      $urlPrefix = 'swasco';
+      $urlPrefix = 'lukanga';
       $menuNo = '2';
       $sessionId = '100005075';
       $customerAccount = 'liv0005559';

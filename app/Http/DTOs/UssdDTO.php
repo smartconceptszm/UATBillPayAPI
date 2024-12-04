@@ -13,6 +13,7 @@ class UssdDTO extends BaseDTO
 {
 
    public $payments_provider_id;
+   public $revenueCollector;
    public $clientSurcharge;
    public $subscriberInput;
    public $fireMoMoRequest;
@@ -25,6 +26,7 @@ class UssdDTO extends BaseDTO
    public $lastResponse;
    public $isNewRequest;
    public $mobileNumber;
+   public $revenuePoint;
    public $testMSISDN;
    public $menuPrompt;
    public $created_at;
@@ -37,7 +39,6 @@ class UssdDTO extends BaseDTO
    public $errorType;
    public $shortCode;
    public $customer;
-   public $district;
    public $response;
    public $mnoName;
    public $handler;
@@ -55,7 +56,7 @@ class UssdDTO extends BaseDTO
             'mobileNumber'=>$this->mobileNumber,
             'sessionId'=>$this->sessionId,
             'client_id'=>$this->client_id,
-            'district'=>$this->district,
+            'revenuePoint'=>$this->revenuePoint,
             'response'=>$this->response,
             'menu_id'=>$this->menu_id,
             'mno_id'=>$this->mno_id,

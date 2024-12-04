@@ -49,7 +49,7 @@ class ChambeshiPrePaid implements IBillingClient
                      $response['customerAccount'] = $apiResponse['result']['customer_number'];
                      $response['name'] = $apiResponse['result']['customer_name'];
                      $response['address'] = $apiResponse['result']['customer_addr'];
-                     $response['district'] = $this->chambeshi->getDistrict(\trim($apiResponse['result']['customer_number']));
+                     $response['revenuePoint'] = $this->chambeshi->getRevenuePoint(\trim($apiResponse['result']['customer_number']));
                      $response['mobileNumber'] = "";
                      $response['balance'] = \number_format((float)$apiResponse['result']['debt_remain'] + (float)$apiResponse['result']['monthly_charge'], 2, '.', ',') ;
                      break;

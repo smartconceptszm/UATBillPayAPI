@@ -13,9 +13,10 @@ class Payment extends Model
 
    protected $fillable=[
                   'session_id','wallet_id','menu_id', 'mobileNumber','walletNumber','customerAccount',
-                  'district','ppTransactionId','surchargeAmount','paymentAmount','receiptAmount',
-                  'transactionId','receiptNumber','tokenNumber','receipt','channel',
-                  'paymentStatus','status','error','user_id','reference'
+                  'revenuePoint','revenueCollector','ppTransactionId','surchargeAmount',
+                  'paymentAmount','receiptAmount','transactionId','receiptNumber',
+                  'tokenNumber','receipt','channel','paymentStatus','status',
+                  'error','user_id','reference'
                ];
 
    protected $casts = [

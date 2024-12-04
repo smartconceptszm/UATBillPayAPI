@@ -19,7 +19,7 @@ class Mazabuka implements IBillingClient
          'customerAccount' => $params['customerAccount'],
          "name" => "Mazabuka Customer",
          "address" => "MAZABUKA",
-         "district" => 'MAZABUKA',
+         "revenuePoint" => 'MAZABUKA',
          "mobileNumber" => "",
          "balance" => \number_format(100, 2, '.', ','),
       ];

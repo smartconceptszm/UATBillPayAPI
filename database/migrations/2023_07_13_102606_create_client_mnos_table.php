@@ -16,7 +16,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string("client_id",36)->notNullable();
             $table->string("mno_id",36)->notNullable();
-            $table->string('handler',50)->notNullable();
+            $table->string("smsChannel",36)->notNullable();
             $table->float('smsCharge',10,2)->default(0);
             $table->timestamps();
             $table->unique(['client_id', 'mno_id'],'ClientMNO');

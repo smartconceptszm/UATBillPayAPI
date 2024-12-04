@@ -63,24 +63,24 @@ class ClientDashboardService
 
          //
          //2. Daily Totals over the Month
-            $thePayments = DB::table('dashboard_payment_status_totals as pst')
-                              ->select(DB::raw('pst.year,pst.month,pst.day,
-                                                SUM(pst.numberOfTransactions) AS totalTransactions,
-                                                SUM(pst.totalAmount) as totalRevenue'))
-                              ->where('pst.year', '=',  $theYear)
-                              ->where('pst.month', '=',  $theMonth)
-                              ->where('pst.client_id', '=', $dto->client_id)
+            $thePayments = DB::table('dashboard_payments_provider_totals as ppt')
+                              ->select(DB::raw('ppt.year,ppt.month,ppt.day,
+                                                SUM(ppt.numberOfTransactions) AS totalTransactions,
+                                                SUM(ppt.totalAmount) as totalRevenue'))
+                              ->where('ppt.year', '=',  $theYear)
+                              ->where('ppt.month', '=',  $theMonth)
+                              ->where('ppt.client_id', '=', $dto->client_id)
                               ->groupBy('day','month','year')
                               ->orderBy('day');
             $dailyTrends = $thePayments->get();
             $dailyLabels = $dailyTrends->map(function ($item) {
-                           return $item->day;
-                     });
+                                                   return $item->day;
+                                             });
             $dailyData = $dailyTrends->map(function ($item) {
-                        return $item->totalRevenue;
-                  });
+                                                return $item->totalRevenue;
+                                          });
          //
-         //3 Monthly Totals Over one Year
+         //3. Monthly Totals Over one Year
             // $startDate  = $endOfMonth->copy()->addMonth(1);
             $startDate = $endOfMonth->copy()->addDay(1);
             $startDate = $startDate->subYear(1);
@@ -178,19 +178,19 @@ class ClientDashboardService
 
 
          //
-         //4. District Totals for Month
-            $thePayments = DB::table('dashboard_district_totals as ddt')
-                              ->select(DB::raw('ddt.district,
+         //4. RevenuePoint Totals for Month
+            $thePayments = DB::table('dashboard_revenue_point_totals as ddt')
+                              ->select(DB::raw('ddt.revenuePoint,
                                                 SUM(ddt.numberOfTransactions) AS totalTransactions,
                                                 SUM(ddt.totalAmount) as totalRevenue'))
                               ->whereBetween('ddt.dateOfTransaction', [$dateFrom, $dateTo])
                               ->where('ddt.client_id', '=', $dto->client_id)
-                              ->groupBy('ddt.district');
-            $byDistrict = $thePayments->get();
-            $districtLabels = $byDistrict->map(function ($item) {
-                                                return $item->district;
+                              ->groupBy('ddt.revenuePoint');
+            $byRevenuePoint= $thePayments->get();
+            $revenuePointLabels = $byRevenuePoint->map(function ($item) {
+                                                return $item->revenuePoint;
                                              });
-            $districtData = $byDistrict->map(function ($item) {
+            $revenuePointData = $byRevenuePoint->map(function ($item) {
                                              return $item->totalRevenue;
                                           });
          //
@@ -231,19 +231,37 @@ class ClientDashboardService
                                                 return $billpaySettings[$item->paymentStatus.'_COLOUR'];
                                           });        
          //
+         //7. RevenueCollector Totals for Month
+            $theCollectorPayments = DB::table('dashboard_revenue_collector_totals as drct')
+                  ->select(DB::raw('drct.revenueCollector,
+                                    SUM(drct.numberOfTransactions) AS totalTransactions,
+                                    SUM(drct.totalAmount) as totalRevenue'))
+                  ->whereBetween('drct.dateOfTransaction', [$dateFrom, $dateTo])
+                  ->where('drct.client_id', '=', $dto->client_id)
+                  ->groupBy('drct.revenueCollector');
+            $byRevenueCollector = $theCollectorPayments->get();
+            $revenueCollectorLabels = $byRevenueCollector->map(function ($item) {
+                                                return $item->revenueCollector;
+                                             });
+            $revenueCollectorData = $byRevenueCollector->map(function ($item) {
+                                             return $item->totalRevenue;
+                                          });
+         //
          $response = [
                         'paymentsSummary' => $paymentsSummary,
                         'dailyLabels' => $dailyLabels,
                         'dailyData' =>$dailyData,
                         'paymentsTrendsData' => $paymentsTrendsData,
                         'paymentsTrendsLabels' => $paymentsTrendsLabels,
-                        'districtLabels' => $districtLabels,
-                        'districtData' => $districtData,
+                        'revenuePointLabels' => $revenuePointLabels,
+                        'revenuePointData' => $revenuePointData,
                         'paymentStatusData' => $paymentStatusData,
                         'paymentStatusLabels' => $paymentStatusLabels,
                         'paymentStatusColours' => $paymentStatusColours,
                         'paymentTypeLabels' =>$paymentTypeLabels,
-                        'paymentTypeData' =>$paymentTypeData 
+                        'paymentTypeData' =>$paymentTypeData,
+                        'revenueCollectorLabels' =>$revenueCollectorLabels,
+                        'revenueCollectorData' =>$revenueCollectorData 
                      ];
    
          return $response;

@@ -10,8 +10,9 @@ class ClientMnoService
 {
 
    public function __construct(
-         private ClientMno $model
-   ) {}
+      private SMSChannelCredentialsService $clientMnoCredentialsService,
+      private ClientMno $model) 
+   {}
 
    public function findAll(array $criteria = null):array|null
    {
@@ -64,10 +65,12 @@ class ClientMnoService
          foreach ($data as $key => $value) {
             $record->$key = $value;
          }
+
          if($record->isDirty()){
             $record->save();
          }
          return $record;
+
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

@@ -17,7 +17,7 @@ return new class extends Migration
          $table->string('caseNumber',50)->unique()->nullable();
          $table->string('mobileNumber',12)->notNullable();
          $table->string('customerAccount',20)->notNullable();
-         $table->string('district',50)->nullable();
+         $table->string('revenuePoint',50)->nullable();
          $table->enum('status',['INITIATED','SUBMITTED','ASSIGNED','CLOSED'])->default('INITIATED')->notNullable();
          $table->string('assignedBy',36)->nullable();
          $table->string('assignedTo')->nullable();

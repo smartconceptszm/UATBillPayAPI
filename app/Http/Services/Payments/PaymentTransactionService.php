@@ -25,7 +25,6 @@ class PaymentTransactionService
                      ->join('sessions as s','p.session_id','=','s.id')
                      ->join('client_menus as m','p.menu_id','=','m.id')
                      ->select('p.*','m.prompt as paymentType','pp.shortName as paymentProvider');
-                     //->whereIn('p.paymentStatus',['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
          if($dto->dateFrom && $dto->dateTo){
             $records = $records->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo]);
          }

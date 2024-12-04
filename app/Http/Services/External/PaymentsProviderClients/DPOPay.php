@@ -96,7 +96,7 @@ class DPOPay implements IPaymentsProviderClient
             $jsonArray = json_decode(json_encode($xmlObject), true);
             if($jsonArray['Result'] == '000'){
                $response['ppTransactionId'] = $jsonArray['TransactionApproval'];
-               $response['status'] = 'PAID | NOT RECEIPTED';
+               $response['status'] = 'PAYMENT SUCCESSFUL';
             }else{
                throw new Exception("DPOPay verify token error: ".$jsonArray['ResultExplanation'].".", 1);
             }

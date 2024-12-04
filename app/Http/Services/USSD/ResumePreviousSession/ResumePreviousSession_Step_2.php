@@ -30,7 +30,7 @@ class ResumePreviousSession_Step_2
             $txDTO->customerJourney = implode('*',$arrCustomerJourney);
             $txDTO->paymentAmount = $sessionToResume->paymentAmount;
             $txDTO->paymentAmount = $sessionToResume->paymentAmount;
-            $txDTO->district = $sessionToResume->district;
+            $txDTO->revenuePoint = $sessionToResume->revenuePoint;
             $txDTO->menu_id = $sessionToResume->menu_id;
             $txDTO->status = $sessionToResume->status;
             $txDTO->subscriberInput = $subscriberInput;

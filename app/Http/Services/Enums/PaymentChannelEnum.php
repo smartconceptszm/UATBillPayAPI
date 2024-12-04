@@ -9,5 +9,5 @@ enum PaymentChannelEnum:string
     case Mobile ='MOBILEAPP';
     case Bank ='BANK';
     case WebApp ='WEBAPP';
-    case Wbsite ='WEBSITE';
+    case Website ='WEBSITE';
 }

@@ -4,6 +4,7 @@ namespace App\Http\Services\USSD\CouncilPayment;
 
 use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
 use App\Http\Services\USSD\StepServices\ValidateCRMInput;
+use App\Http\Services\USSD\StepServices\GetRevenueCollectionDetails;
 use App\Http\Services\USSD\StepServices\ConfirmToPay;
 use App\Http\Services\Clients\MnoService;
 use App\Http\Services\Enums\MNOs;
@@ -14,6 +15,7 @@ class CouncilPayment_Step_6
 {
 
 	public function __construct(
+		private GetRevenueCollectionDetails $getRevenuePointAndCollector,
 		private CheckPaymentsEnabled $checkPaymentsEnabled,
       private ValidateCRMInput $validateInput,
 		private ConfirmToPay $confirmToPay,
@@ -41,6 +43,7 @@ class CouncilPayment_Step_6
          $customerJourney = \explode("*", $txDTO->customerJourney);
 			\array_pop($customerJourney);
 			$txDTO->subscriberInput = '1';
+         $txDTO = $this->getRevenuePointAndCollector->handle($txDTO);
 			$txDTO = $this->confirmToPay->handle($txDTO);
       } catch (\Throwable $e) {
 			switch ($e->getCode()) {

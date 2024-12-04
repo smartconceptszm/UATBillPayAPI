@@ -17,7 +17,7 @@ class BillingMock implements IBillingClient
          "customerAccount" => $params['customerAccount'],
          "name" => "Mock Customer",
          "address" => "No. 1, Street 1",
-         "district" => "MOCK",
+         "revenuePoint" => "MOCK",
          "mobileNumber" => "260761028631",
          "balance" => \number_format(100, 2, '.', ','),
       ]; 
@@ -35,11 +35,26 @@ class BillingMock implements IBillingClient
       return $response;
    }
 
+   public function generateToken(Array $postParams): Array
+   {
+
+      $response=[
+         'status'=>'FAILED',
+         'tokenNumber'=>"TOKN".\rand(100000000000,999999999999),
+         'error'=>''
+      ];
+
+      return $response;
+
+   }
+
    public function postComplaint(array $postParams): String {
 
       $response="COMPLAINT:".\rand(1000,100000);
       return $response;
 
    }
+
+
 
 }

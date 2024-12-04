@@ -11,7 +11,7 @@ use Exception;
 class SwascoV2 implements IBillingClient
 {
 
-   private $districts =[
+   private $revenuePoints =[
       "BAT"=>"BATOKA",
       "CHI"=>"CHISEKESI",
       "CHK"=>"CHIKANKATA",
@@ -66,7 +66,7 @@ class SwascoV2 implements IBillingClient
                            "customerAccount" => $apiResponse['No'],
                            "name" => $apiResponse['Name'],
                            "address" => $apiResponse['Address'],
-                           "district" => $this->getDistrict(\substr($apiResponse['No'],0,3)),
+                           "revenuePoint" => $this->getRevenuePoint(\substr($apiResponse['No'],0,3)),
                            "mobileNumber" => $apiResponse['MobileNo'],
                            "balance" => \number_format((float)$apiResponse['Balance'], 2, '.', ',')
                         ];
@@ -358,21 +358,16 @@ class SwascoV2 implements IBillingClient
                         ];
       $this->swascoSoapService = new \SoapClient($wsdlPath,$soapOptions);
       $this->swascoSoapService->__setLocation($baseURL);
-      // if($providerName){
-      //    $this->cashierNo = $clientCredentials['SOAP_CASHIER_NO_'.$providerName];
-      // }
       $this->soapUserName =$clientCredentials['SOAP_USERNAME'];
       $this->soapPassword = $clientCredentials['SOAP_PASSWORD'];
-      // $this->operator = $clientCredentials['SOAP_OPERATOR'];
-      // $this->cacheTTL = $clientCredentials['BALANCE_CACHE'];
 
    }
 
-   public function getDistrict(String $code): string
+   public function getRevenuePoint(String $code): string
    {
       
-      if(\array_key_exists($code,$this->districts)){
-         return $this->districts[$code];
+      if(\array_key_exists($code,$this->revenuePoints)){
+         return $this->revenuePoints[$code];
       }else{
          return "OTHER";
       }

@@ -11,11 +11,13 @@ class MnosOfClientService
    public function findAll(string $client_id):array|null{
 
       try {
-         $records = DB::table('client_mnos as cm')
-                           ->join('clients as c','cm.client_id','=','c.id')
-                           ->join('mnos as m','cm.mno_id','=','m.id')
-                           ->select('cm.*','m.name as mno','c.name as client')
-                           ->where('cm.client_id', '=', $client_id);
+         $records = DB::table('client_mnos as cmno')
+                        ->join('clients as c','cmno.client_id','=','c.id')
+                        ->join('mnos as m','cmno.mno_id','=','m.id')
+                        ->join('client_sms_channels as csc','cmno.smsChannel','=','csc.id')
+                        ->join('sms_providers as sp','csc.sms_provider_id','=','sp.id')
+                        ->select('cmno.*','sp.id as sms_provider_id','sp.name as smsChannel','sp.handler','m.name as mno','c.name as client')
+                        ->where('cmno.client_id', '=', $client_id);                        
          $records =$records->get();
          return $records->all();
       } catch (\Throwable $e) {

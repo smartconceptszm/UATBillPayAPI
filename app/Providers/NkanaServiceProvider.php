@@ -25,7 +25,7 @@ class NkanaServiceProvider extends ServiceProvider
          });
 
          $this->app->singleton('ReceiptPostPaidNkana', function () {
-            return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptPostPaidNkana::class);
+            return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidNkana::class);
          });
       //
 
@@ -35,7 +35,7 @@ class NkanaServiceProvider extends ServiceProvider
          });
 
          $this->app->singleton('ReceiptPrePaidNkana', function () {
-            return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptPrePaidNkana::class);
+            return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPrePaidNkana::class);
          });
 
       //

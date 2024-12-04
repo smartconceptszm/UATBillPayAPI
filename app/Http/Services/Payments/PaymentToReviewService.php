@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Payments;
 
+use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -21,7 +22,9 @@ class PaymentToReviewService
          if($dto->dateFrom && $dto->dateTo){
             $records =$records->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo]);
          }
-         $records =$records->whereIn('p.paymentStatus', ['SUBMITTED','SUBMISSION FAILED','PAYMENT FAILED'])
+         $records =$records->whereIn('p.paymentStatus', [PaymentStatusEnum::Submitted->value,
+                                                                  PaymentStatusEnum::Submission_Failed->value,
+                                                                  PaymentStatusEnum::Payment_Failed->value])
                            ->where('cw.client_id', '=', $dto->client_id)
                            ->get();
          $providerErrors = $records->filter(
@@ -31,8 +34,8 @@ class PaymentToReviewService
                         || (\strpos($item->error,"on get transaction status"))
                         || (\strpos($item->error,"Token error"))
                         || (\strpos($item->error,"on collect funds"))
-                        || ($item->paymentStatus == "SUBMITTED")
-                        || ($item->paymentStatus == "SUBMISSION FAILED")
+                        || ($item->paymentStatus == PaymentStatusEnum::Submitted->value)
+                        || ($item->paymentStatus == PaymentStatusEnum::Submission_Failed->value)
                      ) 
                   {
                      return $item;

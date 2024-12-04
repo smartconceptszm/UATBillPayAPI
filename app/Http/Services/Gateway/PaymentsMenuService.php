@@ -21,8 +21,10 @@ class PaymentsMenuService
       try {
          $client = $this->clientService->findOneBy($criteria);
          return $this->clientMenuService->findAll([
-                              'client_id' =>  $client->id,
-                              'isPayment' =>  "YES"
+                              ['client_id','=', $client->id],
+                              ['handler','!=', 'ParentMenu'],
+                              ['isPayment','=', 'YES'],
+                              ['isActive','=', 'YES'],
                            ]);
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

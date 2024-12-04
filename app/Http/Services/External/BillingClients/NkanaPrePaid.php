@@ -47,7 +47,7 @@ class NkanaPrePaid implements IBillingClient
                         $response['customerAccount'] = $apiResponseArray['identificationnumber'];
                         $response['name'] = $apiResponseArray['customername'];
                         $response['address'] = "KITWE";
-                        $response['district'] = "KITWE";
+                        $response['revenuePoint'] = "KITWE";
                         $response['mobileNumber'] =  $apiResponseArray['telephonenumber'];
                         $response['balance'] =  $apiResponseArray['additionalfee'];
                         break;
@@ -147,7 +147,7 @@ class NkanaPrePaid implements IBillingClient
                   switch ($apiResponseArray['errorcode']) {
                      case "0":
                         $response['status'] = "SUCCESS";
-                        $response['tokenNumber'] = \implode('-', \str_split($apiResponseArray['tokenlist'], 4));
+                        $response['tokenNumber'] = \implode('-', \str_split(str_replace(' ', '', $apiResponseArray['tokenlist']), 4));
                         break;
                      case "3":
                         throw new Exception("Failed to calculate fee, increase amount",4);
@@ -201,9 +201,9 @@ class NkanaPrePaid implements IBillingClient
 
       } catch (\Throwable $e) {
          if ($e->getCode() == 1 || $e->getCode() == 2 || $e->getCode() == 4) {
-            throw $e;
+            $response['error'] = $e->getMessage();
          } else {
-            throw new Exception("Error executing 'Get PrePaid Account Details': " . $e->getMessage(), 3);
+            $response['error'] = " NKANA PrePaid Service error. Details: " . $e->getMessage();
          }
       }
 

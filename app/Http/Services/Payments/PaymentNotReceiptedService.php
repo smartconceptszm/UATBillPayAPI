@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Payments;
 
+use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -29,7 +30,9 @@ class PaymentNotReceiptedService
             $records =$records->whereBetween('p.created_at',[$dto->dateFrom, $dto->dateTo]);
          }
          $records = $records->where('c.id', '=', $dto->client_id)
-                              ->whereIn('p.paymentStatus', ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED'])
+                              ->whereIn('p.paymentStatus', [PaymentStatusEnum::NoToken->value,
+                                                               PaymentStatusEnum::Paid->value,
+                                                               PaymentStatusEnum::Receipted->value])
                               ->orderByDesc('p.created_at')->get();
          return $records->all();
       } catch (\Throwable $e) {

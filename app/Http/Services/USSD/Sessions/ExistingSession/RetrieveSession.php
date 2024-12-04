@@ -37,7 +37,7 @@ class RetrieveSession extends EfectivoPipelineContract
          $txDTO->customerJourney = $ussdSession->customerJourney;
          $txDTO->customerAccount = $ussdSession->customerAccount;
          $txDTO->paymentAmount = $ussdSession->paymentAmount;
-         $txDTO->district = $ussdSession->district;
+         $txDTO->revenuePoint = $ussdSession->revenuePoint;
          $txDTO->menu_id = $ussdSession->menu_id;
          $txDTO->mno_id = $ussdSession->mno_id;
          $txDTO->status = $ussdSession->status;

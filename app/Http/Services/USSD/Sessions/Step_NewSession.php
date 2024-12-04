@@ -23,6 +23,7 @@ class Step_NewSession extends EfectivoPipelineContract
                               \App\Http\Services\USSD\Sessions\NewSession\RedirectedSession::class,
                               \App\Http\Services\USSD\Sessions\NewSession\CreateSession::class,
                               \App\Http\Services\USSD\Sessions\NewSession\ResumingSession::class,
+                              \App\Http\Services\USSD\Sessions\NewSession\GetAggregatedClient::class,
                               \App\Http\Services\USSD\Sessions\NewSession\ShortcutSession::class
                            ]
                         )

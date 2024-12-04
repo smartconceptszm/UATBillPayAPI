@@ -1,26 +1,39 @@
 <?php
 
-use Tests\TestCase;
+namespace Tests\Feature;
 
-Use App\Models\Payment;
+// use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Models\DashboardPaymentStatusTotals;
+use Tests\TestCase;
 
 class UtilityTest extends TestCase
 {
 
-    public function _testFunction()
-    {   
+   /**
+    * A basic test example.
+    */
+   public function _test_a_feature(): void
+   {
 
-        $paymentHistoryService = new \App\Http\Services\Payments\PaymentHistoryService();
 
-        $payment = $paymentHistoryService->getLatestToken(
-                            [
-                            'customerAccount' => "0120210638835",
-                            'client_id' => "39d62460-7303-11ee-b8ce-fec6e52a2330"
-                            ]
-                        );
+      $currentEntries = DashboardPaymentStatusTotals::where([
+                                          ['dateOfTransaction', '=', '2024-10-24'],
+                                          ['client_id', '=', '39d6269a-7303-11ee-b8ce-fec6e52a2330'],
+                                       ])
+                                       ->pluck('id')
+                                       ->toArray();
 
-        $this->assertTrue(strlen($payment->receipt) == 24);
+      DashboardPaymentStatusTotals::destroy($currentEntries);
 
-    }
+      $currentEntries = DashboardPaymentStatusTotals::where([
+                                                               ['dateOfTransaction', '=', '2024-10-24'],
+                                                               ['client_id', '=', '39d6269a-7303-11ee-b8ce-fec6e52a2330'],
+                                                            ])
+                                                            ->pluck('id')
+                                                            ->toArray();
+
+      $this->assertTrue($currentEntries);
+
+   }
 
 }

@@ -2,10 +2,6 @@
 
 namespace App\Http\Services\USSD;
 
-use App\Http\Services\USSD\StepServices\GetExistingSession;
-use App\Http\Services\USSD\StepServices\CreateNewSession;
-
-
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
@@ -14,11 +10,6 @@ use App\Http\DTOs\BaseDTO;
 class Step_GetMenu extends EfectivoPipelineContract
 {
 
-   public function __construct(
-      private GetExistingSession $existingSession,
-      private CreateNewSession $newSession)
-   {}
-   
    protected function stepProcess(BaseDTO $txDTO)
    {
 

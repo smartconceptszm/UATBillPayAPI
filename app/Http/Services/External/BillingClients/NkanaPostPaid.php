@@ -35,7 +35,7 @@ class NkanaPostPaid implements IBillingClient
                $response['customerAccount'] = $params['customerAccount'];
                $response['name'] =   $apiResponse['Cus_Details']['0']['INITIAL']."".$apiResponse['Cus_Details']['0']['SURNAME'];
                $response['address'] = $apiResponse['Cus_Details']['0']['UA_ADRESS1'];
-               $response['district'] = "OTHER";
+               $response['revenuePoint'] = "OTHER";
                $response['mobileNumber'] =  $apiResponse['Cus_Details']['0']['CELL_TEL_NO'];
                $response['balance'] = $apiResponse['Cus_Details']['0']['Closing_Balance'];
             }else{
@@ -96,9 +96,9 @@ class NkanaPostPaid implements IBillingClient
 
       } catch (\Throwable $e) {
          if ($e->getCode() == 1) {
-               $response['error']=$e->getMessage();
+            $response['error']=$e->getMessage();
          } else{
-               $response['error']=" NKANA Billing Client server error. Details: " . $e->getMessage();
+            $response['error']=" NKANA Billing Client server error. Details: " . $e->getMessage();
          }
       }
       return $response;

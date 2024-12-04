@@ -2,7 +2,8 @@
 
 namespace App\Http\Services\External\SMSClients;
 
-use App\Http\Services\Clients\ClientMnoCredentialsService;
+use App\Http\Services\Clients\SMSChannelCredentialsService;
+use App\Http\Services\Clients\SMSProviderCredentialService;
 use App\Http\Services\External\SMSClients\ISMSClient;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -11,7 +12,8 @@ class MTNSMS implements ISMSClient
 {
 
     public function __construct(
-        private ClientMnoCredentialsService $channelCredentialsService)
+        private SMSChannelCredentialsService $channelCredentialsService,
+        private SMSProviderCredentialService $smsProviderCredentialService)
      {}
 
 
@@ -27,10 +29,10 @@ class MTNSMS implements ISMSClient
         $response = false;
         try {
             
-            $credentials = $this->channelCredentialsService->getSMSCredentials($smsParams['channel_id']);
+            $credentials = $this->getConfigs($smsParams);
             $apiToken = $this->getToken($credentials);
-            if(!$smsParams['transaction_id']){
-                $smsParams['transaction_id'] = $smsParams['mobileNumber']."_".\date('ymdHis');
+            if(!$smsParams['transactionId']){
+                $smsParams['transactionId'] = $smsParams['mobileNumber']."_".\date('ymdHis');
             }
             $fullURL = $credentials['SMS_GATEWAY_URL'].'/sms/send';
             $messageBody = [
@@ -39,7 +41,7 @@ class MTNSMS implements ISMSClient
                                 "recipient"=>$smsParams['mobileNumber'],
                                 "sender" => $credentials['SMS_SENDER_ID'],
                                 "category" => $credentials['SMS_CATEGORY'],     // OTP|TXN|Promo
-                                "clientTxnId" => $smsParams['transaction_id'],
+                                "clientTxnId" => $smsParams['transactionId'],
                                 "country" => "ZM"
                         ];
                         
@@ -104,5 +106,22 @@ class MTNSMS implements ISMSClient
        }
        return $response;
     }
+
+    private function getConfigs(array $smsParams):array
+    {
+ 
+        $channelCredentials = $this->channelCredentialsService->getSMSChannelCredentials($smsParams['channel_id']);
+        $smsProviderCredentials = $this->smsProviderCredentialService->getSMSProviderCredentials($smsParams['sms_provider_id']);
+        $configs['SMS_GATEWAY_Timeout'] = $smsProviderCredentials['MTN_SMS_GATEWAY_Timeout'];
+        $configs['SMS_GATEWAY_URL'] = $smsProviderCredentials['MTN_SMS_GATEWAY_URL'];
+        $configs['SMS_CATEGORY'] = $smsProviderCredentials['MTN_SMS_CATEGORY'];
+
+        $configs['SMS_SENDER_ID'] = $channelCredentials['MTN_SMS_SENDER_ID'];
+        $configs['PASSWORD'] = $channelCredentials['MTN_PASSWORD'];
+        $configs['EMAIL'] = $channelCredentials['MTN_EMAIL'];
+        return $configs;
+ 
+    }
+
 
 }

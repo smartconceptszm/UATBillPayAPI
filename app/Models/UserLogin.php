@@ -62,13 +62,15 @@ class UserLogin implements UserProvider
 					->where([['u.id', '=', $identifier]])
 					->where([['u.status', '=', 'ACTIVE']])
 					->select('u.id','u.client_id','u.username','u.password','u.fullnames','u.email',
-									'r.name as name','c.name as client','c.urlPrefix','c.ussdAggregator')
+									'u.revenueCollectorCode','r.name as name','c.name as client',
+									'c.urlPrefix','c.ussdAggregator')
 					->get();
 
 		if(\count($query)>0){
 			$arrRights = $query->map(function($row){return $row->name;});
 			$user = new User;
 			$query = $query->first();
+			$user->revenueCollectorCode = $query->revenueCollectorCode;
 			$user->client_id = $query->client_id;
 			$user->urlPrefix = $query->urlPrefix;
 			$user->fullnames = $query->fullnames;
@@ -130,7 +132,8 @@ class UserLogin implements UserProvider
 						->where([['u.username', '=', $credentials['username']]])
 						->where([['u.status', '=', 'ACTIVE']])
 						->select('u.id','u.client_id','u.username','u.password','u.fullnames','u.email',
-											'r.name as name','c.name as client','c.urlPrefix','c.ussdAggregator');
+										'u.revenueCollectorCode','r.name as name','c.name as client',
+										'c.urlPrefix','c.ussdAggregator');
 
 		// $queryString = $query->toSql();
 		$query = $query->get();
@@ -138,6 +141,7 @@ class UserLogin implements UserProvider
 			$arrRights = $query->map(function($row){return $row->name;});
 			$user = new User;
 			$query = $query->first();
+			$user->revenueCollectorCode = $query->revenueCollectorCode;
 			$user->client_id = $query->client_id;
 			$user->urlPrefix = $query->urlPrefix;
 			$user->fullnames = $query->fullnames;

@@ -9,6 +9,7 @@ use App\Http\Services\Clients\BillingCredentialService;
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\Gateway\Utility\Step_LogStatus;
 use App\Http\Services\Clients\ClientMnoService;
+use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
@@ -31,13 +32,14 @@ class PaymentWithReceiptToDeliverService
          
          $thePayment = $this->paymentToReviewService->findById($id);
          $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
-         if ($paymentDTO->paymentStatus == 'RECEIPTED' || $paymentDTO->paymentStatus == 'RECEIPT DELIVERED' ) {  
+         if ($paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value || 
+                                 $paymentDTO->paymentStatus == PaymentStatusEnum::Receipt_Delivered->value ) {  
             if(!$paymentDTO->receipt){
-               $paymentDTO->receipt = "Payment successful\n" .
-                                       "Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n";
+               $paymentDTO->receipt = "Payment successful\n";
                $paymentDTO->receiptNumber ? $paymentDTO->receipt.= "Rcpt No.: ".$paymentDTO->receiptNumber."\n":"";
-               $paymentDTO->tokenNumber ? $paymentDTO->receipt.= "Token: ".$paymentDTO->tokenNumber."\n":"";
+               $paymentDTO->receipt.= "Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n";
                $paymentDTO->customerAccount ? $paymentDTO->receipt.= "Acc: " . $paymentDTO->customerAccount . "\n":"";
+               $paymentDTO->tokenNumber ? $paymentDTO->receipt.= "Token: ".$paymentDTO->tokenNumber."\n":"";
                $paymentDTO->receipt.="Date: " . Carbon::parse($paymentDTO->updated_at)->format('d-M-Y'). "\n";
             }
 

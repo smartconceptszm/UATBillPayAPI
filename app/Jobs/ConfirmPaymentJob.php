@@ -42,7 +42,7 @@ class ConfirmPaymentJob extends BaseJob
             $billingClient = "MockBillingClient";
          }
          App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
-         App::bind(\App\Http\Services\External\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
+         App::bind(\App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
       //
 
       //SMS handling

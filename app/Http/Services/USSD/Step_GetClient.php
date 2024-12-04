@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\USSD;
 
-use App\Http\Services\Clients\AggregatedClientService; 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Sessions\SessionService;
 use App\Http\Services\Clients\ClientService; 
@@ -12,7 +11,6 @@ class Step_GetClient extends EfectivoPipelineContract
 {
     
    public function __construct(
-      private AggregatedClientService $aggregatedClientService,
       private SessionService $sessionService,
       private ClientService $clientService)
    {}

@@ -33,15 +33,15 @@ class SwascoServiceProvider extends ServiceProvider
 		
 		//Receipting Handlers
 			$this->app->singleton('ReceiptPostPaidSwasco', function () {
-				return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptPostPaidSwasco::class);
+				return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidSwasco::class);
 			});
 
 			$this->app->singleton('ReceiptReconnectionSwasco', function () {
-				return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptReconnectionSwasco::class);
+				return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptReconnectionSwasco::class);
 			});
 			
 			$this->app->singleton('ReceiptVacuumTankerSwasco', function () {
-				return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptVacuumTankerSwasco::class);
+				return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptVacuumTankerSwasco::class);
 			});
 		//
 

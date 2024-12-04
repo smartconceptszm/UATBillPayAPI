@@ -103,7 +103,9 @@ class AppServiceProvider extends ServiceProvider
          $this->app->singleton('PayPostPaidBill', function () {
             return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\PayPostPaidBill::class);
          });
-
+         $this->app->singleton('MakeCouncilPayment', function () {
+            return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\MakeCouncilPayment::class);
+         });
       //
 
       //Resume Payment Session
@@ -223,7 +225,7 @@ class AppServiceProvider extends ServiceProvider
 
       //Billing Clients
          $this->app->singleton('ReceiptingMock', function () {
-            return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptPaymentMock::class);
+            return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPaymentMock::class);
          });
 			$this->app->singleton('MockBillingClient', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\BillingMock::class);
@@ -232,7 +234,7 @@ class AppServiceProvider extends ServiceProvider
 
 		//Receipting Payment
 			$this->app->singleton('MockReceipting', function () {
-            return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptPaymentMock::class);
+            return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPaymentMock::class);
 			});            
 		//
 
@@ -294,7 +296,7 @@ class AppServiceProvider extends ServiceProvider
          $this->app->singleton('MTNSMS', function () {
                return $this->app->make(\App\Http\Services\External\SMSClients\MTNSMS::class);
             });
-			$this->app->singleton('ZamtelSMS', function () {
+			$this->app->singleton('ZAMTELSMS', function () {
                return $this->app->make(\App\Http\Services\External\SMSClients\ZamtelSMS::class);
 				});
       //

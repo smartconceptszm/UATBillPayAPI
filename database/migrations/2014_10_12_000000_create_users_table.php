@@ -21,6 +21,7 @@ return new class extends Migration
          $table->string('password',250)->notNullable();
          $table->string('fullnames',100)->notNullable();
          $table->string('mobileNumber',12)->unique()->notNullable();
+         $table->string('revenueCollectorCode',15)->unique();
          $table->string('email',100)->unique()->notNullable();
          $table->enum('status',['REGISTERED','ACTIVE','BLOCKED'])->default('REGISTERED')->notNullable();
          $table->timestamps();

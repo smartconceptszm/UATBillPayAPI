@@ -3,9 +3,12 @@
 namespace App\Http\Services\Analytics;
 
 use App\Models\DashboardPaymentsProviderTotals;
+use App\Models\DashboardRevenueCollectorTotals;
+use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Models\DashboardPaymentStatusTotals;
+use App\Models\DashboardRevenuePointTotals;
 use App\Models\DashboardPaymentTypeTotals;
-use App\Models\DashboardDistrictTotals;
+use App\Http\Services\Auth\UserService;
 use App\Models\DashboardHourlyTotals;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -13,11 +16,14 @@ use Illuminate\Support\Facades\DB;
 class AnalyticsGeneratorService
 {
 
+   public function __construct(
+		private UserService $userService)
+	{}
+
    public function generate(array $params)
    {
       
       try {
-
          $theDate = $params['theDate'];
          //Step 1 Generate Payments Provider Daily transactions totals
             $paymentsProviderTotals = DB::table('payments as p')
@@ -28,8 +34,9 @@ class AnalyticsGeneratorService
                                  ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
                                  ->where('cw.client_id', '=', $params['client_id'])
                                  ->whereIn('p.paymentStatus', 
-                                          ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
-                                 ->groupBy('payments_provider_id')
+                                          [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
+                                             PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                                 ->groupBy('cw.payments_provider_id')
                                  ->get();
             if($paymentsProviderTotals->isNotEmpty()){
                $paymentsProviderTotalRecords =[];
@@ -48,31 +55,32 @@ class AnalyticsGeneratorService
                      );
             }
          //
-         //Step 2 - Generate District Daily transactions totals
-            $districtTotals = DB::table('payments as p')
+         //Step 2 - Generate RevenuePoint Daily transactions totals
+            $revenuePointTotals = DB::table('payments as p')
                                     ->join('client_wallets as cw','p.wallet_id','=','cw.id')
-                                    ->select(DB::raw('p.district,
+                                    ->select(DB::raw('p.revenuePoint,
                                                          COUNT(p.id) AS numberOfTransactions,
                                                             SUM(p.receiptAmount) as totalAmount'))
                                     ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
                                     ->where('cw.client_id', '=', $params['client_id'])
                                     ->whereIn('p.paymentStatus', 
-                                             ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
-                                    ->groupBy('p.district')
+                                             [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
+                                                PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                                    ->groupBy('p.revenuePoint')
                                     ->get();
 
-            $districtTotalRecords =[];
-            foreach ($districtTotals as $districtTotal) {
-               $district = $districtTotal->district? $districtTotal->district:"OTHER";
-               $districtTotalRecords[] = ['client_id' => $params['client_id'],'month' => $params['theMonth'],'day' => $params['theDay'], 
-                                             'numberOfTransactions' => $districtTotal->numberOfTransactions,
-                                             'totalAmount'=>$districtTotal->totalAmount, 'year' => $params['theYear'], 
-                                             'dateOfTransaction' => $theDate->format('Y-m-d'),'district' => $district];
+            $revenuePointTotalRecords =[];
+            foreach ($revenuePointTotals as $revenuePointTotal) {
+               $revenuePoint = $revenuePointTotal->revenuePoint? $revenuePointTotal->revenuePoint:"OTHER";
+               $revenuePointTotalRecords[] = ['client_id' => $params['client_id'],'month' => $params['theMonth'],'day' => $params['theDay'], 
+                                             'numberOfTransactions' => $revenuePointTotal->numberOfTransactions,
+                                             'totalAmount'=>$revenuePointTotal->totalAmount, 'year' => $params['theYear'], 
+                                             'dateOfTransaction' => $theDate->format('Y-m-d'),'revenuePoint' => $revenuePoint];
             }
 
-            DashboardDistrictTotals::upsert(
-                     $districtTotalRecords,
-                     ['client_id','district', 'dateOfTransaction'],
+            DashboardRevenuePointTotals::upsert(
+                     $revenuePointTotalRecords,
+                     ['client_id','revenuePoint', 'dateOfTransaction'],
                      ['numberOfTransactions','totalAmount','year','month','day']
                   );
          //
@@ -80,14 +88,15 @@ class AnalyticsGeneratorService
             $menuTotals = DB::table('payments as p')
                               ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                               ->join('client_menus as cm','p.menu_id','=','cm.id')
-                              ->select(DB::raw('cm.prompt as paymentType,
+                              ->select(DB::raw('cm.prompt AS paymentType,
                                                    COUNT(p.id) AS numberOfTransactions,
                                                       SUM(p.receiptAmount) as totalAmount'))
                               ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
                               ->where('cw.client_id', '=', $params['client_id'])
                               ->whereIn('p.paymentStatus', 
-                                       ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
-                              ->groupBy('paymentType')
+                                       [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
+                                          PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                              ->groupBy('cm.prompt')
                               ->get();
             $menuTotalRecords =[];
             foreach ($menuTotals as  $menuTotal) {
@@ -103,7 +112,7 @@ class AnalyticsGeneratorService
                      ['numberOfTransactions','totalAmount','year','month','day']
                );
          //
-         //Step 4 - Generate Payment Status Daily transactions totals
+         //Step 4 - Generate Payment Status Daily transactions totals         
             $paymentStatusTotals = DB::table('payments as p')
                               ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                               ->select(DB::raw('p.paymentStatus,
@@ -112,8 +121,9 @@ class AnalyticsGeneratorService
                               ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
                               ->where('cw.client_id', '=', $params['client_id'])
                               ->whereIn('p.paymentStatus', 
-                                       ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
-                              ->groupBy('paymentStatus')
+                                       [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
+                                          PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                              ->groupBy('p.paymentStatus')
                               ->get();
             $paymentStatusRecords =[];
             foreach ($paymentStatusTotals as $paymentStatusTotal) {
@@ -124,6 +134,15 @@ class AnalyticsGeneratorService
                                           'totalAmount'=>$paymentStatusTotal->totalAmount];
             }
 
+            $currentEntries = DashboardPaymentStatusTotals::where([
+                                                   ['dateOfTransaction', '=', $theDate->format('Y-m-d')],
+                                                   ['client_id', '=', $params['client_id']],
+                                                ])
+                                                ->pluck('id')
+                                                ->toArray();
+
+            DashboardPaymentStatusTotals::destroy($currentEntries);
+            
             DashboardPaymentStatusTotals::upsert(
                      $paymentStatusRecords,
                      ['client_id','paymentStatus', 'dateOfTransaction'],
@@ -139,7 +158,8 @@ class AnalyticsGeneratorService
                            ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
                            ->where('cw.client_id', '=', $params['client_id'])
                            ->whereIn('p.paymentStatus', 
-                                    ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'])
+                                    [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
+                                       PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
                            ->groupBy('hour')
                            ->orderBy('hour')
                            ->get();
@@ -161,7 +181,42 @@ class AnalyticsGeneratorService
                   );
             }
          //
+         //Step 6 - Generate Revenue Collector Daily transactions totals
+            $revenueCollectorTotals = DB::table('payments as p')
+                     ->join('client_wallets as cw','p.wallet_id','=','cw.id')
+                     ->select(DB::raw('p.revenueCollector,
+                                          COUNT(p.id) AS numberOfTransactions,
+                                             SUM(p.receiptAmount) as totalAmount'))
+                     ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
+                     ->where('cw.client_id', '=', $params['client_id'])
+                     ->whereIn('p.paymentStatus', 
+                              [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
+                                 PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                     ->groupBy('p.revenueCollector')
+                     ->get();
 
+            $revenueCollectorTotalRecords =[];
+            foreach ($revenueCollectorTotals as $revenueCollectorTotal) {
+               $revenueCollector = "(POS) Point of Sale";
+               if($revenueCollectorTotal->revenueCollector){
+                  $theUser = $this->userService->findOneBy(['client_id'=>$params['client_id'],
+                                                            'revenueCollectorCode'=>$revenueCollectorTotal->revenueCollector]);
+                  if($theUser){
+                     $revenueCollector = "(".$theUser->revenueCollectorCode.") ".$theUser->fullnames;
+                  }
+               }
+               $revenueCollectorTotalRecords[] = ['client_id' => $params['client_id'],'month' => $params['theMonth'],'day' => $params['theDay'], 
+                                 'numberOfTransactions' => $revenueCollectorTotal->numberOfTransactions,
+                                 'totalAmount'=>$revenueCollectorTotal->totalAmount, 'year' => $params['theYear'], 
+                                 'dateOfTransaction' => $theDate->format('Y-m-d'),'revenueCollector' => $revenueCollector];
+            }
+
+            DashboardRevenueCollectorTotals::upsert(
+                        $revenueCollectorTotalRecords,
+                        ['client_id','revenueCollector', 'dateOfTransaction'],
+                        ['numberOfTransactions','totalAmount','year','month','day']
+                     );
+         //
       } catch (\Throwable $e) {
          Log::info($e->getMessage());
          return false;

@@ -24,30 +24,9 @@ class MoMoDTO extends PaymentDTO
 
    public function toPaymentData():array{
       
-      return [
-            'ppTransactionId'=>$this->ppTransactionId,
-            'surchargeAmount'=>$this->surchargeAmount,
-            'customerAccount'=>$this->customerAccount,
-            'paymentAmount'=>$this->paymentAmount,
-            'transactionId'=>$this->transactionId,
-            'receiptAmount'=>$this->receiptAmount,
-            'paymentStatus'=>$this->paymentStatus,
-            'receiptNumber'=>$this->receiptNumber,
-            'mobileNumber'=>$this->mobileNumber,
-            'walletNumber'=>$this->walletNumber,
-            'tokenNumber'=>$this->tokenNumber,
-            'session_id'=>$this->session_id,
-            'wallet_id'=>$this->wallet_id,      
-            'reference'=>$this->reference,
-            'district'=>$this->district,
-            'menu_id'=>$this->menu_id,
-            'channel'=>$this->channel,
-            'receipt'=>$this->receipt, 
-            'user_id'=>$this->user_id,
-            'status'=>$this->status,
-            'error'=>$this->error,
-            'id'=>$this->id
-         ]; 
+      $paymentData = $this->getCommonPaymentData();
+      $paymentData['walletNumber'] = $this->walletNumber;
+      return $paymentData;
    }
 
    public function toProviderParams():object{

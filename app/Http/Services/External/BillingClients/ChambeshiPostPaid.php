@@ -26,12 +26,12 @@ class ChambeshiPostPaid implements IBillingClient
 
          $customer = $this->chambeshiAccountService->findOneBy(['AR_Acc'=>$params['customerAccount']]);
          if($customer){
-            $district = $this->chambeshi->getDistrict(\trim($customer->AR_Acc));
+            $revenuePoint = $this->chambeshi->getRevenuePoint(\trim($customer->AR_Acc));
             $response = [
                            "customerAccount" => \trim($customer->AR_Acc),
                            "name"=>\trim($customer->AR_Acc_Name),
                            "address"=>"",
-                           "district" => $district,
+                           "revenuePoint" => $revenuePoint,
                            "mobileNumber"=>"",
                            "balance"=> \number_format((float)$customer->AR_Acc_Bal, 2, '.', ',')
                         ];

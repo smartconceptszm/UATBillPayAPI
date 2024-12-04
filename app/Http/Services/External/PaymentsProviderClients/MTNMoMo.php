@@ -94,7 +94,7 @@ class MTNMoMo implements IPaymentsProviderClient
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
                $apiResponse=$apiResponse->json();
                if($apiResponse['status']==='SUCCESSFUL'){
-                  $response['status'] = "PAID | NOT RECEIPTED";
+                  $response['status'] = "PAYMENT SUCCESSFUL";
                   $response['ppTransactionId']=$apiResponse['financialTransactionId'];
                }else{
                   switch ($apiResponse['status']) {

@@ -2,6 +2,8 @@
 
 namespace App\Http\Services\SMS;
 
+use App\Http\Services\Clients\ClientSMSChannelService;
+use App\Http\Services\Clients\SMSProviderService;
 use App\Http\Services\Clients\ClientMnoService;
 use App\Http\Services\Clients\ClientService;
 use App\Http\Services\Clients\MnoService;
@@ -20,6 +22,8 @@ class SMSService
    private $channelChargeable = false;
 
    public function __construct(
+      private ClientSMSChannelService $clientSMSChannelService,
+      private SMSProviderService $smsProviderService,
       private ClientMnoService $clientMnoService, 
       private MessageService $messageService,
       private ClientService $clientService,
@@ -126,8 +130,11 @@ class SMSService
                                                    'mno_id' => $dto->mno_id
                                                 ]);
       $dto->smsCharge = (float)$clientMNOs->smsCharge;
-      $dto->handler = $clientMNOs->handler;
-      $dto->channel_id = $clientMNOs->id;
+      $clientSMSChannel = $this->clientSMSChannelService->findById($clientMNOs->smsChannel);
+      $smsProvider = $this->smsProviderService->findById($clientSMSChannel->sms_provider_id);
+      $dto->channel_id = $clientMNOs->smsChannel;
+      $dto->sms_provider_id = $smsProvider->id;
+      $dto->handler = $smsProvider->handler;
       //Check if Client has enough balance
          if(($dto->smsPayMode == 'POST-PAID') || ($dto->balance > $dto->smsCharge)){
             $dto->balance = $dto->balance - $dto->smsCharge;

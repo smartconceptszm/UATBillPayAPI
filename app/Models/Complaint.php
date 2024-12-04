@@ -12,7 +12,7 @@ class Complaint extends Model
 
    protected $fillable=[
       'complaint_subtype_id','client_id','session_id','caseNumber', 'mobileNumber','customerAccount',
-      'district','address','details', 'status','assignedBy','assignedTo','resolution','comments'
+      'revenuePoint','address','details', 'status','assignedBy','assignedTo','resolution','comments'
    ];
    
    protected $casts = [

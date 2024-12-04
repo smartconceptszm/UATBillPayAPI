@@ -13,7 +13,7 @@ class CustomerFieldUpdate extends Model
 
    protected $fillable=[
       'client_id','caseNumber', 'mobileNumber','customerAccount',
-      'district','address','details', 'status','assignedBy','assignedTo',
+      'revenuePoint','address','details', 'status','assignedBy','assignedTo',
       'resolution','comments'
    ];
 

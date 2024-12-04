@@ -63,7 +63,7 @@ class Survey_Step_5
                                     'client_id' => $txDTO->client_id,
                                     'urlPrefix' => $txDTO->urlPrefix,
                                     'survey_id' => $surveyId,
-                                    'district' => $txDTO->district,
+                                    'revenuePoint' => $txDTO->revenuePoint,
                                     'responses' => $surveyResponses
                                  ];
             $txDTO->response = $this->surveyCreateClient->create($surveyResponseData);

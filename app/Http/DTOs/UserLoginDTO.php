@@ -7,7 +7,7 @@ use JsonSerializable;
 
 class UserLoginDTO extends BaseDTO implements JsonSerializable
 {
-   
+   public $revenueCollectorCode;
    public $expires_in;
    public $token_type;
    public $urlPrefix;
@@ -26,16 +26,17 @@ class UserLoginDTO extends BaseDTO implements JsonSerializable
 
    public function jsonSerialize():mixed{
       return [
-         'expires_in' => $this->expires_in,
-         'token_type' => $this->token_type,
+         'id' => $this->id,
+         'username' => $this->username,
+         'fullnames' => $this->fullnames,
          'urlPrefix' => $this->urlPrefix,
          'client_id' => $this->client_id,
-         'fullnames' => $this->fullnames,
-         'username' => $this->username,
          'client' => $this->client,
-         'rights' => $this->rights,
+         'expires_in' => $this->expires_in,
+         'token_type' => $this->token_type,
          'token' => $this->token,
-         'id' => $this->id
+         'revenueCollectorCode' => $this->revenueCollectorCode,
+         'rights' => $this->rights,
       ];
    }
 

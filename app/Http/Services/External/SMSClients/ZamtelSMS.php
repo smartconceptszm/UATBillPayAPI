@@ -2,7 +2,8 @@
 
 namespace App\Http\Services\External\SMSClients;
 
-use App\Http\Services\Clients\ClientMnoCredentialsService;
+use App\Http\Services\Clients\SMSChannelCredentialsService;
+use App\Http\Services\Clients\SMSProviderCredentialService;
 use App\Http\Services\External\SMSClients\ISMSClient;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -11,7 +12,8 @@ class ZamtelSMS implements ISMSClient
 {
 
     public function __construct(
-        private ClientMnoCredentialsService $channelCredentialsService)
+        private SMSChannelCredentialsService $channelCredentialsService,
+        private SMSProviderCredentialService $smsProviderCredentialService)
      {}
 
 
@@ -27,7 +29,7 @@ class ZamtelSMS implements ISMSClient
         $response = false;
         try {
             
-            $credentials = $this->channelCredentialsService->getSMSCredentials($smsParams['channel_id']);
+            $credentials = $this->getConfigs($smsParams);
 
             if(\substr($smsParams['mobileNumber'],0,1)== "+"){
                 $smsParams['mobileNumber'] = \substr($smsParams['mobileNumber'],1,\strlen($smsParams['mobileNumber'])-1);
@@ -50,6 +52,21 @@ class ZamtelSMS implements ISMSClient
         }
         return $response;
 
+    }
+
+    private function getConfigs(array $smsParams):array
+    {
+ 
+        $channelCredentials = $this->channelCredentialsService->getSMSChannelCredentials($smsParams['channel_id']);
+        $smsProviderCredentials = $this->smsProviderCredentialService->getSMSProviderCredentials($smsParams['sms_provider_id']);
+
+        $configs['SMS_GATEWAY_Timeout'] = $smsProviderCredentials['ZAMTEL_SMS_GATEWAY_Timeout'];
+        $configs['SMS_GATEWAY_URL'] = $smsProviderCredentials['ZAMTEL_SMS_GATEWAY_URL'];
+        
+        $configs['SMS_GATEWAY_APIKEY'] = $channelCredentials['ZAMTEL_SMS_GATEWAY_APIKEY'];
+        $configs['SMS_SENDER_ID'] = $channelCredentials['ZAMTEL_SMS_SENDER_ID'];
+        return $configs;
+ 
     }
 
 }

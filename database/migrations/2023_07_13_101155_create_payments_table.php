@@ -19,7 +19,8 @@ return new class extends Migration
          $table->string('mobileNumber',12)->notNullable();
          $table->string('walletNumber',50)->nullable();
          $table->string('customerAccount',50)->nullable();
-         $table->string('district',50)->nullable();
+         $table->string('revenuePoint',150)->nullable();
+         $table->string('revenueCollector',150)->nullable();
          $table->string('reference',160)->nullable();
          $table->string('ppTransactionId',30)->nullable();            
          $table->float('surchargeAmount',10,2)->default(0);

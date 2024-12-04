@@ -23,7 +23,6 @@ class ShortcutSession extends EfectivoPipelineContract
 
          if(($txDTO->isNewRequest == '1') && (\count(\explode("*", $txDTO->subscriberInput))>1)){
             
-
             $arrInputs = explode("*", $txDTO->subscriberInput);
             $selectedMenu = $this->clientMenuService->findOneBy([
                                                                   'order' => $arrInputs[1],
@@ -37,7 +36,6 @@ class ShortcutSession extends EfectivoPipelineContract
             }else{
                $txDTO->subscriberInput = $txDTO->shortCode;
             }
-            return $txDTO;
 
          }
 

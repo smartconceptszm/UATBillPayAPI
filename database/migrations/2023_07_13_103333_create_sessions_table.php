@@ -22,7 +22,7 @@ return new class extends Migration
          $table->string('mobileNumber',12)->notNullable();
          $table->string('walletNumber',12)->nullable();
          $table->string('customerAccount',50)->nullable();
-         $table->string('district',50)->nullable();
+         $table->string('revenuePoint',50)->nullable();
          $table->float('paymentAmount',10,2)->default(0);
          $table->string('response',160)->nullable();
          $table->enum('status',['INITIATED','COMPLETED','FAILED','SUCCESSFUL','REVIEWED',

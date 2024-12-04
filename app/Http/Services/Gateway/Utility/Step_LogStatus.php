@@ -3,6 +3,7 @@
 namespace App\Http\Services\Gateway\Utility;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
+use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -17,8 +18,8 @@ class Step_LogStatus extends EfectivoPipelineContract
 			if($paymentDTO->error==''){
 				$logMessage='('.$paymentDTO->urlPrefix.'). Payment Status: '.
 									$paymentDTO->paymentStatus." (via ".$paymentDTO->walletHandler.").";
-				if($paymentDTO->paymentStatus=='RECEIPTED' || 
-					$paymentDTO->paymentStatus=='RECEIPT DELIVERED')
+				if($paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value || 
+					               $paymentDTO->paymentStatus == PaymentStatusEnum::Receipt_Delivered->value)
 				{
 					$logMessage.=' DETAILS: '.$paymentDTO->receipt;
 				}

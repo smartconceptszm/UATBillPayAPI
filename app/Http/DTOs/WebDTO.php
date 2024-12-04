@@ -11,8 +11,9 @@ namespace App\Http\DTOs;
 
 class WebDTO extends BaseDTO
 {
-   
+
    public $payments_provider_id;
+   public $revenueCollector;
    public $customerAccount;
    public $subscriberInput;
    public $clientSurcharge;
@@ -21,6 +22,7 @@ class WebDTO extends BaseDTO
    public $billingClient;
    public $mobileNumber;
    public $walletNumber;
+   public $revenuePoint;
    public $testMSISDN;
    public $created_at;
    public $updated_at;

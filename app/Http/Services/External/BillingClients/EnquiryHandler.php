@@ -25,7 +25,7 @@ class EnquiryHandler
 																		'paymentAmount'=>$txDTO->paymentAmount,
 																		'client_id'=>$txDTO->client_id
 																	]);
-			$txDTO->district = $txDTO->customer['district'];
+			$txDTO->revenuePoint = $txDTO->customer['revenuePoint'];
 			Cache::forget($txDTO->urlPrefix.'_BillingErrorCount');
 		} catch (\Throwable $e) {
 			if($e->getCode()==1 || $e->getCode()==4){

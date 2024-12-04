@@ -3,6 +3,7 @@
 namespace App\Http\Services\Gateway;
 
 use App\Http\Services\Clients\PaymentsProviderCredentialService;
+use App\Http\Services\USSD\StepServices\GetRevenueCollectionDetails;
 use App\Http\Services\Clients\ClientWalletService;
 use App\Http\Services\USSD\StepServices\GetAmount;
 use App\Http\Services\Sessions\SessionService;
@@ -22,6 +23,7 @@ class PaymentRequestService
 
    public function __construct(
       private PaymentsProviderCredentialService $paymentsProviderCredentialService,
+      private GetRevenueCollectionDetails $getRevenuePointAndCollector,
       private ClientWalletService $ClientWalletService,
       private SessionService $sessionService,
       private ClientService $clientService,
@@ -41,6 +43,7 @@ class PaymentRequestService
          $webDTO = $this->getMNO($webDTO);
          $webDTO = $this->getClientWallet($webDTO);
          $webDTO = $this->getClient($webDTO);
+         $webDTO = $this->getRevenuePointAndCollector->handle($webDTO);
          //Get payment amount
          $webDTO->subscriberInput = $webDTO->paymentAmount;
          [$webDTO->subscriberInput,$webDTO->paymentAmount] = $this->getAmount->handle($webDTO);

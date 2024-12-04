@@ -63,7 +63,7 @@ class ZamtelKwacha implements IPaymentsProviderClient
 
             if($jsonArray['ResultCode'] == '0'){
                $mainResponse['ppTransactionId'] = $jsonArray['TransactionResult']['TransactionID'];
-               $mainResponse['status'] = 'PAID | NOT RECEIPTED';
+               $mainResponse['status'] = 'PAYMENT SUCCESSFUL';
             }else{
                $errorMessage='';
                switch ($jsonArray['ResultCode']) {
@@ -97,7 +97,6 @@ class ZamtelKwacha implements IPaymentsProviderClient
 
    }
 
-
    public function comfirmZamtel(object $dto) : object {
       try {
 
@@ -118,7 +117,7 @@ class ZamtelKwacha implements IPaymentsProviderClient
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
             $apiResponse=$apiResponse->json();
             if($apiResponse['code']==='200'){
-               $response['status'] = "PAID | NOT RECEIPTED";
+               $response['status'] = "PAYMENT SUCCESSFUL";
                $response['ppTransactionId']=$apiResponse['ORDERID'];
             }else{
                throw new Exception("Error on get transaction status. ZamKwacha response: ". $apiResponse['ORDERSTATE'].".", 2);

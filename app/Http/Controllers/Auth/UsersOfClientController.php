@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Services\Auth\UsersOfClientService;
+use App\Http\Services\Auth\UserService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -10,7 +10,7 @@ class UsersOfClientController extends Controller
 {
 
 	public function __construct(
-		private UsersOfClientService $theService)
+		private UserService $theService)
 	{}
                   
    /**

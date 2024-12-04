@@ -3,10 +3,10 @@
 namespace App\Http\Services\Gateway\Utility;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
+use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Jobs\PaymentsAnalyticsRegularJob;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
@@ -17,7 +17,8 @@ class Step_RefreshAnalytics extends EfectivoPipelineContract
    {
 
       try {
-            $paymentStatusArr = ['PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED','RECEIPT DELIVERED'];
+            $paymentStatusArr = [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
+                                    PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value];
             if(in_array($paymentDTO->paymentStatus,$paymentStatusArr)){
                $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
                $dashboardCache = (int)$billpaySettings['DASHBOARD_CACHE_'.strtoupper($paymentDTO->urlPrefix)]; 

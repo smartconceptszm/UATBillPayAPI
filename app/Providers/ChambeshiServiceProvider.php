@@ -51,7 +51,7 @@ class ChambeshiServiceProvider extends ServiceProvider
          });
 
          $this->app->singleton('ReceiptPostPaidChambeshi', function () {
-            return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptPostPaidChambeshi::class);
+            return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidChambeshi::class);
          });
       //
 
@@ -61,7 +61,7 @@ class ChambeshiServiceProvider extends ServiceProvider
          });
 
          $this->app->singleton('ReceiptPrePaidChambeshi', function () {
-            return $this->app->make(\App\Http\Services\External\ReceiptingHandlers\ReceiptPrePaidChambeshi::class);
+            return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPrePaidChambeshi::class);
          });
 
       //

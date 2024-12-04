@@ -46,7 +46,7 @@ class UpdateDetails_Step_4
                                        'customerAccount' => $txDTO->customerAccount,
                                        'mobileNumber' => $txDTO->mobileNumber,
                                        'client_id' => $txDTO->client_id,
-                                       'district' => $txDTO->customer['district'],
+                                       'revenuePoint' => $txDTO->customer['revenuePoint'],
                                        'updates' => $capturedUpdates
                                  ];
             $caseNumber = $this->updateDetailsClient->create($customerFieldUpdate);

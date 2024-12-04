@@ -60,7 +60,7 @@ class FaultsComplaints_Step_5
          }
          $complaintData = [
                            'customerAccount'=>$txDTO->customerAccount,
-                           'district'=> $txDTO->customer['district'],
+                           'revenuePoint'=> $txDTO->customer['revenuePoint'],
                            'address'=> $txDTO->customer['address'],
                            'complaint_subtype_id'=>$theSubType->id,
                            'complaintCode' => $theSubType->code,

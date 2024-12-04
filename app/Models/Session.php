@@ -13,7 +13,7 @@ class Session extends Model
 
    protected $fillable=[
       'client_id','mno_id', 'menu_id','sessionId','customerJourney','mobileNumber','walletNumber',
-      'customerAccount','district','paymentAmount','response','status','error'
+      'customerAccount','revenuePoint','paymentAmount','response','status','error'
    ];
 
    protected $casts = [

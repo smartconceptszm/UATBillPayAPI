@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Services\Auth\GroupsOfClientService;
+use App\Http\Services\Auth\GroupService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -10,7 +10,7 @@ class GroupsOfClientController extends Controller
 {
 
 	public function __construct(
-		private GroupsOfClientService $theService)
+		private GroupService $theService)
 	{}
                   
 	/**
@@ -20,7 +20,7 @@ class GroupsOfClientController extends Controller
 		*/
 	public function index(Request  $request,$id){
 
-		try {
+		try{
 			$this->response['data'] = $this->theService->findAll(['client_id' => $id]);
 		} catch (\Throwable $e) {
 			$this->response['status']['code'] = 500;

@@ -12,7 +12,7 @@ class SurveyEntry extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'survey_id','caseNumber','mobileNumber','customerAccount','district', 
+      'survey_id','caseNumber','mobileNumber','customerAccount','revenuePoint', 
       'status','assignedBy','assignedTo','resolution','comments'
    ];
 

@@ -8,6 +8,7 @@ class SMSTxDTO extends BaseDTO
 {
    
    public $customerAccount;
+   public $sms_provider_id;
    public $transaction_id;
    public $mobileNumber;
    public $smsPayMode;
@@ -65,10 +66,12 @@ class SMSTxDTO extends BaseDTO
 
    public function toSMSClientData():array{
       return [
+            'sms_provider_id'=>$this->sms_provider_id,
             'transactionId'=>$this->transaction_id,
             'mobileNumber'=>$this->mobileNumber,
             'channel_id'=>$this->channel_id,
             'wallet_id'=>$this->wallet_id,
+            'mno_id'=>$this->mno_id,
             'message'=>$this->message
          ];
    }

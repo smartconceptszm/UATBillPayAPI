@@ -6,6 +6,7 @@ use App\Http\Services\Clients\BillingCredentialService;
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Clients\ClientMnoService;
+use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -42,7 +43,7 @@ class PaymentFailedService
             $records =$records->whereBetween('p.created_at',[$dto->dateFrom, $dto->dateTo]);
          }
          $allFailed = $records->where('c.id', '=', $dto->client_id)
-                              ->whereIn('p.paymentStatus', ['SUBMISSION FAILED','PAYMENT FAILED'])
+                              ->whereIn('p.paymentStatus', [PaymentStatusEnum::Submission_Failed->value,PaymentStatusEnum::Payment_Failed->value])
                               ->orderByDesc('p.created_at');
          $allFailed = $records->get();
          $providerErrors = $allFailed->filter(
@@ -51,7 +52,7 @@ class PaymentFailedService
                         ((\strpos($item->error,"Status Code")) || (\strpos($item->error,"on get transaction status")) 
                            || (\strpos($item->error,"Token error")) || (\strpos($item->error,"on collect funds")))
                         ||
-                        ($item->paymentStatus == "SUBMISSION FAILED")   
+                        ($item->paymentStatus == PaymentStatusEnum::Payment_Failed->value)   
                      ) 
                   {
                         return $item;
@@ -98,7 +99,7 @@ class PaymentFailedService
                $billingClient = "MockBillingClient";
             }
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
-            App::bind(\App\Http\Services\External\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
+            App::bind(\App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
          //
          
          //Reconfirm/Review the payment Transaction
