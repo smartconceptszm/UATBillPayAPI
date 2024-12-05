@@ -75,3 +75,26 @@
 //5. SWASCO Billing client v2
 1. Add billing credentials for SOAP API 
 
+
+
+
+
+SELECT `customerAccount`, `paymentAmount`, COUNT(*) as duplicate_count
+FROM `payments`
+WHERE  `created_at` > '2024-12-04 19:00:00' AND `paymentStatus` IN ('PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED', 'RECEIPT DELIVERED') AND `ppTransactionId` = ''
+GROUP BY `customerAccount`, `paymentAmount`
+HAVING COUNT(*) > 1
+ORDER BY COUNT(*) DESC;
+
+
+
+
+SELECT  `c`.`shortName` AS 'Client',`pps`.`name` AS 'MobileMoneyProvider', `p`.`mobileNumber`, 
+`p`.`customerAccount`, `paymentAmount`,`p`.`paymentStatus`,`p`.`receiptNumber`, `p`.`receipt`, `cm`.`prompt` AS 'PaymentType', `p`.`ppTransactionId`, `p`.`transactionId`, `p`.`created_at`
+FROM `payments` AS `p`
+	JOIN `client_wallets` AS `cw` ON `cw`.`id` = `p`.`wallet_id`
+    JOIN `clients` AS `c` ON `c`.`id` = `cw`.`client_id`
+    JOIN `payments_providers` AS `pps` ON `pps`.`id` = `cw`.`payments_provider_id`
+    JOIN `client_menus` AS `cm` ON `cm`.`id` = `p`.`menu_id`
+WHERE  `p`.`created_at` > '2024-12-04 19:00:00' AND `p`.`paymentStatus` IN ('PAID | NO TOKEN','PAID | NOT RECEIPTED','RECEIPTED', 'RECEIPT DELIVERED') AND (`p`.`ppTransactionId` = '' || `p`.`ppTransactionId` IS NULL)
+ORDER BY `c`.`shortName`, `p`.`customerAccount`;

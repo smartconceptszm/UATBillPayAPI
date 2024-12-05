@@ -25,8 +25,8 @@ class Kernel extends ConsoleKernel
         //             )->timezone('Africa/Lusaka')->dailyAt('00:20'); // $billpaySettings['DAILY_ANALYTICS_TIME']
 
         $schedule->job(
-                        new \App\Jobs\GenerateCloseOfDayAnalyticsJob
-                    )->timezone('Africa/Lusaka')->dailyAt('00:20'); // $billpaySettings['DAILY_ANALYTICS_TIME']
+                        new \App\Jobs\GenerateCloseOfDayAnalyticsJob('','','high')
+                    )->timezone('Africa/Lusaka')->dailyAt('08:28'); // $billpaySettings['DAILY_ANALYTICS_TIME']
 
 
     }
