@@ -17,14 +17,11 @@ class Step_CheckReceiptStatus extends EfectivoPipelineContract
 	{
 		
 		try {
-			if($paymentDTO->error == ''){
-				$payment = $this->paymentService->findById($paymentDTO->id);
-				if($payment->receiptNumber != ''){
-					$paymentDTO->paymentStatus = $payment->paymentStatus;
-					$paymentDTO->receiptNumber = $payment->receiptNumber;
-					$paymentDTO->receipt = $payment->receipt;
-					$paymentDTO->error = 'Payment already receipted - Session: '.$paymentDTO->sessionId; 
-				}
+			$payment = $this->paymentService->findById($paymentDTO->id);
+			if($payment->receiptNumber != ''){
+				$paymentDTO->paymentStatus = $payment->paymentStatus;
+				$paymentDTO->receiptNumber = $payment->receiptNumber;
+				$paymentDTO->receipt = $payment->receipt;
 			}
 		} catch (\Throwable $e) {
 			$paymentDTO->error='At check payment receipt status. '.$e->getMessage();

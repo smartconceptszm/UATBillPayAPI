@@ -21,7 +21,12 @@ class Step_GetPaymentStatus extends EfectivoPipelineContract
    {
       
       try {
-         if($paymentDTO->error == '' && $paymentDTO->ppTransactionId==''){
+         
+         if( 
+               ($paymentDTO->paymentStatus == PaymentStatusEnum::Submitted->value)||
+               ($paymentDTO->paymentStatus == PaymentStatusEnum::Payment_Failed->value) ||
+               ($paymentDTO->paymentStatus == PaymentStatusEnum::Submission_Failed->value)
+         ){
             $paymentsProviderResponse = $this->paymentsProviderClient->confirmPayment($paymentDTO->toProviderParams());
             if($paymentsProviderResponse->status == "PAYMENT SUCCESSFUL"){
                $paymentDTO->ppTransactionId = $paymentsProviderResponse->ppTransactionId;

@@ -13,12 +13,12 @@ class MTNSMSClientTest extends TestCase
 
       //Main Menu
       $params = [
-                  'sms_provider_id' => 'eb085dae-b149-11ef-8659-d15a4f7f8c43',
-                  'mobileNumber' =>'260972702707',
+                  'sms_provider_id' => 'd8023388-b264-11ef-9d8d-0a3595084709',
+                  'mobileNumber' =>'260977787659',
                   'mno_id' => '0fd6f092-730b-11ee-b8ce-fec6e52a2330',
                   'message' => 'Test Message from API',
                   'transactionId' => 'ALIV0017400D240913T035853',
-                  'channel_id' => '9da458cb-d5e0-4ddf-a46e-208888a2fe59'
+                  'channel_id' => '9da56ee2-b902-4c72-8aed-b2254ac85177'
                ];
       $mtnSMSClient =  new \App\Http\Services\External\SMSClients\MTNSMS(
           new \App\Http\Services\Clients\SMSChannelCredentialsService(new \App\Models\SMSChannelCredentials()),

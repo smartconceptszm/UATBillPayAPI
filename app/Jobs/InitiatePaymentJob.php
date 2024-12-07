@@ -18,13 +18,6 @@ class InitiatePaymentJob extends BaseJob
    public function handle(InitiatePayment $initiatePayment)
    {
       
-      //Bind the PaymentsProvider Client Wallet 
-      $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-      $walletHandler = $this->paymentDTO->walletHandler;
-      if( $billpaySettings['WALLET_USE_MOCK_'.strtoupper($this->paymentDTO->urlPrefix)] == 'YES'){
-         $walletHandler = 'MockWallet';
-      }
-      App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
       //Handle the Job
       return $initiatePayment->handle($this->paymentDTO);
 

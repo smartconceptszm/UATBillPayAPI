@@ -19,6 +19,7 @@ class Step_RefreshAnalytics extends EfectivoPipelineContract
       try {
             $paymentStatusArr = [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                     PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value];
+                                    
             if(in_array($paymentDTO->paymentStatus,$paymentStatusArr)){
                $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
                $dashboardCache = (int)$billpaySettings['DASHBOARD_CACHE_'.strtoupper($paymentDTO->urlPrefix)]; 

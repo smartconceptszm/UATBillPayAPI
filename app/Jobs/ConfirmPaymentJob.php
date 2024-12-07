@@ -3,10 +3,8 @@
 namespace App\Jobs;
 
 use App\Http\Services\Clients\PaymentsProviderCredentialService;
-use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Gateway\ConfirmPayment;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 use App\Jobs\BaseJob;
@@ -20,30 +18,8 @@ class ConfirmPaymentJob extends BaseJob
    {}
 
    public function handle(PaymentsProviderCredentialService $paymentsProviderCredentialService,
-                              ConfirmPayment $confirmPayment, ClientMenuService $clientMenuService)
+                                                                        ConfirmPayment $confirmPayment)
    {
-
-      $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
-
-      //Bind the PaymentsProvider Client Wallet 
-         $walletHandler = $this->paymentDTO->walletHandler;
-         if($billpaySettings['WALLET_USE_MOCK_'.strtoupper($this->paymentDTO->urlPrefix)] == 'YES'){
-            $walletHandler = 'MockWallet';
-         }
-         App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
-      //
-      
-      //Bind Receipting Handler
-         $theMenu = $clientMenuService->findById($this->paymentDTO->menu_id);
-         $receiptingHandler = $theMenu->receiptingHandler;
-         $billingClient = $theMenu->billingClient;
-         if ($billpaySettings['USE_RECEIPTING_MOCK_'.strtoupper($this->paymentDTO->urlPrefix)] == "YES"){
-            $receiptingHandler = "MockReceipting";
-            $billingClient = "MockBillingClient";
-         }
-         App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
-         App::bind(\App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment::class,$receiptingHandler);
-      //
 
       //SMS handling
          $paymentsProviderCredentials = $paymentsProviderCredentialService->getProviderCredentials($this->paymentDTO->payments_provider_id);

@@ -82,15 +82,17 @@ class MTNSMS implements ISMSClient
        try {
           $fullURL = $configs['SMS_GATEWAY_URL'].'/accounts/users/login';
           $apiResponse = Http::timeout($configs['SMS_GATEWAY_Timeout'])
-                               ->withHeaders([
+                                ->withHeaders([
                                     'Content-Type' => 'application/json',
                                     'Accept' => '*/*'
                                   ])
                                 ->withOptions([
                                             'verify' => false,  // Disable SSL verification
                                     ])
-                               ->post($fullURL,['email'=>$configs['EMAIL'],'password'=>$configs['PASSWORD']]);
-          
+                                ->post($fullURL,
+                                        ['email'=>$configs['EMAIL'],'password'=>$configs['PASSWORD']]
+                                    );
+
           if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
                 $apiResponse=$apiResponse->json();
                 $response['access_token']=$apiResponse['access_token'];

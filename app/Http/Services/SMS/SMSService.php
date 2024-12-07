@@ -35,6 +35,9 @@ class SMSService
    {
 
       try {
+         if($dto->message == ''){
+            throw new Exception("Message is empty!",1);
+         }
          //Get client details
          $dto = $this->getClient($dto);
          //Get MNO details
@@ -57,6 +60,7 @@ class SMSService
          }
          $dto->status = $sms->status;
          $dto->id = $sms->id;
+
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $dto->error = $e->getMessage();

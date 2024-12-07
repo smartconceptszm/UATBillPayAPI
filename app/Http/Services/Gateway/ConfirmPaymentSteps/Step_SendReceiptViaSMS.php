@@ -20,11 +20,16 @@ class Step_SendReceiptViaSMS extends EfectivoPipelineContract
    {
 
       try {
-         if($paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value ||
-                                          PaymentStatusEnum::Receipt_Delivered->value ||
-                                           $paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value){
+         if(   ($paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value) ||
+               ($paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value) ||
+               ($paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value) ||
+               ($paymentDTO->paymentStatus ==  PaymentStatusEnum::Receipt_Delivered->value)
+         ){
 
-            if($paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value){
+            if(
+               ($paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value)||
+               ($paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value)
+            ){
                $paymentDTO->receipt = "Payment received BUT NOT receipted." . "\n" . 
                               \strtoupper($paymentDTO->urlPrefix).
                               " will receipt the payment shortly, please wait.\n";

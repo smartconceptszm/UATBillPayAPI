@@ -13,6 +13,15 @@ class InitiatePayment
    public function handle(BaseDTO $paymentDTO)
    {
       
+      //Bind the PaymentsProvider Client Wallet 
+         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+         $walletHandler = $paymentDTO->walletHandler;
+         if( $billpaySettings['WALLET_USE_MOCK_'.strtoupper($paymentDTO->urlPrefix)] == 'YES'){
+            $walletHandler = 'MockWallet';
+         }
+         App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
+      //
+
       //Process the request
       try {
          $paymentDTO  =  App::make(Pipeline::class)

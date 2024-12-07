@@ -2,17 +2,10 @@
 
 namespace App\Http\Services\Payments;
 
-use App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS;
-use App\Http\Services\Gateway\Utility\Step_UpdateTransaction;
-use App\Http\Services\Gateway\Utility\Step_RefreshAnalytics; 
-use App\Http\Services\Clients\BillingCredentialService;
 use App\Http\Services\Payments\PaymentToReviewService;
-use App\Http\Services\Gateway\Utility\Step_LogStatus;
-use App\Http\Services\Clients\ClientMnoService;
 use App\Http\Services\Enums\PaymentStatusEnum;
+use App\Http\Services\Gateway\ConfirmPayment;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\App;
-use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\MoMoDTO;
 use Exception;
@@ -21,9 +14,8 @@ class PaymentWithReceiptToDeliverService
 {
 
    public function __construct(
-      private BillingCredentialService $billingCredentialService,
       private PaymentToReviewService $paymentToReviewService,
-      private ClientMnoService $clientMnoService,
+      private ConfirmPayment $confirmPayment,
       private MoMoDTO $paymentDTO)
    {}
 
@@ -47,17 +39,8 @@ class PaymentWithReceiptToDeliverService
                $paymentDTO->user_id = $user->id;
             }
 
-            $paymentDTO = App::make(Pipeline::class)
-                        ->send($paymentDTO)
-                        ->through(
-                           [
-                              Step_SendReceiptViaSMS::class,
-                              Step_UpdateTransaction::class,  
-                              Step_LogStatus::class,
-                              Step_RefreshAnalytics::class
-                           ]
-                        )
-                        ->thenReturn();
+            $paymentDTO = $this->confirmPayment->handle($paymentDTO);
+
          }
 
       } catch (\Throwable $e) {
