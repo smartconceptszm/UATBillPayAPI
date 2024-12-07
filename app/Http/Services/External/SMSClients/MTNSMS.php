@@ -41,7 +41,7 @@ class MTNSMS implements ISMSClient
                                 "recipient"=>$smsParams['mobileNumber'],
                                 "sender" => $credentials['SMS_SENDER_ID'],
                                 "category" => $credentials['SMS_CATEGORY'],     // OTP|TXN|Promo
-                                "clientTxnId" => $smsParams['transactionId'],
+                                "clientTxnId" => $smsParams['mobileNumber']." Receipt", //$smsParams['transactionId'],
                                 "country" => "ZM"
                         ];
                         

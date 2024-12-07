@@ -17,7 +17,6 @@ class Step_DispatchReConfirmationJob extends EfectivoPipelineContract
    {
 
       try {
-
          if( $paymentDTO->paymentStatus == PaymentStatusEnum::Payment_Failed->value){
             $paymentDTO->status = "COMPLETED";
             $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);

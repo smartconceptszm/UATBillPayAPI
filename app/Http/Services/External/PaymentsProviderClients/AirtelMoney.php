@@ -68,7 +68,7 @@ class AirtelMoney implements IPaymentsProviderClient
                                     if (\array_key_exists('message', $airtelResponse['data']['transaction'])) {
                                        $errorMessage = "Error on collect funds. Airtel response: ".$airtelResponse['data']['transaction']['message'].".";
                                     }else{
-                                       $errorMessage = "Error on collect funds. Airtel response: ".$airtelResponse['data']['transaction']['status'].".";
+                                       $errorMessage = "Error on collect funds. ".$airtelResponse['data']['transaction']['status'].".";
                                     }
                                     throw new Exception($errorMessage, 2);
                               }
@@ -142,12 +142,8 @@ class AirtelMoney implements IPaymentsProviderClient
                                        $response['status'] = "PAYMENT SUCCESSFUL";
                                        $response['ppTransactionId'] = $apiResponse['data']['transaction']['airtel_money_id'];
                                  }else{
-                                       if (\array_key_exists('message', $apiResponse['data']['transaction'])) {
-                                          $errorMessage = "Airtel response: ".$apiResponse['data']['transaction']['message'];
-                                       }else{
-                                          $errorMessage = "Error on get transaction status. Airtel response: ".$apiResponse["data"]["transaction"]["status"].".";
-                                       }
-                                       throw new Exception($errorMessage, 2);
+                                    $errorMessage = "Airtel response: ".$apiResponse["data"]["transaction"]["status"].".";
+                                    throw new Exception($errorMessage, 2);
                                  }
                               }
                            }

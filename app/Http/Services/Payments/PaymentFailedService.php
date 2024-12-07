@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Payments;
 
+use App\Http\Services\Clients\PaymentsProviderCredentialService;
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Http\Services\Gateway\ConfirmPayment;
@@ -14,6 +15,7 @@ class PaymentFailedService
 {
 
    public function __construct(
+      private PaymentsProviderCredentialService $paymentsProviderCredentialService,
       private PaymentToReviewService $paymentToReviewService,
       private ConfirmPayment $confirmPayment,
       private MoMoDTO $paymentDTO)
@@ -74,15 +76,24 @@ class PaymentFailedService
             $paymentDTO->user_id = $user->id;
          } 
          $paymentDTO->error = "";
-
+         $logMessage = "";
          //Reconfirm/Review the payment Transaction
-            $paymentDTO = $this->confirmPayment->handle($paymentDTO);
-            if($paymentDTO->error==''){
-               $logMessage = $paymentDTO->receipt;
+
+            $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($paymentDTO->payments_provider_id);
+            if($paymentsProviderCredentials['TRANSACTION_CAN_BE_RECONFIRMED'] == 'YES'){
+               $paymentDTO = $this->confirmPayment->handle($paymentDTO);
+               if($paymentDTO->error==''){
+                  $logMessage = $paymentDTO->receipt;
+               }else{
+                  $logMessage = $paymentDTO->error ;
+               }
             }else{
-               $logMessage = $paymentDTO->error;
+               $logMessage =  "Payments via ". $paymentDTO->walletHandler.' cannot be reviewed';
             }
-         //
+
+
+         //x
+
 
          return $logMessage;
 

@@ -38,11 +38,11 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
 				$theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
 				$parentMenu = $this->clientMenuService->findById($theMenu->parent_id);
 				if($theMenu->onOneAccount =="YES"){
-					$theService = "For: (".$theMenu->commonAccount.") - ".$parentMenu->prompt.": ".$theMenu->prompt."\n";
+					$theService = "For: (".$theMenu->commonAccount.") - ".$parentMenu->prompt.": ".$theMenu->prompt;
 				}else{
 					$revenueCode = $this->revenueCodeService->findOneBy(['menu_id' =>$paymentDTO->menu_id,
 																									'code' =>$paymentDTO->customerAccount]);
-					$theService = "For: (".$revenueCode->code.") - ".$parentMenu->prompt.": ".$revenueCode->name."\n";
+					$theService = "For: (".$revenueCode->code.") - ".$parentMenu->prompt.": ".$revenueCode->name;
 				}
 
 				$paymentDTO->receipt = "\n"."Payment successful"."\n".
@@ -51,7 +51,6 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
 								$theService ."\n".
 								"Ref: ".$paymentDTO->reference."\n".
 								"Date: " . Carbon::now()->format('d-M-Y') . "\n";
-									
 			}else{
 				$paymentDTO->error = "At Council payment. ".$billingResponse['error'];
 			}
