@@ -10,22 +10,13 @@ use App\Jobs\BaseJob;
 class SendSMSesJob extends BaseJob
 {
 
-   // public $timeout = 600;
+   public $timeout = 600;
    /**
     * Create a new job instance.
     *
     * @return void
     */
    public function __construct(private Array $arrSMSes)
-   {}
-
-
-   /**
-    * Get the middleware the job should pass through.
-    *
-    * @return array<int, object>
-    */
-   public function middleware()
    {}
 
    /**

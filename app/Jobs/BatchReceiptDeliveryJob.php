@@ -16,18 +16,8 @@ class BatchReceiptDeliveryJob extends BaseJob
     *
     * @return void
     */
-   public function __construct(
-      private Array $transactions)
+   public function __construct(private array $transactions)
    {}
-
-   /**
-    * Get the middleware the job should pass through.
-    *
-    * @return array<int, object>
-    */
-   public function middleware()
-   {
-   }
 
    /**
     * Execute the job.
@@ -35,15 +25,14 @@ class BatchReceiptDeliveryJob extends BaseJob
     * @return void
     */
    public function handle(PaymentWithReceiptToDeliverService $paymentWithReceiptToDeliverService) {
-
       try {
          foreach ($this->transactions as $value) {
-            $paymentWithReceiptToDeliverService->update($value->id);
+            $paymentWithReceiptToDeliverService->update($value);
          }
       } catch (\Throwable $e) {
          Log::error("Handling batch receipt delivery job. DETAILS: " . $e->getMessage());
       }
-      
+
    }
 
 }

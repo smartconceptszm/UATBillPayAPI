@@ -32,7 +32,7 @@ class MTNSMS implements ISMSClient
             $credentials = $this->getConfigs($smsParams);
             $apiToken = $this->getToken($credentials);
             if(!$smsParams['transactionId']){
-                $smsParams['transactionId'] = $smsParams['mobileNumber']."_".\date('ymdHis');
+                $smsParams['transactionId'] = $smsParams['mobileNumber']."T".\date('ymdHis');
             }
             $fullURL = $credentials['SMS_GATEWAY_URL'].'/sms/send';
             $messageBody = [
@@ -41,7 +41,7 @@ class MTNSMS implements ISMSClient
                                 "recipient"=>$smsParams['mobileNumber'],
                                 "sender" => $credentials['SMS_SENDER_ID'],
                                 "category" => $credentials['SMS_CATEGORY'],     // OTP|TXN|Promo
-                                "clientTxnId" => $smsParams['mobileNumber']." Receipt", //$smsParams['transactionId'],
+                                "clientTxnId" => $smsParams['transactionId'],
                                 "country" => "ZM"
                         ];
                         

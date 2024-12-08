@@ -24,7 +24,7 @@ return new class extends Migration
          $table->float('amount',10,2)->default(0);
          $table->enum('type',['RECEIPT','SINGLE','BULK','BULKCUSTOM','NOTIFICATION'])->default('RECEIPT')->notNullable();
          $table->enum('status',['INITIATED','DELIVERED','FAILED'])->default('INITIATED')->notNullable();
-         $table->unsignedBigInteger('user_id')->nullable();
+         $table->string('user_id',36)->nullable();
          $table->text('error')->nullable();
          $table->timestamps();
          $table->index('mno_id');

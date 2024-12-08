@@ -30,12 +30,15 @@ class BatchReceiptService
          }
          $records = $records->where('cw.client_id', '=', $dto->client_id)
                               ->where('p.paymentStatus','=', PaymentStatusEnum::Receipted->value);
-         $records = $records->get()->all();
+         $records = $records->pluck('id')
+                           ->toArray();
+
+
+
          if (\sizeof($records) > 0) {
             $chunkedArr = \array_chunk($records,5,false);
             foreach ($chunkedArr as $value) {
-               Queue::later(Carbon::now()->addSeconds(1),
-                              new BatchReceiptDeliveryJob($value),'','low');
+               Queue::later(Carbon::now()->addSeconds(1),new BatchReceiptDeliveryJob($value),'','low');
             }
             return (object)['data' => 'Batch receipt delivery process initiated. Check status after a few minutes!'];
          } else {

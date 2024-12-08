@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Http\Services\Gateway\InitiatePayment;
-use Illuminate\Support\Facades\App;
 use App\Http\DTOs\BaseDTO;
 use App\Jobs\BaseJob;
 

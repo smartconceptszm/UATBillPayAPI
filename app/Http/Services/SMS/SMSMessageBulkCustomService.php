@@ -78,7 +78,7 @@ class SMSMessageBulkCustomService
                                  'type'=>$bulkSMS->type
                            ];
             }
-            Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes,$data['client_id']),'','low');
+            Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes),'','low');
          }
          return (object)["description" => "Messages successfully submitted"];
 
