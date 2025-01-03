@@ -29,6 +29,9 @@ class SwascoServiceProvider extends ServiceProvider
 			$this->app->singleton('swascoPostPaid', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\Swasco::class);
          });
+			$this->app->singleton('swascoPostPaidV2', function () {
+            return $this->app->make(\App\Http\Services\External\BillingClients\SwascoV2::class);
+         });
 		//
 		
 		//Receipting Handlers

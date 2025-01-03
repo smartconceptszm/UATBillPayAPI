@@ -29,12 +29,14 @@ class ConfirmPayment
             App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
          //
 
-         //Bind Receipting Handler
+         //Bind Receipting and Billing Handlers
             $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
             $receiptingHandler = $theMenu->receiptingHandler;
             $billingClient = $theMenu->billingClient;
             if ($billpaySettings['USE_RECEIPTING_MOCK_'.strtoupper($paymentDTO->urlPrefix)] == "YES"){
                $receiptingHandler = "MockReceipting";
+            }
+            if ($billpaySettings['USE_BILLING_MOCK_'.strtoupper($paymentDTO->urlPrefix)] == "YES"){
                $billingClient = "MockBillingClient";
             }
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);
@@ -53,7 +55,7 @@ class ConfirmPayment
                      \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
                      \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,  
                      \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
-                     \App\Http\Services\Gateway\Utility\Step_RefreshAnalytics::class 
+                     \App\Http\Services\Gateway\Utility\Step_RefreshAnalytics::class
                   ]
                )
                ->thenReturn();

@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\SMS;
 
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Carbon;
 use App\Jobs\SendSMSesJob;
@@ -24,7 +23,9 @@ class MessageService
          $user = Auth::user(); 
          $data['type'] = 'SINGLE';
 			$data['user_id'] = $user->id;
-			Queue::later(Carbon::now()->addSeconds(1),new SendSMSesJob([$data]),'','low');
+         SendSMSesJob::dispatch([$data])
+                              ->delay(Carbon::now()->addSeconds(1))
+                              ->onQueue('low');
          return 'Message submitted';
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

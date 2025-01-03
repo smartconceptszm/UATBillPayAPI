@@ -34,11 +34,13 @@ class ReceiptVacuumTankerSwasco implements IReceiptPayment
 
 		$receiptingParams = [ 
 									'mobileNumber'=> $paymentDTO->mobileNumber,
-									'referenceNumber' => $referenceNumber,
 									'account' => $paymentDTO->customerAccount,
+									'created_at' => $paymentDTO->created_at,
+									'referenceNumber' => $referenceNumber,
 									'amount' => $paymentDTO->receiptAmount,
 									'client_id' => $paymentDTO->client_id,
 									'paymentType'=>"12",
+									'receiptType'=>"1"
 								];
 		$billingResponse = $this->billingClient->postPayment($receiptingParams);
 		if($billingResponse['status'] == 'SUCCESS'){
@@ -51,7 +53,7 @@ class ReceiptVacuumTankerSwasco implements IReceiptPayment
 											"Ref: " .\str_replace(\chr(47), "", $paymentDTO->reference). "\n".
 											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 		}else{
-			$paymentDTO->error = "At post payment. ".$billingResponse['error'];
+			$paymentDTO->error = "At receipt vaccum tanker payment. ".$billingResponse['error'];
 		}
 
 		return $paymentDTO;

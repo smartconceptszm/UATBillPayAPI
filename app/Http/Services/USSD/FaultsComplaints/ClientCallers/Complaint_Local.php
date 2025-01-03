@@ -4,7 +4,6 @@ namespace App\Http\Services\USSD\FaultsComplaints\ClientCallers;
 
 use App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient;
 use App\Http\Services\CRM\ComplaintService;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Carbon;
 use App\Jobs\SendSMSesJob;
 use Exception;
@@ -30,8 +29,9 @@ class Complaint_Local implements IComplaintClient
 									'type' => 'NOTIFICATION',
 								]
 							];
-			Queue::later(Carbon::now()->addSeconds(3), 
-								new SendSMSesJob($arrSMSes,$complaintData['urlPrefix']),'','low');
+			SendSMSesJob::dispatch($arrSMSes)
+								->delay(Carbon::now()->addSeconds(3))
+								->onQueue('low');
 
 			return $complaint->caseNumber;
 					

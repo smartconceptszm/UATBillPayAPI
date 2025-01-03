@@ -12,7 +12,8 @@ class ClientController extends Controller
    protected  $validationRules=[
                   'name' => 'required|string|unique:clients',
                   'shortName' => 'required|string|unique:clients',
-                  'urlPrefix' => 'required|string|unique:clients'
+                  'urlPrefix' => 'required|string|unique:clients',
+                  'ussdMenuText' => 'required|string',
                ];
 	public function __construct(
 		private ClientService $client)

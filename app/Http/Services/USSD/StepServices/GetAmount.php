@@ -48,15 +48,13 @@ class GetAmount
          throw new Exception("Amount either below the minimum or above the maximum amount allowed", 1);
       }
 
-      $revenueCode = $this->clientRevenueCodeService->findOneBy(['menu_id' =>$txDTO->menu_id,
-                                                               'code' =>$txDTO->customerAccount]);
+      $revenueCode = $this->clientRevenueCodeService->findOneBy(['menu_id'=>$txDTO->menu_id,'code'=>$txDTO->customerAccount]);
       if($revenueCode){
          if(($revenueCode->amountFixed) =='YES' && ($amount != $revenueCode->requiredAmount)){
             throw new Exception("Payment amount MUST equal the required amount of ZMW ".
-                                             number_format($revenueCode->requiredAmount, 2, '.', ','), 1);
+            number_format($revenueCode->requiredAmount, 2, '.', ','), 1);
          }
       }
-
       return [$subscriberInput, $amount];
 
    }

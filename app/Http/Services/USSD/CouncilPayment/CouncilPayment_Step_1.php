@@ -22,9 +22,7 @@ class CouncilPayment_Step_1
          $paymentProviderStatus = $this->checkPaymentsEnabled->handle($txDTO);
          if($paymentProviderStatus['enabled']){
             $clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
-            if($clientMenu->onOneAccount == 'NO'){
-               $txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
-            }else{
+            if($clientMenu->onOneAccount == 'YES'){
                $txDTO->customerAccount = $clientMenu->commonAccount;
                $txDTO->customer['customerAccount'] = $clientMenu->commonAccount;
                $txDTO->customer['name'] = $clientMenu->description;
@@ -37,6 +35,8 @@ class CouncilPayment_Step_1
                   $txDTO->subscriberInput = $txDTO->mobileNumber;
                   $txDTO->response="Enter Amount :\n";
                }
+            }else{
+               $txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
             }
          }else{
             throw new Exception($paymentProviderStatus['responseText'], 1);

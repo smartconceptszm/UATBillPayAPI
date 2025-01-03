@@ -5,6 +5,7 @@ namespace App\Http\Services\Analytics;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
+use Carbon\CarbonPeriod;
 use Exception;
 
 class ClientDashboardService 
@@ -14,25 +15,25 @@ class ClientDashboardService
    {
       
       try {
+
          $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
          $dto = (object)$criteria;
+
          $dateFrom = Carbon::parse($dto->dateFrom);
-         $dateFrom = $dateFrom->format('Y-m-d');
+         $dateFromYMD = $dateFrom->copy()->format('Y-m-d');
+
          $dateTo = Carbon::parse($dto->dateTo);
-         $dateTo = $dateTo->format('Y-m-d');
+         $dateToYMD = $dateTo->copy()->format('Y-m-d');
 
-         $endOfMonth = Carbon::parse($dto->dateTo);
-         $endOfMonth = $endOfMonth->copy()->endOfMonth();;
-         $theYear = (string)$endOfMonth->year;
-         $theMonth = $endOfMonth->month;
+         $endOfMonth = $dateTo->copy()->endOfMonth();
 
-         //1. Payments Provider Totals for Month
+         //1. Payments Provider Totals for Period
             $thePayments = DB::table('dashboard_payments_provider_totals as ppt')
                               ->join('payments_providers as p','ppt.payments_provider_id','=','p.id')
                               ->select(DB::raw('p.shortName as paymentsProvider,p.colour,
                                                    SUM(ppt.numberOfTransactions) AS totalTransactions,
                                                       SUM(ppt.totalAmount) as totalRevenue'))
-                              ->whereBetween('ppt.dateOfTransaction', [$dateFrom, $dateTo])
+                              ->whereBetween('ppt.dateOfTransaction', [$dateFromYMD, $dateToYMD])
                               ->where('ppt.client_id', '=', $dto->client_id)
                               ->groupBy('paymentsProvider','colour')
                               ->orderByDesc('totalRevenue');
@@ -67,27 +68,88 @@ class ClientDashboardService
                               ->select(DB::raw('ppt.year,ppt.month,ppt.day,
                                                 SUM(ppt.numberOfTransactions) AS totalTransactions,
                                                 SUM(ppt.totalAmount) as totalRevenue'))
-                              ->where('ppt.year', '=',  $theYear)
-                              ->where('ppt.month', '=',  $theMonth)
+                              ->whereBetween('ppt.dateOfTransaction', [$dateFromYMD, $dateToYMD])
                               ->where('ppt.client_id', '=', $dto->client_id)
                               ->groupBy('day','month','year')
                               ->orderBy('day');
             $dailyTrends = $thePayments->get();
-            $dailyLabels = $dailyTrends->map(function ($item) {
-                                                   return $item->day;
-                                             });
-            $dailyData = $dailyTrends->map(function ($item) {
-                                                return $item->totalRevenue;
-                                          });
+
+            $period = CarbonPeriod::create($dateFrom, $dateTo);
+            if($dateFrom->month != $dateTo->month){
+               $period = CarbonPeriod::create($dateFrom, $dateFrom->copy()->endOfMonth());
+            }
+            $dailyLabels =[];
+            $dailyData = [];
+            foreach ($period as $date) {
+               $daysRecord = $dailyTrends->firstWhere('day','=',$date->day);
+               $dailyLabels[] = $date->day;
+               if($daysRecord){
+                  $dailyData[] = $daysRecord->totalRevenue;
+               }else{
+                  $dailyData[] = 0;
+               }
+            }
+
+            $dailyTrends = [[
+                                 'backgroundColor'=> "rgba(255, 255, 255,0.2)",
+                                 'borderColor' => "rgba(75,192,192,1)",
+                                 'pointBackgroundColor' => "rgba(75,192,192,1)",
+                                 'pointBorderColor' => "rgba(75,192,192,1)",
+                                 'label' => "Daily revenue - ".$dateFrom->copy()->format('Y-M'),
+                                 'data' => $dailyData
+                              ]
+                           ];
+
+
+
+            $dateFromPreviousMonth = $dateFrom->copy()->subMonth();
+            $dateToPreviousMonth = $dateTo->copy()->subMonth();
+            $thePayments = DB::table('dashboard_payments_provider_totals as ppt')
+                           ->select(DB::raw('ppt.year,ppt.month,ppt.day,
+                                             SUM(ppt.numberOfTransactions) AS totalTransactions,
+                                             SUM(ppt.totalAmount) as totalRevenue'))
+                           ->whereBetween('ppt.dateOfTransaction', 
+                                             [$dateFromPreviousMonth->copy()->format('Y-m-d'), 
+                                                $dateToPreviousMonth->copy()->format('Y-m-d')])
+                           ->where('ppt.client_id', '=', $dto->client_id)
+                           ->groupBy('day','month','year')
+                           ->orderBy('day');
+            $dailyTrendsLastMonth = $thePayments->get();
+            
+            $period = CarbonPeriod::create($dateFromPreviousMonth, $dateToPreviousMonth);
+            if($dateFromPreviousMonth->month != $dateToPreviousMonth->month){
+               $period = CarbonPeriod::create($dateFrom, $dateFromPreviousMonth->copy()->endOfMonth());
+            }
+
+            $dailyDataLastMonth = [];
+            foreach ($period as $date) {
+               $daysRecord = $dailyTrendsLastMonth->firstWhere('day','=',$date->day);
+               if($daysRecord){
+                  $dailyDataLastMonth[] = $daysRecord->totalRevenue;
+               }else{
+                  $dailyDataLastMonth[] = 0;
+               }
+            }
+
+
+            $dailyTrends[] =  [
+                                 'backgroundColor'=> "rgba(255, 255, 255,0.2)",
+                                 'borderColor' => "rgba(248,177,20,0.5)",
+                                 'pointBackgroundColor' => "rgba(248,177,20,0.5)",
+                                 'pointBorderColor' => "rgba(248,177,20,0.5)",
+                                 'label' => "Daily revenue - ".$dateFromPreviousMonth->copy()->format('Y-M'),
+                                 'data' => $dailyDataLastMonth
+                              ];
+
          //
          //3. Monthly Totals Over one Year
-            // $startDate  = $endOfMonth->copy()->addMonth(1);
-            $startDate = $endOfMonth->copy()->addDay(1);
-            $startDate = $startDate->subYear(1);
-            $startDate = $startDate->startOfMonth();
-            $myYear = $startDate->format('Y');
-            $myMonth = $startDate->format('m');
-            $monthsCollection = collect([['month'=>$myMonth,'year'=>$myYear]]);
+            $endOfTransactionsYear = $endOfMonth->copy()->addDay(1);
+            $oneYearBack = $endOfTransactionsYear->subYear(1);
+            $startingDate = $oneYearBack->startOfMonth();
+
+            $yearOfStartingDate = $startingDate->format('Y');
+            $monthOfStartingDate = $startingDate->format('m');
+            $monthsCollection = collect([['month'=>$monthOfStartingDate,'year'=>$yearOfStartingDate]]);
             $paymentsTrends = DB::table('dashboard_payments_provider_totals as ppt')
                                     ->join('payments_providers as p','ppt.payments_provider_id','=','p.id')
                                     ->select(DB::raw('p.shortName as paymentsProvider,p.colour,
@@ -95,18 +157,18 @@ class ClientDashboardService
                                                          SUM(ppt.numberOfTransactions) AS totalTransactions,
                                                             SUM(ppt.totalAmount) as totalRevenue'))
                                     ->where('ppt.client_id', '=', $dto->client_id)
-                                    ->where('ppt.year', '=',  $myYear)
-                                    ->where('ppt.month', '=',  $myMonth);
+                                    ->where('ppt.year', '=',  $yearOfStartingDate)
+                                    ->where('ppt.month', '=',  $monthOfStartingDate);
 
             for ($i=1; $i < 12; $i++) { 
-               $startDate = $startDate->addMonth();
-               $myYear = $startDate->format('Y');
-               $myMonth = $startDate->format('m');
-               $monthsCollection->push(['month'=>$myMonth,'year'=>$myYear]);
+               $startingDate = $startingDate->addMonth();
+               $yearOfStartingDate = $startingDate->format('Y');
+               $monthOfStartingDate = $startingDate->format('m');
+               $monthsCollection->push(['month'=>$monthOfStartingDate,'year'=>$yearOfStartingDate]);
                $client_id= $dto->client_id;
-               $paymentsTrends = $paymentsTrends->orWhere(function (Builder $query) use($myYear,$myMonth,$client_id) {
-                                                         $query->where('ppt.year','=', $myYear)
-                                                               ->where('ppt.month','=', $myMonth)
+               $paymentsTrends = $paymentsTrends->orWhere(function (Builder $query) use($yearOfStartingDate,$monthOfStartingDate,$client_id) {
+                                                         $query->where('ppt.year','=', $yearOfStartingDate)
+                                                               ->where('ppt.month','=', $monthOfStartingDate)
                                                                ->where('ppt.client_id','=', $client_id);
                                                    });
             }
@@ -183,7 +245,7 @@ class ClientDashboardService
                               ->select(DB::raw('ddt.revenuePoint,
                                                 SUM(ddt.numberOfTransactions) AS totalTransactions,
                                                 SUM(ddt.totalAmount) as totalRevenue'))
-                              ->whereBetween('ddt.dateOfTransaction', [$dateFrom, $dateTo])
+                              ->whereBetween('ddt.dateOfTransaction', [$dateFromYMD, $dateToYMD])
                               ->where('ddt.client_id', '=', $dto->client_id)
                               ->groupBy('ddt.revenuePoint');
             $byRevenuePoint= $thePayments->get();
@@ -199,7 +261,7 @@ class ClientDashboardService
                            ->select(DB::raw('ptt.paymentType,
                                                 SUM(ptt.numberOfTransactions) AS totalTransactions,
                                                 SUM(ptt.totalAmount) as totalRevenue'))
-                           ->whereBetween('ptt.dateOfTransaction', [$dateFrom, $dateTo])
+                           ->whereBetween('ptt.dateOfTransaction', [$dateFromYMD, $dateToYMD])
                            ->where('ptt.client_id', '=', $dto->client_id)
                            ->groupBy('paymentType');
             $menuTotals = $thePayments->get();
@@ -215,7 +277,7 @@ class ClientDashboardService
             ->select(DB::raw('pst.paymentStatus,
                                           SUM(pst.numberOfTransactions) AS totalTransactions,
                                           SUM(pst.totalAmount) as totalRevenue'))
-                              ->whereBetween('pst.dateOfTransaction', [$dateFrom, $dateTo])
+                              ->whereBetween('pst.dateOfTransaction', [$dateFromYMD, $dateToYMD])
                               ->where('pst.client_id', '=', $dto->client_id)
                               ->groupBy('paymentStatus')
                               ->orderBy('paymentStatus');
@@ -236,7 +298,7 @@ class ClientDashboardService
                   ->select(DB::raw('drct.revenueCollector,
                                     SUM(drct.numberOfTransactions) AS totalTransactions,
                                     SUM(drct.totalAmount) as totalRevenue'))
-                  ->whereBetween('drct.dateOfTransaction', [$dateFrom, $dateTo])
+                  ->whereBetween('drct.dateOfTransaction', [$dateFromYMD, $dateToYMD])
                   ->where('drct.client_id', '=', $dto->client_id)
                   ->groupBy('drct.revenueCollector');
             $byRevenueCollector = $theCollectorPayments->get();
@@ -249,8 +311,8 @@ class ClientDashboardService
          //
          $response = [
                         'paymentsSummary' => $paymentsSummary,
-                        'dailyLabels' => $dailyLabels,
-                        'dailyData' =>$dailyData,
+                        'dailyTrendsData' => collect($dailyTrends),
+                        'dailyTrendsLabels' => collect($dailyLabels),
                         'paymentsTrendsData' => $paymentsTrendsData,
                         'paymentsTrendsLabels' => $paymentsTrendsLabels,
                         'revenuePointLabels' => $revenuePointLabels,

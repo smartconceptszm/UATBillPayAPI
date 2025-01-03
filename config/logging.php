@@ -69,7 +69,15 @@ return [
             'driver' => 'daily',
             'path' => storage_path('logs/billpayapi.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'days' => 21,
+            'days' => 90,
+            'replace_placeholders' => true,
+        ],
+
+        'web_requests' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/billpayapi_web.log'),
+            'level' => env('LOG_LEVEL', 'debug'),
+            'days' => 90,
             'replace_placeholders' => true,
         ],
 

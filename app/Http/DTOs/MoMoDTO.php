@@ -7,6 +7,8 @@ use App\Http\DTOs\PaymentDTO;
 class MoMoDTO extends PaymentDTO
 {
 
+   public $callbackResponse = 'NO';
+
    public function fromSessionData(array $ussdParams): BaseDTO
    {
       foreach ($ussdParams as $key => $value) {

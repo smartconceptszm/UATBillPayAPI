@@ -4,7 +4,6 @@ namespace App\Http\Services\Payments;
 
 use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Jobs\BatchReceiptDeliveryJob;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
@@ -38,7 +37,9 @@ class BatchReceiptService
          if (\sizeof($records) > 0) {
             $chunkedArr = \array_chunk($records,5,false);
             foreach ($chunkedArr as $value) {
-               Queue::later(Carbon::now()->addSeconds(1),new BatchReceiptDeliveryJob($value),'','low');
+               BatchReceiptDeliveryJob::dispatch($value)
+                                             ->delay(Carbon::now()->addSeconds(1))
+                                             ->onQueue('low');
             }
             return (object)['data' => 'Batch receipt delivery process initiated. Check status after a few minutes!'];
          } else {

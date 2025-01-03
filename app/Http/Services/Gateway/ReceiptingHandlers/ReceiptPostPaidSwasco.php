@@ -34,12 +34,13 @@ class ReceiptPostPaidSwasco implements IReceiptPayment
 		}
 
 		$receiptingParams = [ 
-										'mobileNumber'=> $paymentDTO->mobileNumber,
 										'referenceNumber' => $swascoTransactionRef,
 										'account' => $paymentDTO->customerAccount,
 										'amount' => $paymentDTO->receiptAmount,
-										'client_id' => $paymentDTO->client_id,
-										'paymentType'=>"1",
+										'paymentType'=>"01",
+										'receiptType'=>"2",
+										'mobileNumber'=> $paymentDTO->mobileNumber,
+										'client_id' => $paymentDTO->client_id
 									];
 
 		$billingResponse=$this->billingClient->postPayment($receiptingParams);
@@ -71,7 +72,7 @@ class ReceiptPostPaidSwasco implements IReceiptPayment
 				}
 			}
 		}else{
-			$paymentDTO->error = "At post payment. ".$billingResponse['error'];
+			$paymentDTO->error = "At receipt payment. ".$billingResponse['error'];
 		}
 		return $paymentDTO;
 

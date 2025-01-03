@@ -21,24 +21,24 @@ class ReceiptPrePaidLukanga implements IReceiptPayment
 
 		if($paymentDTO->tokenNumber == '' && $paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value){				
 			//receiptNumber = transactionid in Lukanga PrePaid Billing Client
-			$paymentDTO->receiptNumber =  now()->timestamp.\strtoupper(Str::random(6)); 
+			$receiptNumber = \now()->timestamp.\strtoupper(Str::random(6));
 			$tokenParams = [
 								'customerAccount'=>$paymentDTO->customerAccount,
 								"paymentAmount" => $paymentDTO->receiptAmount,
-								"transactionId" => $paymentDTO->receiptNumber,
+								"transactionId" => $receiptNumber,
 								'client_id'=>$paymentDTO->client_id
 							];
 			$tokenResponse = $this->billingClient->generateToken($tokenParams);
 			if($tokenResponse['status']=='SUCCESS'){
 				$paymentDTO->paymentStatus = PaymentStatusEnum::Receipted->value;
 				$paymentDTO->tokenNumber = $tokenResponse['tokenNumber'];
+				$paymentDTO->receiptNumber =  $receiptNumber;
 				$paymentDTO->receipt = "\n"."Payment successful"."\n".
 											"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
 											"Acc/Meter No: " . $paymentDTO->customerAccount . "\n" .
 											"Token: ". $paymentDTO->tokenNumber . "\n".
 											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{
-				$paymentDTO->receiptNumber =  '';
 				$paymentDTO->error = $tokenResponse['error'];
 			}
 		}

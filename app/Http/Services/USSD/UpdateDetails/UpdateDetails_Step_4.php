@@ -6,7 +6,6 @@ use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient;
 use App\Http\Services\USSD\StepServices\ValidateCRMInput;
 use App\Http\Services\MenuConfigs\CustomerFieldService;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Jobs\SendSMSesJob;
@@ -98,8 +97,9 @@ class UpdateDetails_Step_4
                   'type' => 'NOTIFICATION',
                ]
          ];
-      Queue::later(Carbon::now()->addSeconds(3), 
-                     new SendSMSesJob($arrSMSes),'','low');
+      SendSMSesJob::dispatch($arrSMSes)
+                     ->delay(Carbon::now()->addSeconds(3))
+                     ->onQueue('low');
    }
 
 }

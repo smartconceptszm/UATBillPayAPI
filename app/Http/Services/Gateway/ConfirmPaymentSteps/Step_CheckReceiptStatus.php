@@ -21,7 +21,9 @@ class Step_CheckReceiptStatus extends EfectivoPipelineContract
 			if($payment->receiptNumber != ''){
 				$paymentDTO->paymentStatus = $payment->paymentStatus;
 				$paymentDTO->receiptNumber = $payment->receiptNumber;
-				$paymentDTO->receipt = $payment->receipt;
+				if($payment->receipt){
+					$paymentDTO->receipt = $payment->receipt;
+				}
 			}
 		} catch (\Throwable $e) {
 			$paymentDTO->error='At check payment receipt status. '.$e->getMessage();

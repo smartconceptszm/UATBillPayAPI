@@ -21,7 +21,20 @@ class PaymentsMenuController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->paymentsMenuService->findAll(['urlPrefix' => $request->input('urlPrefix')]);
+         $this->response['data'] = $this->paymentsMenuService->findAll(['client_id' => $request->input('client_id')]);
+      } catch (\Throwable $e) {
+            $this->response['status']['code'] = 500;
+            $this->response['status']['message'] = $e->getMessage();
+      }
+      return response()->json( $this->response);
+
+   }
+
+   public function submenus(Request $request) 
+   {
+
+      try {
+         $this->response['data'] = $this->paymentsMenuService->submenus(['parent_id' => $request->input('parent_id')]);
       } catch (\Throwable $e) {
             $this->response['status']['code'] = 500;
             $this->response['status']['message'] = $e->getMessage();

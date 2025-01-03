@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\SMS;
 
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
@@ -77,7 +76,9 @@ class SMSMessageBulkService
                                  'type'=>$bulkSMS->type
                            ];
             }
-            Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes),'','low');
+            SendSMSesJob::dispatch($arrSMSes)
+                           ->delay(Carbon::now()->addSeconds(1))
+                           ->onQueue('low');
          }
          return (object)["description" => "Messages successfully submitted"];
       } catch (\Throwable $e) {

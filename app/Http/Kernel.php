@@ -45,7 +45,8 @@ class Kernel extends HttpKernel
          \Illuminate\Routing\Middleware\SubstituteBindings::class,
          \App\Http\Middleware\RemoveUriFromRequestParameters::class,
          \App\Http\Middleware\FireMoMoRequestMiddleware::class,
-         \App\Http\Middleware\RequestLoggerMiddleware::class
+         \App\Http\Middleware\USSDRequestLoggerMiddleware::class,
+         \App\Http\Middleware\WebRequestLoggerMiddleware::class
       ],
    ];
 

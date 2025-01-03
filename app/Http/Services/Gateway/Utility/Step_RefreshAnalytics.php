@@ -5,7 +5,6 @@ namespace App\Http\Services\Gateway\Utility;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Jobs\PaymentsAnalyticsRegularJob;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -25,7 +24,9 @@ class Step_RefreshAnalytics extends EfectivoPipelineContract
                $dashboardCache = (int)$billpaySettings['DASHBOARD_CACHE_'.strtoupper($paymentDTO->urlPrefix)]; 
                $clientPaymentCount = (int)Cache::get($paymentDTO->client_id.'_PaymentStatusCount');
                if(($clientPaymentCount + 1) >= $dashboardCache){
-                  Queue::later(Carbon::now()->addSeconds(1),new PaymentsAnalyticsRegularJob($paymentDTO),'','high');
+                  PaymentsAnalyticsRegularJob::dispatch($paymentDTO)
+                                                ->delay(Carbon::now()->addSeconds(1))
+                                                ->onQueue('high');
                   Cache::put($paymentDTO->client_id.'_PaymentStatusCount', 0, Carbon::now()->addMinutes((int)$billpaySettings['DASHBOARD_CACHE']));
                }else{
                   Cache::increment($paymentDTO->client_id.'_PaymentStatusCount');

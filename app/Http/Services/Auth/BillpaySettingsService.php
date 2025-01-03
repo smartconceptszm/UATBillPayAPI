@@ -5,6 +5,7 @@ namespace App\Http\Services\Auth;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Cache;
 use App\Models\BillpaySettings;
+use Illuminate\Support\Carbon;
 use Exception;
 
 class BillpaySettingsService
@@ -109,7 +110,7 @@ class BillpaySettingsService
    protected function refreshCache()
    {
       $billpaySettings = $this->getAllSettings();
-      Cache::put('billpaySettings', \json_encode($billpaySettings));
+      Cache::put('billpaySettings',\json_encode($billpaySettings),Carbon::now()->addHours(12));
    }
 
 }

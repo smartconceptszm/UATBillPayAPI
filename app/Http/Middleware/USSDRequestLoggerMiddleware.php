@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 
 use Closure;
 
-class RequestLoggerMiddleware
+class USSDRequestLoggerMiddleware
 {
     /**
      * Handle an incoming request.

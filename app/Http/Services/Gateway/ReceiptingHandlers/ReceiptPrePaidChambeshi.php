@@ -44,24 +44,25 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 			}
 		}
 
-		if($paymentDTO->tokenNumber && $paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value){
-			$paymentDTO->receiptNumber =  $paymentDTO->customerAccount."_".\now()->timestamp;
-			$receiptingParams=[
-					"TxDate"=> $paymentDTO->created_at,
-					"Account"=> $paymentDTO->customerAccount,  
-					"AccountName"=> $paymentDTO->customer['name'],
-					"Debt"=> 0,
-					"AmountPaid" => $paymentDTO->receiptAmount, 
-					"Phone#"=> $paymentDTO->mobileNumber,
-					"ReceiptNo"=> $paymentDTO->receiptNumber,
-					"Address"=> $paymentDTO->customerAccount,
-					"District"=> $paymentDTO->revenuePoint,
-					"TransactDescript"=> "2220 PREPAID. Token: ".$paymentDTO->tokenNumber,
-					"Mobile Network" => $paymentDTO->walletHandler, 
-			];
-			$billingResponse=$this->billingClient->postPayment($receiptingParams);
+		if(($paymentDTO->tokenNumber != '') && ($paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value)){
+			$receiptNumber =  $paymentDTO->customerAccount."_".\now()->timestamp;
+			$receiptingParams = [
+												"TxDate"=> $paymentDTO->created_at,
+												"Account"=> $paymentDTO->customerAccount,  
+												"AccountName"=> $paymentDTO->customer['name'],
+												"Debt"=> 0,
+												"AmountPaid" => $paymentDTO->receiptAmount, 
+												"Phone#"=> $paymentDTO->mobileNumber,
+												"ReceiptNo"=> $receiptNumber ,
+												"Address"=> $paymentDTO->customerAccount,
+												"District"=> $paymentDTO->revenuePoint,
+												"TransactDescript"=> "2220 PREPAID. Token: ".$paymentDTO->tokenNumber,
+												"Mobile Network" => $paymentDTO->walletHandler, 
+										];
+			$billingResponse = $this->billingClient->postPayment($receiptingParams);
 			if($billingResponse['status'] == 'SUCCESS'){
 				$paymentDTO->paymentStatus = PaymentStatusEnum::Receipted->value;
+				$paymentDTO->receiptNumber =  $receiptNumber;
 				$paymentDTO->receipt = "\n"."Payment successful"."\n".
 											"Rcpt No: " . $paymentDTO->receiptNumber . "\n" .
 											"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
@@ -69,8 +70,8 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 											"Token: ". $paymentDTO->tokenNumber . "\n".
 											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{
-				$paymentDTO->receiptNumber = '';
-				$paymentDTO->error = "At post payment. ".$billingResponse['error'];
+				$paymentDTO->error = "At receipt payment. ".$billingResponse['error'];
+				$paymentDTO->receiptNumber =  '';
 			}
 		}
 		return $paymentDTO;

@@ -62,9 +62,12 @@ class MainDashboardService
                                              'urlPrefix'=>$clientDetails->urlPrefix,
                                              'name'=>$clientDetails->name,
                                              'id'=>$clientDetails->id,
+                                             'totalRevenue' =>  $totalRevenue,
                                              'data'=>$formattedData->toArray()
                                           ];
                                  });
+
+               $paymentsSummary = $paymentsSummary->sortByDesc('totalRevenue',SORT_NUMERIC);
                return $paymentsSummary;
             }else{
                return [];

@@ -21,7 +21,7 @@ class UserDashboardService
          $dateTo = $dateTo->format('Y-m-d');
 
          $endOfMonth = Carbon::parse($dto->dateTo);
-         $endOfMonth = $endOfMonth->copy()->endOfMonth();;
+         $endOfMonth = $endOfMonth->copy()->endOfMonth();
          $theYear = (string)$endOfMonth->year;
          $theMonth = $endOfMonth->month;
          

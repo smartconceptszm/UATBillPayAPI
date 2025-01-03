@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Analytics;
 
 use App\Jobs\PaymentsAnalyticsDailySingleJob;
 use App\Jobs\PaymentsAnalyticsDailyBulkJob;
-use Illuminate\Support\Facades\Queue;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
@@ -16,7 +15,10 @@ class DailyAnalyticsController extends Controller
    {
 
       try {
-         Queue::later(Carbon::now()->addSeconds(1),new PaymentsAnalyticsDailyBulkJob($request->input('date')),'','high');
+         PaymentsAnalyticsDailyBulkJob::dispatch($request->input('date'))
+                                       ->delay(Carbon::now()->addSeconds(1))
+                                       ->onQueue('high');
+
          $this->response['data'] = ['Message' => "Job submitted"];
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
@@ -31,7 +33,9 @@ class DailyAnalyticsController extends Controller
 
       try {
          $theDate = Carbon::parse($request->input('date'));
-         Queue::later(Carbon::now()->addSeconds(1),new PaymentsAnalyticsDailySingleJob($theDate),'','high');
+         PaymentsAnalyticsDailySingleJob::dispatch($theDate)
+                                          ->delay(Carbon::now()->addSeconds(1))
+                                          ->onQueue('high');
          $this->response['data'] = ['Message' => "Job submitted"];
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;

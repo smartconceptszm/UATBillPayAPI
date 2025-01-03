@@ -17,6 +17,7 @@ return new class extends Migration
          $table->string('shortName',25)->unique()->notNullable();
          $table->string('urlPrefix',25)->unique()->notNullable();
          $table->string('name',50)->unique()->notNullable();
+         $table->string('ussdMenuText',50)->unique()->notNullable();
          $table->float('balance',10,2)->default(0);
          $table->enum('smsPayMode',['POST-PAID','PRE-PAID'])->default('POST-PAID')->notNullable();
          $table->enum('surcharge',['NO','YES'])->default('NO')->notNullable();

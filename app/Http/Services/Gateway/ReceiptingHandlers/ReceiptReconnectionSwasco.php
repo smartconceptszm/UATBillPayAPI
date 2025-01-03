@@ -28,8 +28,10 @@ class ReceiptReconnectionSwasco implements IReceiptPayment
 										'created_at' => $paymentDTO->created_at,
 										'amount' => $paymentDTO->receiptAmount,
 										'client_id' => $paymentDTO->client_id,
-										'paymentType'=>"4",
+										'paymentType'=>"04",
+										'receiptType'=>"2",
 									];
+									
 			$billingResponse = $this->billingClient->postPayment($receiptingParams);
 
 			if($billingResponse['status']=='SUCCESS'){
@@ -41,7 +43,7 @@ class ReceiptReconnectionSwasco implements IReceiptPayment
 												"Acc: " . $paymentDTO->customerAccount . "\n".
 												"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{
-				$paymentDTO->error = "At post recoonection fee. ".$billingResponse['error'];
+				$paymentDTO->error = "At receipt reconnection fee. ".$billingResponse['error'];
 			}
         
         return $paymentDTO;

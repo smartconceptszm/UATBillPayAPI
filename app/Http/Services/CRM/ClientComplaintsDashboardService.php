@@ -2,20 +2,17 @@
 
 namespace App\Http\Services\CRM;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Exception;
 
-class ComplaintDashboardService
+class ClientComplaintsDashboardService
 {
 
    public function findAll(array $criteria):array|null
    {
       
       try {
-         $user = Auth::user(); 
-         $criteria['client_id'] = $user->client_id;
          $dto = (object)$criteria;
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
@@ -48,14 +45,13 @@ class ComplaintDashboardService
             }
          // Get all Days in Current Month
             $theDateTo = Carbon::parse($dto->dateTo);
-            $currentYear = $theDateTo->format('Y');
-            $currentMonth = $theDateTo->format('m');
-            $firstDayOfCurrentMonth = $currentYear . '-' . $currentMonth . '-01 00:00:00';
+            $startOfMonth = $theDateTo->copy()->startOfMonth();
+            $endOfDay = $theDateTo->copy()->endOfDay();
             $dailyTrends = DB::table('complaints as c')
                ->select(DB::raw('dayofmonth(c.created_at) as dayOfComplaint,
                                     COUNT(c.id) AS noOfComplaints'))
                ->where('c.client_id', '=', $dto->client_id)
-               ->whereBetween('c.created_at', [$firstDayOfCurrentMonth, $dto->dateTo])
+               ->whereBetween('c.created_at', [$startOfMonth, $endOfDay])
                ->groupBy('dayOfComplaint')
                ->orderBy('dayOfComplaint')
                ->get();

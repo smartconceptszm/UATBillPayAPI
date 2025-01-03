@@ -21,6 +21,7 @@ class UpdateDetails_Swasco implements IUpdateDetailsClient
          return $this->billingClient->changeCustomerDetail([
                                     'customerAccount' => $detailsData['customerAccount'],
                                     "mobileNumber" => $detailsData['mobileNumber'],
+                                    'created_at' => $detailsData['created_at'],
                                     'newMobileNumber' => $newMobileNumber,
                                     'client_id' => $detailsData['client_id']
                                  ]);

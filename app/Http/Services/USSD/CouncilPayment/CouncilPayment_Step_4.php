@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\USSD\CouncilPayment;
 
-use App\Http\Services\Clients\ClientRevenueCodeService;
+use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\USSD\StepServices\GetAmount;
 use App\Http\Services\Clients\ClientMenuService;
 use Illuminate\Support\Facades\Cache;
@@ -14,8 +14,8 @@ class CouncilPayment_Step_4
 {
 
    public function __construct(
-      private ClientRevenueCodeService $revenueCodeService,
       private ClientMenuService $clientMenuService,
+      private EnquiryHandler $enquiryHandler,
       private GetAmount $getAmount
    ){}
 
@@ -36,15 +36,30 @@ class CouncilPayment_Step_4
 
       $theMenu = $this->clientMenuService->findById($txDTO->menu_id);
       $parentMenu = $this->clientMenuService->findById($theMenu->parent_id);
+      $theService = '';
+      $theAccount = '';
       if($theMenu->onOneAccount =="YES"){
          $theService = "For: (".$theMenu->commonAccount.") - ".$parentMenu->prompt.": ".$theMenu->prompt."\n";
       }else{
-         $revenueCode = $this->revenueCodeService->findOneBy(['menu_id' =>$txDTO->menu_id,
-                                                                     'code' =>$txDTO->customerAccount]);
-         $theService = "For: (".$revenueCode->code.") - ".$parentMenu->prompt.": ".$revenueCode->name."\n";
+         try {
+            $txDTO = $this->enquiryHandler->handle($txDTO);
+            $theAccount = "Into: ".$txDTO->customerAccount." ".$txDTO->customer['name'];
+            $theService = "For: ".$parentMenu->prompt.": ".$theMenu->prompt."\n";
+         } catch (\Throwable $e) {
+            if($e->getCode()==1){
+               $txDTO->errorType = 'InvalidAccount';
+            }else{
+               $txDTO->errorType = 'SystemError';
+            }
+            $txDTO->error = $e->getMessage();
+            return $txDTO;
+         }
       }
 
       $txDTO->response = "Pay ZMW ".$txDTO->subscriberInput."\n";
+      if($theAccount != ''){
+         $txDTO->response .= $theAccount;
+      }
       $txDTO->response .= $theService;
       $txDTO->response .= "Ref: ".$txDTO->reference."\n";
       $txDTO->response .= "Enter\n". 

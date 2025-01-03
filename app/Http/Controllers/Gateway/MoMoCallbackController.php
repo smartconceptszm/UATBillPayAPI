@@ -22,6 +22,7 @@ class MoMoCallbackController extends Controller
             $callbackParams = $request->all();
             $callbackParams = $callbackParams['transaction'];
             $this->moMoCallbackService->handleAirtel($callbackParams);
+            // Log::info("AIRTEL Callback executed: ".json_encode($callbackParams));
         } catch (\Throwable $e) {
             Log::error('Error processing Call Back Transaction: '.$e->getMessage());
         }
@@ -35,7 +36,6 @@ class MoMoCallbackController extends Controller
         try {
 
             $callbackParams = $request->all();
-
 
 
             Log::info("MTN Callback executed: ".json_encode($callbackParams)."\n".

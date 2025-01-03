@@ -73,7 +73,6 @@ class SwascoV2 implements IBillingClient
          }else{
             throw new Exception("Invalid SWASCO Account Number",1);
          }
-
       } catch (\Throwable $e) {
          if ($e->getCode() == 1) {
             throw $e;
@@ -96,27 +95,26 @@ class SwascoV2 implements IBillingClient
          ];
 
       try {
-
-         $this->setConfigs($postParams['client_id'],$postParams['providerName']);
+         $this->setConfigs($postParams['client_id']);
          $receiptingParams =  [ 
                                  'username' => $this->soapUserName,
                                  'password' => $this->soapPassword,
-                                 'accountNumber' => $postParams['customerAccount'],
-                                 'lineAmount' => $postParams['amount'],
                                  'referenceNumber' => $postParams['referenceNumber'],
-                                 'paymentType' => '01',
-                                 'phoneNumber' => $postParams['mobileNumber'] 
+                                 'accountNumber' => $postParams['account'],
+                                 'lineAmount' => $postParams['amount'],
+                                 'paymentType' => $postParams['paymentType'],
+                                 'phoneNumber' => $postParams['mobileNumber'],
+                                 'source' => 1,
+                                 'receiptType' => $postParams['receiptType']
                               ];
 
          $apiResponse = $this->swascoSoapService->PostCustomerReceipt($receiptingParams);
          if($apiResponse->return_value){
             $response['status']="SUCCESS";
             $response['receiptNumber'] = $apiResponse->return_value;
-            return  $response;
          }else{
             throw new Exception("SWASCO Billing Client PostCustomerReceipt error: ",1);
          }
-
       } catch (\Throwable $e) {
          if ($e->getCode() == 1) {
             $response['error']=$e->getMessage();
@@ -124,161 +122,9 @@ class SwascoV2 implements IBillingClient
             $response['error']=" SWASCO Billing Client (Post Payment) error. Details: " . $e->getMessage();
          }
       }
-
       return $response;
 
    }
-
-   public function postReconnection(Array $postParams): array 
-   {
-
-      $response = [
-                        'status'=>'FAILED',
-                        'receiptNumber'=>'',
-                        'error'=>''
-                     ];
-
-      try {
-
-         $this->setConfigs($postParams['client_id'],$postParams['providerName']);
-
-         $theDate = Carbon::parse($postParams['created_at']);
-         $theDate = $theDate->format('Y-m-d');
-
-         $receiptingParams =  [ 
-                                 'referenceNumber' => $postParams['referenceNumber'],
-                                 'accountNumber' => $postParams['customerAccount'],
-                                 'sourcePhoneNumber' => $postParams['mobileNumber'],
-                                 'paymentType' => $postParams['paymentType'],
-                                 'creditAmount' => $postParams['amount'],
-                                 'paymentDate' => $theDate,
-                                 'username' => $this->soapUserName,
-                                 'password' => $this->soapPassword,
-                              ];
-
-         $apiResponse = $this->swascoSoapService->PostReconnectionPayment($receiptingParams);
-         $apiResponse = json_decode($apiResponse->return_value,true);
-         $apiResponse = $apiResponse['RESPONSE'];
-         if(is_array($apiResponse) && key_exists('RECEIPTNO',$apiResponse)){
-            $response['status']="SUCCESS";
-            $response['receiptNumber'] = $apiResponse['RECEIPTNO'];
-            return  $response;
-         }else{
-            throw new Exception("SWASCO Billing Client Post Reconnection Payment error: ",1);
-         }
-
-      } catch (\Throwable $e) {
-         if ($e->getCode() == 1) {
-            $response['error']=$e->getMessage();
-         } else{
-            $response['error']=" SWASCO Billing Client Post Reconnection Payment error. Details: " . $e->getMessage();
-         }
-      }
-
-      return $response;
-
-   }
-
-   public function postVacuumTanker(Array $postParams): array 
-   {
-
-      $response = [
-                        'status'=>'FAILED',
-                        'receiptNumber'=>'',
-                        'error'=>''
-                     ];
-
-      try {
-
-         $this->setConfigs($postParams['client_id'],$postParams['providerName']);
-
-         $theDate = Carbon::parse($postParams['created_at']);
-         $theDate = $theDate->format('Y-m-d');
-
-         $receiptingParams =  [ 
-                                 'referenceNumber' => $postParams['referenceNumber'],
-                                 'accountNumber' => $postParams['customerAccount'],
-                                 'sourcePhoneNumber' => $postParams['mobileNumber'],
-                                 'paymentType' => $postParams['paymentType'],
-                                 'creditAmount' => $postParams['amount'],
-                                 'paymentDate' => $theDate,
-                                 'username' => $this->soapUserName,
-                                 'password' => $this->soapPassword,
-                              ];
-
-         $apiResponse = $this->swascoSoapService->PostVacuumTankerPayment($receiptingParams);
-         $apiResponse = json_decode($apiResponse->return_value,true);
-         $apiResponse = $apiResponse['RESPONSE'];
-         if(is_array($apiResponse) && key_exists('RECEIPTNO',$apiResponse)){
-            $response['status']="SUCCESS";
-            $response['receiptNumber'] = $apiResponse['RECEIPTNO'];
-            return  $response;
-         }else{
-            throw new Exception("SWASCO Billing Client Post Reconnection Payment error: ",1);
-         }
-
-      } catch (\Throwable $e) {
-         if ($e->getCode() == 1) {
-            $response['error']=$e->getMessage();
-         } else{
-            $response['error']=" SWASCO Billing Client Post Reconnection Payment error. Details: " . $e->getMessage();
-         }
-      }
-
-      return $response;
-
-   }
-
-   public function postNewConnection(Array $postParams): array 
-   {
-
-      $response = [
-                        'status'=>'FAILED',
-                        'receiptNumber'=>'',
-                        'error'=>''
-                     ];
-
-      try {
-
-         $this->setConfigs($postParams['client_id'],$postParams['providerName']);
-
-         $theDate = Carbon::parse($postParams['created_at']);
-         $theDate = $theDate->format('Y-m-d');
-
-         $receiptingParams =  [ 
-                                 'referenceNumber' => $postParams['referenceNumber'],
-                                 'accountNumber' => $postParams['customerAccount'],
-                                 'sourcePhoneNumber' => $postParams['mobileNumber'],
-                                 'paymentType' => $postParams['paymentType'],
-                                 'creditAmount' => $postParams['amount'],
-                                 'paymentDate' => $theDate,
-                                 'username' => $this->soapUserName,
-                                 'password' => $this->soapPassword,
-                              ];
-
-         $apiResponse = $this->swascoSoapService->PostVacuumTankerPayment($receiptingParams);
-         $apiResponse = json_decode($apiResponse->return_value,true);
-         $apiResponse = $apiResponse['RESPONSE'];
-         if(is_array($apiResponse) && key_exists('RECEIPTNO',$apiResponse)){
-            $response['status']="SUCCESS";
-            $response['receiptNumber'] = $apiResponse['RECEIPTNO'];
-            return  $response;
-         }else{
-            throw new Exception("SWASCO Billing Client Post Reconnection Payment error: ",1);
-         }
-
-      } catch (\Throwable $e) {
-         if ($e->getCode() == 1) {
-            $response['error']=$e->getMessage();
-         } else{
-            $response['error']=" SWASCO Billing Client Post Reconnection Payment error. Details: " . $e->getMessage();
-         }
-      }
-
-      return $response;
-
-   }
-
 
    public function changeCustomerDetail(array $postParams): String {
 
@@ -298,9 +144,10 @@ class SwascoV2 implements IBillingClient
                               'submissionDate' => $theDate,
                               'sourcePhoneNo' => $postParams['mobileNumber']
                            ];
+
          $apiResponse = $this->swascoSoapService->ChangeCustomerNumber($customerParams);
          if($apiResponse->return_value){
-            return  $apiResponse->return_value;
+            $response = $apiResponse->return_value;
          }else{
             throw new Exception("SWASCO Billing Client Change Customer Details error: ",1);
          }
@@ -322,7 +169,7 @@ class SwascoV2 implements IBillingClient
                                  'username' => $this->soapUserName,
                                  'password' => $this->soapPassword,
                                  'accountNo' => $postParams['customerAccount'],
-                                 'compaintCode' => $postParams['compaintCode'],
+                                 'compaintCode' => $postParams['complaintCode'],
                                  'submissionDate' => $theDate,
                                  'sourcePhoneNo' => $postParams['mobileNumber'] 
                               ];
@@ -330,9 +177,7 @@ class SwascoV2 implements IBillingClient
          $apiResponse = $this->swascoSoapService->SubmitFaultComplaint($receiptingParams);
 
          if($apiResponse->return_value){
-            $response['status']="SUCCESS";
-            $response['receiptNumber'] = $apiResponse->return_value;
-            return  $response;
+            $response = $apiResponse->return_value;
          }else{
             throw new Exception("SWASCO Billing Client SubmitFaultComplaint error: ",1);
          }
@@ -342,24 +187,24 @@ class SwascoV2 implements IBillingClient
       return $response;
    }
 
-   private function setConfigs(string $client_id,string $providerName=null){
+   private function setConfigs(string $client_id){
 
       $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
-      $baseURL = $clientCredentials['SOAP_BASE_URL'];
+      $baseURL = $clientCredentials['SWASCOV2_SOAP_BASE_URL'];
       $wsdlPath = $baseURL;//.$clientCredentials['wsdl_URI'];
       $soapOptions =  [
                            'exceptions' => true,
-                           'login' => $clientCredentials['SOAP_USERNAME'],
-                           'password' => $clientCredentials['SOAP_PASSWORD'],
-                           'cache_wsdl' => WSDL_CACHE_BOTH,
+                           'login' => $clientCredentials['SWASCOV2_SOAP_USERNAME'],
+                           'password' => $clientCredentials['SWASCOV2_SOAP_PASSWORD'],
+                           'cache_wsdl' => WSDL_CACHE_NONE,
                            'soap_version' => SOAP_1_1,
                            'trace' => 1,
                            'connection_timeout' => $clientCredentials['SOAP_CONNECTION_TIMEOUT']
                         ];
       $this->swascoSoapService = new \SoapClient($wsdlPath,$soapOptions);
       $this->swascoSoapService->__setLocation($baseURL);
-      $this->soapUserName =$clientCredentials['SOAP_USERNAME'];
-      $this->soapPassword = $clientCredentials['SOAP_PASSWORD'];
+      $this->soapUserName =$clientCredentials['SWASCOV2_SOAP_USERNAME'];
+      $this->soapPassword = $clientCredentials['SWASCOV2_SOAP_PASSWORD'];
 
    }
 
@@ -372,6 +217,157 @@ class SwascoV2 implements IBillingClient
          return "OTHER";
       }
       
+   }
+
+   public function _postReconnection(Array $postParams): array 
+   {
+
+      $response = [
+                        'status'=>'FAILED',
+                        'receiptNumber'=>'',
+                        'error'=>''
+                     ];
+
+      try {
+
+         $this->setConfigs($postParams['client_id']);
+
+         $theDate = Carbon::parse($postParams['created_at']);
+         $theDate = $theDate->format('Y-m-d');
+
+         $receiptingParams =  [ 
+                                 'referenceNumber' => $postParams['referenceNumber'],
+                                 'accountNumber' => $postParams['account'],
+                                 'sourcePhoneNumber' => $postParams['mobileNumber'],
+                                 'paymentType' => $postParams['paymentType'],
+                                 'creditAmount' => $postParams['amount'],
+                                 'paymentDate' => $theDate,
+                                 'source' => 1,
+                                 'receiptType' => $postParams['receiptType'],
+                                 'username' => $this->soapUserName,
+                                 'password' => $this->soapPassword,
+                              ];
+
+         $apiResponse = $this->swascoSoapService->PostReconnectionPayment($receiptingParams);
+         $apiResponse = json_decode($apiResponse->return_value,true);
+         $apiResponse = $apiResponse['RESPONSE'];
+         if(is_array($apiResponse) && key_exists('RECEIPTNO',$apiResponse)){
+            $response['status']="SUCCESS";
+            $response['receiptNumber'] = $apiResponse['RECEIPTNO'];
+         }else{
+            throw new Exception("SWASCO Billing Client Post Reconnection Payment error: ",1);
+         }
+      } catch (\Throwable $e) {
+         if ($e->getCode() == 1) {
+            $response['error']=$e->getMessage();
+         } else{
+            $response['error']=" SWASCO Billing Client Post Reconnection Payment error. Details: " . $e->getMessage();
+         }
+      }
+
+      return $response;
+
+   }
+
+   public function _postVacuumTanker(Array $postParams): array 
+   {
+
+      $response = [
+                        'status'=>'FAILED',
+                        'receiptNumber'=>'',
+                        'error'=>''
+                     ];
+
+      try {
+
+         $this->setConfigs($postParams['client_id']);
+
+         $theDate = Carbon::parse($postParams['created_at']);
+         $theDate = $theDate->format('Y-m-d');
+
+         $receiptingParams =  [ 
+                                 'referenceNumber' => $postParams['referenceNumber'],
+                                 'accountNumber' => $postParams['account'],
+                                 'sourcePhoneNumber' => $postParams['mobileNumber'],
+                                 'paymentType' => $postParams['paymentType'],
+                                 'creditAmount' => $postParams['amount'],
+                                 'paymentDate' => $theDate,
+                                 'source' => 1,
+                                 'receiptType' => $postParams['receiptType'],
+                                 'username' => $this->soapUserName,
+                                 'password' => $this->soapPassword,
+                              ];
+           
+         $apiResponse = $this->swascoSoapService->PostVacuumTankerPayment($receiptingParams);
+         $apiResponse = json_decode($apiResponse->return_value,true);
+         $apiResponse = $apiResponse['RESPONSE'];
+         if(is_array($apiResponse) && key_exists('RECEIPTNO',$apiResponse)){
+            $response['status']="SUCCESS";
+            $response['receiptNumber'] = $apiResponse['RECEIPTNO'];
+         }else{
+            throw new Exception("SWASCO Billing Client Post Reconnection Payment error: ",1);
+         }
+
+      } catch (\Throwable $e) {
+         if ($e->getCode() == 1) {
+            $response['error']=$e->getMessage();
+         } else{
+            $response['error']=" SWASCO Billing Client Post Reconnection Payment error. Details: " . $e->getMessage();
+         }
+      }
+
+      return $response;
+
+   }
+
+   public function _postNewConnection(Array $postParams): array 
+   {
+
+      $response = [
+                        'status'=>'FAILED',
+                        'receiptNumber'=>'',
+                        'error'=>''
+                     ];
+
+      try {
+
+         $this->setConfigs($postParams['client_id']);
+
+         $theDate = Carbon::parse($postParams['created_at']);
+         $theDate = $theDate->format('Y-m-d');
+
+         $receiptingParams =  [ 
+                                 'referenceNumber' => $postParams['referenceNumber'],
+                                 'accountNumber' => $postParams['customerAccount'],
+                                 'sourcePhoneNumber' => $postParams['mobileNumber'],
+                                 'paymentType' => $postParams['paymentType'],
+                                 'creditAmount' => $postParams['amount'],
+                                 'paymentDate' => $theDate,
+                                 'username' => $this->soapUserName,
+                                 'password' => $this->soapPassword,
+                              ];
+
+         $apiResponse = $this->swascoSoapService->PostVacuumTankerPayment($receiptingParams);
+         $apiResponse = json_decode($apiResponse->return_value,true);
+         $apiResponse = $apiResponse['RESPONSE'];
+         if(is_array($apiResponse) && key_exists('RECEIPTNO',$apiResponse)){
+            $response['status']="SUCCESS";
+            $response['receiptNumber'] = $apiResponse['RECEIPTNO'];
+            return  $response;
+         }else{
+            throw new Exception("SWASCO Billing Client Post Reconnection Payment error: ",1);
+         }
+
+      } catch (\Throwable $e) {
+         if ($e->getCode() == 1) {
+            $response['error']=$e->getMessage();
+         } else{
+            $response['error']=" SWASCO Billing Client Post Reconnection Payment error. Details: " . $e->getMessage();
+         }
+      }
+
+      return $response;
+
    }
 
 }

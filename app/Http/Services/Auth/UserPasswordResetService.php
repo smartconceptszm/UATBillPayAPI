@@ -5,7 +5,6 @@ namespace App\Http\Services\Auth;
 use App\Http\Services\Clients\ClientService;
 use App\Http\Services\Auth\UserService;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use App\Jobs\SendSMSesJob;
@@ -36,7 +35,11 @@ class UserPasswordResetService
                   ]];
             $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
             Cache::put($user->username.'.'.$user->mobileNumber,$resetPIN, Carbon::now()->addMinutes(intval($billpaySettings['PASSWORD_RESET'])));
-            Queue::later(Carbon::now()->addSeconds(1),new SendSMSesJob($smses),'','high');
+
+            SendSMSesJob::dispatch($smses)
+                           ->delay(Carbon::now()->addSeconds(1))
+                           ->onQueue('high');
+
          }else{
             throw new Exception("Invalid username");
          }

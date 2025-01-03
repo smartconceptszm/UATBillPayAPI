@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use App\Jobs\PaymentsAnalyticsDailySingleJob;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Jobs\BaseJob;
@@ -23,7 +22,9 @@ class PaymentsAnalyticsDailyBulkJob extends BaseJob
       $endOfMonth = $theDate->endOfMonth();
       $daysDone = 0;
       while ($dayOfMonth <= $endOfMonth) {
-         Queue::later(Carbon::now()->addSeconds($daysDone*30),new PaymentsAnalyticsDailySingleJob($dayOfMonth),'','high');
+         PaymentsAnalyticsDailySingleJob::dispatch($dayOfMonth)
+                        ->delay(Carbon::now()->addSeconds($daysDone*30))
+                        ->onQueue('high');
          $daysDone += 1;
          $dayOfMonth->addDay();
       }

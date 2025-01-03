@@ -30,10 +30,11 @@ class MTNSMS implements ISMSClient
         try {
             
             $credentials = $this->getConfigs($smsParams);
+            
             $apiToken = $this->getToken($credentials);
-            if(!$smsParams['transactionId']){
-                $smsParams['transactionId'] = $smsParams['mobileNumber']."T".\date('ymdHis');
-            }
+
+            $smsParams['transactionId'] = $smsParams['mobileNumber']."T".\date('ymdHis');
+
             $fullURL = $credentials['SMS_GATEWAY_URL'].'/sms/send';
             $messageBody = [
                                 "name" => "Non-Bulk campaign",

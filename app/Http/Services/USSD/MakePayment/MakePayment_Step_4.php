@@ -4,8 +4,8 @@ namespace App\Http\Services\USSD\MakePayment;
 
 use App\Http\Services\Gateway\Utility\StepService_CalculatePaymentAmounts;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
-use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\USSD\StepServices\GetAmount;
+use App\Http\Services\Clients\ClientMenuService;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -17,8 +17,8 @@ class MakePayment_Step_4
    public function __construct(
       private StepService_CalculatePaymentAmounts $calculatePaymentAmounts,
       private ClientMenuService $clientMenuService,
-      private GetAmount $getAmount,
-      private EnquiryHandler $enquiryHandler 
+      private EnquiryHandler $enquiryHandler,
+      private GetAmount $getAmount
    ){}
 
    public function run(BaseDTO $txDTO)
@@ -41,10 +41,16 @@ class MakePayment_Step_4
          try {
             $txDTO = $this->enquiryHandler->handle($txDTO);
          } catch (\Throwable $e) {
-            if($e->getCode()==1){
-               $txDTO->errorType = 'InvalidAccount';
-            }else{
-               $txDTO->errorType = 'SystemError';
+            switch ($e->getCode()) {
+               case 1:
+                  $txDTO->errorType = 'InvalidAccount';
+                  break;
+               case 4:
+                     $txDTO->errorType = 'InvalidAmount';
+                     break;
+               default:
+                  $txDTO->errorType = 'SystemError';
+                  break;
             }
             $txDTO->error = $e->getMessage();
             return $txDTO;

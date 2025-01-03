@@ -39,8 +39,8 @@ class BillingMock implements IBillingClient
    {
 
       $response=[
-         'status'=>'FAILED',
-         'tokenNumber'=>"TOKN".\rand(100000000000,999999999999),
+         'status'=>'SUCCESS',
+         'tokenNumber'=> \implode('-', \str_split(str_replace(' ', '', "TOKN".\rand(100000000000,999999999999)), 4)),
          'error'=>''
       ];
 

@@ -6,7 +6,6 @@ use App\Http\Services\USSD\ServiceApplications\ClientCallers\IServiceApplication
 use App\Http\Services\USSD\StepServices\ValidateCRMInput;
 use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
 use App\Http\Services\MenuConfigs\ServiceTypeService;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Jobs\SendSMSesJob;
@@ -99,8 +98,9 @@ class ServiceApplications_Step_4
                'type' => 'NOTIFICATION',
             ]
          ];
-      Queue::later(Carbon::now()->addSeconds(3), 
-                     new SendSMSesJob($arrSMSes),'','low');
+      SendSMSesJob::dispatch($arrSMSes)
+                  ->delay(Carbon::now()->addSeconds(3))
+                  ->onQueue('low');
    }
 
 }

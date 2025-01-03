@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Gateway;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Gateway\CustomerService;
 use App\Http\Services\Clients\ClientService;
-use Illuminate\Support\Facades\Cache;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
@@ -18,7 +17,7 @@ class CustomerController extends Controller
       private ClientService $clientService,
       private Request $request)
 	{
-      $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
+      $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
       $client = $this->clientService->findById($request->input('client_id'));
       $billingClient = 'MockBillingClient';
       if($billpaySettings['USE_BILLING_MOCK_'.strtoupper($client->urlPrefix)]!="YES"){

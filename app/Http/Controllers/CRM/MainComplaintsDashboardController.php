@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\CRM;
 
-use App\Http\Services\CRM\ComplaintDashboardService;
+use App\Http\Services\CRM\MainComplaintsDashboardService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class ComplaintDashboardController extends Controller
+class MainComplaintsDashboardController extends Controller
 {
 
 	public function __construct(
-		private ComplaintDashboardService $complaintDashboardService)
+		private MainComplaintsDashboardService $complaintDashboardService)
 	{}
 
    /**

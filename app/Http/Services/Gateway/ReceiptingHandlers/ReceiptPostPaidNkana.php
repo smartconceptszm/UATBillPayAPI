@@ -46,7 +46,7 @@ class ReceiptPostPaidNkana implements IReceiptPayment
 				}
 				$paymentDTO->receipt .= "Date: " . Carbon::now()->format('d-M-Y') . "\n";
 		}else{
-				$paymentDTO->error = "At post payment. ".$billingResponse['error'];
+				$paymentDTO->error = "At receipt payment. ".$billingResponse['error'];
 		}
 		return $paymentDTO;
 

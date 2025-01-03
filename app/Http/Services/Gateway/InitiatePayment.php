@@ -33,7 +33,8 @@ class InitiatePayment
                \App\Http\Services\Gateway\InitiatePaymentSteps\Step_SendPaymentsProviderRequest::class, 
                \App\Http\Services\Gateway\InitiatePaymentSteps\Step_DispatchConfirmationJob::class,
                \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,  
-               \App\Http\Services\Gateway\Utility\Step_LogStatus::class 
+               \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
+               \App\Http\Services\Gateway\Utility\Step_DailyAnalytics::class,  
             ]
          )
          ->thenReturn();

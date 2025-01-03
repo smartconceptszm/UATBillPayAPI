@@ -3,10 +3,14 @@
 namespace App\Http\Services\Gateway;
 
 use App\Http\Services\Payments\PaymentToReviewService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Enums\PaymentStatusEnum;
-USE App\Http\Services\Gateway\ConfirmPayment;
+use App\Http\Services\Gateway\ConfirmPayment;
+use App\Http\Services\Enums\PaymentTypeEnum;
 use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\MoMoDTO;
+
+
 use Exception;
 
 class MoMoCallbackService
@@ -14,6 +18,7 @@ class MoMoCallbackService
 
    public function __construct(
       private PaymentToReviewService $paymentToReviewService, 
+      private ClientMenuService $clientMenuService,
       private ConfirmPayment $confirmPayment,
       private MoMoDTO $paymentDTO)
    {}
@@ -26,11 +31,16 @@ class MoMoCallbackService
          $thePayment = $this->paymentToReviewService->findByTransactionId($callbackParams['id']);
          $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
          $paymentDTO->ppTransactionId = $callbackParams['airtel_money_id'];
-
-         Log::info("(".$paymentDTO->urlPrefix.") Airtel money callback executed on wallet: ".$paymentDTO->mobileNumber);
+         $paymentDTO->callbackResponse = "YES";
+         //Log::info("(".$paymentDTO->urlPrefix.") Airtel money callback executed on wallet: ".$paymentDTO->mobileNumber);
          
          if($callbackParams['status_code'] == 'TS'){
-            $paymentDTO->paymentStatus = PaymentStatusEnum::Paid->value;
+            $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
+            if($theMenu->paymentType == PaymentTypeEnum::PrePaid->value){
+               $paymentDTO->paymentStatus = PaymentStatusEnum::NoToken->value;
+            }else{
+               $paymentDTO->paymentStatus = PaymentStatusEnum::Paid->value;
+            }
             $paymentDTO->error = "";
          }else{
             $paymentDTO->paymentStatus = PaymentStatusEnum::Payment_Failed->value;

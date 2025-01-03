@@ -9,7 +9,6 @@ use App\Http\Services\USSD\StepServices\GetAmount;
 use App\Http\Services\Sessions\SessionService;
 use App\Http\Services\Clients\ClientService;
 use App\Http\Services\Clients\MnoService;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Log;
 use App\Http\Services\Enums\MNOs;
 use App\Jobs\InitiatePaymentJob;
@@ -53,9 +52,11 @@ class PaymentRequestService
          $paymentDTO = $thePaymentDTO->fromArray($webDTO->toArray());
          $paymentDTO->session_id = $session->id;
          $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($paymentDTO->payments_provider_id);
-      
-         Queue::later(Carbon::now()->addSeconds((int) $paymentsProviderCredentials[$paymentDTO->walletHandler.
-                     '_SUBMIT_PAYMENT']), new InitiatePaymentJob($paymentDTO),'','high');
+
+         InitiatePaymentJob::dispatch($paymentDTO)
+                           ->delay(Carbon::now()
+                                 ->addSeconds((int)$paymentsProviderCredentials[$paymentDTO->walletHandler.'_SUBMIT_PAYMENT']))
+                           ->onQueue('high');
 
          Log::info('('.$paymentDTO->urlPrefix.') '.
                         'Web payment initiated: Phone: '.

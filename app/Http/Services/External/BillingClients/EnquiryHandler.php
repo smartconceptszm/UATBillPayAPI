@@ -3,7 +3,6 @@
 namespace App\Http\Services\External\BillingClients;
 
 use App\Http\Services\External\BillingClients\IBillingClient;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Jobs\SendSMSesJob;
@@ -52,8 +51,9 @@ class EnquiryHandler
 									$arrSMSes[$key]['client_id']=$txDTO->client_id;
 									$arrSMSes[$key]['type']="NOTIFICATION";
 								}
-								Queue::later(Carbon::now()->addSeconds(1), 
-													new SendSMSesJob($arrSMSes,$txDTO->client_id),'','low');
+								SendSMSesJob::dispatch($arrSMSes)
+													->delay(Carbon::now()->addSeconds(1))
+													->onQueue('low');
 						//
 						Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1, 
 													Carbon::now()->addMinutes((int)$billpaySettings['BILLING_ERROR_CACHE']));

@@ -32,12 +32,14 @@ class ReConfirmPayment
             App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
          //
 
-         //Bind Receipting Handler
+         //Bind Receipting and Billing Handlers
             $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
             $receiptingHandler = $theMenu->receiptingHandler;
             $billingClient = $theMenu->billingClient;
             if ($billpaySettings['USE_RECEIPTING_MOCK_'.strtoupper($paymentDTO->urlPrefix)] == "YES"){
                $receiptingHandler = "MockReceipting";
+            }
+            if ($billpaySettings['USE_BILLING_MOCK_'.strtoupper($paymentDTO->urlPrefix)] == "YES"){
                $billingClient = "MockBillingClient";
             }
             App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);

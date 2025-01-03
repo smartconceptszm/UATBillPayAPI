@@ -25,6 +25,7 @@ return new class extends Migration
          $table->string('receiptingHandler',50)->nullable();
          $table->enum('isDefault',['YES','NO'])->default('NO')->notNullable();
          $table->enum('isActive',['YES','NO'])->default('NO')->notNullable();
+         $table->string('cAccountCode',50)->nullable();
          $table->enum('onOneAccount',['YES','NO'])->default('NO')->notNullable();
          $table->string('commonAccount',50)->nullable();
          $table->string('customerAccountPrompt',150)->nullable();

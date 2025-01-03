@@ -28,13 +28,13 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 										(float)$paymentDTO->receiptAmount;
 		$newBalance = \number_format($newBalance, 2, '.', ',');
 
-		$paymentDTO->receiptNumber =  $paymentDTO->customerAccount."_".\now()->timestamp;
+		$receiptNumber =  $paymentDTO->customerAccount."_".\now()->timestamp;
 
 		$receiptingParams = [
 									"Mobile Network" => $paymentDTO->walletHandler, 
 									"AccountName"=> $paymentDTO->customer['name'],
 									"AmountPaid" => $paymentDTO->receiptAmount,
-									"ReceiptNo"=> $paymentDTO->receiptNumber,
+									"ReceiptNo"=> $receiptNumber,
 									"Address"=> $paymentDTO->customerAccount,
 									"Account"=> $paymentDTO->customerAccount,
 									"TransactDescript"=> "2220 POST-PAID.",
@@ -48,6 +48,7 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 	
 		if($billingResponse['status']=='SUCCESS'){
 			$paymentDTO->paymentStatus =  PaymentStatusEnum::Receipted->value;
+			$paymentDTO->receiptNumber =  $receiptNumber;
 			$paymentDTO->receipt = "\n"."Payment successful"."\n".
 										"Rcpt No: " . $paymentDTO->receiptNumber . "\n" .
 										"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
@@ -56,7 +57,7 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 			$paymentDTO->receipt.="Balance update within 48 hrs.";
 		}else{
 			$paymentDTO->receiptNumber =  '';
-			$paymentDTO->error = "At post payment. ".$billingResponse['error'];
+			$paymentDTO->error = "At receipt payment. ".$billingResponse['error'];
 		}
 		return $paymentDTO;
 

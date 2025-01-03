@@ -6,7 +6,6 @@ use App\Http\Services\Clients\PaymentsProviderCredentialService;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Clients\ClientWalletService;
 use App\Http\Services\Enums\PaymentStatusEnum;
-use Illuminate\Support\Facades\Queue;
 use App\Jobs\ReConfirmPaymentJob;
 use App\Jobs\ConfirmPaymentJob;
 use Illuminate\Support\Carbon;
@@ -27,14 +26,17 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
          if( $paymentDTO->paymentStatus == PaymentStatusEnum::Submitted->value){
                $clientWallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
                $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($clientWallet->payments_provider_id);
-               
-               Queue::later(Carbon::now()->addSeconds(
-                  (int)$paymentsProviderCredentials[$paymentDTO->walletHandler.'_PAYSTATUS_CHECK']),
-                                       new ConfirmPaymentJob($paymentDTO),'','high');                     
+               ConfirmPaymentJob::dispatch($paymentDTO)
+                              ->delay(Carbon::now()->addSeconds(
+                                       (int)$paymentsProviderCredentials[$paymentDTO->walletHandler.'_PAYSTATUS_CHECK'])
+                                    )
+                              ->onQueue('high');
+                  
          }else{
             $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-            Queue::later(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']),
-                                                            new ReConfirmPaymentJob($paymentDTO),'','high');
+            ReConfirmPaymentJob::dispatch($paymentDTO)
+                              ->delay(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']))
+                              ->onQueue('high');
          }
       } catch (\Throwable $e) {
          $paymentDTO->error='At dispatching confirmation job. '.$e->getMessage();

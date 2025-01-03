@@ -2,30 +2,40 @@
 
 namespace App\Http\Services\Gateway;
 
-use App\Http\Services\Clients\ClientMenuService;
-use App\Http\Services\Clients\ClientService;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
 class PaymentsMenuService
 {
 
-   public function __construct(
-      private ClientMenuService $clientMenuService,
-      private ClientService $clientService
-   )
-   {}
-
    public function findAll(array $criteria):array|null
    {
 
       try {
-         $client = $this->clientService->findOneBy($criteria);
-         return $this->clientMenuService->findAll([
-                              ['client_id','=', $client->id],
-                              ['handler','!=', 'ParentMenu'],
-                              ['isPayment','=', 'YES'],
-                              ['isActive','=', 'YES'],
-                           ]);
+         $records = DB::table('client_menus as cm')
+                     ->join('client_menus as cm2','cm2.id','=','cm.parent_id')
+                     ->select('cm.*','cm2.parent_id as rootMenu')
+                     ->where('cm.client_id', '=', $criteria['client_id'])
+                     ->where('cm.isPayment', '=', 'YES')
+                     ->where('cm2.parent_id', '=', '0')
+                     ->get()->all();               
+         return $records;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+
+   }
+
+   public function submenus(array $criteria):array|null
+   {
+
+      try {
+         $records = DB::table('client_menus')
+                     ->select('*')
+                     ->where('parent_id', '=', $criteria['parent_id'])
+                     ->where('isPayment', '=', 'YES')
+                     ->get()->all();               
+         return $records;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

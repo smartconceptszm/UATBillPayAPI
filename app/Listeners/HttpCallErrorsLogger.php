@@ -7,7 +7,6 @@ use App\Http\Services\Utility\PsrMessageToStringConvertor;
 use Illuminate\Http\Client\Events\ResponseReceived;
 use App\Http\Services\Clients\ClientService;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Jobs\SendSMSesJob;
@@ -100,7 +99,9 @@ class HttpCallErrorsLogger
                                                    ." have failed over 5 times in the last ".
                                                    $billpaySettings['HTTP_ERROR_CACHE']." minutes!";
                   }
-                  Queue::later(Carbon::now()->addSeconds(1), new SendSMSesJob($arrSMSes),'','low');
+                  SendSMSesJob::dispatch($arrSMSes)
+                                 ->delay(Carbon::now()->addSeconds(1))
+                                 ->onQueue('low');
                //
                Cache::put($errorType.'_ErrorCount', $httpErrorCount, Carbon::now()->addMinutes((int)$billpaySettings['HTTP_ERROR_CACHE']));
             } 
@@ -121,7 +122,7 @@ class HttpCallErrorsLogger
 
          if($logString){
             $logString="\n\n*******************************\n\n".$logString;
-            $logString.="Http Request and Response log:\n\n";
+            $logString.=" Http Request and Response log:\n\n";
             $logString.="The REQUEST";
             $logString.=$this->messageConvertor->toString($event->request->toPsrRequest());
             $logString.="\nThe RESPONSE";

@@ -10,7 +10,7 @@ use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
-class ReceiptPaymentMazabuka implements IReceiptPayment
+class ReceiptMazabukaOnCustomerAccount implements IReceiptPayment
 {
 
     public function __construct(
@@ -22,12 +22,11 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
     public function handle(BaseDTO $paymentDTO): BaseDTO
     {
 			$receiptingParams = [ 
-										'account' => $paymentDTO->customerAccount,
-										'amount' => $paymentDTO->receiptAmount,
-										'mobileNumber'=> $paymentDTO->mobileNumber,
-										'client_id' => $paymentDTO->client_id,
-										'referenceNumber' => $paymentDTO->reference,
+										'customerAccount' => $paymentDTO->customerAccount,
+										'receiptAmount' => $paymentDTO->receiptAmount,
+										'client_id' => $paymentDTO->client_id
 									];
+
 			$billingResponse = $this->billingClient->postPayment($receiptingParams);
 
 			if($billingResponse['status']=='SUCCESS'){
@@ -37,22 +36,15 @@ class ReceiptPaymentMazabuka implements IReceiptPayment
 
 				$theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
 				$parentMenu = $this->clientMenuService->findById($theMenu->parent_id);
-				if($theMenu->onOneAccount =="YES"){
-					$theService = "For: (".$theMenu->commonAccount.") - ".$parentMenu->prompt.": ".$theMenu->prompt;
-				}else{
-					$revenueCode = $this->revenueCodeService->findOneBy(['menu_id' =>$paymentDTO->menu_id,
-																									'code' =>$paymentDTO->customerAccount]);
-					$theService = "For: (".$revenueCode->code.") - ".$parentMenu->prompt.": ".$revenueCode->name;
-				}
-
 				$paymentDTO->receipt = "\n"."Payment successful"."\n".
 								"Rcpt No.: " . $paymentDTO->receiptNumber . "\n" .
 								"Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-								$theService ."\n".
+								"Acc: " . $paymentDTO->customerAccount . "\n".
+								"For: (".$theMenu->commonAccount.") - ".$parentMenu->prompt.": ".$theMenu->prompt."\n".
 								"Ref: ".$paymentDTO->reference."\n".
 								"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 			}else{
-				$paymentDTO->error = "At Council payment. ".$billingResponse['error'];
+				$paymentDTO->error = "At receipt Council payment. ".$billingResponse['error'];
 			}
         
         return $paymentDTO;

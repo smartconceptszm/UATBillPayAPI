@@ -16,7 +16,8 @@ class MnosOfClientService
                         ->join('mnos as m','cmno.mno_id','=','m.id')
                         ->join('client_sms_channels as csc','cmno.smsChannel','=','csc.id')
                         ->join('sms_providers as sp','csc.sms_provider_id','=','sp.id')
-                        ->select('cmno.*','sp.id as sms_provider_id','sp.name as smsChannel','sp.handler','m.name as mno','c.name as client')
+                        ->select('cmno.*','sp.id as sms_provider_id','csc.id as smsChannel',
+                                    'sp.name as smsChannelName','sp.handler','m.name as mno','c.name as client')
                         ->where('cmno.client_id', '=', $client_id);                        
          $records =$records->get();
          return $records->all();

@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\SMS;
 
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -13,9 +12,7 @@ class SMSesOfClientService
    {
 
       try {
-         $user = Auth::user(); 
-         $criteria['client_id'] = $user->client_id;
-         $dto = (object)$criteria;
+            $dto = (object)$criteria;
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
          $records = DB::table('messages')

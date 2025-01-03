@@ -96,7 +96,9 @@ Route::group(['middleware' => 'mode'], function (){
    //
 
    //Mobile/Web/External Gateway Routes
+      Route::get('/app/webpaymentsclients', [\App\Http\Controllers\Clients\ClientController::class, 'findOneBy']);
       Route::get('/app/services', [\App\Http\Controllers\Gateway\PaymentsMenuController::class, 'index']);
+      Route::get('/app/services/submenus', [\App\Http\Controllers\Gateway\PaymentsMenuController::class, 'submenus']);
       Route::get('/app/customers', [\App\Http\Controllers\Gateway\CustomerController::class, 'show']);
       Route::get('/app/paymentsprovidersofclient', [\App\Http\Controllers\Gateway\PaymentsProvidersOfClientController::class, 'index']);
       Route::get('/app/clientwallets/findoneby', [\App\Http\Controllers\Clients\ClientWalletController::class, 'findOneBy']);
@@ -107,6 +109,7 @@ Route::group(['middleware' => 'mode'], function (){
 
    // AUTHENTICATED Routes
       Route::group(['middleware' => 'auth'], function (){
+
          //Analaytics
             Route::get('maindashboard', [\App\Http\Controllers\Analytics\MainDashboardController::class, 'index']);
             Route::get('clientdashboard', [\App\Http\Controllers\Analytics\ClientDashboardController::class, 'index']);
@@ -177,6 +180,10 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/menusofclient/{id}', 'menusofclient');
                Route::post('/clientmenus', 'store');
                Route::get('/clientmenus', 'index');
+            });
+            Route::controller(\App\Http\Controllers\Clients\MenusOfClientController::class)->group(function () {
+               Route::get('/levelonemenusofclient/{id}', 'levelOneMenus');
+               Route::get('/submenusofclient/{id}', 'subMenus');
             });
          //
 
@@ -341,7 +348,8 @@ Route::group(['middleware' => 'mode'], function (){
          // 
 
          //Complaint
-            Route::get('complaintsdashboard', [\App\Http\Controllers\CRM\ComplaintDashboardController::class, 'index']);
+            Route::get('clientcomplaintsdashboard', [\App\Http\Controllers\CRM\ClientComplaintsDashboardController::class, 'index']);
+            Route::get('maincomplaintsdashboard', [\App\Http\Controllers\CRM\MainComplaintsDashboardController::class, 'index']);
             Route::get('complaintsofclient', [\App\Http\Controllers\CRM\ComplaintsOfClientController::class, 'index']);
             Route::controller(\App\Http\Controllers\CRM\ComplaintController::class)->group(function () {
                Route::get('/complaints/findoneby', 'findOneBy');
@@ -373,13 +381,16 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/complaintsubtypes', 'index');
             });
          //
+
          // Text Messaging
-            Route::get('smsdashboard', [\App\Http\Controllers\SMS\SMSDashboardController::class, 'index']);
+            Route::get('mainsmsdashboard', [\App\Http\Controllers\SMS\MainSMSDashboardController::class, 'index']);
+            Route::get('clientsmsdashboard', [\App\Http\Controllers\SMS\ClientSMSDashboardController::class, 'index']);
             Route::get('smses', [\App\Http\Controllers\SMS\SMSesOfClientController::class, 'index']);
             Route::post('messages', [\App\Http\Controllers\SMS\MessageController::class, 'store']);
             Route::post('messages/bulk', [\App\Http\Controllers\SMS\SMSBulkController::class, 'store']);
             Route::post('messages/bulkcustom', [\App\Http\Controllers\SMS\SMSBulkCustomController::class, 'store']);
          //
+
          // Surveys
             Route::get('activesurveyquestions', [\App\Http\Controllers\CRM\ActiveSurveyQuestionsController::class, 'index']);
             Route::get('surveyresponsesofquestion', [\App\Http\Controllers\CRM\SurveyResponsesOfQuestionController::class, 'index']);
@@ -417,6 +428,7 @@ Route::group(['middleware' => 'mode'], function (){
             });
 
          //
+
          // Sessions 
             Route::controller(\App\Http\Controllers\Sessions\SessionController::class)->group(function () {
                Route::get('/sessions', 'index');
@@ -490,7 +502,6 @@ Route::group(['middleware' => 'mode'], function (){
 
             Route::delete('/logout', [\App\Http\Controllers\Auth\UserLogoutController::class,'destroy']);
          //
-
       });
    //
    

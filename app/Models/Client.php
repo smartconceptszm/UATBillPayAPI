@@ -11,7 +11,7 @@ class Client extends Model
    use HasFactory, HasUuids;
 
    protected $fillable=[
-      'shortCode','shortName','urlPrefix', 'name','balance','smsPayMode',
+      'shortCode','shortName','urlPrefix', 'name','ussdMenuText','balance','smsPayMode',
       'surcharge','mode','ussdAggregator','testMSISDN', 'status'
    ];
    

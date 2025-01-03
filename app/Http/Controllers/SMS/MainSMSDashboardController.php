@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\SMS;
 
-use App\Http\Services\SMS\SMSDashboardService;
+use App\Http\Services\SMS\MainSMSDashboardService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class SMSDashboardController extends Controller
+class MainSMSDashboardController extends Controller
 {
 
 	public function __construct(
-		private SMSDashboardService $smsDashboardService)
+		private MainSMSDashboardService $mainSMSDashboardService)
 	{}
 
    /**
@@ -20,7 +20,7 @@ class SMSDashboardController extends Controller
    {
 
       try {
-         $this->response['data'] =  $this->smsDashboardService->findAll($request->query());
+         $this->response['data'] =  $this->mainSMSDashboardService->findAll($request->query());
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

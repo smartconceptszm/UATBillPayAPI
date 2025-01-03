@@ -6,7 +6,6 @@ use App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient;
 use App\Http\Services\MenuConfigs\SurveyQuestionService;
 use App\Http\Services\CRM\SurveyEntryDetailService;
 use App\Http\Services\CRM\SurveyEntryService;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Jobs\SendSMSesJob;
@@ -72,8 +71,9 @@ class Survey_Local implements ISurveyClient
 
    private function sendSMSNotification(array $smsData): void
    {
-      Queue::later(Carbon::now()->addSeconds(3), 
-                     new SendSMSesJob([$smsData],$smsData['urlPrefix']),'','low');
+      SendSMSesJob::dispatch([$smsData])
+                  ->delay(Carbon::now()->addSeconds(3))
+                  ->onQueue('low');
    }
 
 }

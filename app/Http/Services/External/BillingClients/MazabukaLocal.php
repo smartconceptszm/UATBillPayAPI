@@ -6,7 +6,7 @@ use App\Http\Services\External\BillingClients\IBillingClient;
 
 use Exception;
 
-class Mazabuka implements IBillingClient
+class MazabukaLocal implements IBillingClient
 {
     
    public function __construct()
@@ -16,13 +16,13 @@ class Mazabuka implements IBillingClient
    {
 
       $response = [
-         'customerAccount' => $params['customerAccount'],
-         "name" => "Mazabuka Customer",
-         "address" => "MAZABUKA",
-         "revenuePoint" => 'MAZABUKA',
-         "mobileNumber" => "",
-         "balance" => \number_format(100, 2, '.', ','),
-      ];
+                     'customerAccount' => $params['customerAccount'],
+                     "name" => "Mazabuka Customer",
+                     "address" => "MAZABUKA",
+                     "revenuePoint" => 'MAZABUKA',
+                     "mobileNumber" => "",
+                     "balance" => \number_format(0, 2, '.', ','),
+                  ];
       return $response;
    }
 

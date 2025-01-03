@@ -58,9 +58,14 @@ class FaultsComplaints_Step_5
          }else{
             $complaintInfo = "";
          }
+
+         $revenuePoint =  empty($txDTO->customer['revenuePoint']) 
+                           ? 'OTHER' 
+                           : $txDTO->customer['revenuePoint'];
+
          $complaintData = [
                            'customerAccount'=>$txDTO->customerAccount,
-                           'revenuePoint'=> $txDTO->customer['revenuePoint'],
+                           'revenuePoint'=> $revenuePoint,
                            'address'=> $txDTO->customer['address'],
                            'complaint_subtype_id'=>$theSubType->id,
                            'complaintCode' => $theSubType->code,
