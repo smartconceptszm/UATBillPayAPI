@@ -7,6 +7,7 @@ use App\Http\Services\Clients\ClientWalletCredentialsService;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Clients\ClientWalletService;
 use App\Http\Services\Enums\PaymentStatusEnum;
+use App\Jobs\ReConfirmCallBackPaymentJob;
 use App\Jobs\ReConfirmPaymentJob;
 use App\Jobs\ConfirmPaymentJob;
 use Illuminate\Support\Carbon;
@@ -26,6 +27,7 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
 
       try {
          $walletCredentials = $this->walletCredentialsService->getWalletCredentials($paymentDTO->wallet_id);
+         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
          if($walletCredentials['CALLBACK_ENABLED'] != 'YES'){
             if( $paymentDTO->paymentStatus == PaymentStatusEnum::Submitted->value){
                $clientWallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
@@ -36,11 +38,14 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
                                     )
                               ->onQueue('high');
             }else{
-               $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
                ReConfirmPaymentJob::dispatch($paymentDTO)
                                  ->delay(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']))
                                  ->onQueue('high');
             }
+         }else{
+            ReConfirmCallBackPaymentJob::dispatch($paymentDTO->id)
+                                 ->delay(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']))
+                                 ->onQueue('high');
          }
       } catch (\Throwable $e) {
          $paymentDTO->error='At dispatching confirmation job. '.$e->getMessage();

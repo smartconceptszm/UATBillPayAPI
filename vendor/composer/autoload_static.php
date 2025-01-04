@@ -940,6 +940,7 @@ class ComposerStaticInit4e18f2a8200f24ce56abd683a0e3a523
         'App\\Jobs\\PaymentsAnalyticsDailyBulkJob' => __DIR__ . '/../..' . '/app/Jobs/PaymentsAnalyticsDailyBulkJob.php',
         'App\\Jobs\\PaymentsAnalyticsDailySingleJob' => __DIR__ . '/../..' . '/app/Jobs/PaymentsAnalyticsDailySingleJob.php',
         'App\\Jobs\\PaymentsAnalyticsRegularJob' => __DIR__ . '/../..' . '/app/Jobs/PaymentsAnalyticsRegularJob.php',
+        'App\\Jobs\\ReConfirmCallBackPaymentJob' => __DIR__ . '/../..' . '/app/Jobs/ReConfirmCallBackPaymentJob.php',
         'App\\Jobs\\ReConfirmPaymentJob' => __DIR__ . '/../..' . '/app/Jobs/ReConfirmPaymentJob.php',
         'App\\Jobs\\RetryFailedJobs' => __DIR__ . '/../..' . '/app/Jobs/RetryFailedJobs.php',
         'App\\Jobs\\SendSMSesJob' => __DIR__ . '/../..' . '/app/Jobs/SendSMSesJob.php',

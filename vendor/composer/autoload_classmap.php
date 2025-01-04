@@ -403,6 +403,7 @@ return array(
     'App\\Jobs\\PaymentsAnalyticsDailyBulkJob' => $baseDir . '/app/Jobs/PaymentsAnalyticsDailyBulkJob.php',
     'App\\Jobs\\PaymentsAnalyticsDailySingleJob' => $baseDir . '/app/Jobs/PaymentsAnalyticsDailySingleJob.php',
     'App\\Jobs\\PaymentsAnalyticsRegularJob' => $baseDir . '/app/Jobs/PaymentsAnalyticsRegularJob.php',
+    'App\\Jobs\\ReConfirmCallBackPaymentJob' => $baseDir . '/app/Jobs/ReConfirmCallBackPaymentJob.php',
     'App\\Jobs\\ReConfirmPaymentJob' => $baseDir . '/app/Jobs/ReConfirmPaymentJob.php',
     'App\\Jobs\\RetryFailedJobs' => $baseDir . '/app/Jobs/RetryFailedJobs.php',
     'App\\Jobs\\SendSMSesJob' => $baseDir . '/app/Jobs/SendSMSesJob.php',
