@@ -37,7 +37,7 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
                      " PPTransactionId: ".$paymentDTO->ppTransactionId.
                      " TransactionId: ".$paymentDTO->transactionId.
                      " Token: ".$paymentDTO->tokenNumber.
-                     " ReceiptNumber: ".$paymentDTO->receiptNumber);
+                     " ReceiptNumber: ".$paymentDTO->receiptNumber)."\n";
             }
 
             if($paymentDTO->receiptNumber  != ''){
@@ -55,7 +55,7 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
                            " PPTransactionId: ".$paymentDTO->ppTransactionId.
                            " TransactionId: ".$paymentDTO->transactionId.
                            " Token: ".$paymentDTO->tokenNumber.
-                           " ReceiptNumber: ".$paymentDTO->receiptNumber);
+                           " ReceiptNumber: ".$paymentDTO->receiptNumber)."\n";
             }
             
          }
