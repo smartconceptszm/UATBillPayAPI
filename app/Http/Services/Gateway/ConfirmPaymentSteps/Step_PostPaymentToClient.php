@@ -28,17 +28,17 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
             ($paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value)
          ){
             
-            if($paymentDTO->callbackResponse == "YES"){
-               $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
-               Log::info("(".$paymentDTO->urlPrefix.") callback based transaction before posting receipt.".
-                     " Mobile: ".$paymentDTO->mobileNumber.
-                     " PaymentType: ".$theMenu->paymentType.
-                     " PaymentStatus: ".$paymentDTO->paymentStatus.
-                     " PPTransactionId: ".$paymentDTO->ppTransactionId.
-                     " TransactionId: ".$paymentDTO->transactionId.
-                     " Token: ".$paymentDTO->tokenNumber.
-                     " ReceiptNumber: ".$paymentDTO->receiptNumber)."\n";
-            }
+            // if($paymentDTO->callbackResponse == "YES"){
+            //    $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
+            //    Log::info("(".$paymentDTO->urlPrefix.") callback based transaction before posting receipt.".
+            //          " Mobile: ".$paymentDTO->mobileNumber.
+            //          " PaymentType: ".$theMenu->paymentType.
+            //          " PaymentStatus: ".$paymentDTO->paymentStatus.
+            //          " PPTransactionId: ".$paymentDTO->ppTransactionId.
+            //          " TransactionId: ".$paymentDTO->transactionId.
+            //          " Token: ".$paymentDTO->tokenNumber.
+            //          " ReceiptNumber: ".$paymentDTO->receiptNumber)."\n";
+            // }
 
             if($paymentDTO->receiptNumber  != ''){
                $paymentDTO->paymentStatus = PaymentStatusEnum::Receipted->value;
@@ -46,17 +46,17 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
                $paymentDTO = $this->receiptPayment->handle($paymentDTO);
             }
 
-            if($paymentDTO->callbackResponse == "YES"){
-               $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
-               Log::info("(".$paymentDTO->urlPrefix.") callback based transaction after posting receipt.".
-                           " Mobile: ".$paymentDTO->mobileNumber.
-                           " PaymentType: ".$theMenu->paymentType.
-                           " PaymentStatus: ".$paymentDTO->paymentStatus.
-                           " PPTransactionId: ".$paymentDTO->ppTransactionId.
-                           " TransactionId: ".$paymentDTO->transactionId.
-                           " Token: ".$paymentDTO->tokenNumber.
-                           " ReceiptNumber: ".$paymentDTO->receiptNumber)."\n";
-            }
+            // if($paymentDTO->callbackResponse == "YES"){
+            //    $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
+            //    Log::info("(".$paymentDTO->urlPrefix.") callback based transaction after posting receipt.".
+            //                " Mobile: ".$paymentDTO->mobileNumber.
+            //                " PaymentType: ".$theMenu->paymentType.
+            //                " PaymentStatus: ".$paymentDTO->paymentStatus.
+            //                " PPTransactionId: ".$paymentDTO->ppTransactionId.
+            //                " TransactionId: ".$paymentDTO->transactionId.
+            //                " Token: ".$paymentDTO->tokenNumber.
+            //                " ReceiptNumber: ".$paymentDTO->receiptNumber)."\n";
+            // }
             
          }
       } catch (\Throwable $e) {

@@ -29,7 +29,8 @@ class PaymentWithReceiptToDeliverService
          $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
 
          if ($paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value || 
-                                 $paymentDTO->paymentStatus == PaymentStatusEnum::Receipt_Delivered->value ) {  
+                                 $paymentDTO->paymentStatus == PaymentStatusEnum::Receipt_Delivered->value ) 
+         {  
 
             if(!$paymentDTO->receipt){
                

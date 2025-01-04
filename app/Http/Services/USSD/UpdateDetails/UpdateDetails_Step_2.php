@@ -30,7 +30,7 @@ class UpdateDetails_Step_2
             $txDTO->subscriberInput = "1";
             $customerField = $customerFields[0];
             $txDTO->response = "Update ".$customerField->prompt." on:\n". 
-                              "Acc: ".$txDTO->subscriberInput."\n".
+                              "Acc: ".$txDTO->customerAccount."\n".
                               "Name: ".$txDTO->customer['name']."\n";
             if(array_key_exists($customerField->name,$txDTO->customer)){
                $txDTO->response .= "Current value: ".$txDTO->customer[$customerField->name]."\n\n";
@@ -42,7 +42,7 @@ class UpdateDetails_Step_2
             $txDTO->response .= "\n";
          }else{
                $txDTO->response = "Update details on:\n". 
-               "Acc: ".$txDTO->subscriberInput."\n".
+               "Acc: ".$txDTO->customerAccount."\n".
                "Name: ".$txDTO->customer['name']."\n". 
                "Addr: ".$txDTO->customer['address']."\n". 
                "Mobile: ".$txDTO->customer['mobileNumber']."\n\n".

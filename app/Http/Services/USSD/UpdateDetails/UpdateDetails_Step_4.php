@@ -45,6 +45,7 @@ class UpdateDetails_Step_4
                                        'customerAccount' => $txDTO->customerAccount,
                                        'mobileNumber' => $txDTO->mobileNumber,
                                        'client_id' => $txDTO->client_id,
+                                       'created_at'=>$txDTO->created_at,
                                        'revenuePoint' => $txDTO->customer['revenuePoint'],
                                        'updates' => $capturedUpdates
                                  ];

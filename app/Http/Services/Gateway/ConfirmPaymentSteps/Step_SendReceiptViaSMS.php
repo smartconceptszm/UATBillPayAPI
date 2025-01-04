@@ -20,6 +20,7 @@ class Step_SendReceiptViaSMS extends EfectivoPipelineContract
    {
 
       try {
+         
          if(   ($paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value) ||
                ($paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value) ||
                ($paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value) ||
@@ -40,6 +41,7 @@ class Step_SendReceiptViaSMS extends EfectivoPipelineContract
             if($this->smsTxDTO->status == 'DELIVERED' && $paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value){
                $paymentDTO->paymentStatus = PaymentStatusEnum::Receipt_Delivered->value;
             }
+            
          }
       } catch (\Throwable $e) {
          $paymentDTO->error='At receipt via sms. '.$e->getMessage();
