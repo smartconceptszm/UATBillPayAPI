@@ -34,8 +34,8 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
                      " Mobile: ".$paymentDTO->mobileNumber.
                      " PaymentType: ".$theMenu->paymentType.
                      " PaymentStatus: ".$paymentDTO->paymentStatus.
-                     " PPTransactionId: ".$paymentDTO->transactionId.
-                     " TransactionId: ".$paymentDTO->paymentStatus.
+                     " PPTransactionId: ".$paymentDTO->ppTransactionId.
+                     " TransactionId: ".$paymentDTO->transactionId.
                      " Token: ".$paymentDTO->tokenNumber.
                      " ReceiptNumber: ".$paymentDTO->receiptNumber);
             }
@@ -49,13 +49,13 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
             if($paymentDTO->callbackResponse == "YES"){
                $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
                Log::info("(".$paymentDTO->urlPrefix.") callback based transaction after posting receipt.".
-                     " Mobile: ".$paymentDTO->mobileNumber.
-                     " PaymentType: ".$theMenu->paymentType.
-                     " PaymentStatus: ".$paymentDTO->paymentStatus.
-                     " PPTransactionId: ".$paymentDTO->transactionId.
-                     " TransactionId: ".$paymentDTO->paymentStatus.
-                     " TokenNumber: ".$paymentDTO->tokenNumber.
-                     " ReceiptNumber: ".$paymentDTO->receiptNumber);
+                           " Mobile: ".$paymentDTO->mobileNumber.
+                           " PaymentType: ".$theMenu->paymentType.
+                           " PaymentStatus: ".$paymentDTO->paymentStatus.
+                           " PPTransactionId: ".$paymentDTO->ppTransactionId.
+                           " TransactionId: ".$paymentDTO->transactionId.
+                           " Token: ".$paymentDTO->tokenNumber.
+                           " ReceiptNumber: ".$paymentDTO->receiptNumber);
             }
             
          }
