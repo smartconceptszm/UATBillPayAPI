@@ -34,7 +34,7 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
                      " Mobile: ".$paymentDTO->mobileNumber.
                      " PaymentType: ".$theMenu->paymentType.
                      " PaymentStatus: ".$paymentDTO->paymentStatus.
-                     " PPTransactionId: ".$theMenu->transactionId.
+                     " PPTransactionId: ".$paymentDTO->transactionId.
                      " TransactionId: ".$paymentDTO->paymentStatus.
                      " Token: ".$paymentDTO->tokenNumber.
                      " ReceiptNumber: ".$paymentDTO->receiptNumber);
@@ -52,7 +52,7 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
                      " Mobile: ".$paymentDTO->mobileNumber.
                      " PaymentType: ".$theMenu->paymentType.
                      " PaymentStatus: ".$paymentDTO->paymentStatus.
-                     " PPTransactionId: ".$theMenu->transactionId.
+                     " PPTransactionId: ".$paymentDTO->transactionId.
                      " TransactionId: ".$paymentDTO->paymentStatus.
                      " TokenNumber: ".$paymentDTO->tokenNumber.
                      " ReceiptNumber: ".$paymentDTO->receiptNumber);

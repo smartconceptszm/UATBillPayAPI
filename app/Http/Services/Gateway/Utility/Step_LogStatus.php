@@ -16,7 +16,7 @@ class Step_LogStatus extends EfectivoPipelineContract
 		
 		try {
 			if($paymentDTO->error==''){
-				$logMessage='('.$paymentDTO->urlPrefix.'). Payment Status: '.
+				$logMessage='('.$paymentDTO->urlPrefix.') Payment Status: '.
 									$paymentDTO->paymentStatus." (via ".$paymentDTO->walletHandler.").";
 				if($paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value || 
 					               $paymentDTO->paymentStatus == PaymentStatusEnum::Receipt_Delivered->value)
