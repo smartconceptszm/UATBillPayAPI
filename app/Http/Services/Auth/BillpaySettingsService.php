@@ -110,7 +110,7 @@ class BillpaySettingsService
    protected function refreshCache()
    {
       $billpaySettings = $this->getAllSettings();
-      Cache::put('billpaySettings',\json_encode($billpaySettings),Carbon::now()->addHours(12));
+      Cache::put('billpaySettings',\json_encode($billpaySettings),Carbon::now()->addHours(24));
    }
 
 }

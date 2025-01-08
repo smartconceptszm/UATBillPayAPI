@@ -17,8 +17,8 @@ class Step_GetPaymentAmounts extends EfectivoPipelineContract
    {
       
       try {
-         if($paymentDTO->error==""){
-            $paymentDTO = $this->calculatePaymentAmounts->handle($paymentDTO);
+         if( empty($paymentDTO->error)){
+            $this->calculatePaymentAmounts->handle($paymentDTO);
          }
       } catch (\Throwable $e) {
          $paymentDTO->error='At Calculate Payment Amounts. '.$e->getMessage();

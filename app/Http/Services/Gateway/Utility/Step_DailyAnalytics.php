@@ -18,7 +18,7 @@ class Step_DailyAnalytics extends EfectivoPipelineContract
             $yesterday = Carbon::yesterday()->toDateString();
             $lastDailyAnalytics = Cache::get('DATE_OF_LAST_DAILY_ANALYTICS');
             if($lastDailyAnalytics  != $yesterday ){
-               Cache::put('DATE_OF_LAST_DAILY_ANALYTICS',$yesterday,Carbon::now()->addHours(30));
+               Cache::put('DATE_OF_LAST_DAILY_ANALYTICS',$yesterday,Carbon::now()->addHours(24));
                PaymentsAnalyticsDailySingleJob::dispatch(Carbon::yesterday())
                                                 ->delay(Carbon::now()->addSeconds(1))
                                                 ->onQueue('high');

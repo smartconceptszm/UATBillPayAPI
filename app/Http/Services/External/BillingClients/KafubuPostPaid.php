@@ -173,7 +173,7 @@ class KafubuPostPaid implements IBillingClient
             try {
                 $theReceipt = $this->xmlToArrayParser->handle($apiResponse->promunResponse);
             } catch (\Throwable $e) {
-                Log::error(' Kafubu Billing Client (updatepreceipts  for account number '.$postParams['customerAccount'].'): '.$apiResponse->promunError);
+                Log::error(' Kafubu Billing Client (updatepreceipts  for account number '.$postParams['account'].'): '.$apiResponse->promunError);
                 throw new Exception(" Kafubu Billing Client (XML response extraction) error. Details: ".$e->getMessage(),1);
             }
             $response['status']="SUCCESS";
@@ -181,14 +181,14 @@ class KafubuPostPaid implements IBillingClient
 
             //Account for uncreditted receipts
             $cacheValues=[];
-            $cacheValues['newBalance']= $postParams['balance']-$postParams['amount'];
+            $cacheValues['newBalance'] = $postParams['balance']-$postParams['amount'];
 
             $cacheTTL =intval($this->cacheTTL)*2;
             if(Carbon::now()->dayOfWeek == 5 || Carbon::now()->dayOfWeek == 6){
                 $cacheTTL+=intval($this->cacheTTL);
             }
 
-            Cache::put('kafubu_balance_'.$postParams['customerAccount'],\json_encode($cacheValues), 
+            Cache::put('kafubu_balance_'.$postParams['account'],\json_encode($cacheValues), 
                 Carbon::now()->addMinutes($cacheTTL));
 
         } catch (\Throwable $e) {

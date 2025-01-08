@@ -18,7 +18,7 @@ class Step_CreatePaymentRecord extends EfectivoPipelineContract
    {
 
       try {
-         if($paymentDTO->error == ""){
+         if( empty($paymentDTO->error)){
             $payment = $this->paymentService->create($paymentDTO->toPaymentData());
             $paymentDTO->created_at = $payment->created_at->toDateTimeString();
             $paymentDTO->status = $payment->status;

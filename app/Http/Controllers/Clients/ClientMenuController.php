@@ -70,21 +70,21 @@ class ClientMenuController extends Controller
 
    }
 
-      /**
-    * Display the specified resources.
-      */
-      public function menusofclient(Request $request, string $id)
-      {
-   
-         try {
-            $this->response['data'] = $this->clientMenu->findAll(['client_id'=>$id]);
-         } catch (\Throwable $e) {
-               $this->response['status']['code'] = 500;
-               $this->response['status']['message'] = $e->getMessage();
-         }
-         return response()->json($this->response);
-   
+   /**
+   * Display the specified resources.
+   */
+   public function menusofclient(Request $request, string $id)
+   {
+
+      try {
+         $this->response['data'] = $this->clientMenu->findAll(['client_id'=>$id]);
+      } catch (\Throwable $e) {
+            $this->response['status']['code'] = 500;
+            $this->response['status']['message'] = $e->getMessage();
       }
+      return response()->json($this->response);
+
+   }
 
    /**
     * Display one resource.

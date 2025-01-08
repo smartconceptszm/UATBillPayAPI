@@ -11,41 +11,56 @@ use App\Http\DTOs\BaseDTO;
 
 class Step_GetPaymentStatus extends EfectivoPipelineContract
 {
+    public function __construct(
+        private IPaymentsProviderClient $paymentsProviderClient,
+        private ClientMenuService $clientMenuService
+    ) {}
 
-   public function __construct(
-      private IPaymentsProviderClient $paymentsProviderClient,
-      private ClientMenuService $clientMenuService)
-   {}
-
-   protected function stepProcess(BaseDTO $paymentDTO)
-   {
-      
-      try {
-         
-         if( 
-               ($paymentDTO->paymentStatus == PaymentStatusEnum::Submitted->value)||
-               ($paymentDTO->paymentStatus == PaymentStatusEnum::Payment_Failed->value) ||
-               ($paymentDTO->paymentStatus == PaymentStatusEnum::Submission_Failed->value)
-         ){
-            $paymentsProviderResponse = $this->paymentsProviderClient->confirmPayment($paymentDTO->toProviderParams());
-            if($paymentsProviderResponse->status == "PAYMENT SUCCESSFUL"){
-               $paymentDTO->ppTransactionId = $paymentsProviderResponse->ppTransactionId;
-               $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
-               if($theMenu->paymentType == PaymentTypeEnum::PrePaid->value){
-                  $paymentDTO->paymentStatus = PaymentStatusEnum::NoToken->value;
-               }else{
-                  $paymentDTO->paymentStatus = PaymentStatusEnum::Paid->value;
-               }
-            }else{
-               $paymentDTO->paymentStatus = PaymentStatusEnum::Payment_Failed->value;
-               $paymentDTO->error = $paymentsProviderResponse->error;
+    protected function stepProcess(BaseDTO $paymentDTO)
+    {
+        try {
+            if ($this->isStatusCheckRequired($paymentDTO->paymentStatus)) {
+                $paymentsProviderResponse = $this->paymentsProviderClient->confirmPayment($paymentDTO->toProviderParams());
+                $this->updatePaymentStatus($paymentDTO, $paymentsProviderResponse);
             }
-         }
-      } catch (\Throwable $e) {
-         $paymentDTO->error='At get payment status pipeline step. '.$e->getMessage();
-      }
-      return  $paymentDTO;
-      
-   }
+        } catch (\Throwable $e) {
+            $paymentDTO->error = 'At get payment status pipeline step. ' . $e->getMessage();
+        }
 
+        return $paymentDTO;
+    }
+
+    private function isStatusCheckRequired(string $paymentStatus): bool
+    {
+        return in_array($paymentStatus, [
+            PaymentStatusEnum::Submitted->value,
+            PaymentStatusEnum::Payment_Failed->value,
+            PaymentStatusEnum::Submission_Failed->value,
+        ]);
+    }
+
+    private function updatePaymentStatus(BaseDTO $paymentDTO, $paymentsProviderResponse): void
+    {
+        if ($paymentsProviderResponse->status === "PAYMENT SUCCESSFUL") {
+            $this->handleSuccessfulPayment($paymentDTO, $paymentsProviderResponse->ppTransactionId);
+        } else {
+            $this->handleFailedPayment($paymentDTO, $paymentsProviderResponse->error);
+        }
+    }
+
+    private function handleSuccessfulPayment(BaseDTO $paymentDTO, string $ppTransactionId): void
+    {
+        $paymentDTO->ppTransactionId = $ppTransactionId;
+        $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
+
+        $paymentDTO->paymentStatus = ($theMenu->paymentType === PaymentTypeEnum::PrePaid->value)
+            ? PaymentStatusEnum::NoToken->value
+            : PaymentStatusEnum::Paid->value;
+    }
+
+    private function handleFailedPayment(BaseDTO $paymentDTO, string $error): void
+    {
+        $paymentDTO->paymentStatus = PaymentStatusEnum::Payment_Failed->value;
+        $paymentDTO->error = $error;
+    }
 }

@@ -23,8 +23,8 @@ class ReConfirmCallBackPaymentJob extends BaseJob
       $thePayment = $paymentToReviewService->findById($this->id);
       $paymentDTO = $paymentDTO->fromArray(\get_object_vars($thePayment));
       if($paymentDTO->paymentStatus == PaymentStatusEnum::Submitted->value){
-         Log::info('('.$this->paymentDTO->urlPrefix.') CallBack Reconfirmation job launched. Transaction ID = '.$this->paymentDTO->transactionId.
-                     '- Channel: '.$this->paymentDTO->channel.' - Wallet: '.$this->paymentDTO->walletNumber);
+         Log::info('('.$paymentDTO->urlPrefix.') CallBack Reconfirmation job launched. Transaction ID = '.$paymentDTO->transactionId.
+                     '- Channel: '.$paymentDTO->channel.' - Wallet: '.$paymentDTO->walletNumber);
          return $confirmPayment->handle($paymentDTO);
       }
 

@@ -24,7 +24,7 @@ class BillpaySettingsServiceProvider extends ServiceProvider
 
 		$billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
 		if(!$billpaySettings){
-			Cache::put('billpaySettings', \json_encode($billpaySettingsService->getAllSettings()),Carbon::now()->addHours(12));
+			Cache::put('billpaySettings', \json_encode($billpaySettingsService->getAllSettings()),Carbon::now()->addHours(24));
 		}
 
 	}

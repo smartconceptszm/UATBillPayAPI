@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Carbon;
 use Exception;
 
-class DPOPay implements IPaymentsProviderClient
+class DPOPayOld implements IPaymentsProviderClient
 {
 
    public function __construct(
@@ -30,33 +30,34 @@ class DPOPay implements IPaymentsProviderClient
 
       try {
 
+         $mainResponse['transactionId'] = $this->getTransactionId($dto->customerAccount);
+         $dto->transactionId = $mainResponse['transactionId']; 
          $configs = $this->getConfigs($dto);
          $txTokenXML = $this->getTransactionTokenXML($configs,$dto);
-
+         $configs['transactionToken'] = $this->getTransactionToken($configs, $txTokenXML);
+         
+         $chargeCardXML = $this->getChargeCardXML($configs, $dto);
          $fullURL = $configs['baseURL'];
          $apiResponse = Http::timeout($configs['timeout'])
                               ->withHeaders([
-                                    'Content-Type' => 'application/xml',
-                                    'Accept' => 'application/xml',
-                                 ])
-                              ->send('POST', $fullURL, [
-                                    'body' => $txTokenXML,
-                                 ]);
+                                 'Content-Type' => 'application/xml',
+                                 'Accept' => 'application/xml',
+                              ])->send('POST', $fullURL, [
+                                    'body' => $chargeCardXML,
+                              ]);
          
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
             $xmlObject = simplexml_load_string($apiResponse->body(), "SimpleXMLElement", LIBXML_NOCDATA);
             $jsonArray = json_decode(json_encode($xmlObject), true);
             if($jsonArray['Result'] == '000'){
-               $mainResponse['transactionId'] = $jsonArray['TransToken'];
-               $mainResponse['status'] = "SUBMITTED";
+               $mainResponse['transactionId'] = $configs['transactionToken'];
+               $mainResponse['status'] = 'SUBMITTED';
             }else{
-               throw new Exception("DPOPay API Get Transaction Token error: ".$jsonArray['ResultExplanation'].".", 1);
+               throw new Exception("DPOPay Charge Card error: ".$jsonArray['ResultExplanation'].".", 1);
             }
          } else{
-               throw new Exception("DPOPay API Get Transaction Token error. DPOPay responded with status code: ".$apiResponse->status().".", 1);
+            throw new Exception("DPOPay Charge Card error. DPOPay responded with status code: ".$apiResponse->status().".", 1);
          }
-         
-
       } catch (\Throwable $e) {
          if($e->getCode()==1){
                $mainResponse['error']=$e->getMessage();
@@ -76,7 +77,7 @@ class DPOPay implements IPaymentsProviderClient
                   'error'=>''];
 
       try {
-         $configs = $this->getConfigs($dto);
+         $configs = $this->getConfigs($dto->wallet_id);
          $theXML = '<?xml version="1.0" encoding="utf-8"?>
                      <API3G>
                         <CompanyToken>'.$configs['companyToken'].'</CompanyToken>
@@ -117,6 +118,44 @@ class DPOPay implements IPaymentsProviderClient
 
    }
 
+   private function getTransactionToken(array $configs, string $theXML): string
+   {
+
+      $response='';
+
+      try {
+         $fullURL = $configs['baseURL'];
+         $apiResponse = Http::timeout($configs['timeout'])
+               ->withHeaders([
+                     'Content-Type' => 'application/xml',
+                     'Accept' => 'application/xml',
+                  ])
+               ->send('POST', $fullURL, [
+                     'body' => $theXML,
+                  ]);
+         
+         if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
+            $xmlObject = simplexml_load_string($apiResponse->body(), "SimpleXMLElement", LIBXML_NOCDATA);
+            $jsonArray = json_decode(json_encode($xmlObject), true);
+            if($jsonArray['Result'] == '000'){
+               $response=$jsonArray['TransToken'];
+            }else{
+               throw new Exception("DPOPay API Get Transaction Token error: ".$jsonArray['ResultExplanation'].".", 1);
+            }
+         } else{
+               throw new Exception("DPOPay API Get Transaction Token error. DPOPay responded with status code: ".$apiResponse->status().".", 1);
+         }
+
+      } catch (\Throwable $e) {
+         if ($e->getCode()==1) {
+               throw new Exception($e->getMessage(), 1);
+         } else {
+               throw new Exception("DPOPay API Get Transaction Token error. Details: ".$e->getMessage(), 1);
+         }
+      }
+      return $response;
+   }
+
    private function getTransactionTokenXML(array $configs, object $params):string
    {
       $transactionDate = Carbon::now();
@@ -129,7 +168,7 @@ class DPOPay implements IPaymentsProviderClient
                         <PaymentCurrency>'.$configs['currency'].'</PaymentCurrency>
                         <CompanyRef>'.$configs['companyRef'].'</CompanyRef>
                         <RedirectURL>'.$configs['redirectURL'].'</RedirectURL>
-                        <BackURL>'.$configs['backURL'].'</BackURL>
+                        <BackURL>'.$configs['redirectURL'].'</BackURL>
                         <CompanyRefUnique>0</CompanyRefUnique>
                         <PTL>5</PTL>
                      </Transaction>
@@ -143,6 +182,25 @@ class DPOPay implements IPaymentsProviderClient
                   </API3G>';
       return $xmlTemplate;
 
+   }
+
+   private function getChargeCardXML(array $configs,  object $dto):string
+   {
+
+      $cardExpiry = Carbon::createFromFormat('Y-m-d',$dto->cardExpiry.'-01');
+      $cardExpiry = $cardExpiry->format('my');
+
+      return '<?xml version="1.0" encoding="utf-8"?>
+                                    <API3G>
+                                       <CompanyToken>'.$configs['companyToken'].'</CompanyToken>
+                                       <Request>chargeTokenCreditCard</Request>
+                                       <TransactionToken>'.$configs['transactionToken'].'</TransactionToken>
+                                       <CreditCardNumber>'.$dto->creditCardNumber.'</CreditCardNumber>
+                                       <CreditCardExpiry>'.$cardExpiry.'</CreditCardExpiry>
+                                       <CreditCardCVV>'.$dto->cardCVV.'</CreditCardCVV>
+                                       <CardHolderName>'.$dto->cardHolderName.'</CardHolderName>
+                                       <ChargeType></ChargeType>
+                                    </API3G>';
    }
 
    private function getConfigs(object $dto):array
@@ -159,12 +217,39 @@ class DPOPay implements IPaymentsProviderClient
             'serviceType'=>$walletCredentials['DPO_ServiceType'],
             'companyRef'=>$walletCredentials['DPO_CompanyRef'],
             'currency'=>$walletCredentials['DPO_Currency'],
-            'redirectURL'=>'https://payments.smartconcepts.co.zm/billpaymis/cardpaymentstatus/'.$dto->urlPrefix,
-            'backURL'=>'https://payments.smartconcepts.co.zm/billpaymis/'.$dto->urlPrefix,
+            'redirectURL'=>'https://payments.smartconcepts.co.zm/billpaymis/'.$dto->urlPrefix.'/cardpaymentstatus',
             'timeout'=>$paymentsProviderCredentials['DPOPay_Http_Timeout'],
             'baseURL'=>$paymentsProviderCredentials['DPOPay_BASE_URL']
          ];
 
    }
+
+   private function getTransactionId(string $customerAccount): string
+   {
+
+      $theDate = "D".\date('ymd');
+      $theTime = "T".\date('His');
+      $theAccount = "A".$customerAccount;
+      $transactionId = $theAccount.$theDate.$theTime;
+      if(\strlen($transactionId) > 25){
+         $theAccount = \substr($theAccount,0,25-strlen($theDate.$theTime));
+         $transactionId = $theAccount.$theDate.$theTime;
+      }
+      if(\strlen($transactionId ) < 25){
+         $arrLetters=['A','B','C','D','E','F','G','H',
+                  'I','J','K','L','M','N','O','P',
+                  'Q','R','S','T','U','V','W','X',
+                  'Y','Z'];
+         $lenToAdd = 25-\strlen($transactionId );
+         $strToApend = '';
+         for ($i=0; $i < $lenToAdd; $i++) { 
+            $strToApend .= $arrLetters[\rand(0,25)];
+         }
+         $transactionId = $theAccount.$theDate.$theTime;
+      }
+      return $transactionId;
+   }
+
+
 
 }

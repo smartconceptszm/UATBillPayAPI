@@ -104,6 +104,7 @@ Route::group(['middleware' => 'mode'], function (){
       Route::get('/app/clientwallets/findoneby', [\App\Http\Controllers\Clients\ClientWalletController::class, 'findOneBy']);
       Route::post('/app/paymentsviamomo', [\App\Http\Controllers\Gateway\PaymentViaMoMoController::class, 'store']);
       Route::post('/app/paymentsviacard', [\App\Http\Controllers\Gateway\PaymentViaCardController::class, 'store']);
+      Route::get('/app/cardpayments', [\App\Http\Controllers\Gateway\PaymentViaCardController::class, 'update']);
       Route::get('/app/payments/{id}', [\App\Http\Controllers\Payments\PaymentSessionController::class, 'show']);
    //End
 
@@ -379,6 +380,17 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/complaintsubtypes/{id}', 'show');
                Route::post('/complaintsubtypes', 'store');
                Route::get('/complaintsubtypes', 'index');
+            });
+         //
+
+         //Customer Fields
+            Route::get('customerfieldsofclient/{id}', [\App\Http\Controllers\MenuConfigs\CustomerFieldController::class, 'customerfieldsofclient']);
+            Route::controller(\App\Http\Controllers\MenuConfigs\ComplaintTypeController::class)->group(function () {
+               Route::get('/customerfields/findoneby', 'findOneBy');
+               Route::put('/customerfields/{id}', 'update');
+               Route::get('/customerfields/{id}', 'show');
+               Route::post('/customerfields', 'store');
+               Route::get('/customerfields', 'index');
             });
          //
 

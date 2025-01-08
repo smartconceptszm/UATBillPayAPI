@@ -6,46 +6,85 @@ use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class Step_LogStatus extends EfectivoPipelineContract
 {
-
 	protected function stepProcess(BaseDTO $paymentDTO)
 	{
-		
 		try {
-			if($paymentDTO->error==''){
-				$logMessage='('.$paymentDTO->urlPrefix.') Payment Status: '.
-									$paymentDTO->paymentStatus." (via ".$paymentDTO->walletHandler.").";
-				if($paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value || 
-					               $paymentDTO->paymentStatus == PaymentStatusEnum::Receipt_Delivered->value)
-				{
-					$logMessage.=' DETAILS: '.$paymentDTO->receipt;
-				}
-				$logMessage.='Transaction ID = '.$paymentDTO->transactionId. '. Session: '.$paymentDTO->sessionId.
-				'. Channel: '.$paymentDTO->channel.'. Wallet: '.$paymentDTO->walletNumber;
-				Log::info($logMessage);
-				if($paymentDTO->sms){
-					if($paymentDTO->sms['status'] == 'DELIVERED'){
-							Log::info('('.$paymentDTO->urlPrefix.') '.'SMS Notification SENT. Session: '.
-											$paymentDTO->sessionId.'. Phone: '.$paymentDTO->mobileNumber); 
-					}else{
-							Log::error('('.$paymentDTO->urlPrefix.') SMS Notification NOT SENT. Details: '.$paymentDTO->sms['error'].
-								'. Session: '.$paymentDTO->sessionId.'. Phone: '.$paymentDTO->mobileNumber); 
+			if (empty($paymentDTO->error)) {
+					$logMessage = $this->buildLogMessage($paymentDTO);
+					Log::info($logMessage);
+
+					if ($paymentDTO->sms) {
+						$this->logSMSStatus($paymentDTO);
 					}
-				}
-			}else{
-				Log::error('('.$paymentDTO->urlPrefix.'). '.$paymentDTO->error.' Payment Status: '
-					.$paymentDTO->paymentStatus.' (via '.$paymentDTO->walletHandler.'). Transaction ID = '.$paymentDTO->transactionId.
-					'. Session: '.$paymentDTO->sessionId.'. Channel: '.$paymentDTO->channel.'. Wallet: '.$paymentDTO->walletNumber);
+			} else {
+					$this->logError($paymentDTO);
 			}
 		} catch (\Throwable $e) {
-			$paymentDTO->error='At logging transaction. '.$e->getMessage();
+			$paymentDTO->error = 'At logging transaction. ' . $e->getMessage();
 		}
 
 		return $paymentDTO;
+	}
 
+	private function buildLogMessage(BaseDTO $paymentDTO): string
+	{
+		$logMessage = sprintf(
+			'(%s) Payment Status: %s (via %s). Transaction ID = %s. Session: %s. Channel: %s. Wallet: %s',
+			$paymentDTO->urlPrefix,
+			$paymentDTO->paymentStatus,
+			$paymentDTO->walletHandler,
+			$paymentDTO->transactionId,
+			$paymentDTO->sessionId,
+			$paymentDTO->channel,
+			$paymentDTO->walletNumber
+		);
+
+		if (in_array($paymentDTO->paymentStatus, [
+			PaymentStatusEnum::Receipted->value,
+			PaymentStatusEnum::Receipt_Delivered->value
+		])) {
+			$logMessage .= ' DETAILS: ' . $paymentDTO->receipt;
+		}
+
+		return $logMessage;
+	}
+
+	private function logSMSStatus(BaseDTO $paymentDTO): void
+	{
+		$smsStatus = $paymentDTO->sms['status'];
+		$logMessage = sprintf(
+			'(%s) SMS Notification %s. Session: %s. Phone: %s',
+			$paymentDTO->urlPrefix,
+			$smsStatus === 'DELIVERED' ? 'SENT' : 'NOT SENT - ' . $paymentDTO->sms['error'],
+			$paymentDTO->sessionId,
+			$paymentDTO->mobileNumber
+		);
+
+		if ($smsStatus === 'DELIVERED') {
+			Log::info($logMessage);
+		} else {
+			Log::error($logMessage);
+		}
+	}
+
+	private function logError(BaseDTO $paymentDTO): void
+	{
+		$logMessage = sprintf(
+			'(%s) %s Payment Status: %s (via %s). Transaction ID = %s. Session: %s. Channel: %s. Wallet: %s',
+			$paymentDTO->urlPrefix,
+			$paymentDTO->error,
+			$paymentDTO->paymentStatus,
+			$paymentDTO->walletHandler,
+			$paymentDTO->transactionId,
+			$paymentDTO->sessionId,
+			$paymentDTO->channel,
+			$paymentDTO->walletNumber
+		);
+
+		Log::error($logMessage);
 	}
 
 }

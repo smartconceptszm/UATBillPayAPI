@@ -68,7 +68,7 @@ class SwascoV2 implements IBillingClient
                            "address" => $apiResponse['Address'],
                            "revenuePoint" => $this->getRevenuePoint(\substr($apiResponse['No'],0,3)),
                            "mobileNumber" => $apiResponse['MobileNo'],
-                           "balance" => \number_format((float)$apiResponse['Balance'], 2, '.', ',')
+                           "balance" => \number_format((float)\str_replace(",", "", $apiResponse['Balance']), 2, '.', ',')
                         ];
          }else{
             throw new Exception("Invalid SWASCO Account Number",1);

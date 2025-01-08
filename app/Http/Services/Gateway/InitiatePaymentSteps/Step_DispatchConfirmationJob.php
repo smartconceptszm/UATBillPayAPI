@@ -15,42 +15,69 @@ use App\Http\DTOs\BaseDTO;
 
 class Step_DispatchConfirmationJob extends EfectivoPipelineContract
 {
+   private const PAYMENT_REVIEW_DELAY_KEY = 'PAYMENT_REVIEW_DELAY';
 
    public function __construct(
       private PaymentsProviderCredentialService $paymentsProviderCredentialService,
       private ClientWalletCredentialsService $walletCredentialsService,
-      private ClientWalletService $clientWalletService) 
-   {}
+      private ClientWalletService $clientWalletService
+   ) {}
 
    protected function stepProcess(BaseDTO $paymentDTO)
    {
-
       try {
          $walletCredentials = $this->walletCredentialsService->getWalletCredentials($paymentDTO->wallet_id);
-         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-         if($walletCredentials['CALLBACK_ENABLED'] != 'YES'){
-            if( $paymentDTO->paymentStatus == PaymentStatusEnum::Submitted->value){
-               $clientWallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
-               $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($clientWallet->payments_provider_id);
-               ConfirmPaymentJob::dispatch($paymentDTO)
-                              ->delay(Carbon::now()->addSeconds(
-                                       (int)$paymentsProviderCredentials[$paymentDTO->walletHandler.'_PAYSTATUS_CHECK'])
-                                    )
-                              ->onQueue('high');
-            }else{
-               ReConfirmPaymentJob::dispatch($paymentDTO)
-                                 ->delay(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']))
-                                 ->onQueue('high');
-            }
-         }else{
-            ReConfirmCallBackPaymentJob::dispatch($paymentDTO->id)
-                                 ->delay(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']))
-                                 ->onQueue('high');
+         $billpaySettings = json_decode(cache('billpaySettings', json_encode([])), true);
+
+         if ($walletCredentials['CALLBACK_ENABLED'] == 'YES') {
+            $this->dispatchCallBackJob($paymentDTO, $billpaySettings);
+         } else {
+            $this->dispatchJobBasedOnPaymentStatus($paymentDTO, $billpaySettings);
          }
       } catch (\Throwable $e) {
-         $paymentDTO->error='At dispatching confirmation job. '.$e->getMessage();
+         $paymentDTO->error = 'At dispatching confirmation job. ' . $e->getMessage();
       }
-      return $paymentDTO;
 
+      return $paymentDTO;
    }
+
+   private function dispatchCallBackJob(BaseDTO $paymentDTO, array $billpaySettings)
+   {
+      $paymentReviewDelay = (int) $billpaySettings[self::PAYMENT_REVIEW_DELAY_KEY];
+      ReConfirmCallBackPaymentJob::dispatch($paymentDTO->id)
+                                    ->delay(Carbon::now()->addMinutes($paymentReviewDelay))
+                                    ->onQueue('high');
+   }
+
+   private function dispatchJobBasedOnPaymentStatus(BaseDTO $paymentDTO, array $billpaySettings)
+   {
+      $paymentStatus = $paymentDTO->paymentStatus;
+      $paymentReviewDelay = (int) $billpaySettings[self::PAYMENT_REVIEW_DELAY_KEY];
+
+      if ($paymentStatus === PaymentStatusEnum::Submitted->value) {
+         $this->dispatchConfirmPaymentJob($paymentDTO, $paymentReviewDelay);
+      } else {
+         $this->dispatchReConfirmPaymentJob($paymentDTO, $paymentReviewDelay);
+      }
+   }
+
+   private function dispatchConfirmPaymentJob(BaseDTO $paymentDTO, int $paymentReviewDelay)
+   {
+      $clientWallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
+      $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($clientWallet->payments_provider_id);
+      $delaySeconds = (int)$paymentsProviderCredentials[$paymentDTO->walletHandler . '_PAYSTATUS_CHECK'];
+
+      ConfirmPaymentJob::dispatch($paymentDTO)
+         ->delay(Carbon::now()->addSeconds($delaySeconds))
+         ->onQueue('high');
+   }
+
+   private function dispatchReConfirmPaymentJob(BaseDTO $paymentDTO, int $paymentReviewDelay)
+   {
+      ReConfirmPaymentJob::dispatch($paymentDTO)
+         ->delay(Carbon::now()->addMinutes($paymentReviewDelay))
+         ->onQueue('high');
+   }
+
+
 }

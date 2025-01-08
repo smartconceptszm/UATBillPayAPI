@@ -32,7 +32,7 @@ class PaymentViaMoMoController extends Controller
          $this->validate($request, $this->validationRules);
          $params = $this->getParameters($request);
          $params['channel'] = 'WEBSITE';
-         $this->response['data'] = $this->paymentRequestService->initiateWebPayement($params,$this->moMoDTO);
+         $this->response['data'] = $this->paymentRequestService->initiateMoMoWebPayement($params,$this->moMoDTO);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

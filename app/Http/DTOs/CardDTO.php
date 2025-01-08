@@ -7,10 +7,6 @@ use App\Http\DTOs\PaymentDTO;
 class CardDTO extends PaymentDTO
 {
 
-   public $cardHolderName;
-   public $cardExpiry;
-   public $cardCVV;
-
    public function fromSessionData(array $sessionParams): BaseDTO
    {
       
@@ -28,20 +24,17 @@ class CardDTO extends PaymentDTO
 
    public function toPaymentData():array{
       $paymentData = $this->getCommonPaymentData();
-      $paymentData['walletNumber'] = 'VISA-****-****-' . substr($this->walletNumber, -4);
+      $paymentData['walletNumber'] = 'VISA-****-****-****';
       return $paymentData;
    }
 
    public function toProviderParams():object{
       return (object)[
-            'cardHolderName'=>$this->cardHolderName,
-            'creditCardNumber'=>$this->walletNumber,
             'transactionId'=>$this->transactionId,
             'paymentAmount'=>$this->paymentAmount,
             'transactionDate'=>$this->created_at,
-            'cardExpiry'=>$this->cardExpiry,
             'wallet_id'=>$this->wallet_id,
-            'cardCVV'=>$this->cardCVV
+            'urlPrefix'=>$this->urlPrefix
          ]; 
    }
 

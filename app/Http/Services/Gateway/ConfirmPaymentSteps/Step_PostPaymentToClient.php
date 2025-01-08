@@ -12,58 +12,39 @@ use App\Http\DTOs\BaseDTO;
 
 class Step_PostPaymentToClient extends EfectivoPipelineContract
 {
+    public function __construct(
+        private ClientMenuService $clientMenuService,
+        private PaymentService $paymentService,
+        private IReceiptPayment $receiptPayment
+    ) {}
 
-   public function __construct(
-      private ClientMenuService $clientMenuService,
-      private PaymentService $paymentService,
-      private IReceiptPayment $receiptPayment)
-   {}
-
-   protected function stepProcess(BaseDTO $paymentDTO)
-   {
-      
-      try {
-
-         if(($paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value) || 
-            ($paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value)
-         ){
-            
-            // if($paymentDTO->callbackResponse == "YES"){
-            //    $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
-            //    Log::info("(".$paymentDTO->urlPrefix.") callback based transaction before posting receipt.".
-            //          " Mobile: ".$paymentDTO->mobileNumber.
-            //          " PaymentType: ".$theMenu->paymentType.
-            //          " PaymentStatus: ".$paymentDTO->paymentStatus.
-            //          " PPTransactionId: ".$paymentDTO->ppTransactionId.
-            //          " TransactionId: ".$paymentDTO->transactionId.
-            //          " Token: ".$paymentDTO->tokenNumber.
-            //          " ReceiptNumber: ".$paymentDTO->receiptNumber)."\n";
-            // }
-
-            if($paymentDTO->receiptNumber  != ''){
-               $paymentDTO->paymentStatus = PaymentStatusEnum::Receipted->value;
-            }else{
-               $paymentDTO = $this->receiptPayment->handle($paymentDTO);
+    protected function stepProcess(BaseDTO $paymentDTO)
+    {
+        try {
+            if ($this->isPaymentEligibleForReceipt($paymentDTO->paymentStatus)) {
+                $this->processReceipt($paymentDTO);
             }
+        } catch (\Throwable $e) {
+            $paymentDTO->error = 'At post payment step. ' . $e->getMessage();
+        }
 
-            // if($paymentDTO->callbackResponse == "YES"){
-            //    $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
-            //    Log::info("(".$paymentDTO->urlPrefix.") callback based transaction after posting receipt.".
-            //                " Mobile: ".$paymentDTO->mobileNumber.
-            //                " PaymentType: ".$theMenu->paymentType.
-            //                " PaymentStatus: ".$paymentDTO->paymentStatus.
-            //                " PPTransactionId: ".$paymentDTO->ppTransactionId.
-            //                " TransactionId: ".$paymentDTO->transactionId.
-            //                " Token: ".$paymentDTO->tokenNumber.
-            //                " ReceiptNumber: ".$paymentDTO->receiptNumber)."\n";
-            // }
-            
-         }
-      } catch (\Throwable $e) {
-         $paymentDTO->error='At post payment step. '.$e->getMessage();
-      }
-      return  $paymentDTO;
-      
-   }
+        return $paymentDTO;
+    }
 
+    private function isPaymentEligibleForReceipt(string $paymentStatus): bool
+    {
+        return in_array($paymentStatus, [
+            PaymentStatusEnum::Paid->value,
+            PaymentStatusEnum::NoToken->value,
+        ]);
+    }
+
+    private function processReceipt(BaseDTO $paymentDTO): void
+    {
+        if (!empty($paymentDTO->receiptNumber)) {
+            $paymentDTO->paymentStatus = PaymentStatusEnum::Receipted->value;
+        } else {
+            $paymentDTO = $this->receiptPayment->handle($paymentDTO);
+        }
+    }
 }

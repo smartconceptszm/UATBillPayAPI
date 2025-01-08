@@ -8,12 +8,12 @@ use Tests\TestCase;
 class BillingClientSWASCOV2Test extends TestCase
 {
 
-   public function _test_Get_Account(): void
+   public function test_Get_Account(): void
    {
 
       //Main Menu
       $params = [
-                  'customerAccount' => 'LIV0005543',
+                  'customerAccount' => 'LIV0027040',
                   'client_id' =>'39d6269a-7303-11ee-b8ce-fec6e52a2330'
                ];
       $billingClient =  new \App\Http\Services\External\BillingClients\SwascoV2(

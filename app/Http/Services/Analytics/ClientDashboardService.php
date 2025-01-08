@@ -274,13 +274,16 @@ class ClientDashboardService
          //
          //6. Payments Status Totals for Month
             $thePayments = DB::table('dashboard_payment_status_totals as pst')
-            ->select(DB::raw('pst.paymentStatus,
+                              ->select(DB::raw('pst.paymentStatus,
                                           SUM(pst.numberOfTransactions) AS totalTransactions,
                                           SUM(pst.totalAmount) as totalRevenue'))
                               ->whereBetween('pst.dateOfTransaction', [$dateFromYMD, $dateToYMD])
                               ->where('pst.client_id', '=', $dto->client_id)
                               ->groupBy('paymentStatus')
                               ->orderBy('paymentStatus');
+            // $theSQLQuery = $thePayments->toSql();
+            // $theBindings = $thePayments-> getBindings();
+            // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
             $thePayments = $thePayments->get();
 
             $paymentStatusData = $thePayments->map(function ($item) {

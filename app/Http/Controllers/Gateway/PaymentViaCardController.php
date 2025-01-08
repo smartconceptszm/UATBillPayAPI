@@ -11,14 +11,10 @@ class PaymentViaCardController extends Controller
 {
 
    private $validationRules = [
-                  'mobileNumber' => 'required|string|size:12',
-                  'walletNumber' => 'required|string|size:16',
+                  //'mobileNumber' => 'required|string|size:12',
                   'customerAccount' => 'required|string',
-                  'cardHolderName' => 'required|string',
                   'paymentAmount' => 'required|string',
-                  'cardExpiry' => 'required|string',
                   'wallet_id' => 'required|string',
-                  'cardCVV' => 'required|string',
                   'menu_id' => 'required|string'
                ];
    public function __construct(
@@ -34,7 +30,20 @@ class PaymentViaCardController extends Controller
          $this->validate($request, $this->validationRules);
          $params = $this->getParameters($request);
          $params['channel'] = 'WEBSITE';
-         $this->response['data'] = $this->paymentRequestService->initiateWebPayement($params,$this->cardDTO);
+         $this->response['data'] = $this->paymentRequestService->initiateCardWebPayement($params,$this->cardDTO);
+      } catch (\Throwable $e) {
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
+      }
+      return response()->json($this->response);
+
+   }
+
+   public function update(Request $request)
+   {
+
+      try {
+         $this->response['data'] = $this->paymentRequestService->confirmWebPayment($request->input('id'));
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
