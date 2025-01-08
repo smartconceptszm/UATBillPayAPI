@@ -196,7 +196,7 @@ class SwascoV2 implements IBillingClient
                            'exceptions' => true,
                            'login' => $clientCredentials['SWASCOV2_SOAP_USERNAME'],
                            'password' => $clientCredentials['SWASCOV2_SOAP_PASSWORD'],
-                           'cache_wsdl' => WSDL_CACHE_NONE,
+                           'cache_wsdl' => WSDL_CACHE_BOTH,
                            'soap_version' => SOAP_1_1,
                            'trace' => 1,
                            'connection_timeout' => $clientCredentials['SOAP_CONNECTION_TIMEOUT']
