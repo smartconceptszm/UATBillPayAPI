@@ -58,7 +58,7 @@ class Step_SendReceiptViaSMS extends EfectivoPipelineContract
 
    private function updatePaymentStatusAfterSMS(BaseDTO $paymentDTO): void
    {
-      if ($this->smsTxDTO->status === 'DELIVERED') {
+      if ($this->smsTxDTO->status === 'DELIVERED' && $paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value) {
          $paymentDTO->paymentStatus = PaymentStatusEnum::Receipt_Delivered->value;
       }
    }

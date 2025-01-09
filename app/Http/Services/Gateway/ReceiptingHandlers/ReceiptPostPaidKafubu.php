@@ -18,7 +18,7 @@ class ReceiptPostPaidKafubu implements IReceiptPayment
     public function handle(BaseDTO $paymentDTO):BaseDTO
     {
         
-		$newBalance="0";
+		$newBalance = "0";
 		if($paymentDTO->customer){
 			if(\key_exists('balance',$paymentDTO->customer)){
 				$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) - 
