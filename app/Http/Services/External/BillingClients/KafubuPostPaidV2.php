@@ -5,10 +5,12 @@ namespace App\Http\Services\External\BillingClients;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use App\Http\Services\Clients\BillingCredentialService;
 use App\Http\Services\Utility\XMLtoArrayParser;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Carbon;
 use Exception;
 
-class KafubuPostPaid implements IBillingClient
+class KafubuPostPaidV2 implements IBillingClient
 {
 
     private $kafubuSoapService;
@@ -17,6 +19,7 @@ class KafubuPostPaid implements IBillingClient
     private string $soapToken;
     private string $cashierNo;
     private string $operator;
+    private $cacheTTL;
 
     public function __construct(
         private BillingCredentialService $billingCredentialsService,
@@ -68,6 +71,19 @@ class KafubuPostPaid implements IBillingClient
                     }else{
                         $theBalance+=(float)$customerBalance['items']['item']['bmf-tot'];
                         break;
+                    }
+                }
+            }
+
+
+            //Account for un creditted receipts
+            $cachedBalance = \json_decode(Cache::get('kafubu_balance_'.$params['customerAccount'],\json_encode([])), true);
+            if($cachedBalance){
+                if(\key_exists('newBalance',$cachedBalance)){
+                    if($theBalance>$cachedBalance['newBalance']){
+                        $theBalance=$cachedBalance['newBalance'];
+                    }else{
+                        Cache::forget('kafubu'.$params['customerAccount']);
                     }
                 }
             }
@@ -162,6 +178,18 @@ class KafubuPostPaid implements IBillingClient
             }
             $response['status'] = "SUCCESS";
             $response['receiptNumber'] = $theReceipt['recno'];
+
+            // //Account for uncreditted receipts
+            $cacheValues=[];
+            $cacheValues['newBalance'] = $postParams['balance']-$postParams['amount'];
+
+            $cacheTTL =intval($this->cacheTTL)*2;
+            if(Carbon::now()->dayOfWeek == 5 || Carbon::now()->dayOfWeek == 6){
+                $cacheTTL+=intval($this->cacheTTL);
+            }
+
+            Cache::put('kafubu_balance_'.$postParams['account'],\json_encode($cacheValues), 
+                Carbon::now()->addMinutes($cacheTTL));
 
         } catch (\Throwable $e) {
             if ($e->getCode() == 1) {
