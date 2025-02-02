@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Http\Services\Payments\ShortcutCustomerService;
+use App\Http\Services\Clients\ClientWalletService;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Facades\Log;
@@ -19,7 +20,8 @@ class AddCustomerToShotcutListJob extends BaseJob
       private BaseDTO $paymentDTO)
    {}
 
-   public function handle(ShortcutCustomerService $shortcutCustomerService, ClientMenuService $clientMenuService)
+   public function handle(ShortcutCustomerService $shortcutCustomerService, ClientMenuService $clientMenuService,
+                                 ClientWalletService $clientWalletService)
    {
 
       $menu = $clientMenuService->findById($this->paymentDTO->menu_id);
@@ -47,10 +49,11 @@ class AddCustomerToShotcutListJob extends BaseJob
                                              ->count();
             
             if($paymentTransactions >1){
-
+               $wallet = $clientWalletService->findById($this->paymentDTO->wallet_id);
                $shortcutCustomerService->create([
                                                 'customerAccount'=>$this->paymentDTO->customerAccount,
-                                                'mobileNumber' => $this->paymentDTO->mobileNumber
+                                                'mobileNumber' => $this->paymentDTO->mobileNumber,
+                                                'client_id'=>$wallet->client_id
                                              ]);
 
                Log::info('('.$this->paymentDTO->urlPrefix.') Customer added to shortcut list. Mobile Number = '.$this->paymentDTO->mobileNumber.
