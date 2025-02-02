@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
+use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -23,7 +24,7 @@ class Step_TrimResponse extends EfectivoPipelineContract
 				}
 			} catch (\Throwable $e) {
 				$txDTO->error = 'At trim response. '.$e->getMessage();
-				$txDTO->errorType = 'SystemError';
+				$txDTO->errorType = USSDStatusEnum::SystemError->value;
 			}
 		}
 		return $txDTO;

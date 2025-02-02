@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\USSD\Menus;
 
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use Illuminate\Support\Facades\App;
 use App\Http\DTOs\BaseDTO;
@@ -13,8 +14,9 @@ class UpdateDetails implements IUSSDMenu
    public function handle(BaseDTO $txDTO):BaseDTO
    {
       
-      if ($txDTO->error == '') {
-         try {
+      
+      try {
+         if ($txDTO->error == '') {
             $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
             $billingClient = $billpaySettings['USE_BILLING_MOCK_'.strtoupper($txDTO->urlPrefix)]=="YES"? 'MockBillingClient':$txDTO->billingClient;	
             if (\count(\explode("*", $txDTO->customerJourney)) == 2) {
@@ -27,11 +29,12 @@ class UpdateDetails implements IUSSDMenu
             }
             $stepHandler = App::make('UpdateDetails_Step_'.\count(\explode("*", $txDTO->customerJourney)));
             $txDTO = $stepHandler->run($txDTO);
-         } catch (\Throwable $e) {
-            $txDTO->error = 'At handle customer field update menu. '.$e->getMessage();
-            $txDTO->errorType = 'SystemError';
          }
+      } catch (\Throwable $e) {
+         $txDTO->error = 'At handle customer field update menu. '.$e->getMessage();
+         $txDTO->errorType = USSDStatusEnum::SystemError->value;
       }
+
       return $txDTO;
       
    }

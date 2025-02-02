@@ -7,6 +7,7 @@ use App\Http\Services\MenuConfigs\ComplaintSubTypeService;
 use App\Http\Services\MenuConfigs\ComplaintTypeService;
 use App\Http\Services\USSD\StepServices\ValidateCRMInput;
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -38,9 +39,9 @@ class FaultsComplaints_Step_4
          $txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
-            $txDTO->errorType = 'InvalidInput';
+            $txDTO->errorType = USSDStatusEnum::InvalidInput->value;
          }else{
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
          $txDTO->error='At Get extra infomation for the complaint. '.$e->getMessage();
       }

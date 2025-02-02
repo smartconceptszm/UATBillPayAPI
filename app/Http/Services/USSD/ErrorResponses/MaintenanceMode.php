@@ -13,7 +13,7 @@ class MaintenanceMode implements IErrorResponse
 
 		try {   
 			$billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true); 
-			$txDTO->response = $billpaySettings['MODE_MESSAGE'];
+			$txDTO->response = $billpaySettings['MODE_MESSAGE_'.\strtoupper($txDTO->urlPrefix)];
 			$txDTO->error=$txDTO->response;
 			$txDTO->lastResponse = true;
 		} catch (\Throwable $e) {

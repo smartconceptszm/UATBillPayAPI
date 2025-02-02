@@ -26,7 +26,9 @@ return new class extends Migration
          $table->float('paymentAmount',10,2)->default(0);
          $table->string('response',160)->nullable();
          $table->enum('status',['INITIATED','COMPLETED','FAILED','SUCCESSFUL','REVIEWED',
-                                       'MANUALLY REVIEWED'])->default('INITIATED')->notNullable();
+                                 'CLIENTBLOCKED','INVALIDACCOUNT','INVALIDAMOUNT','INVALIDCONFIRMATION',
+                                 'INVALIDINPUT','INVALIDSURVEYRESPONSE','MAINTENANCEMODE','SYSTEMERROR',
+                                 'WALLETNOTACTIVATED','RESUMING','MANUALLY REVIEWED'])->default('INITIATED')->notNullable();
          $table->text('error')->nullable();
          $table->timestamps();
          $table->unique(['sessionId', 'mobileNumber'],'session_mobileNumber');

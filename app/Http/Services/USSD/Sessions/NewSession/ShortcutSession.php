@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\Sessions\NewSession;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
-use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\USSD\StepServices\GetShortcutMenu;
 use Illuminate\Support\Facades\App;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -12,7 +12,7 @@ class ShortcutSession extends EfectivoPipelineContract
 {
 
    public function __construct(
-      private ClientMenuService $clientMenuService)
+      private GetShortcutMenu $getShortcutMenu)
    {}
 
 
@@ -23,16 +23,10 @@ class ShortcutSession extends EfectivoPipelineContract
 
          if(($txDTO->isNewRequest == '1') && (\count(\explode("*", $txDTO->subscriberInput))>1)){
             
-            $arrInputs = explode("*", $txDTO->subscriberInput);
-            $selectedMenu = $this->clientMenuService->findOneBy([
-                                                                  'order' => $arrInputs[1],
-                                                                  'client_id' => $txDTO->client_id,
-                                                                  'parent_id' => $txDTO->menu_id,
-                                                                  'isActive' => 'YES'
-                                                               ]);
-            if($selectedMenu && $selectedMenu->shortcut){
-               $shortCut = App::make($selectedMenu->shortcut);
-               $txDTO = $shortCut->handle($txDTO,$selectedMenu);
+            $selectedMenu = $this->getShortcutMenu->handle($txDTO);
+            if($selectedMenu){
+               $shortcutHandler = App::make($selectedMenu->shortcutHandler);
+               $txDTO = $shortcutHandler->handle($txDTO,$selectedMenu);
             }else{
                $txDTO->subscriberInput = $txDTO->shortCode;
             }

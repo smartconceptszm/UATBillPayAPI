@@ -37,6 +37,12 @@ class AppServiceProvider extends ServiceProvider
          });
       //
 
+      //ResumePreviousSession MENU
+         $this->app->singleton('ResumePreviousSession', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\ResumePreviousSession::class);
+         });
+      //
+
       //Menu Make Payment
          $this->app->singleton('MakePayment', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\MakePayment::class);
@@ -97,14 +103,14 @@ class AppServiceProvider extends ServiceProvider
 		// 
 
       //Shortcuts MENU
-         $this->app->singleton('BalancePostPaid', function () {
-            return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\BalancePostPaid::class);
+         $this->app->singleton('CheckPostPaidBalanceShortcut', function () {
+            return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\CheckPostPaidBalanceShortcut::class);
          });
-         $this->app->singleton('PayPostPaidBill', function () {
-            return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\PayPostPaidBill::class);
+         $this->app->singleton('PayBillShortcut', function () {
+            return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\MakePaymentShortcut::class);
          });
-         $this->app->singleton('MakeCouncilPayment', function () {
-            return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\MakeCouncilPayment::class);
+         $this->app->singleton('MakeCouncilPaymentShortcut', function () {
+            return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\MakeCouncilPaymentShortcut::class);
          });
       //
 
@@ -239,31 +245,31 @@ class AppServiceProvider extends ServiceProvider
 		//
 
       //USSD Error Response Handlers
-         $this->app->singleton('InvalidConfirmation', function () {
+         $this->app->singleton('INVALIDCONFIRMATION', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidConfirmation::class);
          });
-         $this->app->singleton('MaintenanceMode', function () {
+         $this->app->singleton('MAINTENANCEMODE', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\MaintenanceMode::class);
          });
-         $this->app->singleton('InvalidAccount', function () {
+         $this->app->singleton('INVALIDACCOUNT', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidAccount::class);
          });
-         $this->app->singleton('InvalidAmount', function () {
+         $this->app->singleton('INVALIDAMOUNT', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidAmount::class);
          });
-         $this->app->singleton('ClientBlocked', function () {
+         $this->app->singleton('CLIENTBLOCKED', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\ClientBlocked::class);
          });
-         $this->app->singleton('InvalidInput', function () {
+         $this->app->singleton('INVALIDINPUT', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidInput::class);
          });
-         $this->app->singleton('InvalidSurveyResponse', function () {
+         $this->app->singleton('INVALIDSURVEYRESPONSE', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidSurveyResponse::class);
          });
-         $this->app->singleton('SystemError', function () {
+         $this->app->singleton('SYSTEMERROR', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\SystemError::class);
          });
-         $this->app->singleton('WalletNotActivated', function () {
+         $this->app->singleton('WALLETNOTACTIVATED', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\WalletNotActivated::class);
          });
       //

@@ -12,7 +12,7 @@ use App\Jobs\BaseJob;
 class ConfirmPaymentJob extends BaseJob
 {
 
-   public $timeout = 600;
+   // public $timeout = 600;
    public function __construct(
       private BaseDTO $paymentDTO)
    {}

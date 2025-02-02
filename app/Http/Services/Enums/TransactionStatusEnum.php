@@ -9,5 +9,5 @@ enum TransactionStatusEnum:string
     case Completed ='COMPLETED';
     case Failed ='FAILED';
     case Reviewed ='REVIEWED';
-    case Manually_Reviewed ='MANUALLY REVIEWED';
+    case ManuallyReviewed ='MANUALLY REVIEWED';
 }

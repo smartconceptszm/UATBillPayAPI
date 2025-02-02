@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\USSD\MakePayment;
 
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 
 class MakePayment_Step_6
@@ -12,7 +13,7 @@ class MakePayment_Step_6
 		if (\count(\explode("*", $txDTO->customerJourney)) > 4) {
 			$txDTO->error = "Duplicated request from ".$txDTO->mnoName.
 											" with input: ".$txDTO->subscriberInput; 
-			$txDTO->errorType = 'SystemError';
+			$txDTO->errorType = USSDStatusEnum::SystemError->value;
 		}
 		return $txDTO;        
 	}

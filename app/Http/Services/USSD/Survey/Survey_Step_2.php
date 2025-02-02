@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD\Survey;
 
 use App\Http\Services\External\BillingClients\EnquiryHandler;
+use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -41,9 +42,9 @@ class Survey_Step_2
                Carbon::now()->addMinutes(intval($billpaySettings['SESSION_CACHE'])));
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
-            $txDTO->errorType = 'InvalidAccount';
+            $txDTO->errorType = USSDStatusEnum::InvalidAccount->value;
          }else{
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
          $txDTO->error = 'Survey step 2. '.$e->getMessage();
       }

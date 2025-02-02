@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD\StepServices;
 
 use App\Http\Services\Clients\ClientRevenuePointService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\Services\Auth\UserService;
 use App\Http\DTOs\BaseDTO;
 
@@ -32,7 +33,7 @@ class GetRevenueCollectionDetails
             }
 
             $revenueColletor = $this->userService->findOneBy(['client_id'=>$txDTO->client_id,
-                                                                                 'revenueCollectorCode'=>$arrReference[1]]);
+                                                                  'revenueCollectorCode'=>$arrReference[1]]);
             if($revenueColletor){
                $txDTO->revenueCollector = $arrReference[1];
             }
@@ -40,7 +41,7 @@ class GetRevenueCollectionDetails
          }
          
       } catch (\Throwable $e) {
-         $txDTO->errorType = 'SystemError';
+         $txDTO->errorType = USSDStatusEnum::SystemError->value;
          $txDTO->error = $e->getMessage();
       }
       

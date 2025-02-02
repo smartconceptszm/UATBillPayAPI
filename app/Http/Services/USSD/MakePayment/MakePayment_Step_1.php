@@ -4,6 +4,7 @@ namespace App\Http\Services\USSD\MakePayment;
 
 use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -44,10 +45,10 @@ class MakePayment_Step_1
       } catch (\Throwable $e) {
          if($e->getCode() == 1) {
             $txDTO->error = $e->getMessage();
-            $txDTO->errorType = 'WalletNotActivated';
+            $txDTO->errorType = USSDStatusEnum::WalletNotActivated->value;
          }else{
             $txDTO->error = 'Make payment step 1. '.$e->getMessage();
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
       }
       return $txDTO;

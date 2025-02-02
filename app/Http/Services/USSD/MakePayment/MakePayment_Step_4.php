@@ -6,6 +6,7 @@ use App\Http\Services\Gateway\Utility\StepService_CalculatePaymentAmounts;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\USSD\StepServices\GetAmount;
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -28,9 +29,9 @@ class MakePayment_Step_4
          [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
       } catch (\Throwable $e) {
          if($e->getCode()==1){
-            $txDTO->errorType = 'InvalidAmount';
+            $txDTO->errorType = USSDStatusEnum::InvalidAmount->value;
          }else{
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
          $txDTO->error = $e->getMessage();
          return $txDTO;
@@ -43,13 +44,13 @@ class MakePayment_Step_4
          } catch (\Throwable $e) {
             switch ($e->getCode()) {
                case 1:
-                  $txDTO->errorType = 'InvalidAccount';
+                  $txDTO->errorType = USSDStatusEnum::InvalidAccount->value;
                   break;
                case 4:
-                     $txDTO->errorType = 'InvalidAmount';
+                     $txDTO->errorType = USSDStatusEnum::InvalidAmount->value;
                      break;
                default:
-                  $txDTO->errorType = 'SystemError';
+                  $txDTO->errorType = USSDStatusEnum::SystemError->value;
                   break;
             }
             $txDTO->error = $e->getMessage();

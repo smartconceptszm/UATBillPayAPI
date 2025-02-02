@@ -7,6 +7,7 @@ use App\Http\Services\MenuConfigs\ComplaintSubTypeService;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\MenuConfigs\ComplaintTypeService;
 use App\Http\Services\Payments\PaymentService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 
 class FaultsComplaints_Step_5
@@ -38,9 +39,9 @@ class FaultsComplaints_Step_5
             $txDTO = $this->getCustomerAccount->handle($txDTO);
          } catch (\Throwable $e) {
             if($e->getCode()==1){
-               $txDTO->errorType = 'InvalidAccount';
+               $txDTO->errorType = USSDStatusEnum::InvalidAccount->value;
             }else{
-               $txDTO->errorType = 'SystemError';
+               $txDTO->errorType = USSDStatusEnum::SystemError->value;
             }
             $txDTO->error='At get customer account to post complaint. '.$e->getMessage();
             return $txDTO;
@@ -78,11 +79,11 @@ class FaultsComplaints_Step_5
                         ];
          $caseNumber = $this->complaintClient->create($complaintData);
          $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".$caseNumber; 
-         $txDTO->status='COMPLETED'; 
+         $txDTO->status =  USSDStatusEnum::Completed->value;
          
       } catch (\Throwable $e) {
          $txDTO->error = 'At complaints step 5. '.$e->getMessage();
-         $txDTO->errorType = 'SystemError';
+         $txDTO->errorType = USSDStatusEnum::SystemError->value;
       }                                             
       return $txDTO;
 

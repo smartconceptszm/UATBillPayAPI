@@ -5,6 +5,7 @@ namespace App\Http\Services\USSD\CouncilPayment;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\USSD\StepServices\GetAmount;
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -26,9 +27,9 @@ class CouncilPayment_Step_4
          [$txDTO->subscriberInput, $txDTO->paymentAmount] = $this->getAmount->handle($txDTO);
       } catch (\Throwable $e) {
          if($e->getCode()==1){
-            $txDTO->errorType = 'InvalidAmount';
+            $txDTO->errorType = USSDStatusEnum::InvalidAmount->value;
          }else{
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
          $txDTO->error = 'Council payment step 4. '. $e->getMessage();
          return $txDTO;
@@ -47,9 +48,9 @@ class CouncilPayment_Step_4
             $theService = "For: ".$parentMenu->prompt.": ".$theMenu->prompt."\n";
          } catch (\Throwable $e) {
             if($e->getCode()==1){
-               $txDTO->errorType = 'InvalidAccount';
+               $txDTO->errorType = USSDStatusEnum::InvalidAccount->value;
             }else{
-               $txDTO->errorType = 'SystemError';
+               $txDTO->errorType = USSDStatusEnum::SystemError->value;
             }
             $txDTO->error = $e->getMessage();
             return $txDTO;

@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD\MakePayment;
 
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -29,7 +30,7 @@ class MakePayment_Step_2
          }
       } catch (\Throwable $e) {
          $txDTO->error = 'Make payment step 2. '.$e->getMessage();
-         $txDTO->errorType = 'SystemError';
+         $txDTO->errorType = USSDStatusEnum::SystemError->value;
       }
       return $txDTO;
       

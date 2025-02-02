@@ -5,6 +5,7 @@ namespace App\Http\Services\USSD\ServiceApplications;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
 use App\Http\Services\MenuConfigs\ServiceTypeService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -41,9 +42,9 @@ class ServiceApplications_Step_3
             $txDTO->response = $applicationQuestion->prompt;
          } catch (\Throwable $e) {
             if($e->getCode() == 1){
-               $txDTO->errorType = 'InvalidAccount';
+               $txDTO->errorType = USSDStatusEnum::InvalidAccount->value;
             }else{
-               $txDTO->errorType = 'SystemError';
+               $txDTO->errorType = USSDStatusEnum::SystemError->value;
             }
             $txDTO->error = "At service application step 3. ". $e->getMessage(); 
          }

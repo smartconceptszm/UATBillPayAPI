@@ -4,6 +4,7 @@ namespace App\Http\Services\USSD\StepServices;
 
 use App\Http\Services\Clients\PaymentsProviderService;
 use App\Http\Services\Clients\ClientWalletService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -31,7 +32,7 @@ class ConfirmToPay
             $txDTO->walletHandler = $clientWallet->handler;
             $txDTO->wallet_id = $clientWallet->id;
             $txDTO->fireMoMoRequest = true;
-            $txDTO->status = 'COMPLETED';
+            $txDTO->status = USSDStatusEnum::Completed->value;
             $txDTO->lastResponse = true;
          } else {
             if (\strlen($txDTO->subscriberInput) > 1) {
@@ -42,9 +43,9 @@ class ConfirmToPay
       } catch (\Throwable $e) {
 
          if($e->getCode()==1){
-            $txDTO->errorType = 'InvalidConfirmation';
+            $txDTO->errorType = USSDStatusEnum::InvalidConfirmation->value;
          }else{
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
          $txDTO->error = $e->getMessage();
          

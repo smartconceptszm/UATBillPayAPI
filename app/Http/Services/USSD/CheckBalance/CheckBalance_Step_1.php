@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD\CheckBalance;
 
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 
 class CheckBalance_Step_1 
@@ -21,7 +22,7 @@ class CheckBalance_Step_1
 			$txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
 		} catch (\Throwable $e) {
 			$txDTO->error = 'At check balance step 1. '.$e->getMessage();
-			$txDTO->errorType = 'SystemError';
+			$txDTO->errorType = USSDStatusEnum::SystemError->value;
 		}
 		return $txDTO;
 		

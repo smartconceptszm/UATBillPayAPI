@@ -63,7 +63,7 @@ class PaymentRequestService
 
          InitiatePaymentJob::dispatch($paymentDTO)
                            ->delay(Carbon::now()
-                                 ->addSeconds((int)$paymentsProviderCredentials[$paymentDTO->walletHandler.'_SUBMIT_PAYMENT']))
+                           ->addSeconds((int)$paymentsProviderCredentials[$paymentDTO->walletHandler.'_SUBMIT_PAYMENT']))
                            ->onQueue('high');
 
          Log::info('('.$paymentDTO->urlPrefix.') '.
@@ -241,7 +241,7 @@ class PaymentRequestService
       $webDTO->walletHandler = $clientWallet->handler;
       $webDTO->client_id = $clientWallet->client_id;
       if($clientWallet->paymentsMode != 'UP'){
-         throw new Exception($billpaySettings['MODE_MESSAGE']);
+         throw new Exception($clientWallet->modeMessage);
       }
       if($clientWallet->paymentsActive != 'YES'){
          throw new Exception($billpaySettings['BLOCKED_MESSAGE']." ".strtoupper($webDTO->urlPrefix));
@@ -259,9 +259,6 @@ class PaymentRequestService
       $webDTO->clientSurcharge = $client->surcharge;
       return $webDTO;
    }
-
-
-
 
 }
 

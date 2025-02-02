@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD\Menus;
 
 use App\Http\Services\Clients\ClientService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use App\Http\DTOs\BaseDTO;
 
@@ -15,8 +16,8 @@ class Tenants implements IUSSDMenu
    public function handle(BaseDTO $txDTO):BaseDTO
    {
 
-      if($txDTO->error==''){
-         try {
+      try {
+         if($txDTO->error==''){
             $clients = $this->clientService->findAll();
             $menus = [];
             foreach ($clients as $client) {
@@ -29,11 +30,12 @@ class Tenants implements IUSSDMenu
             }
             $prompt .= "\n";
             $txDTO->response = $prompt;
-         } catch (\Throwable $e) {
-            $txDTO->error='At handle tenant menu. '.$e->getMessage();
-            $txDTO->errorType = 'SystemError';
          }
+      } catch (\Throwable $e) {
+         $txDTO->error='At handle tenant menu. '.$e->getMessage();
+         $txDTO->errorType = USSDStatusEnum::SystemError->value;
       }
+
       return $txDTO;
    }
 

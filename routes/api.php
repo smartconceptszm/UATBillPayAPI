@@ -514,6 +514,7 @@ Route::group(['middleware' => 'mode'], function (){
 
             Route::delete('/logout', [\App\Http\Controllers\Auth\UserLogoutController::class,'destroy']);
          //
+         
       });
    //
    

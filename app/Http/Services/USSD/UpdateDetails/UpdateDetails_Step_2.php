@@ -4,6 +4,7 @@ namespace App\Http\Services\USSD\UpdateDetails;
 
 use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\MenuConfigs\CustomerFieldService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -52,9 +53,9 @@ class UpdateDetails_Step_2
          
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
-            $txDTO->errorType = 'InvalidAccount';
+            $txDTO->errorType = USSDStatusEnum::InvalidAccount->value;
          }else{
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
          $txDTO->error = $e->getMessage(); 
       }

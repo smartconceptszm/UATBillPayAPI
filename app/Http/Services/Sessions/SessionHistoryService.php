@@ -18,12 +18,13 @@ class SessionHistoryService
          $record = DB::table('sessions as s')
                         ->join('client_menus as cm','s.menu_id','=','cm.id')
                         ->select('s.menu_id','s.customerJourney', 's.customerAccount','s.sessionId',
-                                    'cm.prompt','s.revenuePoint','s.paymentAmount','s.response','s.status','s.error')
+                                 'cm.prompt','s.revenuePoint','s.paymentAmount','s.response','s.status',
+                                 'cm.billingClient','s.error')
                         ->where('s.mobileNumber', '=', $txDTO->mobileNumber)
                         ->where('s.sessionId', '!=', $txDTO->sessionId)
                         ->where('s.client_id', '=', $txDTO->client_id)
                         ->where('s.created_at', '>', $startOfDay)
-                        ->where('s.status', '=', "INITIATED")
+                        ->whereIn('s.status', ["INITIATED","SYSTEMERROR"])
                         ->where('cm.isPayment', '=', 'YES')
                         ->orderByDesc('s.created_at')
                         ->first();

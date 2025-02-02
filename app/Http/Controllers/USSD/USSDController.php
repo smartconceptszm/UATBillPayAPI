@@ -45,6 +45,7 @@ class USSDController extends Controller
 	{
 
 		$theHeaders = ['Content-Type" => "text/plain'];
+		
 		if ($txDTO->lastResponse) {
 			$theHeaders['Freeflow'] = "FB";
 		} else {

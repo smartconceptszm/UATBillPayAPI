@@ -6,6 +6,7 @@ use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
 use App\Http\Services\USSD\StepServices\ValidateCRMInput;
 use App\Http\Services\USSD\StepServices\GetRevenueCollectionDetails;
 use App\Http\Services\USSD\StepServices\ConfirmToPay;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\Services\Clients\MnoService;
 use App\Http\Services\Enums\MNOs;
 use App\Http\DTOs\BaseDTO;
@@ -48,13 +49,13 @@ class CouncilPayment_Step_6
       } catch (\Throwable $e) {
 			switch ($e->getCode()) {
 				case 1:
-					$txDTO->errorType = 'InvalidAmount';
+					$txDTO->errorType = USSDStatusEnum::InvalidAmount->value;
 					break;
 				case 2:
-					$txDTO->errorType = 'WalletNotActivated';
+					$txDTO->errorType = USSDStatusEnum::WalletNotActivated->value;
 					break;
 				default:
-					$txDTO->errorType = 'SystemError';
+					$txDTO->errorType = USSDStatusEnum::SystemError->value;
 					break;
 			}
          $txDTO->error = $e->getMessage();

@@ -4,6 +4,7 @@ namespace App\Http\Services\USSD\Sessions\ExistingSession;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -13,7 +14,6 @@ class RetrieveCurrentMenu extends EfectivoPipelineContract
    public function __construct(
       private ClientMenuService $clientMenuService)
    {}
-
 
    protected function stepProcess(BaseDTO $txDTO)
    {
@@ -36,6 +36,11 @@ class RetrieveCurrentMenu extends EfectivoPipelineContract
             if(!$currentMenu){
                throw new Exception("Invalid Menu Item number", 1);
             }
+         }
+
+         if($txDTO->status == USSDStatusEnum::Resuming->value){
+            $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+            $currentMenu->handler = $billpaySettings['RESUME_PAYMENT_SESSION_HANDLER'];
          }
 
          $txDTO->billingClient = $currentMenu->billingClient; 

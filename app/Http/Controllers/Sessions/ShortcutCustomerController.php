@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Sessions;
 
-use App\Http\Services\Sessions\ShortcutCustomerService;
+use App\Http\Services\Payments\ShortcutCustomerService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 

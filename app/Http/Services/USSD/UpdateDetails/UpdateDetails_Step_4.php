@@ -6,6 +6,7 @@ use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\USSD\UpdateDetails\ClientCallers\IUpdateDetailsClient;
 use App\Http\Services\USSD\StepServices\ValidateCRMInput;
 use App\Http\Services\MenuConfigs\CustomerFieldService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Jobs\SendSMSesJob;
@@ -54,7 +55,7 @@ class UpdateDetails_Step_4
                                  $caseNumber; 
             $this->sendSMSNotification($txDTO);
             $txDTO->lastResponse = true;
-            $txDTO->status='COMPLETED';
+            $txDTO->status =  USSDStatusEnum::Completed->value;
 
          }else{
             $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
@@ -77,9 +78,9 @@ class UpdateDetails_Step_4
 
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
-            $txDTO->errorType = 'InvalidInput';
+            $txDTO->errorType = USSDStatusEnum::InvalidInput->value;
          }else{
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
          $txDTO->error='At update details step 4. '.$e->getMessage();
       }

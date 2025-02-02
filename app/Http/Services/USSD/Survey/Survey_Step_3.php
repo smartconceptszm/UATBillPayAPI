@@ -5,6 +5,7 @@ namespace App\Http\Services\USSD\Survey;
 use App\Http\Services\MenuConfigs\SurveyQuestionListItemService;
 use App\Http\Services\MenuConfigs\SurveyQuestionService;
 use App\Http\Services\MenuConfigs\SurveyService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -52,9 +53,9 @@ class Survey_Step_3
          }
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
-            $txDTO->errorType = 'InvalidInput';
+            $txDTO->errorType = USSDStatusEnum::InvalidInput->value;
          }else{
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
          $txDTO->error='At survey step 3. '.$e->getMessage();
       }

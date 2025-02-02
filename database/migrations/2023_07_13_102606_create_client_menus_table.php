@@ -17,7 +17,6 @@ return new class extends Migration
          $table->string("parent_id",36)->notNullable()->default(0);
          $table->integer("order")->notNullable();
          $table->string('prompt',50)->notNullable();
-         $table->string('shortcut',150)->nullable();
          $table->string('handler',50)->notNullable();
          $table->string('billingClient',50)->nullable();
          $table->string('description',150)->nullable();
@@ -31,6 +30,8 @@ return new class extends Migration
          $table->string('customerAccountPrompt',150)->nullable();
          $table->enum('requiresReference',['YES','NO'])->default('NO')->notNullable();
          $table->string('referencePrompt',150)->nullable();
+         $table->string('shortcutHandler',150)->nullable();
+         $table->string('shortcut',150)->nullable();
          $table->timestamps();
          $table->unique(['client_id','parent_id','order'],'menu_order');
       });

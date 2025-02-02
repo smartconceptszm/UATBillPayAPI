@@ -4,6 +4,7 @@ namespace App\Http\Services\USSD\Sessions\ExistingSession;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -30,7 +31,7 @@ class HandleBackStep extends EfectivoPipelineContract
 
                $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
                $backSteps = $handleBack['steps'];
-               $txDTO->status = 'INITIATED';
+               $txDTO->status = USSDStatusEnum::Initiated->value;
                for ($i=1; $i <= $backSteps; $i++) { 
                   if($arrCustomerJourney){
                      \array_pop($arrCustomerJourney);

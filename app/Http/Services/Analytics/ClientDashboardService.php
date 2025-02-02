@@ -90,16 +90,35 @@ class ClientDashboardService
                }
             }
 
-            $dailyTrends = [[
+            $dailyTrends = [
+                              [
                                  'backgroundColor'=> "rgba(255, 255, 255,0.2)",
                                  'borderColor' => "rgba(75,192,192,1)",
                                  'pointBackgroundColor' => "rgba(75,192,192,1)",
                                  'pointBorderColor' => "rgba(75,192,192,1)",
-                                 'label' => "Daily revenue - ".$dateFrom->copy()->format('Y-M'),
+                                 'label' => "Daily revenue - ".$dateFrom->copy()->format('M-Y'),
                                  'data' => $dailyData
                               ]
                            ];
+            
+            $cumulativeTotal = 0;
+            $cumulativeTrends = [];
+            
+            foreach ($dailyData as $amount) {
+               $cumulativeTotal += $amount;
+               $cumulativeTrends[] = $cumulativeTotal;
+            }
 
+            $dailyCumulativeTrends = [
+                              [
+                                 'backgroundColor'=> "rgba(255, 255, 255,0.2)",
+                                 'borderColor' => "rgba(75,192,192,1)",
+                                 'pointBackgroundColor' => "rgba(75,192,192,1)",
+                                 'pointBorderColor' => "rgba(75,192,192,1)",
+                                 'label' => "Cummulative Daily revenue - ".$dateFrom->copy()->format('M-Y'),
+                                 'data' => $cumulativeTrends
+                              ]
+                           ];
 
 
             $dateFromPreviousMonth = $dateFrom->copy()->subMonth();
@@ -131,14 +150,30 @@ class ClientDashboardService
                }
             }
 
-
             $dailyTrends[] =  [
                                  'backgroundColor'=> "rgba(255, 255, 255,0.2)",
                                  'borderColor' => "rgba(248,177,20,0.5)",
                                  'pointBackgroundColor' => "rgba(248,177,20,0.5)",
                                  'pointBorderColor' => "rgba(248,177,20,0.5)",
-                                 'label' => "Daily revenue - ".$dateFromPreviousMonth->copy()->format('Y-M'),
+                                 'label' => "Daily revenue - ".$dateFromPreviousMonth->copy()->format('M-Y'),
                                  'data' => $dailyDataLastMonth
+                              ];
+
+            $cumulativeTotal = 0;
+            $cumulativeLastMonthTrends = [];
+            
+            foreach ($dailyDataLastMonth as $amount) {
+               $cumulativeTotal += $amount;
+               $cumulativeLastMonthTrends[] = $cumulativeTotal;
+            }
+
+            $dailyCumulativeTrends[] =  [
+                                 'backgroundColor'=> "rgba(255, 255, 255,0.2)",
+                                 'borderColor' => "rgba(248,177,20,0.5)",
+                                 'pointBackgroundColor' => "rgba(248,177,20,0.5)",
+                                 'pointBorderColor' => "rgba(248,177,20,0.5)",
+                                 'label' => "Daily revenue - ".$dateFromPreviousMonth->copy()->format('M-Y'),
+                                 'data' => $cumulativeLastMonthTrends
                               ];
 
          //
@@ -316,6 +351,7 @@ class ClientDashboardService
                         'paymentsSummary' => $paymentsSummary,
                         'dailyTrendsData' => collect($dailyTrends),
                         'dailyTrendsLabels' => collect($dailyLabels),
+                        'dailyCumulativeTrendsData' => collect($dailyCumulativeTrends),
                         'paymentsTrendsData' => $paymentsTrendsData,
                         'paymentsTrendsLabels' => $paymentsTrendsLabels,
                         'revenuePointLabels' => $revenuePointLabels,

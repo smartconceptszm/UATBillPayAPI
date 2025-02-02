@@ -5,6 +5,7 @@ namespace App\Http\Services\USSD\Menus;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Clients\ClientService;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -19,9 +20,8 @@ class ParentMenu implements IUSSDMenu
 	public function handle(BaseDTO $txDTO):BaseDTO
 	{
 		
-		if($txDTO->error==''){
-			try {
-
+		try {
+			if($txDTO->error==''){
 				$menus = $this->clientMenuService->findAll([
 												'client_id'=>$txDTO->client_id,
 												'parent_id'=>$txDTO->menu_id,
@@ -34,11 +34,11 @@ class ParentMenu implements IUSSDMenu
 				}
 				$prompt .= "\n";
 				$txDTO->response = $prompt;
-			} catch (\Throwable $e) {
-				$txDTO->error = 'At handle parent menu. '.$e->getMessage();
-				$txDTO->errorType = 'SystemError';
-			}  
-		} 
+			} 
+		} catch (\Throwable $e) {
+			$txDTO->error = 'At handle parent menu. '.$e->getMessage();
+			$txDTO->errorType = USSDStatusEnum::SystemError->value;
+		}  
 		return $txDTO;
 
 	}   

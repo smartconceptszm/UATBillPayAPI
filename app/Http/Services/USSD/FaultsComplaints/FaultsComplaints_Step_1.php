@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD\FaultsComplaints;
 
 use App\Http\Services\MenuConfigs\ComplaintTypeService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -25,7 +26,7 @@ class FaultsComplaints_Step_1
          $txDTO->response=$stringMenu; 
       } catch (\Throwable $e) {
          $txDTO->error='At complaints step 1. '.$e->getMessage();
-         $txDTO->errorType = 'SystemError';
+         $txDTO->errorType = USSDStatusEnum::SystemError->value;
       }
       return $txDTO;
 

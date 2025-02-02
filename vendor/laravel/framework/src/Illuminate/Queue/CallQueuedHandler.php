@@ -116,7 +116,7 @@ class CallQueuedHandler
         if ($command instanceof \__PHP_Incomplete_Class) {
             throw new Exception('Job is incomplete class: '.json_encode($command));
         }
-        
+
         return (new Pipeline($this->container))->send($command)
                 ->through(array_merge(method_exists($command, 'middleware') ? $command->middleware() : [], $command->middleware ?? []))
                 ->then(function ($command) use ($job) {

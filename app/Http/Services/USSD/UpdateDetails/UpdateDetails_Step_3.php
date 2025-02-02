@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD\UpdateDetails;
 
 use App\Http\Services\MenuConfigs\CustomerFieldService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -35,9 +36,9 @@ class UpdateDetails_Step_3
 
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
-            $txDTO->errorType = 'InvalidInput';
+            $txDTO->errorType = USSDStatusEnum::InvalidInput->value;
          }else{
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
          $txDTO->error='At update details step 3. '.$e->getMessage();
       }

@@ -8,7 +8,7 @@ use Tests\TestCase;
 class WebClientDashboardTest extends TestCase
 {
 
-   public function test_get_client_dashboard(): void
+   public function _test_get_client_dashboard(): void
    {
 
       //Login

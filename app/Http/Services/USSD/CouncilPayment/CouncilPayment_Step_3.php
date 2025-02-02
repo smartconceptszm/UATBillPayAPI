@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\USSD\CouncilPayment;
 
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 
 class CouncilPayment_Step_3
@@ -15,7 +16,7 @@ class CouncilPayment_Step_3
 			$txDTO->response="Enter Amount :\n";
 		} catch (\Throwable $e) {
 			$txDTO->error = 'Council payment step 3. '.$e->getMessage();
-			$txDTO->errorType = 'SystemError';
+			$txDTO->errorType = USSDStatusEnum::SystemError->value;
 		}
 		return $txDTO;
 		

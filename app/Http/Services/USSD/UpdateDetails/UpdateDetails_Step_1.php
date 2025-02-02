@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD\UpdateDetails;
 
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -21,7 +22,7 @@ class UpdateDetails_Step_1
 			$txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
       } catch (\Throwable $e) {
          $txDTO->error = 'Update details step 1. '.$e->getMessage();
-         $txDTO->errorType = 'SystemError';
+         $txDTO->errorType = USSDStatusEnum::SystemError->value;
       }
       return $txDTO;
 

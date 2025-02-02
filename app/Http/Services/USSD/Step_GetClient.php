@@ -5,6 +5,7 @@ namespace App\Http\Services\USSD;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Sessions\SessionService;
 use App\Http\Services\Clients\ClientService; 
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 
 class Step_GetClient extends EfectivoPipelineContract
@@ -32,7 +33,8 @@ class Step_GetClient extends EfectivoPipelineContract
 
          if($client->mode != 'UP'){
             $txDTO->error = 'System in Maintenance Mode';
-            $txDTO->response = $billpaySettings['MODE_MESSAGE'];
+            $txDTO->response = $billpaySettings['MODE_MESSAGE_'.\strtoupper($txDTO->urlPrefix)];
+            $txDTO->errorType = USSDStatusEnum::MaintenanceMode->value;
             $txDTO->exitPipeline = true;
             $txDTO->lastResponse = true;
          }
@@ -40,13 +42,14 @@ class Step_GetClient extends EfectivoPipelineContract
          if($client->status != 'ACTIVE'){
             $txDTO->response=$billpaySettings['BLOCKED_MESSAGE']." ".\strtoupper($txDTO->urlPrefix);
             $txDTO->error = 'Client is blocked';
+            $txDTO->errorType = USSDStatusEnum::ClientBlocked->value;
             $txDTO->lastResponse = true;
             $txDTO->exitPipeline = true;
          }
 
       } catch (\Throwable $e) {
          $txDTO->error = 'At identify client step. '.$e->getMessage();
-         $txDTO->errorType = 'SystemError';
+         $txDTO->errorType = USSDStatusEnum::SystemError->value;
          $txDTO->handler = 'DummyMenu';
       }
       return $txDTO;

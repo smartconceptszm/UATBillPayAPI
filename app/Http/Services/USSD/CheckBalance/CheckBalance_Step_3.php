@@ -6,6 +6,7 @@ use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
 use App\Http\Services\Clients\BillingCredentialService;
 use App\Http\Services\Payments\PaymentHistoryService;
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -43,7 +44,7 @@ class CheckBalance_Step_3
                   $txDTO->handler = $selectedMenu->handler;
                   $txDTO->menu_id = $selectedMenu->id;
                   $txDTO->response = "Enter Amount :\n";
-                  $txDTO->status = 'INITIATED';
+                  $txDTO->status = USSDStatusEnum::Initiated->value;
                }else{
                   $txDTO->response = " Dial *".$arrCustomerJourney[0]."# and choose the menu for payment!";
                   $txDTO->lastResponse = true;
@@ -58,7 +59,7 @@ class CheckBalance_Step_3
             $txDTO->customerJourney = $arrCustomerJourney[0];
             $txDTO->subscriberInput = $arrCustomerJourney[1];
             $txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
-            $txDTO->status = 'INITIATED';
+            $txDTO->status = USSDStatusEnum::Initiated->value;
             return $txDTO;
          }
 
@@ -89,15 +90,15 @@ class CheckBalance_Step_3
 
          $txDTO->customerAccount = $arrCustomerJourney[2];
          $txDTO->error = 'Invalid selection';
-         $txDTO->errorType= "InvalidInput";
+         $txDTO->errorType = USSDStatusEnum::InvalidInput->value;
 
       } catch (\Throwable $e) {
          if($e->getCode() == 1) {
             $txDTO->error = $e->getMessage();
-            $txDTO->errorType = 'WalletNotActivated';
+            $txDTO->errorType = USSDStatusEnum::WalletNotActivated->value;
          }else{
             $txDTO->error = 'At check balance step 3. '.$e->getMessage();
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
       }
       return $txDTO;

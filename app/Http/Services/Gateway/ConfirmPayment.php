@@ -34,7 +34,8 @@ class ConfirmPayment
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
                               \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,
                               \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
-                              \App\Http\Services\Gateway\Utility\Step_RefreshAnalytics::class
+                              \App\Http\Services\Gateway\Utility\Step_RefreshAnalytics::class,
+                              \App\Http\Services\Gateway\Utility\Step_AddCutomerToShortcutList::class,
                            ])
                            ->thenReturn();
       } catch (\Throwable $e) {

@@ -17,6 +17,7 @@ class Step_HandleErrorResponse extends EfectivoPipelineContract
 			if($txDTO->error){
 				$errorHandler = App::make($txDTO->errorType);
             $txDTO = $errorHandler->handle($txDTO);
+				$txDTO->status = $txDTO->errorType;
 			}
 		} catch (\Throwable $e) {
 			$txDTO->error='At handle error response menu'.$e->getMessage();

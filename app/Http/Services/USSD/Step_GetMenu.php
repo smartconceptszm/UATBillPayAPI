@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
+use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\App;
 use Illuminate\Pipeline\Pipeline;
 use App\Http\DTOs\BaseDTO;
@@ -24,21 +25,20 @@ class Step_GetMenu extends EfectivoPipelineContract
                ]
             )
             ->thenReturn();
-
       } catch (\Throwable $e) {
          switch ($e->getCode()) {
 
             case 1:
                $txDTO->error = $e->getMessage();
-               $txDTO->errorType = 'InvalidInput';
+               $txDTO->errorType = USSDStatusEnum::InvalidInput->value;
                break;
             case 2:
                $txDTO->error = $e->getMessage();
-               $txDTO->errorType = 'MoMoNotActivated';
+               $txDTO->errorType = USSDStatusEnum::WalletNotActivated->value;
                break;
             default:
                $txDTO->error = $e->getMessage();
-               $txDTO->errorType = 'SystemError';
+               $txDTO->errorType = USSDStatusEnum::SystemError->value;
                break;
          }
          $txDTO->handler = 'DummyMenu';

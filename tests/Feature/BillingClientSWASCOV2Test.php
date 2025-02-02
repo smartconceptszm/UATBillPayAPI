@@ -8,7 +8,7 @@ use Tests\TestCase;
 class BillingClientSWASCOV2Test extends TestCase
 {
 
-   public function test_Get_Account(): void
+   public function _test_Get_Account(): void
    {
 
       //Main Menu

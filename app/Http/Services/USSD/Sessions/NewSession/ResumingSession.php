@@ -23,20 +23,17 @@ class ResumingSession extends EfectivoPipelineContract
 
       try {
 
-         if($txDTO->isNewRequest == '1'){
-            $resumeSessionMenu = $this->clientMenuService->findOneBy([
-                                                               'handler' => 'ResumePreviousSession',
-                                                               'client_id' => $txDTO->client_id,
-                                                               'parent_id' =>$txDTO->menu_id
-                                                            ]);
-            if($resumeSessionMenu){
+         if($txDTO->isNewRequest == '1' && (\count(\explode("*", $txDTO->subscriberInput))==1)){
+            $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+            $strSettingKey = "RESUME_PAYMENT_SESSION_ENABLED_".\strtoupper($txDTO->urlPrefix);
+            if($billpaySettings[$strSettingKey]=='YES'){
                $sessionToResume =  $this->sessionHistoryService->getLatestIncompletePayment($txDTO);
                if($sessionToResume){
                   Cache::put($txDTO->sessionId.'_Resume', json_encode(get_object_vars($sessionToResume)));
-                  $txDTO->billingClient = $resumeSessionMenu->billingClient; 
-                  $txDTO->menuPrompt = $resumeSessionMenu->prompt;
-                  $txDTO->handler = $resumeSessionMenu->handler; 
-                  $txDTO->menu_id = $resumeSessionMenu->id; 
+                  $txDTO->billingClient = $sessionToResume->billingClient; 
+                  $txDTO->menu_id = $sessionToResume->menu_id; 
+                  $txDTO->menuPrompt = $txDTO->menuPrompt.".\n".$billpaySettings['RESUME_PAYMENT_SESSION_PROMPT'];
+                  $txDTO->handler = $billpaySettings['RESUME_PAYMENT_SESSION_HANDLER']; 
                }
             }
          }

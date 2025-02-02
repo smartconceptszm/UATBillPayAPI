@@ -4,6 +4,7 @@ namespace App\Http\Services\USSD\Menus;
 
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
+use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\Cache;
 use App\Http\DTOs\BaseDTO;
 
@@ -48,7 +49,7 @@ class NextPage implements IUSSDMenu
 
 		} catch (\Throwable $e) {
 			$txDTO->error = 'At handle next page response option. '.$e->getMessage();
-			$txDTO->errorType = 'SystemError';
+			$txDTO->errorType = USSDStatusEnum::SystemError->value;
 		}
 		return $txDTO;
       

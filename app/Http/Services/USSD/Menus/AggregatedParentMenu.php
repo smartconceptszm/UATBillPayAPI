@@ -6,6 +6,7 @@ use App\Http\Services\Clients\AggregatedClientService;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Clients\ClientService;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -21,8 +22,8 @@ class AggregatedParentMenu implements IUSSDMenu
    public function handle(BaseDTO $txDTO):BaseDTO
    {
 
-      if($txDTO->error==''){
-         try {
+      try {
+         if($txDTO->error==''){
             $client = $this->clientService->findById($txDTO->client_id);
             $aggregatedClient = $this->aggregatedClientService->findOneBy([
                                           'parent_id'=>$client->id,
@@ -40,7 +41,7 @@ class AggregatedParentMenu implements IUSSDMenu
 
             $txDTO->subscriberInput = $txDTO->customerJourney;
             $txDTO->customerJourney = "";
-				$homeMenu = $this->clientMenuService->findOneBy([
+            $homeMenu = $this->clientMenuService->findOneBy([
                                        'client_id'=>$txDTO->client_id,
                                        'parent_id'=>'0'
                                     ]);
@@ -52,7 +53,7 @@ class AggregatedParentMenu implements IUSSDMenu
             $menus = $this->clientMenuService->findAll([
                                        'client_id'=>$txDTO->client_id,
                                        'parent_id'=>$homeMenu->id,
-												   'isActive' => 'YES'
+                                       'isActive' => 'YES'
                                     ]);
             $prompt = $txDTO->menuPrompt."\n";
             foreach ($menus as $menu) {
@@ -60,15 +61,14 @@ class AggregatedParentMenu implements IUSSDMenu
             }
             $prompt .= "\n";
             $txDTO->response = $prompt;
-
-         } catch (\Throwable $e) {
-            if($e->getCode() == 1){
-               $txDTO->error = $e->getMessage();
-               $txDTO->errorType = 'InvalidInput';
-            }else{
-               $txDTO->error='At handle aggregated parent menu. '.$e->getMessage();
-               $txDTO->errorType = 'SystemError';
-            }
+         }
+      } catch (\Throwable $e) {
+         if($e->getCode() == 1){
+            $txDTO->error = $e->getMessage();
+            $txDTO->errorType = USSDStatusEnum::InvalidInput->value;
+         }else{
+            $txDTO->error='At handle aggregated parent menu. '.$e->getMessage();
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
       }
       return $txDTO;

@@ -5,6 +5,7 @@ namespace App\Http\Services\USSD\ServiceApplications;
 use App\Http\Services\MenuConfigs\ServiceTypeDetailService;
 use App\Http\Services\MenuConfigs\ServiceTypeService;
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -49,9 +50,9 @@ class ServiceApplications_Step_2
 
          } catch (\Throwable $e) {
             if($e->getCode()==1){
-               $txDTO->errorType = "InvalidInput";
+               $txDTO->errorType = USSDStatusEnum::InvalidInput->value;
             }else{
-               $txDTO->errorType = 'SystemError';
+               $txDTO->errorType = USSDStatusEnum::SystemError->value;
             }
             $txDTO->error='At service application step 2. '.$e->getMessage();
          }

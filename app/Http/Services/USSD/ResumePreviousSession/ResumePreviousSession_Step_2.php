@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD\ResumePreviousSession;
 
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\App;
 use App\Http\DTOs\BaseDTO;
 
@@ -54,7 +55,7 @@ class ResumePreviousSession_Step_2
          $txDTO = $menuHandler->handle($txDTO);
       } catch (\Throwable $e) {
          $txDTO->error = 'Resume previous session step 2. '.$e->getMessage();
-         $txDTO->errorType = 'SystemError';
+         $txDTO->errorType = USSDStatusEnum::SystemError->value;
       }
       cache()->forget($txDTO->sessionId."_Resume");
       return $txDTO;

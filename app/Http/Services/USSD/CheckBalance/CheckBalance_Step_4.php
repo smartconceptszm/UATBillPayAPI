@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\USSD\CheckBalance;
 
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 
 class CheckBalance_Step_4
@@ -13,7 +14,7 @@ class CheckBalance_Step_4
 		if (\count(\explode("*", $txDTO->customerJourney)) > 3) {
 			$txDTO->error="Duplicated request from ".$txDTO->mnoName.
 											" with input: ".$txDTO->subscriberInput; 
-			$txDTO->errorType = 'SystemError';
+			$txDTO->errorType = USSDStatusEnum::SystemError->value;
 		}
 		return $txDTO;
 		

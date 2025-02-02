@@ -4,6 +4,7 @@ namespace App\Http\Services\USSD\FaultsComplaints;
 
 use App\Http\Services\MenuConfigs\ComplaintSubTypeService;
 use App\Http\Services\MenuConfigs\ComplaintTypeService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -39,9 +40,9 @@ class FaultsComplaints_Step_2
          }
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
-            $txDTO->errorType = "InvalidInput";
+            $txDTO->errorType = USSDStatusEnum::InvalidInput->value;
          }else{
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
          $txDTO->error='At complaints step 2. '.$e->getMessage();
       }

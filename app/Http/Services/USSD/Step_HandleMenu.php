@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
-
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use App\Http\DTOs\BaseDTO;
 
@@ -23,7 +23,7 @@ class Step_HandleMenu extends EfectivoPipelineContract
 
 		} catch (\Throwable $e) {
 			$txDTO->error = 'At handle menu option. '.$e->getMessage();
-			$txDTO->errorType = 'SystemError';
+			$txDTO->errorType = USSDStatusEnum::SystemError->value;
 		}
 		return $txDTO;
 

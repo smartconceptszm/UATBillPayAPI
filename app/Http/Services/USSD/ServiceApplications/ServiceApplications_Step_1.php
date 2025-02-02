@@ -3,6 +3,7 @@
 namespace App\Http\Services\USSD\ServiceApplications;
 
 use App\Http\Services\MenuConfigs\ServiceTypeService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -26,7 +27,7 @@ class ServiceApplications_Step_1
                $txDTO->response=$stringMenu; 
          } catch (\Throwable $e) {
                $txDTO->error='At service application step 1. '.$e->getMessage();
-               $txDTO->errorType = 'SystemError';
+               $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
       }
       return $txDTO;

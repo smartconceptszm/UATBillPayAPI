@@ -6,6 +6,7 @@ use App\Http\Services\USSD\StepServices\ValidateCRMInput;
 use App\Http\Services\MenuConfigs\SurveyQuestionListItemService;
 use App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient;
 use App\Http\Services\MenuConfigs\SurveyQuestionService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -68,7 +69,7 @@ class Survey_Step_5
                                  ];
             $txDTO->response = $this->surveyCreateClient->create($surveyResponseData);
             $txDTO->lastResponse = true;
-            $txDTO->status='COMPLETED';
+            $txDTO->status = USSDStatusEnum::Completed->value;
          }else{
             $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
             Cache::put($txDTO->sessionId."SurveyResponses",\json_encode($surveyResponses), 
@@ -96,10 +97,10 @@ class Survey_Step_5
 
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
-            $txDTO->errorType = 'InvalidSurveyResponse';
+            $txDTO->errorType = USSDStatusEnum::InvalidSurveyResponse->value;
             Cache::forget($txDTO->sessionId."SurveyResponses");
          }else{
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
          $txDTO->error='At survey step 5. '.$e->getMessage();
       }

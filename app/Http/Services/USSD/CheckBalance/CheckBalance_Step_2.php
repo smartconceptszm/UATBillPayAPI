@@ -6,6 +6,7 @@ use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
 use App\Http\Services\Clients\PaymentsProviderService;
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 
 class CheckBalance_Step_2 
@@ -29,9 +30,9 @@ class CheckBalance_Step_2
 					$txDTO = $this->enquiryHandler->handle($txDTO);
 				} catch (\Throwable $e) {
 						if($e->getCode()==1){
-							$txDTO->errorType = "InvalidAccount";
+							$txDTO->errorType = USSDStatusEnum::InvalidAccount->value;
 						}else{
-							$txDTO->errorType = 'SystemError';
+							$txDTO->errorType = USSDStatusEnum::SystemError->value;
 						}
 						$txDTO->error = $e->getMessage();
 						return $txDTO;
@@ -55,10 +56,10 @@ class CheckBalance_Step_2
 				}
 				$txDTO->response .= "2. Payments history\n";
 				$txDTO->response .= "0. Back";  
-				$txDTO->status = 'COMPLETED';
+				$txDTO->status = USSDStatusEnum::Completed->value;
 			} catch (\Throwable $e) {
 					$txDTO->error = 'At check balance step 2. '.$e->getMessage();
-					$txDTO->errorType = 'SystemError';
+					$txDTO->errorType = USSDStatusEnum::SystemError->value;
 			}
 		return $txDTO;
 		

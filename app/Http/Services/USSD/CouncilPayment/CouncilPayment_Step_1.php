@@ -4,6 +4,7 @@ namespace App\Http\Services\USSD\CouncilPayment;
 
 use App\Http\Services\USSD\StepServices\CheckPaymentsEnabled;
 use App\Http\Services\Clients\ClientMenuService;
+use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -19,8 +20,8 @@ class CouncilPayment_Step_1
    {
 
       try {    
-         $paymentProviderStatus = $this->checkPaymentsEnabled->handle($txDTO);
-         if($paymentProviderStatus['enabled']){
+         $walletStatus = $this->checkPaymentsEnabled->handle($txDTO);
+         if($walletStatus['enabled']){
             $clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
             if($clientMenu->onOneAccount == 'YES'){
                $txDTO->customerAccount = $clientMenu->commonAccount;
@@ -39,15 +40,15 @@ class CouncilPayment_Step_1
                $txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
             }
          }else{
-            throw new Exception($paymentProviderStatus['responseText'], 1);
+            throw new Exception($walletStatus['responseText'], 1);
          }
       } catch (\Throwable $e) {
          if($e->getCode() == 1) {
             $txDTO->error = $e->getMessage();
-            $txDTO->errorType = 'WalletNotActivated';
+            $txDTO->errorType = USSDStatusEnum::WalletNotActivated->value;
          }else{
             $txDTO->error = 'Council payment step 1. '.$e->getMessage();
-            $txDTO->errorType = 'SystemError';
+            $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
       }
       return $txDTO;
