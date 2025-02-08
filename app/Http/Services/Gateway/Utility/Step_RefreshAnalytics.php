@@ -88,8 +88,8 @@ class Step_RefreshAnalytics extends EfectivoPipelineContract
    private function dispatchAnalyticsJob(BaseDTO $paymentDTO): void
    {
       PaymentsAnalyticsRegularJob::dispatch($paymentDTO)
-         ->delay(Carbon::now()->addSeconds(1))
-         ->onQueue('high');
+                                    ->delay(Carbon::now()->addSeconds(1))
+                                    ->onQueue('high');
    }
 
 }

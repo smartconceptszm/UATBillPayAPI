@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 
 use Exception;
 
-class SwascoV2Test implements IBillingClient
+class SwascoPostPaid implements IBillingClient
 {
 
    private $revenuePoints =[
@@ -50,6 +50,10 @@ class SwascoV2Test implements IBillingClient
 
       try {
 
+         if(!(\strlen($params['customerAccount'])==10)){
+            throw new Exception("Invalid SWASCo account number",1);
+         }
+
          $this->setConfigs($params['client_id']);
 
          $getAccountDetailsParams = [ 
@@ -68,7 +72,7 @@ class SwascoV2Test implements IBillingClient
                            "address" => $apiResponse['Address'],
                            "revenuePoint" => $this->getRevenuePoint(\substr($apiResponse['No'],0,3)),
                            "mobileNumber" => $apiResponse['MobileNo'],
-                           "balance" => \number_format((float)$apiResponse['Balance'], 2, '.', ',')
+                           "balance" => \number_format((float)\str_replace(",", "", $apiResponse['Balance']), 2, '.', ',')
                         ];
          }else{
             throw new Exception("Invalid SWASCO Account Number",1);
@@ -97,13 +101,15 @@ class SwascoV2Test implements IBillingClient
       try {
          $this->setConfigs($postParams['client_id']);
          $receiptingParams =  [ 
+                                 'username' => $this->soapUserName,
+                                 'password' => $this->soapPassword,
                                  'referenceNumber' => $postParams['referenceNumber'],
                                  'accountNumber' => $postParams['account'],
                                  'lineAmount' => $postParams['amount'],
                                  'paymentType' => $postParams['paymentType'],
                                  'phoneNumber' => $postParams['mobileNumber'],
-                                 'username' => $this->soapUserName,
-                                 'password' => $this->soapPassword 
+                                 'source' => 1,
+                                 'receiptType' => $postParams['receiptType']
                               ];
 
          $apiResponse = $this->swascoSoapService->PostCustomerReceipt($receiptingParams);
@@ -124,7 +130,101 @@ class SwascoV2Test implements IBillingClient
 
    }
 
-   public function postReconnection(Array $postParams): array 
+   public function changeCustomerDetail(array $postParams): String {
+
+      $response = "";
+
+      try {
+
+         $this->setConfigs($postParams['client_id']);
+
+         $theDate = Carbon::parse($postParams['created_at']);
+         $theDate = $theDate->format('Y-m-d');
+         $customerParams =  [ 
+                              'username' => $this->soapUserName,
+                              'password' => $this->soapPassword,
+                              'accountNumber' => $postParams['customerAccount'],
+                              'mobileNo' => $postParams['newMobileNumber'],
+                              'submissionDate' => $theDate,
+                              'sourcePhoneNo' => $postParams['mobileNumber']
+                           ];
+
+         $apiResponse = $this->swascoSoapService->ChangeCustomerNumber($customerParams);
+         if($apiResponse->return_value){
+            $response = json_decode($apiResponse->return_value,true);
+            $response = $response['Response']['ReFNo'];
+         }else{
+            throw new Exception("SWASCO Billing Client Change Customer Details error: ",1);
+         }
+
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+      return $response;
+   }
+
+   public function postComplaint(array $postParams): String {
+      $response ="";
+      try {
+
+         $this->setConfigs($postParams['client_id']);
+         $theDate = Carbon::parse($postParams['created_at']);
+         $theDate = $theDate->format('Y-m-d');
+         $complaintParams =  [ 
+                                 'username' => $this->soapUserName,
+                                 'password' => $this->soapPassword,
+                                 'accountNo' => $postParams['customerAccount'],
+                                 'compaintCode' => $postParams['complaintCode'],
+                                 'submissionDate' => $theDate,
+                                 'sourcePhoneNo' => $postParams['mobileNumber'] 
+                              ];
+
+         $apiResponse = $this->swascoSoapService->SubmitFaultComplaint($complaintParams);
+         if($apiResponse->return_value){
+            $response = json_decode($apiResponse->return_value,true);
+            $response = $response['Response']['ReFNo'];
+         }else{
+            throw new Exception("SWASCO Billing Client SubmitFaultComplaint error: ",1);
+         }
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+      return $response;
+   }
+
+   private function setConfigs(string $client_id){
+
+      $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
+      $baseURL = $clientCredentials['SWASCOV2_SOAP_BASE_URL'];
+      $wsdlPath = $baseURL;//.$clientCredentials['wsdl_URI'];
+      $soapOptions =  [
+                           'exceptions' => true,
+                           'login' => $clientCredentials['SWASCOV2_SOAP_USERNAME'],
+                           'password' => $clientCredentials['SWASCOV2_SOAP_PASSWORD'],
+                           'cache_wsdl' => WSDL_CACHE_BOTH,
+                           'soap_version' => SOAP_1_1,
+                           'trace' => 1,
+                           'connection_timeout' => $clientCredentials['SOAP_CONNECTION_TIMEOUT']
+                        ];
+      $this->swascoSoapService = new \SoapClient($wsdlPath,$soapOptions);
+      $this->swascoSoapService->__setLocation($baseURL);
+      $this->soapUserName =$clientCredentials['SWASCOV2_SOAP_USERNAME'];
+      $this->soapPassword = $clientCredentials['SWASCOV2_SOAP_PASSWORD'];
+
+   }
+
+   public function getRevenuePoint(String $code): string
+   {
+      
+      if(\array_key_exists($code,$this->revenuePoints)){
+         return $this->revenuePoints[$code];
+      }else{
+         return "OTHER";
+      }
+      
+   }
+
+   public function _postReconnection(Array $postParams): array 
    {
 
       $response = [
@@ -147,6 +247,8 @@ class SwascoV2Test implements IBillingClient
                                  'paymentType' => $postParams['paymentType'],
                                  'creditAmount' => $postParams['amount'],
                                  'paymentDate' => $theDate,
+                                 'source' => 1,
+                                 'receiptType' => $postParams['receiptType'],
                                  'username' => $this->soapUserName,
                                  'password' => $this->soapPassword,
                               ];
@@ -172,7 +274,7 @@ class SwascoV2Test implements IBillingClient
 
    }
 
-   public function postVacuumTanker(Array $postParams): array 
+   public function _postVacuumTanker(Array $postParams): array 
    {
 
       $response = [
@@ -195,10 +297,12 @@ class SwascoV2Test implements IBillingClient
                                  'paymentType' => $postParams['paymentType'],
                                  'creditAmount' => $postParams['amount'],
                                  'paymentDate' => $theDate,
+                                 'source' => 1,
+                                 'receiptType' => $postParams['receiptType'],
                                  'username' => $this->soapUserName,
                                  'password' => $this->soapPassword,
                               ];
-
+           
          $apiResponse = $this->swascoSoapService->PostVacuumTankerPayment($receiptingParams);
          $apiResponse = json_decode($apiResponse->return_value,true);
          $apiResponse = $apiResponse['RESPONSE'];
@@ -221,7 +325,7 @@ class SwascoV2Test implements IBillingClient
 
    }
 
-   public function postNewConnection(Array $postParams): array 
+   public function _postNewConnection(Array $postParams): array 
    {
 
       $response = [
@@ -269,99 +373,6 @@ class SwascoV2Test implements IBillingClient
 
       return $response;
 
-   }
-
-
-   public function changeCustomerDetail(array $postParams): String {
-
-      $response = "";
-
-      try {
-
-         $this->setConfigs($postParams['client_id']);
-
-         $theDate = Carbon::parse($postParams['created_at']);
-         $theDate = $theDate->format('Y-m-d');
-         $customerParams =  [ 
-                              'username' => $this->soapUserName,
-                              'password' => $this->soapPassword,
-                              'accountNumber' => $postParams['customerAccount'],
-                              'mobileNo' => $postParams['newMobileNumber'],
-                              'submissionDate' => $theDate,
-                              'sourcePhoneNo' => $postParams['mobileNumber']
-                           ];
-         $apiResponse = $this->swascoSoapService->ChangeCustomerNumber($customerParams);
-         if($apiResponse->return_value){
-            $response = $apiResponse->return_value;
-         }else{
-            throw new Exception("SWASCO Billing Client Change Customer Details error: ",1);
-         }
-
-      } catch (\Throwable $e) {
-         throw new Exception($e->getMessage());
-      }
-      return $response;
-   }
-
-   public function postComplaint(array $postParams): String {
-      $response ="";
-      try {
-
-         $this->setConfigs($postParams['client_id']);
-         $theDate = Carbon::parse($postParams['created_at']);
-         $theDate = $theDate->format('Y-m-d');
-         $receiptingParams =  [ 
-                                 'username' => $this->soapUserName,
-                                 'password' => $this->soapPassword,
-                                 'accountNo' => $postParams['customerAccount'],
-                                 'compaintCode' => $postParams['complaintCode'],
-                                 'submissionDate' => $theDate,
-                                 'sourcePhoneNo' => $postParams['mobileNumber'] 
-                              ];
-
-         $apiResponse = $this->swascoSoapService->SubmitFaultComplaint($receiptingParams);
-
-         if($apiResponse->return_value){
-            $response = $apiResponse->return_value;
-         }else{
-            throw new Exception("SWASCO Billing Client SubmitFaultComplaint error: ",1);
-         }
-      } catch (\Throwable $e) {
-         throw new Exception($e->getMessage());
-      }
-      return $response;
-   }
-
-   private function setConfigs(string $client_id){
-
-      $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
-      $baseURL = $clientCredentials['SWASCOV2_TEST_SOAP_BASE_URL'];
-      $wsdlPath = $baseURL;//.$clientCredentials['wsdl_URI'];
-      $soapOptions =  [
-                           'exceptions' => true,
-                           'login' => $clientCredentials['SWASCOV2_TEST_SOAP_USERNAME'],
-                           'password' => $clientCredentials['SWASCOV2_TEST_SOAP_PASSWORD'],
-                           'cache_wsdl' => WSDL_CACHE_BOTH,
-                           'soap_version' => SOAP_1_1,
-                           'trace' => 1,
-                           'connection_timeout' => $clientCredentials['SOAP_CONNECTION_TIMEOUT']
-                        ];
-      $this->swascoSoapService = new \SoapClient($wsdlPath,$soapOptions);
-      $this->swascoSoapService->__setLocation($baseURL);
-      $this->soapUserName =$clientCredentials['SWASCOV2_TEST_SOAP_USERNAME'];
-      $this->soapPassword = $clientCredentials['SWASCOV2_TEST_SOAP_PASSWORD'];
-
-   }
-
-   public function getRevenuePoint(String $code): string
-   {
-      
-      if(\array_key_exists($code,$this->revenuePoints)){
-         return $this->revenuePoints[$code];
-      }else{
-         return "OTHER";
-      }
-      
    }
 
 }

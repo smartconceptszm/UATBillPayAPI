@@ -108,8 +108,13 @@ class ChambeshiPrePaid implements IBillingClient
          if ($apiResponse->status() == 200) {
                $apiResponse = $apiResponse->json();
                if($apiResponse['result_code']  == 0){
+                  $tokenArr = \explode(",", $apiResponse['result']['token']);
+                  $formattedTokens = [];
+                  foreach ($tokenArr as $value) {
+                     $formattedTokens[]=\implode('-', \str_split(str_replace(' ', '', $value), 4));
+                  }
+                  $response['tokenNumber'] = \implode(',',$formattedTokens);
                   $response['status'] = "SUCCESS";
-                  $response['tokenNumber'] = $apiResponse['result']['token'];
                }
                else{
                   throw new Exception($apiResponse['reason'], 1); 

@@ -146,8 +146,13 @@ class NkanaPrePaid implements IBillingClient
                if(\array_key_exists('errorcode',$apiResponseArray)){
                   switch ($apiResponseArray['errorcode']) {
                      case "0":
+                        $tokenArr = \explode(",", $apiResponseArray['tokenlist']);
+                        $formattedTokens = [];
+                        foreach ($tokenArr as $value) {
+                           $formattedTokens[]=\implode('-', \str_split(str_replace(' ', '', $value), 4));
+                        }
+                        $response['tokenNumber'] = \implode(',',$formattedTokens);
                         $response['status'] = "SUCCESS";
-                        $response['tokenNumber'] = \implode('-', \str_split(str_replace(' ', '', $apiResponseArray['tokenlist']), 4));
                         break;
                      case "3":
                         throw new Exception("Failed to calculate fee, increase amount",4);

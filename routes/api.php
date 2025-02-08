@@ -137,6 +137,9 @@ Route::group(['middleware' => 'mode'], function (){
             Route::get('failedpayments', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'index']);
             Route::put('failedpayments/{id}', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'update']);
             Route::post('paymentsreviewbatch', [\App\Http\Controllers\Payments\PaymentFailedBatchController::class, 'store']);
+
+            Route::get('submittedpayments', [\App\Http\Controllers\Payments\PaymentSubmittedController::class, 'index']);
+            Route::put('submittedpayments/{id}', [\App\Http\Controllers\Payments\PaymentSubmittedController::class, 'update']);
             
             Route::get('paymentsessions', [\App\Http\Controllers\Payments\PaymentSessionController::class, 'index']);
             Route::get('sessionpayment', [\App\Http\Controllers\Payments\PaymentController::class, 'findOneBy']);

@@ -30,7 +30,7 @@ class UpdateDetails_Step_2
             $txDTO->customerJourney .= "*".$txDTO->subscriberInput;
             $txDTO->subscriberInput = "1";
             $customerField = $customerFields[0];
-            $txDTO->response = "Update ".$customerField->prompt." on:\n". 
+            $txDTO->response = "Update ".":\n". 
                               "Acc: ".$txDTO->customerAccount."\n".
                               "Name: ".$txDTO->customer['name']."\n";
             if(array_key_exists($customerField->name,$txDTO->customer)){

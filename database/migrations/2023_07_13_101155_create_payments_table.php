@@ -27,8 +27,8 @@ return new class extends Migration
          $table->float('paymentAmount',10,2)->default(0);
          $table->float('receiptAmount',10,2)->default(0);
          $table->string('transactionId',50)->nullable();
-         $table->string('receiptNumber',30)->nullable();
-         $table->string('tokenNumber',30)->nullable();
+         $table->string('receiptNumber',50)->nullable();
+         $table->string('tokenNumber',150)->nullable();
          $table->string('receipt',255)->nullable();
          $table->enum('channel',['USSD','MOBILEAPP','BANKAPI', 'WEBSITE'])
                               ->default('USSD')->notNullable();

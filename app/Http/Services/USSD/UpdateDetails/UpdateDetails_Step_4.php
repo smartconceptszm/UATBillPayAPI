@@ -36,7 +36,7 @@ class UpdateDetails_Step_4
          $customerField = \array_values(\array_filter($customerFields, function ($record) use($order){
                                                             return ($record->order == $order);
                                                          }));
-         $customerField = $customerField[0]; 
+         $customerField = (object)$customerField[0]->toArray(); 
          $txDTO->subscriberInput = $this->validateCRMInput->handle($customerField->type,$txDTO->subscriberInput);
          $capturedUpdates[$order] = $txDTO->subscriberInput;
          if(\count($customerFields) == (\count($capturedUpdates))){
@@ -64,7 +64,7 @@ class UpdateDetails_Step_4
             $customerField = \array_values(\array_filter($customerFields, function ($record)use($order){
                                                                return ($record->order == $order +1);
                                                             }));
-            $customerField = $customerField[0]; 
+            $customerField = (object)$customerField[0]->toArray(); 
             $txDTO->response = "Enter ".$customerField->prompt;
             if($customerField->placeHolder){
                $txDTO->response .= "(e.g. ".$customerField->placeHolder.")";
@@ -82,7 +82,7 @@ class UpdateDetails_Step_4
          }else{
             $txDTO->errorType = USSDStatusEnum::SystemError->value;
          }
-         $txDTO->error='At update details step 4. '.$e->getMessage();
+         $txDTO->error = 'At update details step 4. '.$e->getMessage();
       }
       return $txDTO;
 

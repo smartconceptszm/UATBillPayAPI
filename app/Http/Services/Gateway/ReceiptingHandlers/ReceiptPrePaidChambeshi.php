@@ -47,17 +47,13 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 		if(($paymentDTO->tokenNumber != '') && ($paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value)){
 			$receiptNumber =  $paymentDTO->customerAccount."_".\now()->timestamp;
 			$receiptingParams = [
-												"TxDate"=> $paymentDTO->created_at,
-												"Account"=> $paymentDTO->customerAccount,  
-												"AccountName"=> $paymentDTO->customer['name'],
-												"Debt"=> 0,
-												"AmountPaid" => $paymentDTO->receiptAmount, 
-												"Phone#"=> $paymentDTO->mobileNumber,
-												"ReceiptNo"=> $receiptNumber ,
-												"Address"=> $paymentDTO->customerAccount,
-												"District"=> $paymentDTO->revenuePoint,
-												"TransactDescript"=> "2220 PREPAID. Token: ".$paymentDTO->tokenNumber,
-												"Mobile Network" => $paymentDTO->walletHandler, 
+											"payment_provider"=> strtolower($paymentDTO->walletHandler).'_money',
+											"payer_msisdn"=> $paymentDTO->mobileNumber, 
+											"txnDate"=> Carbon::now()->format('Y-m-d'),
+											"account"=> $paymentDTO->customerAccount,  
+											"amount" => $paymentDTO->receiptAmount, 
+											"txnId" => $paymentDTO->transactionId,
+											"ReceiptNo"=> $receiptNumber
 										];
 			$billingResponse = $this->billingClient->postPayment($receiptingParams);
 			if($billingResponse['status'] == 'SUCCESS'){

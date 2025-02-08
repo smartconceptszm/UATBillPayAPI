@@ -7,8 +7,8 @@ use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Http\Services\Gateway\ConfirmPayment;
 use App\Http\Services\Enums\PaymentTypeEnum;
+use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\MoMoDTO;
-
 
 use Exception;
 
@@ -55,6 +55,18 @@ class MoMoCallbackService
             $paymentDTO->error = $callbackParams['message'];
          }
 
+         //Log the Callback Execution
+            $logMessage = sprintf(
+                                    '(%s) Callback executed  on (%s) for Session: %s. Transaction ID = %s. Channel: %s. Wallet: %s. Payment Status: %s (via %s). ',
+                                    $paymentDTO->urlPrefix,
+                                    strtoupper($paymentDTO->walletHandler),
+                                    $paymentDTO->sessionId,
+                                    $paymentDTO->transactionId,
+                                    $paymentDTO->channel,
+                                    $paymentDTO->walletNumber,
+                                    $paymentDTO->paymentStatus
+                                 );
+            Log::info($logMessage);
          // Confirm the payment through the pipeline
          $paymentDTO = $this->confirmPayment->handle($paymentDTO);
 

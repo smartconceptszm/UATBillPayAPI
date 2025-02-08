@@ -43,7 +43,7 @@ class NkanaPostPaid implements IBillingClient
                   //throw new Exception($apiResponse['statusNarration'], 1);
                   throw new Exception("Invalid Nkana POST-PAID Account Number", 1);
                }else{
-                  throw new Exception($apiResponse['statusNarration'], 2);
+                  throw new Exception($apiResponse['StatusNarration'], 2);
                }
             }
          } else {
@@ -73,7 +73,7 @@ class NkanaPostPaid implements IBillingClient
          $configs = $this->getConfigs($postParams['client_id']);
          $fullURL = $configs['baseURL']."nwsc-api/Payment/ClientPayment";
          $apiResponse = Http::withHeaders([
-                                 'Accept' => '/',
+                                 'Accept' =>  '*/*',
                                  'AuthenticationCode'=> $configs['AuthenticationCode']
                               ])
                            ->post($fullURL, $postParams);

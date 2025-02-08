@@ -51,32 +51,32 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
 
    private function dispatchJobBasedOnPaymentStatus(BaseDTO $paymentDTO, array $billpaySettings)
    {
-      $paymentStatus = $paymentDTO->paymentStatus;
+
       $paymentReviewDelay = (int) $billpaySettings[self::PAYMENT_REVIEW_DELAY_KEY];
 
-      if ($paymentStatus === PaymentStatusEnum::Submitted->value) {
-         $this->dispatchConfirmPaymentJob($paymentDTO, $paymentReviewDelay);
+      if ($paymentDTO->paymentStatus === PaymentStatusEnum::Submitted->value) {
+         $this->dispatchConfirmPaymentJob($paymentDTO);
       } else {
          $this->dispatchReConfirmPaymentJob($paymentDTO, $paymentReviewDelay);
       }
    }
 
-   private function dispatchConfirmPaymentJob(BaseDTO $paymentDTO, int $paymentReviewDelay)
+   private function dispatchConfirmPaymentJob(BaseDTO $paymentDTO)
    {
       $clientWallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
       $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($clientWallet->payments_provider_id);
       $delaySeconds = (int)$paymentsProviderCredentials[$paymentDTO->walletHandler . '_PAYSTATUS_CHECK'];
 
       ConfirmPaymentJob::dispatch($paymentDTO)
-         ->delay(Carbon::now()->addSeconds($delaySeconds))
-         ->onQueue('high');
+                        ->delay(Carbon::now()->addSeconds($delaySeconds))
+                        ->onQueue('high');
    }
 
    private function dispatchReConfirmPaymentJob(BaseDTO $paymentDTO, int $paymentReviewDelay)
    {
       ReConfirmPaymentJob::dispatch($paymentDTO)
-         ->delay(Carbon::now()->addMinutes($paymentReviewDelay))
-         ->onQueue('high');
+                           ->delay(Carbon::now()->addMinutes($paymentReviewDelay))
+                           ->onQueue('high');
    }
 
 

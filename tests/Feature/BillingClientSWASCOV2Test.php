@@ -16,7 +16,7 @@ class BillingClientSWASCOV2Test extends TestCase
                   'customerAccount' => 'LIV0027040',
                   'client_id' =>'39d6269a-7303-11ee-b8ce-fec6e52a2330'
                ];
-      $billingClient =  new \App\Http\Services\External\BillingClients\SwascoV2(
+      $billingClient =  new \App\Http\Services\External\BillingClients\SwascoPostPaid(
                                     new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
                                     new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential())
                                  );
@@ -40,7 +40,7 @@ class BillingClientSWASCOV2Test extends TestCase
                      'client_id' => '39d6269a-7303-11ee-b8ce-fec6e52a2330'
                ];
 
-      $billingClient =  new \App\Http\Services\External\BillingClients\SwascoV2(
+      $billingClient =  new \App\Http\Services\External\BillingClients\SwascoPostPaid(
                                  new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
                                  new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential())
                               );
@@ -64,7 +64,7 @@ class BillingClientSWASCOV2Test extends TestCase
                   'receiptType'=>"2"
                ];
 
-      $billingClient =  new \App\Http\Services\External\BillingClients\SwascoV2(
+      $billingClient =  new \App\Http\Services\External\BillingClients\SwascoPostPaid(
                                  new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
                                  new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential())
                               );
@@ -89,7 +89,7 @@ class BillingClientSWASCOV2Test extends TestCase
                   'receiptType'=>"1",
                ];
 
-      $billingClient =  new \App\Http\Services\External\BillingClients\SwascoV2(
+      $billingClient =  new \App\Http\Services\External\BillingClients\SwascoPostPaid(
                                  new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
                                  new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential())
                               );
@@ -107,11 +107,11 @@ class BillingClientSWASCOV2Test extends TestCase
                   'mobileNumber'=> '260977787659',
                   'customerAccount' => 'CHO0001527',
                   'complaintCode' => '01A',
-                  'created_at' => '2025-01-01',
+                  'created_at' => '2025-02-01',
                   'client_id' => '39d6269a-7303-11ee-b8ce-fec6e52a2330'
                ];
 
-      $billingClient =  new \App\Http\Services\External\BillingClients\SwascoV2(
+      $billingClient =  new \App\Http\Services\External\BillingClients\SwascoPostPaid(
                                  new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential()),
                                  new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential())
                               );

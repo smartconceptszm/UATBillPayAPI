@@ -31,18 +31,14 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 		$receiptNumber =  $paymentDTO->customerAccount."_".\now()->timestamp;
 
 		$receiptingParams = [
-									"Mobile Network" => $paymentDTO->walletHandler, 
-									"AccountName"=> $paymentDTO->customer['name'],
-									"AmountPaid" => $paymentDTO->receiptAmount,
-									"ReceiptNo"=> $receiptNumber,
-									"Address"=> $paymentDTO->customerAccount,
-									"Account"=> $paymentDTO->customerAccount,
-									"TransactDescript"=> "2220 POST-PAID.",
-									"Phone#"=> $paymentDTO->mobileNumber,
-									"District"=> $paymentDTO->revenuePoint,
-									"TxDate"=> $paymentDTO->created_at,
-									"Debt"=> 0,
-							];
+									"payment_provider" => strtolower($paymentDTO->walletHandler).'_money', 
+									"payer_msisdn"=> $paymentDTO->mobileNumber, 
+									"txnDate"=> Carbon::now()->format('Y-m-d'),
+									"account"=> $paymentDTO->customerAccount,
+									"amount" => $paymentDTO->receiptAmount,
+									"txnId"=> $paymentDTO->transactionId,
+									"ReceiptNo"=> $receiptNumber
+								];
 
 		$billingResponse=$this->billingClient->postPayment($receiptingParams);
 	

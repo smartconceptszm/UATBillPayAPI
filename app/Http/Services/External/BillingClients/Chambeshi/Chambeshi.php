@@ -2,7 +2,9 @@
 
 namespace App\Http\Services\External\BillingClients\Chambeshi;
 
-use \App\Http\Services\External\BillingClients\Chambeshi\ChambeshiPaymentService;
+use App\Http\Services\Clients\BillingCredentialService;
+use Illuminate\Support\Facades\Http;
+use Exception;
 
 class Chambeshi
 {
@@ -24,7 +26,7 @@ class Chambeshi
    ];
 
    public function __construct(
-      private ChambeshiPaymentService $chambeshiPaymentService,
+      private BillingCredentialService $billingCredentialService,
    )
    {}
   
@@ -32,21 +34,39 @@ class Chambeshi
    {
 
       $response = [
-         'status'=>'FAILED',
-         'receiptNumber'=>'',
-         'error'=>''
-      ];
+                  'status'=>'FAILED',
+                  'receiptNumber'=>'',
+                  'error'=>''
+               ];
 
       try {
-         $payment = $this->chambeshiPaymentService->create($postParams);
-         if($payment){
-            $response['status'] = "SUCCESS";
-            $response['receiptNumber'] = $payment->ReceiptNo;
-         }else{
-            $response['error'] = "Unable to create payment Record";
+         $configs = $this->getConfigs($postParams['client_id']);
+         unset($postParams['client_id']);
+         $fullURL = $configs['baseURL']."/payment/";
+         $postParams['username'] = $configs['username'];
+         $postParams['password'] = $configs['password'];
+         $apiResponse = Http::withHeaders([
+                                 'Content-Type' => 'application/json',
+                                 'Accept' =>  '*/*'
+                              ])
+                           ->post($fullURL, $postParams);
+         if ($apiResponse->status() == 200) {
+               $apiResponse = $apiResponse->json();
+               if(isset($apiResponse['status']) && $apiResponse['status'] == 'SUCCESS'){
+                  $response['status']="SUCCESS";
+                  $response['receiptNumber'] = $postParams['ReceiptNo'];
+               }else{
+                  throw new Exception('Chambeshi Post-Paid server error. Details: '.$apiResponse['RESPONSE'],1);
+               }
+         } else {
+            throw new Exception(" Status code: " . $apiResponse->status(), 2);
          }
-      } catch (\Exception $e) {
-         $response['error'] = "Unable to create payment Record: " .$e->getMessage();
+      } catch (\Throwable $e) {
+         if ($e->getCode() == 1) {
+            $response['error']=$e->getMessage();
+         } else{
+            $response['error'] = "Chambeshi Post-Paid server error. Details: " . $e->getMessage();
+         }
       }
       return $response;
      
@@ -77,5 +97,13 @@ class Chambeshi
       
    }
 
-
+   public function getConfigs(string $client_id):array
+   {
+      $clientCredentials = $this->billingCredentialService->getClientCredentials($client_id);
+      $configs['username'] = $clientCredentials['POSTPAID_USERNAME'];
+      $configs['password'] = $clientCredentials['POSTPAID_PASSWORD'];
+      $configs['baseURL'] = $clientCredentials['POSTPAID_BASE_URL'];
+      return $configs;
+   }
+   
 }

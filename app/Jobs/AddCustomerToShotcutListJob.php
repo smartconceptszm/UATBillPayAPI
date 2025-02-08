@@ -66,4 +66,12 @@ class AddCustomerToShotcutListJob extends BaseJob
 
    }
 
+   /**
+     * Prevent the job from being saved in the failed_jobs table
+   */
+   public function failed(\Throwable $exception)
+   {
+      Log::error($exception->getMessage());
+   }
+
 }

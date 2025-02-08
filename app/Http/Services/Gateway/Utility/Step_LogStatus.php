@@ -15,7 +15,6 @@ class Step_LogStatus extends EfectivoPipelineContract
 			if (empty($paymentDTO->error)) {
 					$logMessage = $this->buildLogMessage($paymentDTO);
 					Log::info($logMessage);
-
 					if ($paymentDTO->sms) {
 						$this->logSMSStatus($paymentDTO);
 					}

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Http\Services\Analytics\DailyAnalyticsService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Jobs\BaseJob;
 
@@ -17,5 +18,13 @@ class PaymentsAnalyticsDailySingleJob extends BaseJob
    {
       $dailyAnalyticsService->generate($this->theDate);
    }
+
+   /**
+     * Prevent the job from being saved in the failed_jobs table
+	*/
+	public function failed(\Throwable $exception)
+	{
+		Log::error($exception->getMessage());
+	}
 
 }
