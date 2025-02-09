@@ -52,6 +52,7 @@ class PaymentWithReceiptToDeliverService
                $paymentDTO->user_id = $user->id;
             }
 
+            $paymentDTO->error = "";
             $paymentDTO = $this->confirmPayment->handle($paymentDTO);
 
          }
