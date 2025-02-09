@@ -56,16 +56,10 @@ class MoMoCallbackService
          }
 
          //Log the Callback Execution
-            $logMessage = sprintf(
-                                    '(%s) Callback executed  on (%s) for Session: %s. Transaction ID = %s. Channel: %s. Wallet: %s. Payment Status: %s (via %s). ',
-                                    $paymentDTO->urlPrefix,
-                                    strtoupper($paymentDTO->walletHandler),
-                                    $paymentDTO->sessionId,
-                                    $paymentDTO->transactionId,
-                                    $paymentDTO->channel,
-                                    $paymentDTO->walletNumber,
-                                    $paymentDTO->paymentStatus
-                                 );
+            $logMessage = '('.$paymentDTO->urlPrefix.') Callback executed  on ('.strtoupper($paymentDTO->walletHandler).
+                              ') for Session: '.$paymentDTO->sessionId.'. Transaction ID = '.$paymentDTO->transactionId.
+                              '. Channel:'.$paymentDTO->channel.'. Wallet: '.$paymentDTO->walletNumber.'. Payment Status:'.
+                              $paymentDTO->paymentStatus;
             Log::info($logMessage);
          // Confirm the payment through the pipeline
          $paymentDTO = $this->confirmPayment->handle($paymentDTO);

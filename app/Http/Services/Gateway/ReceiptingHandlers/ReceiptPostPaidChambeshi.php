@@ -34,6 +34,7 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 									"payment_provider" => strtolower($paymentDTO->walletHandler).'_money', 
 									"payer_msisdn"=> $paymentDTO->mobileNumber, 
 									"txnDate"=> Carbon::now()->format('Y-m-d'),
+									"client_id"=> $paymentDTO->client_id,
 									"account"=> $paymentDTO->customerAccount,
 									"amount" => $paymentDTO->receiptAmount,
 									"txnId"=> $paymentDTO->transactionId,

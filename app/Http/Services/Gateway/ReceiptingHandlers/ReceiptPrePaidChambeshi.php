@@ -53,6 +53,7 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 											"account"=> $paymentDTO->customerAccount,  
 											"amount" => $paymentDTO->receiptAmount, 
 											"txnId" => $paymentDTO->transactionId,
+											"client_id"=> $paymentDTO->client_id,
 											"ReceiptNo"=> $receiptNumber
 										];
 			$billingResponse = $this->billingClient->postPayment($receiptingParams);
