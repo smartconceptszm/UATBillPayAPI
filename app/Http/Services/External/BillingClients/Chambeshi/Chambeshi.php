@@ -56,7 +56,7 @@ class Chambeshi
                   $response['status']="SUCCESS";
                   $response['receiptNumber'] = $postParams['ReceiptNo'];
                }else{
-                  throw new Exception('Chambeshi Post-Paid server error. Details: '.$apiResponse['RESPONSE'],1);
+                  throw new Exception('Chambeshi Post-Paid server error. Details: '.$apiResponse['response'],1);
                }
          } else {
             throw new Exception(" Status code: " . $apiResponse->status(), 2);

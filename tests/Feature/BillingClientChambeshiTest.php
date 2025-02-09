@@ -27,7 +27,7 @@ class BillingClientChambeshiTest extends TestCase
 
    }
 
-   public function _test_PostPayment(): void
+   public function test_PostPayment(): void
    {
 
       //Main Menu
@@ -37,7 +37,7 @@ class BillingClientChambeshiTest extends TestCase
                   'payment_provider' => 'airtel_money',
                   'payer_msisdn'=> '260977787659',
                   'account' => 'KCT10482',
-                  'amount' => '8.00',
+                  'amount' => '2.00',
                   'txnId'=>"FJB2108157529348UAT",
                   'ReceiptNo'=>"KCT10482_".\now()->timestamp
                ];
