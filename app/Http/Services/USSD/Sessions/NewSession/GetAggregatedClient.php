@@ -50,11 +50,10 @@ class GetAggregatedClient extends EfectivoPipelineContract
                                                       'client_id' => $txDTO->client_id,
                                                       'parent_id' =>'0'
                                                    ]);
-            $txDTO->menu_id = $homeMenu->id;
             $txDTO->billingClient = $homeMenu->billingClient; 
             $txDTO->menuPrompt = $homeMenu->prompt;
             $txDTO->handler = $homeMenu->handler; 
-
+            $txDTO->menu_id = $homeMenu->id;
             array_splice($arrInputs,1,1);
             $txDTO->subscriberInput =  implode('*',$arrInputs); 
 

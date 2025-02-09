@@ -20,10 +20,9 @@ class GetRevenueCollectionDetails
 
       try {
 
-         $arrReference = explode("-",$txDTO->reference);
          $txDTO->revenueCollector = "POS";
          $txDTO->revenuePoint = "UNKOWN";
-
+         $arrReference = explode("-",$txDTO->reference);
          if(count($arrReference)==2){
             
             $revenuePoint = $this->clientRevenuePointService->findOneBy(['client_id'=>$txDTO->client_id,

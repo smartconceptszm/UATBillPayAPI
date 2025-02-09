@@ -69,9 +69,9 @@ class CouncilPayment_Step_4
                            "0. Back";
                            
       $cacheValue = \json_encode([
-               'must'=>false,
-               'steps'=>2,
-         ]);         
+                                 'must'=>false,
+                                 'steps'=>2,
+                           ]);         
       $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
       Cache::put($txDTO->sessionId."handleBack",$cacheValue, 
          Carbon::now()->addMinutes(intval($billpaySettings['SESSION_CACHE'])));
