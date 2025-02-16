@@ -11,26 +11,26 @@ class ChambeshiPostPaid implements IBillingClient
 {
    
    private $revenuePoints =[
-      "CHL"=>"Chilubi",
-      "CHN"=>"Chinsali",
-      "ISO"=>"Isoka",
-      "KAP"=>"Kaputa",
-      "KCT"=>"Kasama Central Town",
-      "KMH"=>"Kasama Mulenga Hills",
-      "LUW"=>"Luwingu",
-      "MBA"=>"Mbala",
-      "MPI"=>"Mpika", 
-      "MPU"=>"Mpika", 
-      "MPO"=>"Mporokoso", 
-      "MUN"=>"Mpulungu", 
-      "NAK"=>"Nakonde"
-   ];
+                              "CHL"=>"Chilubi",
+                              "CHN"=>"Chinsali",
+                              "ISO"=>"Isoka",
+                              "KAP"=>"Kaputa",
+                              "KCT"=>"Kasama Central Town",
+                              "KMH"=>"Kasama Mulenga Hills",
+                              "LUW"=>"Luwingu",
+                              "MBA"=>"Mbala",
+                              "MPI"=>"Mpika", 
+                              "MPU"=>"Mpika", 
+                              "MPO"=>"Mporokoso", 
+                              "MUN"=>"Mpulungu", 
+                              "NAK"=>"Nakonde"
+                           ];
 
    public function __construct(
          private BillingCredentialService $billingCredentialService,
       )
    {}
-  
+
    public function getAccountDetails(array $params): array
    {
 
@@ -46,7 +46,7 @@ class ChambeshiPostPaid implements IBillingClient
          if ($apiResponse->status() == 200) {
             $apiResponse = $apiResponse->json();
             if(isset($apiResponse['customer_name'])){
-               $revenuePoint = $this->chambeshi->getRevenuePoint($params['customerAccount']);
+               $revenuePoint = $this->getRevenuePoint($params['customerAccount']);
                $response['customerAccount'] = $params['customerAccount'];
                $response['name'] = $apiResponse['customer_name'];
                $response['address'] = "";
