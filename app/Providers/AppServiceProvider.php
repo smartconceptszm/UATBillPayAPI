@@ -323,6 +323,35 @@ class AppServiceProvider extends ServiceProvider
             return $this->app->make(\App\Http\Services\USSD\Menus\Tenants::class);
          });
       //
+
+
+      //Dashboard Handlers
+         $this->app->singleton('ConsumerTier', function () {
+            return $this->app->make(\App\Http\Services\Analytics\ConsumerTierAnalyticsService::class);
+         });
+         $this->app->singleton('ConsumerType', function () {
+            return $this->app->make(\App\Http\Services\Analytics\ConsumerTypeAnalyticsService::class);
+         });
+         $this->app->singleton('HourlyTransactions', function () {
+            return $this->app->make(\App\Http\Services\Analytics\HourlyTransactionsAnalyticsService::class);
+         });
+         $this->app->singleton('PaymentProvider', function () {
+            return $this->app->make(\App\Http\Services\Analytics\PaymentProviderAnalyticsService::class);
+         });
+         $this->app->singleton('PaymentStatus', function () {
+            return $this->app->make(\App\Http\Services\Analytics\PaymentStatusAnalyticsService::class);
+         });
+         $this->app->singleton('PaymentType', function () {
+            return $this->app->make(\App\Http\Services\Analytics\PaymentTypeAnalyticsService::class);
+         });
+         $this->app->singleton('RevenueCollector', function () {
+            return $this->app->make(\App\Http\Services\Analytics\RevenueCollectorAnalyticsService::class);
+         });
+         $this->app->singleton('RevenuePoint', function () {
+            return $this->app->make(\App\Http\Services\Analytics\RevenuePointsAnalyticsService::class);
+         });
+      //
+   //
       
    }
 

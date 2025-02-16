@@ -47,6 +47,8 @@ class LukangaPrePaid implements IBillingClient
                         $response['name'] = $apiResponseArray['customername'];
                         $response['address'] = "CENTRAL";
                         $response['revenuePoint'] = "CENTRAL";
+                        $response['consumerTier'] = '';
+                        $response['consumerType'] = '';
                         $response['mobileNumber'] =  $apiResponseArray['telephonenumber'];
                         $response['balance'] =  $apiResponseArray['additionalfee'];
                         break;

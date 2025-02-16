@@ -36,6 +36,8 @@ class NkanaPostPaid implements IBillingClient
                $response['name'] =   $apiResponse['Cus_Details']['0']['INITIAL']."".$apiResponse['Cus_Details']['0']['SURNAME'];
                $response['address'] = $apiResponse['Cus_Details']['0']['UA_ADRESS1'];
                $response['revenuePoint'] = "OTHER";
+               $response['consumerTier'] = '';
+               $response['consumerType'] = '';
                $response['mobileNumber'] =  $apiResponse['Cus_Details']['0']['CELL_TEL_NO'];
                $response['balance'] = $apiResponse['Cus_Details']['0']['Closing_Balance'];
             }else{

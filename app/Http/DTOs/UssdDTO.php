@@ -23,10 +23,12 @@ class UssdDTO extends BaseDTO
    public $paymentAmount;
    public $billingClient;
    public $walletHandler;
+   public $consumerTier;
+   public $revenuePoint;
+   public $consumerType;
    public $lastResponse;
    public $isNewRequest;
    public $mobileNumber;
-   public $revenuePoint;
    public $testMSISDN;
    public $menuPrompt;
    public $created_at;
@@ -53,10 +55,12 @@ class UssdDTO extends BaseDTO
             'customerJourney'=>$this->customerJourney, 
             'customerAccount'=>$this->customerAccount,
             'paymentAmount'=>$this->paymentAmount,
+            'consumerTier'=>$this->consumerTier,
+            'revenuePoint'=>$this->revenuePoint,
+            'consumerType'=>$this->consumerType,
             'mobileNumber'=>$this->mobileNumber,
             'sessionId'=>$this->sessionId,
             'client_id'=>$this->client_id,
-            'revenuePoint'=>$this->revenuePoint,
             'response'=>$this->response,
             'menu_id'=>$this->menu_id,
             'mno_id'=>$this->mno_id,

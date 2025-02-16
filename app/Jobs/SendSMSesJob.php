@@ -29,13 +29,20 @@ class SendSMSesJob extends BaseJob
 
       foreach ($this->arrSMSes as $smsData) {
          $smsTxDTO = $smsService->send($smsTxDTO->fromArray($smsData));
-         if($smsData['type'] != "RECEIPT"){
+         if($smsTxDTO->status == 'DELIVERED' && $smsData['type'] != "RECEIPT"){
             Log::info('('.$smsTxDTO->urlPrefix.') '.
                         'SMS Message Dispatched: Phone: '.
                         $smsData['mobileNumber'].' - :Type '.
                         $smsData['type'].' - Message: '.
                         $smsData['message']
                      );
+         }elseif($smsData['type'] != "RECEIPT"){
+            Log::info('('.$smsTxDTO->urlPrefix.') '.
+                           'SMS Message NOT SENT: Phone: '.
+                           $smsData['mobileNumber'].' - :Type '.
+                           $smsData['type'].' - Error: '.
+                           $smsTxDTO->error
+                        );
          }
       }
 

@@ -21,11 +21,11 @@ class PaymentHistoryService
                                                             'p.receiptAmount','p.receiptNumber')
                         ->where('customerAccount', '=', $dto->customerAccount)
                         //->where('mobileNumber', '=', $dto->mobileNumber)
-                        ->where('c.id', '=', $dto->client_id)
                         ->whereIn('paymentStatus',[PaymentStatusEnum::NoToken->value,
                                                          PaymentStatusEnum::Paid->value,
                                                          PaymentStatusEnum::Receipted->value,
                                                          PaymentStatusEnum::Receipt_Delivered->value])
+                        ->where('c.id', '=', $dto->client_id)
                         ->orderByDesc('created_at')
                         ->limit($dto->limit)
                         ->get();
@@ -42,18 +42,23 @@ class PaymentHistoryService
       try {
          $dto = (object)$criteria;
          $record = DB::table('payments as p')
+
                         ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                         ->join('clients as c','cw.client_id','=','c.id')
+
                         ->join('client_menus as cm','p.menu_id','=','cm.id')
+
                         ->select('p.id','p.tokenNumber', 'p.receipt')
+
                         ->where('p.customerAccount', '=', $dto->customerAccount)
+                        ->whereIn('p.paymentStatus',[PaymentStatusEnum::Paid->value,
+                                                         PaymentStatusEnum::Receipted->value,
+                                                         PaymentStatusEnum::Receipt_Delivered->value])
                         ->where('c.id', '=', $dto->client_id)
                         ->where('cm.isPayment', '=', "YES")
                         ->where('cm.paymentType', '=', "PRE-PAID")
                         ->where('cm.isDefault', '=', "YES")
-                        ->whereIn('p.paymentStatus',[PaymentStatusEnum::Paid->value,
-                                                      PaymentStatusEnum::Receipted->value,
-                                                      PaymentStatusEnum::Receipt_Delivered->value])
+
                         ->orderByDesc('p.created_at')
                         ->first();
          $record = \is_null($record)?null:(object)$record->toArray();

@@ -31,11 +31,12 @@ class AnalyticsGeneratorService
                                  ->select(DB::raw('cw.payments_provider_id,
                                                       COUNT(p.id) AS numberOfTransactions,
                                                          SUM(p.receiptAmount) as totalAmount'))
-                                 ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
-                                 ->where('cw.client_id', '=', $params['client_id'])
+                                 ->where('p.created_at', '>=' ,$params['dateFrom'])
+                                 ->where('p.created_at', '<=', $params['dateTo'])
                                  ->whereIn('p.paymentStatus', 
                                           [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                              PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                                 ->where('cw.client_id', '=', $params['client_id'])
                                  ->groupBy('cw.payments_provider_id')
                                  ->get();
             if($paymentsProviderTotals->isNotEmpty()){
@@ -61,11 +62,12 @@ class AnalyticsGeneratorService
                                     ->select(DB::raw('p.revenuePoint,
                                                          COUNT(p.id) AS numberOfTransactions,
                                                             SUM(p.receiptAmount) as totalAmount'))
-                                    ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
-                                    ->where('cw.client_id', '=', $params['client_id'])
+                                    ->where('p.created_at', '>=' ,$params['dateFrom'])
+                                    ->where('p.created_at', '<=', $params['dateTo'])
                                     ->whereIn('p.paymentStatus', 
                                              [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                                 PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                                    ->where('cw.client_id', '=', $params['client_id'])
                                     ->groupBy('p.revenuePoint')
                                     ->get();
 
@@ -91,11 +93,12 @@ class AnalyticsGeneratorService
                               ->select(DB::raw('cm.prompt AS paymentType,
                                                    COUNT(p.id) AS numberOfTransactions,
                                                       SUM(p.receiptAmount) as totalAmount'))
-                              ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
-                              ->where('cw.client_id', '=', $params['client_id'])
+                              ->where('p.created_at', '>=' ,$params['dateFrom'])
+                              ->where('p.created_at', '<=', $params['dateTo'])
                               ->whereIn('p.paymentStatus', 
                                        [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                           PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                              ->where('cw.client_id', '=', $params['client_id'])
                               ->groupBy('cm.prompt')
                               ->get();
             $menuTotalRecords =[];
@@ -118,11 +121,12 @@ class AnalyticsGeneratorService
                               ->select(DB::raw('p.paymentStatus,
                                                    COUNT(p.id) AS numberOfTransactions,
                                                       SUM(p.receiptAmount) as totalAmount'))
-                              ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
-                              ->where('cw.client_id', '=', $params['client_id'])
+                              ->where('p.created_at', '>=' ,$params['dateFrom'])
+                              ->where('p.created_at', '<=', $params['dateTo'])
                               ->whereIn('p.paymentStatus', 
                                        [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                           PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                              ->where('cw.client_id', '=', $params['client_id'])
                               ->groupBy('p.paymentStatus')
                               ->get();
             $paymentStatusRecords =[];
@@ -155,11 +159,12 @@ class AnalyticsGeneratorService
                            ->select(DB::raw('HOUR(p.created_at) AS hour,
                                                 COUNT(p.id) AS numberOfTransactions,
                                                    SUM(p.receiptAmount) as totalAmount'))
-                           ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
-                           ->where('cw.client_id', '=', $params['client_id'])
+                           ->where('p.created_at', '>=' ,$params['dateFrom'])
+                           ->where('p.created_at', '<=', $params['dateTo'])
                            ->whereIn('p.paymentStatus', 
                                     [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                        PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                           ->where('cw.client_id', '=', $params['client_id'])
                            ->groupBy('hour')
                            ->orderBy('hour')
                            ->get();
@@ -187,11 +192,12 @@ class AnalyticsGeneratorService
                      ->select(DB::raw('p.revenueCollector,
                                           COUNT(p.id) AS numberOfTransactions,
                                              SUM(p.receiptAmount) as totalAmount'))
-                     ->whereBetween('p.created_at', [$params['dateFrom'], $params['dateTo']])
-                     ->where('cw.client_id', '=', $params['client_id'])
+                     ->where('p.created_at', '>=' ,$params['dateFrom'])
+                     ->where('p.created_at', '<=', $params['dateTo'])
                      ->whereIn('p.paymentStatus', 
                               [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                  PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                     ->where('cw.client_id', '=', $params['client_id'])
                      ->groupBy('p.revenueCollector')
                      ->get();
 

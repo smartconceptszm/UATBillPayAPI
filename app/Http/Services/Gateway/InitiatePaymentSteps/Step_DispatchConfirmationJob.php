@@ -8,6 +8,7 @@ use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Clients\ClientWalletService;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Jobs\ReConfirmCallBackPaymentJob;
+use Illuminate\Support\Facades\Log;
 use App\Jobs\ReConfirmPaymentJob;
 use App\Jobs\ConfirmPaymentJob;
 use Illuminate\Support\Carbon;
@@ -25,10 +26,10 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
 
    protected function stepProcess(BaseDTO $paymentDTO)
    {
+
       try {
          $walletCredentials = $this->walletCredentialsService->getWalletCredentials($paymentDTO->wallet_id);
          $billpaySettings = json_decode(cache('billpaySettings', json_encode([])), true);
-
          if ($walletCredentials['CALLBACK_ENABLED'] == 'YES') {
             $this->dispatchCallBackJob($paymentDTO, $billpaySettings);
          } else {
@@ -37,16 +38,18 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
       } catch (\Throwable $e) {
          $paymentDTO->error = 'At dispatching confirmation job. ' . $e->getMessage();
       }
-
       return $paymentDTO;
+
    }
 
    private function dispatchCallBackJob(BaseDTO $paymentDTO, array $billpaySettings)
    {
+
       $paymentReviewDelay = (int) $billpaySettings[self::PAYMENT_REVIEW_DELAY_KEY];
       ReConfirmCallBackPaymentJob::dispatch($paymentDTO->id)
                                     ->delay(Carbon::now()->addMinutes($paymentReviewDelay))
                                     ->onQueue('high');
+                                    
    }
 
    private function dispatchJobBasedOnPaymentStatus(BaseDTO $paymentDTO, array $billpaySettings)
@@ -70,6 +73,12 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
       ConfirmPaymentJob::dispatch($paymentDTO)
                         ->delay(Carbon::now()->addSeconds($delaySeconds))
                         ->onQueue('high');
+
+      Log::channel('web_requests')->info('('.$paymentDTO->urlPrefix.') Confirmation Job dispatched', [
+                           'Session Id' =>  $paymentDTO->sessionId,
+                           'Wallet Number' => $paymentDTO->walletNumber
+                     ]);
+                     
    }
 
    private function dispatchReConfirmPaymentJob(BaseDTO $paymentDTO, int $paymentReviewDelay)

@@ -20,7 +20,8 @@ class PaymentToReviewService
                         ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                         ->select('p.id','p.paymentStatus', 'p.error');
          if($dto->dateFrom && $dto->dateTo){
-            $records =$records->whereBetween('p.created_at', [$dto->dateFrom, $dto->dateTo]);
+            $records =$records->where('p.created_at', '>=' ,$dto->dateFrom)
+                              ->where('p.created_at', '<=', $dto->dateTo);
          }
          $records =$records->whereIn('p.paymentStatus', [PaymentStatusEnum::Submitted->value,
                                                                   PaymentStatusEnum::Submission_Failed->value,

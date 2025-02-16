@@ -3,7 +3,9 @@
 namespace App\Http\Services\Gateway\ConfirmPaymentSteps;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Enums\PaymentStatusEnum;
+use App\Http\Services\Enums\PaymentTypeEnum;
 use App\Http\Services\SMS\SMSService;
 use App\Http\DTOs\SMSTxDTO;
 use App\Http\DTOs\BaseDTO;
@@ -11,6 +13,7 @@ use App\Http\DTOs\BaseDTO;
 class Step_SendReceiptViaSMS extends EfectivoPipelineContract
 {
    public function __construct(
+      private ClientMenuService $clientMenuService,
       private SMSService $smsService,
       private SMSTxDTO $smsTxDTO
    ) {}
@@ -42,11 +45,22 @@ class Step_SendReceiptViaSMS extends EfectivoPipelineContract
 
    private function handleReceiptMessage(BaseDTO $paymentDTO): void
    {
-      if (in_array($paymentDTO->paymentStatus, [PaymentStatusEnum::Paid->value, PaymentStatusEnum::NoToken->value])) {
-         $paymentDTO->receipt = "Payment received BUT NOT receipted.\n" .
+
+      if ($paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value) {
+         $paymentDTO->receipt = "Payment received but TOKEN NOT ISSUED.\n" .
+               strtoupper($paymentDTO->urlPrefix) .
+               " will issue the Token shortly, please wait.\n";
+      }
+
+      if ($paymentDTO->paymentStatus === PaymentStatusEnum::Paid->value) {
+         $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
+         if($theMenu->paymentType === PaymentTypeEnum::PostPaid->value){
+            $paymentDTO->receipt = "Payment received BUT NOT receipted.\n" .
                strtoupper($paymentDTO->urlPrefix) .
                " will receipt the payment shortly, please wait.\n";
+         }
       }
+
    }
 
    private function sendSMS(BaseDTO $paymentDTO): void

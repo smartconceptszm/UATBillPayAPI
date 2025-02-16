@@ -18,7 +18,9 @@ abstract class PaymentDTO extends BaseDTO
    public $receiptNumber;
    public $paymentStatus;
    public $walletHandler;
+   public $consumerTier;
    public $revenuePoint;
+   public $consumerType;
    public $mobileNumber;
    public $walletNumber;
    public $tokenNumber;
@@ -56,6 +58,8 @@ abstract class PaymentDTO extends BaseDTO
            'receiptAmount' => $this->receiptAmount,
            'paymentStatus' => $this->paymentStatus,
            'receiptNumber' => $this->receiptNumber,
+           'consumerTier' => $this->consumerTier,
+           'consumerType' => $this->consumerType,
            'revenuePoint' => $this->revenuePoint,
            'mobileNumber' => $this->mobileNumber,
            'tokenNumber' => $this->tokenNumber,

@@ -20,6 +20,8 @@ class MazabukaLocal implements IBillingClient
                      "name" => "Mazabuka Customer",
                      "address" => "MAZABUKA",
                      "revenuePoint" => 'MAZABUKA',
+                     "consumerTier" => '',
+                     "consumerType" => '',
                      "mobileNumber" => "",
                      "balance" => \number_format(0, 2, '.', ','),
                   ];

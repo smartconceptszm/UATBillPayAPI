@@ -191,6 +191,19 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //
 
+         //Dashboard Snippets
+            Route::controller(\App\Http\Controllers\Clients\DashboardSnippetController::class)->group(function () {
+               Route::get('/dashboardsnippets/findoneby', 'findOneBy');
+               Route::put('/dashboardsnippets/{id}', 'update');
+               Route::get('/dashboardsnippets/{id}', 'show');
+               Route::post('/dashboardsnippets', 'store');
+               Route::get('/dashboardsnippets', 'index');
+            });
+            Route::controller(\App\Http\Controllers\Clients\DashboardSnippetController::class)->group(function () {
+               Route::get('/dashboardsnippetsofclient/{id}', 'dashboardsnippetsofclient');
+            });
+         //
+
          //MNOs
             Route::controller(\App\Http\Controllers\Clients\MNOController::class)->group(function () {
                Route::get('/mnos/findoneby', 'findOneBy');

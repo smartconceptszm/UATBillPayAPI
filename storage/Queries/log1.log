@@ -12,7 +12,7 @@
 
 
 1692  sudo chmod -R 775 storage
- 1693  sudo sudo chown -R $USER:www-data storage
+ 1693  sudo sudo chown -R www-data:www-data storage
  1694  chmod -R 775 storage
 
 

@@ -35,13 +35,16 @@ class PaymentSubmittedService
          }
          $dateFrom = $dateFrom->format('Y-m-d H:i:s');
          $dateTo = $dateTo->format('Y-m-d H:i:s');
-         $records = DB::table('sessions as s')
-                  ->join('mnos','s.mno_id','=','mnos.id')
-                  ->join('client_menus as m','s.menu_id','=','m.id')
-                  ->join('payments as p','p.session_id','=','s.id')
-                  ->join('client_wallets as cw','p.wallet_id','=','cw.id')
-                  ->join('clients as c','cw.client_id','=','c.id')
-                  ->join('payments_providers as pps','cw.payments_provider_id','=','pps.id')
+         $records = DB::table('payments as p')
+                        ->join('client_wallets as cw','p.wallet_id','=','cw.id')
+                        ->join('clients as c','cw.client_id','=','c.id')
+                        ->join('payments_providers as pps','cw.payments_provider_id','=','pps.id')
+
+                        ->join('sessions as s','p.session_id','=','s.id')
+                        ->join('mnos','s.mno_id','=','mnos.id')
+
+                        ->join('client_menus as m','p.menu_id','=','m.id')
+
                   ->select('s.id as session_id','s.sessionId','s.client_id','s.customerJourney','s.mobileNumber',
                               's.customerAccount','s.revenuePoint','s.response','s.status','s.created_at','p.id',
                               'p.reference','p.ppTransactionId','p.surchargeAmount','p.paymentAmount',
@@ -50,9 +53,9 @@ class PaymentSubmittedService
                               'm.description as paymentType','mnos.name as mno','s.mno_id',
                               'c.shortName','c.name as clientName','pps.shortName as paymentProvider');
 
-
          if($dateFrom && $dateTo){
-            $records =$records->whereBetween('p.created_at',[$dateFrom, $dateTo]);
+            $records =$records->where('p.created_at', '>=' ,$dateFrom)
+                              ->where('p.created_at', '<=', $dateTo);
          }
          $records = $records->where('p.paymentStatus', '=',PaymentStatusEnum::Submitted->value)
                               //->where('cw.client_id', '=', $dto->client_id)

@@ -4,6 +4,7 @@ namespace App\Http\Services\External\BillingClients;
 
 use App\Http\Services\External\BillingClients\IBillingClient;
 use App\Http\Services\Clients\BillingCredentialService;
+use App\Http\Services\Clients\ClientCustomerService;
 use App\Http\Services\Utility\XMLtoArrayParser;
 use Illuminate\Support\Facades\Log;
 use Exception;
@@ -20,6 +21,7 @@ class KafubuPostPaid implements IBillingClient
 
     public function __construct(
         private BillingCredentialService $billingCredentialsService,
+        private ClientCustomerService $clientCustomerService,
         private XMLtoArrayParser $xmlToArrayParser)
     {}
 
@@ -98,11 +100,22 @@ class KafubuPostPaid implements IBillingClient
             $fullAddress = !(\is_array($theCustomer['streetName'])) ? $fullAddress. " ". $theCustomer['streetName'] : $fullAddress ;
             $fullAddress .= " ".$theCustomer['deptDesc'];
 
+            $clientCustomer = $this->clientCustomerService->findOneBy(['customerAccount'=>$customerBalance['account']]);
+            $revenuePoint = 'UNKNOWN';
+            $consumerTier = '';
+            $consumerType = '';
+            if($clientCustomer){
+                $revenuePoint = $clientCustomer->revenuePoint;
+                $consumerTier = $clientCustomer->consumerTier;
+                $consumerType = $clientCustomer->consumerType;
+            }
             $response = [
                             "customerAccount" => $customerBalance['account'],
                             "name" => $theCustomer['name'],
                             "address" => $fullAddress,
-                            "revenuePoint" => $theCustomer['deptDesc'],
+                            "revenuePoint" => $revenuePoint,
+                            "consumerTier" => $consumerTier,
+                            "consumerType" => $consumerType,
                             "mobileNumber" => $theCustomer['cell'],
                             "balance" => \number_format($theBalance, 2, '.', ','),
                         ];

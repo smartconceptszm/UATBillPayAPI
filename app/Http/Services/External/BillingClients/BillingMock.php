@@ -14,13 +14,15 @@ class BillingMock implements IBillingClient
    {
 
       return [
-         "customerAccount" => $params['customerAccount'],
-         "name" => "Mock Customer",
-         "address" => "No. 1, Street 1",
-         "revenuePoint" => "MOCK",
-         "mobileNumber" => "260761028631",
-         "balance" => \number_format(100, 2, '.', ','),
-      ]; 
+               "customerAccount" => $params['customerAccount'],
+               "name" => "Mock Customer",
+               "address" => "No. 1, Street 1",
+               "revenuePoint" => "MOCK",
+               "consumerType" => "",
+               "consumerTier" => "",
+               "mobileNumber" => "260761028631",
+               "balance" => \number_format(100, 2, '.', ','),
+            ]; 
    }
 
    public function postPayment(Array $postParams): Array 

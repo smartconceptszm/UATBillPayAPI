@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\External\BillingClients;
 
-use App\Http\Services\External\BillingClients\Chambeshi\Chambeshi;
+use App\Http\Services\External\BillingClients\ChambeshiPostPaid;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use App\Http\Services\Clients\BillingCredentialService;
 use Illuminate\Support\Facades\Http;
@@ -18,7 +18,7 @@ class ChambeshiPrePaid implements IBillingClient
 
    public function __construct(
          private BillingCredentialService $billingCredentialsService,
-         private Chambeshi $chambeshi
+         private ChambeshiPostPaid $chambeshiPostPaid
       )
    {}
 
@@ -49,7 +49,9 @@ class ChambeshiPrePaid implements IBillingClient
                      $response['customerAccount'] = $apiResponse['result']['customer_number'];
                      $response['name'] = $apiResponse['result']['customer_name'];
                      $response['address'] = $apiResponse['result']['customer_addr'];
-                     $response['revenuePoint'] = $this->chambeshi->getRevenuePoint(\trim($apiResponse['result']['customer_number']));
+                     $response['revenuePoint'] = $this->chambeshiPostPaid->getRevenuePoint(\trim($apiResponse['result']['customer_number']));
+                     $response['consumerTier'] = '';
+                     $response['consumerType'] = '';
                      $response['mobileNumber'] = "";
                      $response['balance'] = \number_format((float)$apiResponse['result']['debt_remain'] + (float)$apiResponse['result']['monthly_charge'], 2, '.', ',') ;
                      break;
@@ -133,13 +135,14 @@ class ChambeshiPrePaid implements IBillingClient
 
    public function postPayment(array $postParams): array
    {
-      return $this->chambeshi->postPayment($postParams);
+      return $this->chambeshiPostPaid->postPayment($postParams);
    }
 
    private function setConfigs(string $client_id)
    {
 
       $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
+
       $this->passwordVend = $clientCredentials['PREPAID_PASSWORD_VEND'];
       $this->username = $clientCredentials['PREPAID_USERNAME'];
       $this->password = $clientCredentials['PREPAID_PASSWORD'];

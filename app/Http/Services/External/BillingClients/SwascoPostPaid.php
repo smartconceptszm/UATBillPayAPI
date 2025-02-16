@@ -71,6 +71,8 @@ class SwascoPostPaid implements IBillingClient
                            "name" => $apiResponse['Name'],
                            "address" => $apiResponse['Address'],
                            "revenuePoint" => $this->getRevenuePoint(\substr($apiResponse['No'],0,3)),
+                           "consumerTier" => '',
+                           "consumerType" => '',
                            "mobileNumber" => $apiResponse['MobileNo'],
                            "balance" => \number_format((float)\str_replace(",", "", $apiResponse['Balance']), 2, '.', ',')
                         ];

@@ -19,12 +19,16 @@ class EnquiryHandler
 	{
 
 		try {
+			
 			$txDTO->customer = $this->billingClient->getAccountDetails([
 																		'customerAccount'=>$txDTO->customerAccount,
 																		'paymentAmount'=>$txDTO->paymentAmount,
 																		'client_id'=>$txDTO->client_id
 																	]);
 			$txDTO->revenuePoint = $txDTO->customer['revenuePoint'];
+			$txDTO->consumerTier = $txDTO->customer['consumerTier'];
+			$txDTO->consumerType = $txDTO->customer['consumerType'];
+
 			Cache::forget($txDTO->urlPrefix.'_BillingErrorCount');
 		} catch (\Throwable $e) {
 			if($e->getCode()==1 || $e->getCode()==4){

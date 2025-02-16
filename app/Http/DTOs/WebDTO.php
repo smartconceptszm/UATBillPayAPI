@@ -20,9 +20,11 @@ class WebDTO extends BaseDTO
    public $paymentAmount;
    public $walletHandler;
    public $billingClient;
+   public $consumerTier;
+   public $revenuePoint;
+   public $consumerType;
    public $mobileNumber;
    public $walletNumber;
-   public $revenuePoint;
    public $testMSISDN;
    public $created_at;
    public $updated_at;
@@ -48,6 +50,9 @@ class WebDTO extends BaseDTO
             'customerAccount'=>$this->customerAccount,
             'paymentAmount'=>$this->paymentAmount,
             'mobileNumber'=>$this->mobileNumber,
+            'consumerTier'=>$this->consumerTier,
+            'revenuePoint'=>$this->revenuePoint,
+            'consumerType'=>$this->consumerType,
             'sessionId'=>$this->sessionId,
             'client_id'=>$this->client_id,
             'menu_id'=>$this->menu_id,

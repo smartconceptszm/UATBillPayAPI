@@ -56,6 +56,14 @@ class UserService
             }
          }
          $this->model->save();
+
+         if(isset($data['group_id'])){
+            $this->userGroupService->create([
+                                 'user_id' => $this->model->id,
+                                 'group_id' => $data['group_id']
+                              ]);
+         }
+
          return $this->model;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

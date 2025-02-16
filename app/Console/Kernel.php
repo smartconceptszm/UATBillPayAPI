@@ -18,17 +18,7 @@ class Kernel extends ConsoleKernel
         // $schedule->call(function () {
         //     new \App\Http\ScheduledTasks\ClearFailedJobs();
         // })->timezone('Africa/Lusaka')->dailyAt("00:30");
-
-        // $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-        // $schedule->call(
-        //                 App::make(\App\Http\ScheduledTasks\GenerateDailyAnalytics::class)
-        //             )->timezone('Africa/Lusaka')->dailyAt($billpaySettings['DAILY_ANALYTICS_TIME']); // 
-
-        // $schedule->job(
-        //                 new \App\Jobs\GenerateCloseOfDayAnalyticsJob('','','high')
-        //             )->timezone('Africa/Lusaka')->dailyAt('08:28'); // $billpaySettings['DAILY_ANALYTICS_TIME']
-
-
+        
     }
 
     /**

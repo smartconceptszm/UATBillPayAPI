@@ -48,6 +48,8 @@ class NkanaPrePaid implements IBillingClient
                         $response['name'] = $apiResponseArray['customername'];
                         $response['address'] = "KITWE";
                         $response['revenuePoint'] = "KITWE";
+                        $response['consumerTier'] = '';
+                        $response['consumerType'] = '';
                         $response['mobileNumber'] =  $apiResponseArray['telephonenumber'];
                         $response['balance'] =  $apiResponseArray['additionalfee'];
                         break;

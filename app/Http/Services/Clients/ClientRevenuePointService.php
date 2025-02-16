@@ -22,11 +22,11 @@ class ClientRevenuePointService
       }
    }
 
-   public function getClientRevenuePoints(string $wallet_id):array|null
+   public function getClientRevenuePoints(string $client_id):array|null
    {
       try {
          $walletCredentials = [];
-         $records = $this->model->where(['client_id'=>$wallet_id])->get()->all();
+         $records = $this->model->where(['client_id'=>$client_id])->get()->all();
          if($records){
             foreach ($records as $record) {
                $walletCredentials[$record->code]=$record->name;

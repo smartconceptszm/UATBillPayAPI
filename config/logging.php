@@ -81,6 +81,13 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'php-fpm-slow' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/php8.3-fpm-slow.log'),
+            'level' => 'debug',
+            'days' => 7, // Keep for 7 days
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),
