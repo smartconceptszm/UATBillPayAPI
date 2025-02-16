@@ -35,7 +35,7 @@ class PostThePrePaidToBilling
                            ->thenReturn();
       } catch (\Throwable $e) {
          $paymentDTO->error = 'At get confirm payment pipeline. ' . $e->getMessage();
-         Log::info($paymentDTO->error);
+         Log::error($paymentDTO->error);
       }
 
       return $paymentDTO;
