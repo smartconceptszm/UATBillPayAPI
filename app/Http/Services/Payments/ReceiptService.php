@@ -3,8 +3,10 @@
 namespace App\Http\Services\Payments;
 
 use App\Http\Services\Payments\PaymentToReviewService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Http\Services\Gateway\ConfirmPayment;
+use App\Http\Services\Enums\PaymentTypeEnum;
 use Illuminate\Support\Facades\Auth;
 use App\Http\DTOs\MoMoDTO;
 use Exception;
@@ -13,7 +15,8 @@ class ReceiptService
 {
 
    public function __construct(
-      private PaymentToReviewService $paymentToReviewService, 
+      private PaymentToReviewService $paymentToReviewService,
+      private ClientMenuService $clientMenuService, 
       private ConfirmPayment $confirmPayment,
       private MoMoDTO $paymentDTO)
    {}
@@ -29,7 +32,10 @@ class ReceiptService
          }
 
          if($paymentDTO->receiptNumber != ''){
-            throw new Exception("Payment appears receipted! Receipt number ".$paymentDTO->receiptNumber);
+            $menu = $this->clientMenuService->findById($paymentDTO->menu_id);
+            if($menu->paymentType == PaymentTypeEnum::PostPaid->value){
+               throw new Exception("Payment appears receipted! Receipt number ".$paymentDTO->receiptNumber);
+            }
          }
 
          if($paymentDTO->ppTransactionId == ''){
