@@ -19,12 +19,12 @@ class Step_PostPaymentToBilling extends EfectivoPipelineContract
       
       try {
          $paymentDTO = $this->receiptPrePaidChambeshi->handle($paymentDTO);
-         Log::info('('.$this->paymentDTO->urlPrefix.') Payment posted to Billing System. '.
-                        '- Transaction ID = '.$this->paymentDTO->transactionId.               
-                        '- Session Id: '.$this->paymentDTO->sessionId.
-                        '- Channel: '.$this->paymentDTO->channel.
-                        '- Wallet: '.$this->paymentDTO->walletNumber.
-                        '- Receipt: '.$this->paymentDTO->receipt);
+         Log::info('('.$paymentDTO->urlPrefix.') Payment posted to Billing System. '.
+                        '- Transaction ID = '.$paymentDTO->transactionId.               
+                        '- Session Id: '.$paymentDTO->sessionId.
+                        '- Channel: '.$paymentDTO->channel.
+                        '- Wallet: '.$paymentDTO->walletNumber.
+                        '- Receipt: '.$paymentDTO->receipt);
       } catch (\Throwable $e) {
          $paymentDTO->error='At post payment to billing. '.$e->getMessage();
       }
