@@ -18,7 +18,6 @@ class PostThePrePaidToBillingJob extends BaseJob
    public function handle(PostThePrePaidToBilling $postThePrePaidToBilling)
    {
       
-      //Handle the Job
       $postThePrePaidToBilling->handle($this->paymentDTO);
 
    }

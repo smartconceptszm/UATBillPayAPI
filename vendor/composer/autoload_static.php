@@ -789,6 +789,7 @@ class ComposerStaticInit4e18f2a8200f24ce56abd683a0e3a523
         'App\\Http\\Services\\Gateway\\PaymentRequestService' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/PaymentRequestService.php',
         'App\\Http\\Services\\Gateway\\PaymentsMenuService' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/PaymentsMenuService.php',
         'App\\Http\\Services\\Gateway\\PaymentsProvidersOfClientService' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/PaymentsProvidersOfClientService.php',
+        'App\\Http\\Services\\Gateway\\PostPrePaidToBilling\\Step_PostPaymentToBilling' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/PostPrePaidToBilling/Step_PostPaymentToBilling.php',
         'App\\Http\\Services\\Gateway\\PostThePrePaidToBilling' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/PostThePrePaidToBilling.php',
         'App\\Http\\Services\\Gateway\\ReConfirmPayment' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/ReConfirmPayment.php',
         'App\\Http\\Services\\Gateway\\ReceiptingHandlers\\IReceiptPayment' => __DIR__ . '/../..' . '/app/Http/Services/Gateway/ReceiptingHandlers/IReceiptPayment.php',

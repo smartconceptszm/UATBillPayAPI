@@ -245,6 +245,7 @@ return array(
     'App\\Http\\Services\\Gateway\\PaymentRequestService' => $baseDir . '/app/Http/Services/Gateway/PaymentRequestService.php',
     'App\\Http\\Services\\Gateway\\PaymentsMenuService' => $baseDir . '/app/Http/Services/Gateway/PaymentsMenuService.php',
     'App\\Http\\Services\\Gateway\\PaymentsProvidersOfClientService' => $baseDir . '/app/Http/Services/Gateway/PaymentsProvidersOfClientService.php',
+    'App\\Http\\Services\\Gateway\\PostPrePaidToBilling\\Step_PostPaymentToBilling' => $baseDir . '/app/Http/Services/Gateway/PostPrePaidToBilling/Step_PostPaymentToBilling.php',
     'App\\Http\\Services\\Gateway\\PostThePrePaidToBilling' => $baseDir . '/app/Http/Services/Gateway/PostThePrePaidToBilling.php',
     'App\\Http\\Services\\Gateway\\ReConfirmPayment' => $baseDir . '/app/Http/Services/Gateway/ReConfirmPayment.php',
     'App\\Http\\Services\\Gateway\\ReceiptingHandlers\\IReceiptPayment' => $baseDir . '/app/Http/Services/Gateway/ReceiptingHandlers/IReceiptPayment.php',
