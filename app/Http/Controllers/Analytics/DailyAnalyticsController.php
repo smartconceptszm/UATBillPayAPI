@@ -32,11 +32,13 @@ class DailyAnalyticsController extends Controller
    {
 
       try {
+
          $theDate = Carbon::parse($request->input('date'));
          PaymentsAnalyticsDailySingleJob::dispatch($theDate)
                                           ->delay(Carbon::now()->addSeconds(1))
                                           ->onQueue('high');
          $this->response['data'] = ['Message' => "Job submitted"];
+         
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

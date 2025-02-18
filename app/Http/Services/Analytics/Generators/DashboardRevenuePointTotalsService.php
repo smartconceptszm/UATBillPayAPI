@@ -1,21 +1,35 @@
 <?php
 
-namespace App\Http\Services\Analytics;
+namespace App\Http\Services\Analytics\Generators;
 
 use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Models\DashboardRevenuePointTotals;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 use Exception;
 
-class RevenuePointsAnalyticsService
+class DashboardRevenuePointTotalsService
 {
+
+   public function __construct(
+         private DashboardRevenuePointTotals $model
+   ) {}
+
+   public function findAll(array $criteria = null):array|null
+   {
+      try {
+         return $this->model->where($criteria)->get()->all();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
 
    public function generate(array $params)
    {
-      
+
       try {
+
          $theDate = $params['theDate'];
          $revenuePointTotals = DB::table('payments as p')
                                  ->join('client_wallets as cw','p.wallet_id','=','cw.id')
@@ -45,6 +59,7 @@ class RevenuePointsAnalyticsService
                   ['client_id','revenuePoint', 'dateOfTransaction'],
                   ['numberOfTransactions','totalAmount','year','month','day']
                );
+
       } catch (\Throwable $e) {
          Log::info($e->getMessage());
          return false;
@@ -54,44 +69,65 @@ class RevenuePointsAnalyticsService
       
    }
 
-   public function findAll(array $criteria):array|null
-   {
-      
+   public function findById(string $id) : object|null {
       try {
-
-         $dto = (object)$criteria;
-
-         $dateFrom = Carbon::parse($dto->dateFrom);
-         $dateFromYMD = $dateFrom->copy()->format('Y-m-d');
-
-         $dateTo = Carbon::parse($dto->dateTo);
-         $dateToYMD = $dateTo->copy()->format('Y-m-d');
-
-         $thePayments = DB::table('dashboard_revenue_point_totals as ddt')
-                           ->select(DB::raw('ddt.revenuePoint,
-                                             SUM(ddt.numberOfTransactions) AS totalTransactions,
-                                             SUM(ddt.totalAmount) as totalRevenue'))
-                           ->whereBetween('ddt.dateOfTransaction', [$dateFromYMD, $dateToYMD])
-                           ->where('ddt.client_id', '=', $dto->client_id)
-                           ->groupBy('ddt.revenuePoint');
-         $byRevenuePoint= $thePayments->get();
-         $revenuePointLabels = $byRevenuePoint->map(function ($item) {
-                                             return $item->revenuePoint;
-                                          });
-         $revenuePointData = $byRevenuePoint->map(function ($item) {
-                                          return $item->totalRevenue;
-                                       });
-
-         $response = [
-                        'revenuePointLabels' => $revenuePointLabels,
-                        'revenuePointData' => $revenuePointData
-                     ];
-   
-         return $response;
+         $item = $this->model->findOrFail($id);
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
-      
+   }
+
+   public function findOneBy(array $criteria) : object|null {
+      try {
+         $item = $this->model->where($criteria)->first();
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
+   public function create(array $data) : object|null {
+      try {
+         foreach ( $data as $key => $value) {
+            if (Schema::hasColumn($this->model->getTable(), $key) && $value != '') {
+               $this->model->$key = $value;
+            }
+         }
+         $this->model->save();
+         return $this->model;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
+   public function update(array $data, string $id) : object|null {
+
+      try {
+         unset($data['id']);
+         $record = $this->model->findOrFail($id);
+         foreach ($data as $key => $value) {
+            $record->$key = $value;
+         }
+         if($record->isDirty()){
+            $record->save();
+         }
+         return $record;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+
+   }
+
+   public function delete(string $id) : bool{
+      try {
+         return $this->model->where('id', $id)->delete();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+
    }
 
 }

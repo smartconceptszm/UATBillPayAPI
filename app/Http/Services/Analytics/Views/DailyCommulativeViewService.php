@@ -1,22 +1,14 @@
 <?php
 
-namespace App\Http\Services\Analytics;
+namespace App\Http\Services\Analytics\Views;
 
-use App\Models\DashboardPaymentsProviderTotals;
-use App\Http\Services\Enums\PaymentStatusEnum;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Carbon\CarbonPeriod;
 use Exception;
 
-class DailyCommulativeAnalyticsService
+class DailyCommulativeViewService
 {
-
-   public function generate(array $params)
-   {
-      return true;
-   }
 
    public function findAll(array $criteria):array|null
    {

@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
-
 class RegularAnalyticsService
 {
 

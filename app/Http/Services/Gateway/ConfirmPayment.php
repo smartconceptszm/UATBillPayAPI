@@ -31,6 +31,8 @@ class ConfirmPayment
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_DispatchReConfirmationJob::class,
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
+                              \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_AddShortcutMessageToReceipt::class,
+                              \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_AddPromoMessageToReceipt::class,
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
                               \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,
                               \App\Http\Services\Gateway\Utility\Step_LogStatus::class,

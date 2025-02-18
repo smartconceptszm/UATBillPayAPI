@@ -52,7 +52,7 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 										"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
 										"Acc: " . $paymentDTO->customerAccount . "\n";
 			$paymentDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
-			$paymentDTO->receipt.="Balance update within 48 hrs.";
+			
 		}else{
 			$paymentDTO->receiptNumber =  '';
 			$paymentDTO->error = "At receipt payment. ".$billingResponse['error'];

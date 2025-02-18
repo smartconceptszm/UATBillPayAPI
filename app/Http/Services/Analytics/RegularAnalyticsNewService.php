@@ -47,8 +47,8 @@ class RegularAnalyticsNewService
                   ];
 
          foreach ($dashboardSnippets as $snippet) {
-            $generatorService = App::make($snippet->handler);
-            $generatorService->generate($params);
+            $snippetHandler = App::make($snippet->handler);
+            $snippetHandler->generate($params);
          }
          
       } catch (\Throwable $e) {

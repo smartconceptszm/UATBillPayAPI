@@ -28,8 +28,8 @@ class ReceiptReconnectionSwasco implements IReceiptPayment
 										'created_at' => $paymentDTO->created_at,
 										'amount' => $paymentDTO->receiptAmount,
 										'client_id' => $paymentDTO->client_id,
-										'paymentType'=>"04",
-										'receiptType'=>"04",
+										'paymentType'=>"4",
+										'receiptType'=>"4",
 									];
 									
 			$billingResponse = $this->billingClient->postPayment($receiptingParams);

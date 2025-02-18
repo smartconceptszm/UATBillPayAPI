@@ -1,20 +1,33 @@
 <?php
 
-namespace App\Http\Services\Analytics;
+namespace App\Http\Services\Analytics\Generators;
 
 use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Models\DashboardPaymentStatusTotals;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 use Exception;
 
-class PaymentStatusAnalyticsService
+class DashboardPaymentStatusTotalsService
 {
+
+   public function __construct(
+         private DashboardPaymentStatusTotals $model
+   ) {}
+
+   public function findAll(array $criteria = null):array|null
+   {
+      try {
+         return $this->model->where($criteria)->get()->all();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
 
    public function generate(array $params)
    {
-      
+
       try {
          $theDate = $params['theDate'];     
          $paymentStatusTotals = DB::table('payments as p')
@@ -53,6 +66,7 @@ class PaymentStatusAnalyticsService
                   ['client_id','paymentStatus', 'dateOfTransaction'],
                   ['numberOfTransactions','totalAmount','year','month','day']
                );
+
       } catch (\Throwable $e) {
          Log::info($e->getMessage());
          return false;
@@ -62,54 +76,65 @@ class PaymentStatusAnalyticsService
       
    }
 
-   public function findAll(array $criteria):array|null
-   {
-      
+   public function findById(string $id) : object|null {
       try {
-
-         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-         $dto = (object)$criteria;
-
-         $dateFrom = Carbon::parse($dto->dateFrom);
-         $dateFromYMD = $dateFrom->copy()->format('Y-m-d');
-
-         $dateTo = Carbon::parse($dto->dateTo);
-         $dateToYMD = $dateTo->copy()->format('Y-m-d');
-
-         $thePayments = DB::table('dashboard_payment_status_totals as pst')
-                           ->select(DB::raw('pst.paymentStatus,
-                                       SUM(pst.numberOfTransactions) AS totalTransactions,
-                                       SUM(pst.totalAmount) as totalRevenue'))
-                           ->whereBetween('pst.dateOfTransaction', [$dateFromYMD, $dateToYMD])
-                           ->where('pst.client_id', '=', $dto->client_id)
-                           ->groupBy('paymentStatus')
-                           ->orderBy('paymentStatus');
-         // $theSQLQuery = $thePayments->toSql();
-         // $theBindings = $thePayments-> getBindings();
-         // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
-         $thePayments = $thePayments->get();
-
-         $paymentStatusData = $thePayments->map(function ($item) {
-                                                   return $item->totalRevenue;
-                                             });
-         $paymentStatusLabels = $thePayments->map(function ($item) {
-                                                return $item->paymentStatus."(".$item->totalTransactions.")";
-                                          });
-         $paymentStatusColours = $thePayments->map(function ($item) use($billpaySettings) {
-                                             return $billpaySettings[$item->paymentStatus.'_COLOUR'];
-                                       });        
-         //
-         $response = [
-                        'paymentStatusData' => $paymentStatusData,
-                        'paymentStatusLabels' => $paymentStatusLabels,
-                        'paymentStatusColours' => $paymentStatusColours
-                     ];
-   
-         return $response;
+         $item = $this->model->findOrFail($id);
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
-      
+   }
+
+   public function findOneBy(array $criteria) : object|null {
+      try {
+         $item = $this->model->where($criteria)->first();
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
+   public function create(array $data) : object|null {
+      try {
+         foreach ( $data as $key => $value) {
+            if (Schema::hasColumn($this->model->getTable(), $key) && $value != '') {
+               $this->model->$key = $value;
+            }
+         }
+         $this->model->save();
+         return $this->model;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
+   public function update(array $data, string $id) : object|null {
+
+      try {
+         unset($data['id']);
+         $record = $this->model->findOrFail($id);
+         foreach ($data as $key => $value) {
+            $record->$key = $value;
+         }
+         if($record->isDirty()){
+            $record->save();
+         }
+         return $record;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+
+   }
+
+   public function delete(string $id) : bool{
+      try {
+         return $this->model->where('id', $id)->delete();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+
    }
 
 }

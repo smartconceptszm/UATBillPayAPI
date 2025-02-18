@@ -10,6 +10,8 @@ use App\Jobs\BaseJob;
 class PaymentsAnalyticsDailySingleJob extends BaseJob
 {
 
+   public $timeout = 180;
+
    public function __construct(
       private Carbon $theDate)
    {}

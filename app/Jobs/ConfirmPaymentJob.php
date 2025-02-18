@@ -13,7 +13,8 @@ use App\Jobs\BaseJob;
 class ConfirmPaymentJob extends BaseJob
 {
 
-   // public $timeout = 600;
+   public $timeout = 180;
+   
    public function __construct(
       private BaseDTO $paymentDTO)
    {}
@@ -30,12 +31,6 @@ class ConfirmPaymentJob extends BaseJob
          }
       //
       //Handle Job Service
-      Log::channel('web_requests')->info('('.$this->paymentDTO->urlPrefix.') Confirmation Job started execution', [
-                              'Transaction Id' => $this->paymentDTO->transactionId,
-                              'Payment Status' => $this->paymentDTO->paymentStatus,
-                              'Session Id' =>  $this->paymentDTO->sessionId,
-                              'Wallet Number' => $this->paymentDTO->walletNumber
-                        ]);
          return $confirmPayment->handle($this->paymentDTO);
       //
 

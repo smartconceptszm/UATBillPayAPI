@@ -77,7 +77,7 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 			$billingResponse = $this->billingClient->postPayment($receiptingParams);
 
 			if($billingResponse['status']=='SUCCESS'){
-					$paymentDTO->paymentStatus =  PaymentStatusEnum::Receipt_Delivered->value;
+				$paymentDTO->paymentStatus =  PaymentStatusEnum::Receipted->value;
 			}else{
 				$paymentDTO->receiptNumber = '';
 				$paymentDTO->error = "At receipt payment. ".$billingResponse['error'];

@@ -1,19 +1,14 @@
 <?php
 
-namespace App\Http\Services\Analytics;
+namespace App\Http\Services\Analytics\Views;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Exception;
 
-class MonthlyAnalyticsService
+class MonthlyOverYearViewService
 {
-
-   public function generate(array $params)
-   {
-      return true;
-   }
 
    public function findAll(array $criteria):array|null
    {

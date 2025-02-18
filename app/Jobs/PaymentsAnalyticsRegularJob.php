@@ -10,6 +10,8 @@ use App\Jobs\BaseJob;
 class PaymentsAnalyticsRegularJob extends BaseJob
 {
 
+   public $timeout = 120;
+
    public function __construct(
       private BaseDTO $paymentDTO)
    {}

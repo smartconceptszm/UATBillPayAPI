@@ -40,7 +40,7 @@ class ReceiptVacuumTankerSwasco implements IReceiptPayment
 									'amount' => $paymentDTO->receiptAmount,
 									'client_id' => $paymentDTO->client_id,
 									'paymentType'=>"12",
-									'receiptType'=>"12"
+									'receiptType'=>"01"
 								];
 		$billingResponse = $this->billingClient->postPayment($receiptingParams);
 		if($billingResponse['status'] == 'SUCCESS'){

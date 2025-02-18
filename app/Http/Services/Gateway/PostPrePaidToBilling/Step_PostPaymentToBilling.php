@@ -4,14 +4,18 @@ namespace App\Http\Services\Gateway\PostPrePaidToBilling;
 
 use App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPrePaidChambeshi;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
-use Illuminate\Support\Facades\Log;
+use App\Http\Services\Clients\ClientWalletService;
+use App\Http\Services\Enums\PaymentStatusEnum;
+use App\Http\Services\SMS\MessageService;
 use App\Http\DTOs\BaseDTO;
 
 class Step_PostPaymentToBilling extends EfectivoPipelineContract
 {
 
    public function __construct(
-      private ReceiptPrePaidChambeshi $receiptPrePaidChambeshi)
+      private ReceiptPrePaidChambeshi $receiptPrePaidChambeshi,
+      private ClientWalletService $clientWalletService,
+      private MessageService $messageService)
    {}    
 
    protected function stepProcess(BaseDTO $paymentDTO)
@@ -19,12 +23,17 @@ class Step_PostPaymentToBilling extends EfectivoPipelineContract
       
       try {
          $paymentDTO = $this->receiptPrePaidChambeshi->handle($paymentDTO);
-         Log::info('('.$paymentDTO->urlPrefix.') Payment posted to Billing System. '.
-                        '- Transaction ID = '.$paymentDTO->transactionId.               
-                        '- Session Id: '.$paymentDTO->sessionId.
-                        '- Channel: '.$paymentDTO->channel.
-                        '- Wallet: '.$paymentDTO->walletNumber.
-                        '- Receipt: '.$paymentDTO->receipt);
+         $wallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
+         $theSMS = $this->messageService->findOneBy([
+                                             'transaction_id' => $paymentDTO->transactionId,
+                                             'customerAccount'=>$paymentDTO->customerAccount,
+                                             'mobileNumber'=>$paymentDTO->mobileNumber,
+                                             'client_id' => $wallet->client_id
+                                          ]);
+         if($theSMS->status == 'DELIVERED'){
+            $paymentDTO->paymentStatus =  PaymentStatusEnum::Receipt_Delivered->value;
+         }
+
       } catch (\Throwable $e) {
          $paymentDTO->error='At post payment to billing. '.$e->getMessage();
       }

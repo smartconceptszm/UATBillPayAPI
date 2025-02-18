@@ -324,31 +324,66 @@ class AppServiceProvider extends ServiceProvider
          });
       //
 
-
-      //Dashboard Handlers
+      //Dashboard Generate Handlers
          $this->app->singleton('ConsumerTier', function () {
-            return $this->app->make(\App\Http\Services\Analytics\ConsumerTierAnalyticsService::class);
+            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardConsumerTierTotalsService::class);
          });
          $this->app->singleton('ConsumerType', function () {
-            return $this->app->make(\App\Http\Services\Analytics\ConsumerTypeAnalyticsService::class);
+            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardConsumerTypeTotalsService::class);
          });
-         $this->app->singleton('HourlyTransactions', function () {
-            return $this->app->make(\App\Http\Services\Analytics\HourlyTransactionsAnalyticsService::class);
+         $this->app->singleton('Hourly', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardHourlyTotalsService::class);
          });
          $this->app->singleton('PaymentProvider', function () {
-            return $this->app->make(\App\Http\Services\Analytics\PaymentProviderAnalyticsService::class);
+            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardPaymentProviderTotalsService::class);
          });
          $this->app->singleton('PaymentStatus', function () {
-            return $this->app->make(\App\Http\Services\Analytics\PaymentStatusAnalyticsService::class);
+            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardPaymentStatusTotalsService::class);
          });
          $this->app->singleton('PaymentType', function () {
-            return $this->app->make(\App\Http\Services\Analytics\PaymentTypeAnalyticsService::class);
+            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardPaymentTypeTotalsService::class);
          });
          $this->app->singleton('RevenueCollector', function () {
-            return $this->app->make(\App\Http\Services\Analytics\RevenueCollectorAnalyticsService::class);
+            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardRevenueCollectorTotalsService::class);
          });
          $this->app->singleton('RevenuePoint', function () {
-            return $this->app->make(\App\Http\Services\Analytics\RevenuePointsAnalyticsService::class);
+            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardRevenuePointTotalsService::class);
+         });
+      //
+
+      //Dashboard View Handlers
+         $this->app->singleton('ConsumerTierView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\ConsumerTierViewService::class);
+         });
+         $this->app->singleton('ConsumerTypeView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\ConsumerTypeViewService::class);
+         });
+         $this->app->singleton('DailyByMonthView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\DailyByMonthViewService::class);
+         });
+         $this->app->singleton('DailyCumulativeView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\DailyCommulativeViewService::class);
+         });
+         $this->app->singleton('HourlySalesView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\HourlySalesViewService::class);
+         });
+         $this->app->singleton('MonthlyOverYearView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\MonthlyOverYearViewService::class);
+         });
+         $this->app->singleton('PaymentProviderSummaryView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\PaymentProviderSummaryViewService::class);
+         });
+         $this->app->singleton('PaymentStatusView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\PaymentStatusViewService::class);
+         });
+         $this->app->singleton('PaymentTypeView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\PaymentTypeViewService::class);
+         });
+         $this->app->singleton('RevenueCollectorView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\RevenueCollectorViewService::class);
+         });
+         $this->app->singleton('RevenuePointView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\RevenuePointViewService::class);
          });
       //
    //
