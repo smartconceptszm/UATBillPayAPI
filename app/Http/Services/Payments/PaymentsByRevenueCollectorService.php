@@ -50,7 +50,7 @@ class PaymentsByRevenueCollectorService
                                                 SUM(p.totalAmount) as totalAmount'))
                         ->where('p.dateOfTransaction', '>=' ,$dto->dateFrom)
                         ->where('p.dateOfTransaction', '<=',  $dto->dateTo)
-                        ->where('P.client_id', '=', $dto->client_id)
+                        ->where('p.client_id', '=', $dto->client_id)
                         ->groupBy('p.revenueCollector')
                         ->get();
          return $records->all();

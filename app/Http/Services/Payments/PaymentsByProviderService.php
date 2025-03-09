@@ -52,7 +52,7 @@ class PaymentsByProviderService
                                                 SUM(p.totalAmount) as totalAmount'))
                         ->where('p.dateOfTransaction', '>=' ,$dto->dateFrom)
                         ->where('p.dateOfTransaction', '<=',  $dto->dateTo)
-                        ->where('P.client_id', '=', $dto->client_id)
+                        ->where('p.client_id', '=', $dto->client_id)
                         ->groupBy('id','paymentsProvider')
                         ->get();
          return $records->all();
