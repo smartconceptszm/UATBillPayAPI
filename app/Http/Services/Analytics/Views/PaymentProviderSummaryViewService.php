@@ -3,7 +3,6 @@
 namespace App\Http\Services\Analytics\Views;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 use Exception;
 
 class PaymentProviderSummaryViewService
@@ -13,22 +12,16 @@ class PaymentProviderSummaryViewService
    {
       
       try {
-
+         
          $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
          $dto = (object)$criteria;
-
-         $dateFrom = Carbon::parse($dto->dateFrom);
-         $dateFromYMD = $dateFrom->copy()->format('Y-m-d');
-
-         $dateTo = Carbon::parse($dto->dateTo);
-         $dateToYMD = $dateTo->copy()->format('Y-m-d');
 
          $thePayments = DB::table('dashboard_payments_provider_totals as ppt')
                            ->join('payments_providers as p','ppt.payments_provider_id','=','p.id')
                            ->select(DB::raw('p.shortName as paymentsProvider,p.colour,
                                                 SUM(ppt.numberOfTransactions) AS totalTransactions,
                                                    SUM(ppt.totalAmount) as totalRevenue'))
-                           ->whereBetween('ppt.dateOfTransaction', [$dateFromYMD, $dateToYMD])
+                           ->whereBetween('ppt.dateOfTransaction', [$dto->dateFromYMD, $dto->dateToYMD])
                            ->where('ppt.client_id', '=', $dto->client_id)
                            ->groupBy('paymentsProvider','colour')
                            ->orderByDesc('totalRevenue');
@@ -37,30 +30,30 @@ class PaymentProviderSummaryViewService
          // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
          $byPaymentProvider = $thePayments->get();
 
-         $totalRevenue = $byPaymentProvider->reduce(function ($totalRevenue, $item) {
-                                             return $totalRevenue + $item->totalRevenue;
+         $theLabels = $byPaymentProvider->pluck('paymentsProvider')->unique()->values();
+         $theLabels->prepend('TOTAL');
+         $theData = $byPaymentProvider->map(function ($item) {
+                                          return [
+                                             'label'=>$item->paymentsProvider.
+                                                         ' ('.number_format($item->totalTransactions,0,'.',',').')',
+                                             'data'=>$item->totalRevenue,
+                                             'labelColour'=>$item->paymentsProvider,
+                                             'colour'=>$item->colour
+                                          ];
                                        });
 
-         $totalRevenue = $totalRevenue?$totalRevenue:0;
-
-         $paymentsSummary = $byPaymentProvider->map(function ($item) {
-                                                   return [
-                                                      'paymentsProvider'=>$item->paymentsProvider,
-                                                      'totalAmount'=>$item->totalRevenue,
-                                                      'colour'=>$item->colour
-                                                   ];
-                                             });
-         $paymentsSummary->prepend([
-                                    'paymentsProvider'=>'TOTAL',
-                                    'totalAmount'=> $totalRevenue,
-                                    'colour'=>$billpaySettings['ANALYTICS_PROVIDER_TOTALS_COLOUR']
-                              ]);
-
-         $response = [
-                        'paymentsSummary' => $paymentsSummary,
-                     ];
+         $theData->prepend([  
+                        'label'=> 'TOTAL ('.number_format($byPaymentProvider->sum('totalTransactions'),0,'.',',') .')',
+                        'data'=>$byPaymentProvider->sum('totalRevenue'),
+                        'labelColour'=>"TOTAL",
+                        'colour'=>$billpaySettings['ANALYTICS_PROVIDER_TOTALS_COLOUR']
+                     ]);
    
-         return $response;
+         return [
+                  'labels' => $theLabels,
+                  'datasets' => $theData
+               ];
+
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

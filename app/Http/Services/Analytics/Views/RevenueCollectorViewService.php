@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\Analytics\Views;
 
+use \App\Http\Services\Enums\ChartColours;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 use Exception;
 
 class RevenueCollectorViewService
@@ -16,31 +16,36 @@ class RevenueCollectorViewService
 
          $dto = (object)$criteria;
 
-         $dateFrom = Carbon::parse($dto->dateFrom);
-         $dateFromYMD = $dateFrom->copy()->format('Y-m-d');
-
-         $dateTo = Carbon::parse($dto->dateTo);
-         $dateToYMD = $dateTo->copy()->format('Y-m-d');
-
          //7. RevenueCollector Totals for Month
             $theCollectorPayments = DB::table('dashboard_revenue_collector_totals as drct')
-                  ->select(DB::raw('drct.revenueCollector,
-                                    SUM(drct.numberOfTransactions) AS totalTransactions,
-                                    SUM(drct.totalAmount) as totalRevenue'))
-                  ->whereBetween('drct.dateOfTransaction', [$dateFromYMD, $dateToYMD])
-                  ->where('drct.client_id', '=', $dto->client_id)
-                  ->groupBy('drct.revenueCollector');
-            $byRevenueCollector = $theCollectorPayments->get();
-            $revenueCollectorLabels = $byRevenueCollector->map(function ($item) {
-                                                return $item->revenueCollector;
-                                             });
-            $revenueCollectorData = $byRevenueCollector->map(function ($item) {
-                                             return $item->totalRevenue;
-                                          });
+                                       ->select(DB::raw('drct.revenueCollector,
+                                                         SUM(drct.numberOfTransactions) AS totalTransactions,
+                                                         SUM(drct.totalAmount) as totalRevenue'))
+                                       ->whereBetween('drct.dateOfTransaction', [$dto->dateFromYMD, $dto->dateToYMD])
+                                       ->where('drct.client_id', '=', $dto->client_id)
+                                       ->groupBy('drct.revenueCollector');
+            $theCollectorPayments = $theCollectorPayments->get();
+
+            $theLabels = $theCollectorPayments->pluck('revenueCollector')->unique()->values();
+            $i=0;
+            $theData = $theCollectorPayments->map(function ($item) use(&$i)  {
+                           $i++;
+                           $colours = ChartColours::getColours($i);
+                           return [
+                              'label'=>$item->revenueCollector.
+                                          ' ('.number_format($item->totalTransactions,0,'.',',').')',
+                              'data'=>$item->totalRevenue,
+                              'backgroundColor'=> $colours['backgroundColor'],
+                              'borderColor' => $colours['borderColor'],
+                              'pointBackgroundColor' => $colours['pointBackgroundColor'],
+                              'pointBorderColor' => $colours['pointBorderColor'],
+                              'fill' => false
+                           ];
+                        });
          //
          $response = [
-                        'revenueCollectorLabels' =>$revenueCollectorLabels,
-                        'revenueCollectorData' =>$revenueCollectorData 
+                        'labels' =>$theLabels,
+                        'datasets' =>$theData 
                      ];
    
          return $response;

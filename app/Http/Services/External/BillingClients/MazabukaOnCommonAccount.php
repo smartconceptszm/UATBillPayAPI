@@ -49,7 +49,8 @@ class MazabukaOnCommonAccount implements IBillingClient
          $fullURL .= "&ReceiptAmount=".$postParams['receiptAmount'];
          $fullURL .= "&ExtDbRefNo=".$postParams['transactionId'];
 
-         $apiResponse = Http::withHeaders([
+         $apiResponse = Http::timeout($configs['timeout'])
+                           ->withHeaders([
                                  'Accept' => '*/*',
                               ])
                            ->get($fullURL);
@@ -83,6 +84,7 @@ class MazabukaOnCommonAccount implements IBillingClient
       $configs['baseURL'] = $clientCredentials['POSTPAID_BASE_URL'];
       $configs['ApiAuthCode'] = $clientCredentials['API_AUTH_CODE'];
       $configs['PaymentMode'] = $clientCredentials['PAYMENT_MODE'];
+      $configs['timeout'] = $clientCredentials['POSTPAID_TIMEOUT'];
       return $configs;
 
    }

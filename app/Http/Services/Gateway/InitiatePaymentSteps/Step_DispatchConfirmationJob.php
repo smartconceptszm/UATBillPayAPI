@@ -8,7 +8,6 @@ use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Clients\ClientWalletService;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Jobs\ReConfirmCallBackPaymentJob;
-use Illuminate\Support\Facades\Log;
 use App\Jobs\ReConfirmPaymentJob;
 use App\Jobs\ConfirmPaymentJob;
 use Illuminate\Support\Carbon;
@@ -28,6 +27,7 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
    {
 
       try {
+
          $walletCredentials = $this->walletCredentialsService->getWalletCredentials($paymentDTO->wallet_id);
          $billpaySettings = json_decode(cache('billpaySettings', json_encode([])), true);
          if ($walletCredentials['CALLBACK_ENABLED'] == 'YES') {
@@ -35,8 +35,9 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
          } else {
             $this->dispatchJobBasedOnPaymentStatus($paymentDTO, $billpaySettings);
          }
+
       } catch (\Throwable $e) {
-         $paymentDTO->error = 'At dispatching confirmation job. ' . $e->getMessage();
+         $paymentDTO->error = 'At dispatching payment confirmation job. ' . $e->getMessage();
       }
       return $paymentDTO;
 
@@ -49,23 +50,22 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
       ReConfirmCallBackPaymentJob::dispatch($paymentDTO->id)
                                     ->delay(Carbon::now()->addMinutes($paymentReviewDelay))
                                     ->onQueue('high');
-                                    
    }
 
    private function dispatchJobBasedOnPaymentStatus(BaseDTO $paymentDTO, array $billpaySettings)
    {
 
-      $paymentReviewDelay = (int) $billpaySettings[self::PAYMENT_REVIEW_DELAY_KEY];
-
       if ($paymentDTO->paymentStatus === PaymentStatusEnum::Submitted->value) {
          $this->dispatchConfirmPaymentJob($paymentDTO);
       } else {
+         $paymentReviewDelay = (int) $billpaySettings[self::PAYMENT_REVIEW_DELAY_KEY];
          $this->dispatchReConfirmPaymentJob($paymentDTO, $paymentReviewDelay);
       }
    }
 
    private function dispatchConfirmPaymentJob(BaseDTO $paymentDTO)
    {
+
       $clientWallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
       $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($clientWallet->payments_provider_id);
       $delaySeconds = (int)$paymentsProviderCredentials[$paymentDTO->walletHandler . '_PAYSTATUS_CHECK'];
@@ -73,19 +73,16 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
       ConfirmPaymentJob::dispatch($paymentDTO)
                         ->delay(Carbon::now()->addSeconds($delaySeconds))
                         ->onQueue('high');
-
-      Log::channel('web_requests')->info('('.$paymentDTO->urlPrefix.') Confirmation Job dispatched', [
-                           'Session Id' =>  $paymentDTO->sessionId,
-                           'Wallet Number' => $paymentDTO->walletNumber
-                     ]);
                      
    }
 
    private function dispatchReConfirmPaymentJob(BaseDTO $paymentDTO, int $paymentReviewDelay)
    {
+
       ReConfirmPaymentJob::dispatch($paymentDTO)
                            ->delay(Carbon::now()->addMinutes($paymentReviewDelay))
                            ->onQueue('high');
+
    }
 
 

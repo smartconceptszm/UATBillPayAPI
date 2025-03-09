@@ -63,6 +63,15 @@ class DashboardRevenueCollectorTotalsService
                               'dateOfTransaction' => $theDate->format('Y-m-d'),'revenueCollector' => $revenueCollector];
          }
 
+         $currentEntries = DashboardRevenueCollectorTotals::where([
+                     ['dateOfTransaction', '=', $theDate->format('Y-m-d')],
+                     ['client_id', '=', $params['client_id']],
+                  ])
+                  ->pluck('id')
+                  ->toArray();
+
+         DashboardRevenueCollectorTotals::destroy($currentEntries);
+
          DashboardRevenueCollectorTotals::upsert(
                      $revenueCollectorTotalRecords,
                      ['client_id','revenueCollector', 'dateOfTransaction'],

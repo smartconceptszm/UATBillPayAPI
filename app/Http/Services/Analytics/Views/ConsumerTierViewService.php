@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\Analytics\Views;
 
+use \App\Http\Services\Enums\ChartColours;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 use Exception;
 
 class ConsumerTierViewService
@@ -15,33 +15,37 @@ class ConsumerTierViewService
       try {
 
          $dto = (object)$criteria;
-         $dateFrom = Carbon::parse($dto->dateFrom);
-         $dateFromYMD = $dateFrom->copy()->format('Y-m-d');
-
-         $dateTo = Carbon::parse($dto->dateTo);
-         $dateToYMD = $dateTo->copy()->format('Y-m-d');
 
          $thePayments = DB::table('dashboard_consumer_tier_totals as ctt')
                            ->select(DB::raw('ctt.consumerTier,
                                              SUM(ctt.numberOfTransactions) AS totalTransactions,
                                              SUM(ctt.totalAmount) as totalRevenue'))
-                           ->whereBetween('ctt.dateOfTransaction', [$dateFromYMD, $dateToYMD])
+                           ->whereBetween('ctt.dateOfTransaction', [$dto->dateFromYMD, $dto->dateToYMD])
                            ->where('ctt.client_id', '=', $dto->client_id)
                            ->groupBy('ctt.consumerTier');
 
-         $byConsumerTier = $thePayments->get();
+         $thePayments = $thePayments->get();
 
-         $consumerTierLabels = $byConsumerTier->map(function ($item) {
-                                             return $item->consumerTier;
-                                          });
+         $theLabels = $thePayments->map(function ($item) {
+                     return $item->consumerTier.' ('.number_format($item->totalTransactions,0,'.',',').')';
+                  });
 
-         $consumerTierData = $byConsumerTier->map(function ($item) {
-                                          return $item->totalRevenue;
-                                       });
+         $theData = $thePayments->pluck('totalRevenue')->unique()->values();
+
+         $colours = ChartColours::getColours(1);
+         $datasets = [collect([
+                           'label'=>'Collections by Consumer Tier',
+                           'data'=>$theData->toArray(),
+                           'backgroundColor'=> $colours['backgroundColor'],
+                           'borderColor' => $colours['borderColor'],
+                           'pointBackgroundColor' => $colours['pointBackgroundColor'],
+                           'pointBorderColor' => $colours['pointBorderColor'],
+                           'fill' => false
+                        ])];
 
          $response = [
-                        'consumerTierLabels' => $consumerTierLabels,
-                        'consumerTierData' => $consumerTierData,
+                        'labels' =>$theLabels,
+                        'datasets' =>$datasets,
                      ];
    
          return $response;

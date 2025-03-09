@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\Analytics\Views;
 
-
+use \App\Http\Services\Enums\ChartColours;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use Exception;
@@ -16,27 +16,38 @@ class HourlySalesViewService
       try {
 
          $dto = (object)$criteria;
-         $theDate = Carbon::parse($dto->theDate);
-         $dateFrom = $theDate->format('Y-m-d');
-
          $hourlyTrends = DB::table('dashboard_hourly_totals as dht')
-                  ->select('dht.hour','dht.numberOfTransactions',
-                              'dht.totalAmount')
-                  ->where('dht.dateOfTransaction', '=', $dateFrom)
-                  ->where('dht.client_id', '=', $dto->client_id)
-                  ->orderBy('dht.hour');
-         $hourlyTrends = $hourlyTrends->get();
-         $hourlyLabels = $hourlyTrends->map(function ($item) {
-                                    return $item->hour;
-                                 });
-         $hourlyData = $hourlyTrends->map(function ($item) {
-                                    return $item->totalAmount;
-                                 });
+                              ->select('dht.hour','dht.numberOfTransactions',
+                                          'dht.totalAmount')
+                              ->where('dht.dateOfTransaction', '=', $dto->dateToYMD)
+                              ->where('dht.client_id', '=', $dto->client_id)
+                              ->orderBy('dht.hour')
+                              ->get();
 
-         $response = [
-                        'hourlyLabels' => $hourlyLabels,
-                        'hourlyData' =>$hourlyData,
-                     ];
+         $hourLabels =[];
+         $hourData = [];
+         for ($i=0; $i < 24; $i++) { 
+            $hourRecord = $hourlyTrends->firstWhere('hour','=',$i);
+            $hourLabels[] = $i;
+            if($hourRecord){
+               $hourData[] = $hourRecord->totalAmount;
+            }else{
+               $hourData[] = 0;
+            }
+         }
+
+         $response['labels'] = collect($hourLabels);
+         $colours = ChartColours::getColours(1);
+         $response['datasets'][] = collect([
+                                          'backgroundColor'=> $colours['backgroundColor'],
+                                          'borderColor' => $colours['borderColor'],
+                                          'pointBackgroundColor' => $colours['pointBackgroundColor'],
+                                          'pointBorderColor' => $colours['pointBorderColor'],
+                                          'label' => 'Hourly Collections',
+                                          'data' => collect($hourData),
+                                          'fill' => true
+                                       ]);
+
          return $response;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

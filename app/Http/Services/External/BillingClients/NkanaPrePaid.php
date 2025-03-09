@@ -30,9 +30,11 @@ class NkanaPrePaid implements IBillingClient
                         "payment" => $params['paymentAmount'],
                      ];
 
-         $apiResponse = Http::withHeaders([
-                                    'Accept' => '*/*'
-                                 ])->get($configs['baseURL'], $getData);
+         $apiResponse = Http::timeout($configs['timeout'])
+                              ->withHeaders([
+                                 'Accept' => '*/*'
+                              ])
+                              ->get($configs['baseURL'], $getData);
 
          if ($apiResponse->status() == 200) {
             $apiResponseString = $apiResponse->body(); // Get response data as BODY
@@ -136,7 +138,9 @@ class NkanaPrePaid implements IBillingClient
                               "transid" => $postParams['transactionId'],
                               "purchaseparam" => $purchaseParameterString
                            ];
-         $apiResponse = Http::asForm()->post($configs['baseURL'], $tokenParameters);
+         $apiResponse = Http::timeout($configs['timeout'])
+                              ->asForm()
+                              ->post($configs['baseURL'], $tokenParameters);
 
          if ($apiResponse->status() == 200) {
             $apiResponseString = $apiResponse->body(); // Get response data as BODY
@@ -237,6 +241,7 @@ class NkanaPrePaid implements IBillingClient
       $configs['platformId'] = $clientCredentials['PREPAID_PLATFORMID'];
       $configs['rootKey'] = $clientCredentials['PREPAID_ROOTKEY'];
       $configs['baseURL'] =$clientCredentials['PREPAID_BASE_URL'];
+      $configs['timeout'] = $clientCredentials['PREPAID_TIMEOUT'];
       return $configs;
    }
 

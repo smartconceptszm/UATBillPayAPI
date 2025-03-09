@@ -43,7 +43,11 @@ class CheckBalance_Step_3
                   $txDTO->subscriberInput = $txDTO->mobileNumber;
                   $txDTO->handler = $selectedMenu->handler;
                   $txDTO->menu_id = $selectedMenu->id;
-                  $txDTO->response = "Enter Amount :\n";
+                  if($clientMenu->amountPrompt){
+                     $txDTO->response = $clientMenu->amountPrompt.":\n";
+                  }else{
+                     $txDTO->response="Enter Amount :\n";
+                  }
                   $txDTO->status = USSDStatusEnum::Initiated->value;
                }else{
                   $txDTO->response = " Dial *".$arrCustomerJourney[0]."# and choose the menu for payment!";

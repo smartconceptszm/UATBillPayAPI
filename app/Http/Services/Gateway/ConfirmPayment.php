@@ -10,6 +10,7 @@ use App\Http\DTOs\BaseDTO;
 
 class ConfirmPayment
 {
+   
    private const WALLET_USE_MOCK_KEY = 'WALLET_USE_MOCK_';
    private const USE_RECEIPTING_MOCK_KEY = 'USE_RECEIPTING_MOCK_';
    private const USE_BILLING_MOCK_KEY = 'USE_BILLING_MOCK_';
@@ -27,19 +28,32 @@ class ConfirmPayment
          $paymentDTO = App::make(Pipeline::class)
                            ->send($paymentDTO)
                            ->through([
+                              
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
+
+                              \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,
+                              \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
+
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_DispatchReConfirmationJob::class,
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
+
+                              \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,
+                              \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
+
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_AddShortcutMessageToReceipt::class,
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_AddPromoMessageToReceipt::class,
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
+
                               \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,
                               \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
+
                               \App\Http\Services\Gateway\Utility\Step_RefreshAnalytics::class,
                               \App\Http\Services\Gateway\Utility\Step_AddCutomerToShortcutList::class,
+
                            ])
                            ->thenReturn();
+                           
       } catch (\Throwable $e) {
          $paymentDTO->error = 'At get confirm payment pipeline. ' . $e->getMessage();
          Log::info($paymentDTO->error);

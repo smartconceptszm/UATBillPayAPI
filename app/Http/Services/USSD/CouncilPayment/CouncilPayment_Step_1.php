@@ -34,7 +34,11 @@ class CouncilPayment_Step_1
                }else{
                   $txDTO->customerJourney = $txDTO->customerJourney."*".$txDTO->subscriberInput."*".$clientMenu->commonAccount;
                   $txDTO->subscriberInput = $txDTO->mobileNumber;
-                  $txDTO->response="Enter Amount :\n";
+                  if($clientMenu->amountPrompt){
+                     $txDTO->response = $clientMenu->amountPrompt.":\n";
+                  }else{
+                     $txDTO->response="Enter Amount :\n";
+                  }
                }
             }else{
                $txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";

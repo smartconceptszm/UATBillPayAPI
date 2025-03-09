@@ -3,13 +3,16 @@
 namespace App\Http\Services\External\BillingClients;
 
 use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\Payments\ReceiptService;
 
 use Exception;
 
 class MazabukaLocal implements IBillingClient
 {
     
-   public function __construct()
+   public function __construct(
+      private ReceiptService $receiptService
+   )
    {}
 
    public function getAccountDetails(array $params): array
@@ -31,14 +34,21 @@ class MazabukaLocal implements IBillingClient
    public function postPayment(Array $postParams): Array 
    {
 
-      $alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      $firstChar = $alphabet[\random_int(0, strlen($alphabet) - 1)];
-      $digits = \str_pad(\random_int(0, 99999), 5, '0', STR_PAD_LEFT);
-      $response=[
-            'status'=>'SUCCESS',
-            'receiptNumber'=>"MAZ".\date('ymd').".".\date('His').".".$firstChar.$digits,
-            'error'=>''
-         ];
+      $response = [
+                  'status'=>'FAILED',
+                  'receiptNumber'=>'',
+                  'error'=>''
+               ];
+      try {
+         $receipt = $this->receiptService->create([
+                                          'payment_id'=>$postParams['payment_id'],
+                                          'client_id'=>$postParams['client_id']
+                                       ]);
+         $response['receiptNumber'] = $receipt->id;
+         $response['status'] = 'SUCCESS';
+      } catch (\Throwable $th) {
+         $response['error'] = $th->getMessage();
+      }
       return $response;
       
    }

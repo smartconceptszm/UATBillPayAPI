@@ -5,6 +5,7 @@ namespace App\Http\Services\Gateway\ReceiptingHandlers;
 use App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\Payments\ReceiptService;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Jobs\PostThePrePaidToBillingJob;
 use Illuminate\Support\Facades\Cache;
@@ -16,6 +17,7 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 
 	public function __construct(
 		private EnquiryHandler $chambeshiEnquiry,
+		private ReceiptService $receiptService,
 		private IBillingClient $billingClient)
 	{}
 
@@ -41,7 +43,6 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 			if($tokenResponse['status']=='SUCCESS'){
 				$paymentDTO->paymentStatus = PaymentStatusEnum::Paid->value;
 				$paymentDTO->tokenNumber = $tokenResponse['tokenNumber'];
-				$paymentDTO->receiptNumber =  $paymentDTO->customerAccount."_".\now()->timestamp;
 				$paymentDTO->receipt = "\n"."Payment successful"."\n".
 											"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
 											"Acc/Meter No: " . $paymentDTO->customerAccount . "\n" .
@@ -58,10 +59,19 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 			}
 		}else if($paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value){
 
-			if(!$paymentDTO->receiptNumber){
-				$paymentDTO->receiptNumber =  $paymentDTO->customerAccount."_".\now()->timestamp;
-			}
+			$receipt = $this->receiptService->findOneBy([
+												'client_id'=>$paymentDTO->client_id,
+												'payment_id'=>$paymentDTO->id
+											]);
 
+			if(!$receipt){
+				$receipt = $this->receiptService->create([
+												'description' => $paymentDTO->receipt,
+												'client_id'=>$paymentDTO->client_id,
+												'payment_id'=>$paymentDTO->id
+											]);
+			}
+			$paymentDTO->receiptNumber =  $receipt->id;
 			$receiptingParams = [
 										"payment_provider" => strtolower($paymentDTO->walletHandler).'_money', 
 										"payer_msisdn"=> $paymentDTO->mobileNumber, 
@@ -79,7 +89,6 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 			if($billingResponse['status']=='SUCCESS'){
 				$paymentDTO->paymentStatus =  PaymentStatusEnum::Receipted->value;
 			}else{
-				$paymentDTO->receiptNumber = '';
 				$paymentDTO->error = "At receipt payment. ".$billingResponse['error'];
 			}
 

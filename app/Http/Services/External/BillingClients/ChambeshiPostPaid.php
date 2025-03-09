@@ -39,7 +39,8 @@ class ChambeshiPostPaid implements IBillingClient
       try {     
          $configs = $this->getConfigs($params['client_id']);
          $fullURL = $configs['baseURL']."/lookup?query=".$params['customerAccount'];
-         $apiResponse = Http::withHeaders([
+         $apiResponse = Http::timeout($configs['timeout'])
+                                 ->withHeaders([
                                     'Accept' =>  '*/*',
                                  ])
                               ->get($fullURL);
@@ -93,11 +94,12 @@ class ChambeshiPostPaid implements IBillingClient
             $fullURL = $configs['baseURL']."/payment/";
             $postParams['username'] = $configs['username'];
             $postParams['password'] = $configs['password'];
-            $apiResponse = Http::withHeaders([
-                                    'Content-Type' => 'application/json',
-                                    'Accept' =>  '*/*'
-                                 ])
-                              ->post($fullURL, $postParams);
+            $apiResponse =  Http::timeout($configs['timeout'])
+                                 ->withHeaders([
+                                       'Content-Type' => 'application/json',
+                                       'Accept' =>  '*/*'
+                                    ])
+                                 ->post($fullURL, $postParams);
             if ($apiResponse->status() == 200) {
                   $apiResponse = $apiResponse->json();
                   if(isset($apiResponse['status']) && $apiResponse['status'] == 'SUCCESS'){
@@ -149,6 +151,7 @@ class ChambeshiPostPaid implements IBillingClient
       $configs['username'] = $clientCredentials['POSTPAID_USERNAME'];
       $configs['password'] = $clientCredentials['POSTPAID_PASSWORD'];
       $configs['baseURL'] = $clientCredentials['POSTPAID_BASE_URL'];
+      $configs['timeout'] = $clientCredentials['POSTPAID_TIMEOUT'];
       return $configs;
    }
 

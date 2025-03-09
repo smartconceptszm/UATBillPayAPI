@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services\Analytics;
+namespace App\Http\Services\Analytics\Old;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 use Carbon\CarbonPeriod;
 use Exception;
 
-class ClientDashboardService 
+class ClientDashboardServiceOld 
 {
 
    public function findAll(array $criteria):array|null
@@ -270,7 +270,6 @@ class ClientDashboardService
                                                    'data' => $theData
                                                 ];
                                        }
-
                                  });
 
 

@@ -22,8 +22,9 @@ class ReceiptMazabukaOnCommonAccount implements IReceiptPayment
 			$receiptingParams = [ 
 										'customerAccount' => $paymentDTO->customerAccount,
 										'receiptAmount' => $paymentDTO->receiptAmount,
-										'client_id' => $paymentDTO->client_id,
 										'transactionId' => $paymentDTO->transactionId,
+										'client_id' => $paymentDTO->client_id,
+										'payment_id' => $paymentDTO->id,
 									];
 
 			$billingResponse = $this->billingClient->postPayment($receiptingParams);

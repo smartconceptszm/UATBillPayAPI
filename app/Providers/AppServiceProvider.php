@@ -385,6 +385,13 @@ class AppServiceProvider extends ServiceProvider
          $this->app->singleton('RevenuePointView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\RevenuePointViewService::class);
          });
+
+         $this->app->singleton('RevenuePointUserView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\RevenuePointUserViewService::class);
+         });
+         $this->app->singleton('PaymentProviderSummaryUserView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\PaymentProviderSummaryUserViewService::class);
+         });
       //
    //
       

@@ -28,6 +28,7 @@ return new class extends Migration
          $table->enum('onOneAccount',['YES','NO'])->default('NO')->notNullable();
          $table->string('commonAccount',50)->nullable();
          $table->string('customerAccountPrompt',150)->nullable();
+         $table->string('amountPrompt',150)->nullable();
          $table->enum('requiresReference',['YES','NO'])->default('NO')->notNullable();
          $table->string('referencePrompt',150)->nullable();
          $table->string('shortcutHandler',150)->nullable();

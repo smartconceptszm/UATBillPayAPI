@@ -28,10 +28,11 @@ class MazabukaOnCustomerAccount implements IBillingClient
          $fullURL .= "&SalesRefCode='2022000000'";
          $fullURL .= "&ReceiptAmount=0&ExtDbRefNo=''";
 
-         $apiResponse = Http::withHeaders([
-                                 'Accept' => '*/*',
-                              ])
-                           ->get($fullURL);
+         $apiResponse = Http::timeout($configs['timeout'])
+                              ->withHeaders([
+                                    'Accept' => '*/*',
+                                 ])
+                              ->get($fullURL);
 
          if ($apiResponse->status() == 200) {
             $apiResponse = $apiResponse->json();
@@ -80,10 +81,11 @@ class MazabukaOnCustomerAccount implements IBillingClient
          $fullURL .= "&ReceiptAmount=".$postParams['receiptAmount'];
          $fullURL .= "&ExtDbRefNo=".$postParams['transactionId'];
 
-         $apiResponse = Http::withHeaders([
-                                 'Accept' => '*/*',
-                              ])
-                           ->get($fullURL);
+         $apiResponse = Http::timeout($configs['timeout'])
+                              ->withHeaders([
+                                    'Accept' => '*/*',
+                                 ])
+                              ->get($fullURL);
          if ($apiResponse->status() == 200) {
                $apiResponse = $apiResponse->json();
                if($apiResponse['ApiRespCode'] == '1'){
@@ -114,6 +116,7 @@ class MazabukaOnCustomerAccount implements IBillingClient
       $configs['baseURL'] = $clientCredentials['POSTPAID_BASE_URL'];
       $configs['ApiAuthCode'] = $clientCredentials['API_AUTH_CODE'];
       $configs['PaymentMode'] = $clientCredentials['PAYMENT_MODE'];
+      $configs['timeout'] = $clientCredentials['POSTPAID_TIMEOUT'];
       return $configs;
 
    }

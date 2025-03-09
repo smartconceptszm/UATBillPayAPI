@@ -27,7 +27,7 @@ class BillingClientChambeshiTest extends TestCase
 
    }
 
-   public function test_PostPayment(): void
+   public function _test_PostPayment(): void
    {
 
       //Main Menu

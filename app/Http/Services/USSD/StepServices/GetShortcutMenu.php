@@ -4,7 +4,6 @@ namespace App\Http\Services\USSD\StepServices;
 
 use App\Http\Services\Clients\AggregatedClientService;
 use App\Http\Services\Clients\ClientMenuService;
-use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 
 class GetShortcutMenu
@@ -30,8 +29,7 @@ class GetShortcutMenu
          return $this->clientMenuService->findOneBy(['client_id' =>$txDTO->client_id, 'shortcut'=>$strShortcut]);
          
       } catch (\Throwable $e) {
-         $txDTO->errorType = USSDStatusEnum::SystemError->value;
-         $txDTO->error = $e->getMessage();
+         throw $e;
       }
       
    }

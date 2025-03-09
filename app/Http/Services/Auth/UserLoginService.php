@@ -24,6 +24,7 @@ class UserLoginService
 			}
 			$user = Auth::user(); 
 			$dto->expires_in = Auth::factory()->getTTL()*60;
+			$dto->revenueCollectorCode = $user->revenueCollectorCode;
 			$dto->fullnames = $user->fullnames;
 			$dto->client_id = $user->client_id;
 			$dto->urlPrefix = $user->urlPrefix;

@@ -5,7 +5,7 @@ namespace App\Http\Services\Gateway;
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Enums\PaymentStatusEnum;
-use App\Http\Services\Gateway\ConfirmPayment;
+use App\Http\Services\Gateway\ReConfirmPayment;
 use App\Http\Services\Enums\PaymentTypeEnum;
 use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\MoMoDTO;
@@ -18,7 +18,7 @@ class MoMoCallbackService
    public function __construct(
       private PaymentToReviewService $paymentToReviewService, 
       private ClientMenuService $clientMenuService,
-      private ConfirmPayment $confirmPayment,
+      private ReConfirmPayment $reConfirmPayment,
       private MoMoDTO $paymentDTO)
    {}
 
@@ -62,7 +62,7 @@ class MoMoCallbackService
                               $paymentDTO->paymentStatus;
             Log::info($logMessage);
          // Confirm the payment through the pipeline
-         $paymentDTO = $this->confirmPayment->handle($paymentDTO);
+         $paymentDTO = $this->reConfirmPayment->handle($paymentDTO);
 
       } catch (\Throwable $e) {
          throw new Exception('Error processing Airtel callback: ' . $e->getMessage());

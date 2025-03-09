@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\Analytics\Views;
 
+use \App\Http\Services\Enums\ChartColours;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 use Exception;
 
 class PaymentTypeViewService
@@ -16,29 +16,35 @@ class PaymentTypeViewService
 
          $dto = (object)$criteria;
 
-         $dateFrom = Carbon::parse($dto->dateFrom);
-         $dateFromYMD = $dateFrom->copy()->format('Y-m-d');
-
-         $dateTo = Carbon::parse($dto->dateTo);
-         $dateToYMD = $dateTo->copy()->format('Y-m-d');
-
          $thePayments = DB::table('dashboard_payment_type_totals as ptt')
                            ->select(DB::raw('ptt.paymentType,
                                                 SUM(ptt.numberOfTransactions) AS totalTransactions,
                                                 SUM(ptt.totalAmount) as totalRevenue'))
-                           ->whereBetween('ptt.dateOfTransaction', [$dateFromYMD, $dateToYMD])
+                           ->whereBetween('ptt.dateOfTransaction', [$dto->dateFromYMD, $dto->dateToYMD])
                            ->where('ptt.client_id', '=', $dto->client_id)
                            ->groupBy('paymentType');
-         $menuTotals = $thePayments->get();
-         $paymentTypeLabels = $menuTotals->map(function ($item) {
-                                             return $item->paymentType."(".$item->totalTransactions.")";
-                                          });
-         $paymentTypeData = $menuTotals->map(function ($item) {
-                                             return $item->totalRevenue;
-                                          });
+         $thePayments = $thePayments->get();
+
+         $theLabels = $thePayments->pluck('paymentType')->unique()->values();
+         $i=0;
+         $theData = $thePayments->map(function ($item) use(&$i)  {
+                        $i++;
+                        $colours = ChartColours::getColours($i);
+                        return [
+                           'label'=>$item->paymentType.
+                                       ' ('.number_format($item->totalTransactions,0,'.',',').')',
+                           'data'=>$item->totalRevenue,
+                           'backgroundColor'=> $colours['backgroundColor'],
+                           'borderColor' => $colours['borderColor'],
+                           'pointBackgroundColor' => $colours['pointBackgroundColor'],
+                           'pointBorderColor' => $colours['pointBorderColor'],
+                           'fill' => false
+                        ];
+                     });
+
          $response = [
-                        'paymentTypeLabels' =>$paymentTypeLabels,
-                        'paymentTypeData' =>$paymentTypeData,
+                        'labels' =>$theLabels,
+                        'datasets' =>$theData,
                      ];
    
          return $response;

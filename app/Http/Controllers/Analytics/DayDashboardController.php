@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers\Analytics;
 
-use App\Http\Services\Analytics\ClientDashboardService;
+use App\Http\Services\Analytics\DailyDashboardService;
 use Illuminate\Contracts\Auth\Authenticatable;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class ClientDashboardController extends Controller
+class DayDashboardController extends Controller
 {
 
 	public function __construct(
-		private ClientDashboardService $clientDashboardService)
+		private DailyDashboardService $dailyDashboardService)
 	{}
 
    /**
@@ -21,11 +21,13 @@ class ClientDashboardController extends Controller
    {
 
       try {
+
          $criteria = $this->getParameters($request);
          if(!$criteria['client_id']){
             $criteria['client_id'] = $user->client_id;
          }
-         $this->response['data']=$this->clientDashboardService->findAll($criteria);
+         $this->response['data']=$this->dailyDashboardService->findAll($criteria);
+
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

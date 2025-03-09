@@ -10,11 +10,11 @@ class DashboardSnippetController extends Controller
 {
    
    protected $validationRules = [
-               'client_id' => 'required',
-               'order' => 'required',
+               'name' => 'required',
                'title' => 'required',
                'type' => 'required',
-               
+               'generateHandler' => 'required',
+               'viewHandler' => 'required',
             ];
 	public function __construct(
 		private DashboardSnippetService $dashboardSnippetService)
@@ -63,22 +63,6 @@ class DashboardSnippetController extends Controller
 
       try {
          $this->response['data'] = $this->dashboardSnippetService->findById($id);
-      } catch (\Throwable $e) {
-            $this->response['status']['code'] = 500;
-            $this->response['status']['message'] = $e->getMessage();
-      }
-      return response()->json($this->response);
-
-   }
-
-   /**
-   * Display the specified resources.
-   */
-   public function dashboardsnippetsofclient(Request $request, string $id)
-   {
-
-      try {
-         $this->response['data'] = $this->dashboardSnippetService->findAll(['client_id'=>$id]);
       } catch (\Throwable $e) {
             $this->response['status']['code'] = 500;
             $this->response['status']['message'] = $e->getMessage();

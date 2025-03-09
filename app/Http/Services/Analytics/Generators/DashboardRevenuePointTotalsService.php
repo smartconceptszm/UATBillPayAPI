@@ -54,6 +54,15 @@ class DashboardRevenuePointTotalsService
                                           'dateOfTransaction' => $theDate->format('Y-m-d'),'revenuePoint' => $revenuePoint];
          }
 
+         $currentEntries = DashboardRevenuePointTotals::where([
+                     ['dateOfTransaction', '=', $theDate->format('Y-m-d')],
+                     ['client_id', '=', $params['client_id']],
+                  ])
+                  ->pluck('id')
+                  ->toArray();
+
+         DashboardRevenuePointTotals::destroy($currentEntries);
+
          DashboardRevenuePointTotals::upsert(
                   $revenuePointTotalRecords,
                   ['client_id','revenuePoint', 'dateOfTransaction'],

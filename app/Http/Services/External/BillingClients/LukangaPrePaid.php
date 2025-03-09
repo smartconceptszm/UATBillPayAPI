@@ -29,7 +29,8 @@ class LukangaPrePaid implements IBillingClient
                         "payment" => $params['paymentAmount'],
                      ];
 
-         $apiResponse = Http::withHeaders([
+         $apiResponse = Http::timeout($configs['timeout'])
+                                 ->withHeaders([
                                     'Accept' => '*/*'
                                  ])->get($configs['baseURL'], $getData);
 
@@ -135,7 +136,9 @@ class LukangaPrePaid implements IBillingClient
                               "transid" => $postParams['transactionId'],
                               "purchaseparam" => $purchaseParameterString
                            ];
-         $apiResponse = Http::asForm()->post($configs['baseURL'], $tokenParameters);
+         $apiResponse = Http::timeout($configs['timeout'])
+                              ->asForm()
+                              ->post($configs['baseURL'], $tokenParameters);
 
          if ($apiResponse->status() == 200) {
             $apiResponseString = $apiResponse->body(); // Get response data as BODY
@@ -236,6 +239,7 @@ class LukangaPrePaid implements IBillingClient
       $configs['platformId'] = $clientCredentials['PREPAID_PLATFORMID'];
       $configs['rootKey'] = $clientCredentials['PREPAID_ROOTKEY'];
       $configs['baseURL'] = $clientCredentials['PREPAID_BASE_URL'];
+      $configs['timeout'] = $clientCredentials['PREPAID_TIMEOUT'];
       return $configs;
 
    }

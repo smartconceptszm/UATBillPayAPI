@@ -107,13 +107,14 @@ class ZamtelKwacha implements IPaymentsProviderClient
          $configs = $this->getConfigs($dto->wallet_id);
 
          $fullURL = $configs['statusBaseURL'].$dto->transactionId;
-         $apiResponse = Http::timeout($configs['timeout'])->withHeaders([
-                                          'Content-Type' => 'application/json',
-                                          'username' => 'mobilemoney',
-                                          'password' => 'test',
-                                          'Accept' => '*/*'   
-                                       ])
-                                       ->get($fullURL);
+         $apiResponse = Http::timeout($configs['timeout'])
+                              ->withHeaders([
+                                    'Content-Type' => 'application/json',
+                                    'username' => 'mobilemoney',
+                                    'password' => 'test',
+                                    'Accept' => '*/*'   
+                                 ])
+                              ->get($fullURL);
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
             $apiResponse=$apiResponse->json();
             if($apiResponse['code']==='200'){

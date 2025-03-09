@@ -2,9 +2,10 @@
 
 namespace App\Http\Services\Analytics;
 
-use App\Http\Services\Analytics\AnalyticsGeneratorService;
+use App\Http\Services\Clients\DashboardGeneratorsOfClientService;
 use App\Http\Services\Clients\ClientService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Carbon;
 use Exception;
 
@@ -12,7 +13,7 @@ class DailyAnalyticsService
 {
 
    public function __construct(
-      private AnalyticsGeneratorService $analyticsGeneratorService,
+      private DashboardGeneratorsOfClientService $dashboardGeneratorsOfClientService,
       private ClientService $clientService)
    {}
    
@@ -25,7 +26,6 @@ class DailyAnalyticsService
          $dateFrom = $dateFrom->format('Y-m-d H:i:s');
          $dateTo = $theDate->copy()->endOfDay();
          $dateTo = $dateTo->format('Y-m-d H:i:s');
-
          $params = [
                      'theMonth' => $theDate->month,
                      'theYear' => $theDate->year,
@@ -35,12 +35,21 @@ class DailyAnalyticsService
                      'theDate' => $theDate,
                      'client_id' => ''
                   ];
-
          $clients = $this->clientService->findAll(['status'=>'ACTIVE']);
+
          foreach ($clients as $client) {
+
             $params['client_id'] = $client->id;
-            $this->analyticsGeneratorService->generate($params);
+
+            $dashboardSnippets = $this->dashboardGeneratorsOfClientService->findAll($client->id);
+
+            foreach ($dashboardSnippets as $snippet) {
+               $snippetHandler = App::make($snippet);
+               $snippetHandler->generate($params);
+            }                                       
+
          }
+         
       } catch (\Throwable $e) {
          Log::info($e->getMessage());
          return false;

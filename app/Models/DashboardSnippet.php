@@ -3,20 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
 class DashboardSnippet extends Model
 {
    
-   use HasFactory, HasUuids;
+   use HasFactory;
 
    protected $table = "dashboard_snippets";
 
    protected $fillable = [
-         'client_id','xPosition','yPosition','sizeOnPage','title','type','generateHandler',
-         'viewHandler','hasDrillDown','label','backgroundColour','borderColour',
-         'isActive'
+         'name','title','type','generateHandler','viewHandler'
       ];
 
    protected $casts = [

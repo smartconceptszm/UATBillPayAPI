@@ -26,7 +26,11 @@ class CouncilPayment_Step_2
          }else{
             $txDTO->customerJourney = $txDTO->customerJourney."*".$txDTO->subscriberInput;
             $txDTO->subscriberInput = $txDTO->mobileNumber;
-            $txDTO->response="Enter Amount :\n";
+            if($clientMenu->amountPrompt){
+               $txDTO->response = $clientMenu->amountPrompt.":\n";
+            }else{
+               $txDTO->response="Enter Amount :\n";
+            }
          }
       } catch (\Throwable $e) {
          $txDTO->error = 'Council payment step 2. '. $e->getMessage();

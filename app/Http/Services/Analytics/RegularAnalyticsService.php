@@ -2,17 +2,19 @@
 
 namespace App\Http\Services\Analytics;
 
-use App\Http\Services\Analytics\AnalyticsGeneratorService;
+use App\Http\Services\Clients\DashboardGeneratorsOfClientService;
 use App\Http\Services\Clients\ClientWalletService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
+
 
 class RegularAnalyticsService
 {
 
    public function __construct(
-         private AnalyticsGeneratorService $analyticsGeneratorService,
+         private DashboardGeneratorsOfClientService $dashboardGeneratorsOfClientService,
          private ClientWalletService $clientWalletService) 
       {}
 
@@ -30,6 +32,8 @@ class RegularAnalyticsService
 
          $clientWallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
 
+         $dashboardSnippets = $this->dashboardGeneratorsOfClientService->findAll($clientWallet->client_id);
+
          $params = [
                      'client_id' => $clientWallet->client_id,
                      'theMonth' => $theDate->month,
@@ -39,12 +43,18 @@ class RegularAnalyticsService
                      'dateTo' => $dateTo,
                      'theDate' => $theDate
                   ];
-         return $this->analyticsGeneratorService->generate($params);
+
+         foreach ($dashboardSnippets as $snippet) {
+            $snippetHandler = App::make($snippet);
+            $snippetHandler->generate($params);
+         }
+         
       } catch (\Throwable $e) {
          Log::info($e->getMessage());
          return false;
       }
       
+      return true;
       
    }
 

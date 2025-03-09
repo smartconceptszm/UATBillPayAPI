@@ -15,10 +15,13 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
 
     protected function stepProcess(BaseDTO $paymentDTO)
     {
+
         try {
+
             if ($this->isPaymentEligibleForReceipt($paymentDTO->paymentStatus)) {
                 $this->processReceipt($paymentDTO);
             }
+
         } catch (\Throwable $e) {
             $paymentDTO->error = 'At post payment step. ' . $e->getMessage();
         }
@@ -36,11 +39,13 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
 
     private function processReceipt(BaseDTO $paymentDTO): void
     {
+
         if (!empty($paymentDTO->receiptNumber)) {
             $paymentDTO->paymentStatus = PaymentStatusEnum::Receipted->value;
         } else {
             $paymentDTO = $this->receiptPayment->handle($paymentDTO);
         }
+        
     }
 
 }

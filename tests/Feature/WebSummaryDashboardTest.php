@@ -1,0 +1,50 @@
+<?php
+
+namespace Tests\Feature;
+
+// use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class WebSummaryDashboardTest extends TestCase
+{
+
+   public function _test_get_main_dashboard(): void
+   {
+
+      //Login
+      $username = 'smartdev';
+      $password = '1    1';
+      $theMonth = '2024-10';
+      $response = $this->post('/login',['username' => $username,'password' =>$password]);
+      $response = $response->json()['data'];
+
+      $response = $this->withHeaders([
+                              'Authorization' => 'Bearer ' . $response['token'],
+                        ])->get('/maindashboard?client_id='.$response['client_id'].'&theMonth='.$theMonth);
+
+      $response = $response->json()['data'];
+      $this->assertTrue(\count($response)>0);
+
+   }
+   
+   public function _test_new_main_dashboard(): void
+   {
+
+      //Login
+      $username = 'smartdev';
+      $password = '1    1';
+      $theMonth = '2024-08';
+
+      $response = $this->post('/login',['username' => $username,'password' =>$password]);
+      $response = $response->json()['data'];
+
+      $response = $this->withHeaders([
+                              'Authorization' => 'Bearer ' . $response['token'],
+                        ])->get('/maindashboard?theMonth='.$theMonth);
+
+      $response = $response->json()['data'];
+      $this->assertTrue(\count($response)>0);
+
+   }
+
+}

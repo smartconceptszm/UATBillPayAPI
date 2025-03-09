@@ -53,6 +53,16 @@ class DashboardConsumerTypeTotalsService
                                           'dateOfTransaction' => $theDate->format('Y-m-d'),'consumerType' => $consumerType];
          }
 
+
+         $currentEntries = DashboardConsumerTypeTotals::where([
+                     ['dateOfTransaction', '=', $theDate->format('Y-m-d')],
+                     ['client_id', '=', $params['client_id']],
+                  ])
+                  ->pluck('id')
+                  ->toArray();
+
+         DashboardConsumerTypeTotals::destroy($currentEntries);
+
          DashboardConsumerTypeTotals::upsert(
                   $consumerTypeTotalRecords,
                   ['client_id','consumerType', 'dateOfTransaction'],

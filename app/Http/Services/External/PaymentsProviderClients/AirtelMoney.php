@@ -34,26 +34,27 @@ class AirtelMoney implements IPaymentsProviderClient
          $token = $apiToken['access_token'];
 
          $fullURL = $configs['baseURL'] . "merchant/v1/payments/";
-         $airtelResponse = Http::timeout($configs['timeout'])->withHeaders([
-               "Content-Type" => "application/json",
-               "Accept" => "*/*",
-               "X-Country" => "ZM",
-               "X-Currency" => "ZMW",
-               "Authorization" => "Bearer " . $token
-            ])->post($fullURL, [
-                  "reference" => $configs['tx_reference'],
-                  "subscriber" => [
-                     "country" => "ZM",
-                     "currency" => "ZMW",
-                     "msisdn" => \substr($dto->walletNumber,3,9),
-                  ],
-                  "transaction" => [
-                     "amount" => $dto->paymentAmount,
-                     "country" => "ZM",
-                     "currency" => "ZMW",
-                     "id" => $mainResponse['transactionId']
-                  ]
-            ]);
+         $airtelResponse = Http::timeout($configs['timeout'])
+                                 ->withHeaders([
+                                    "Content-Type" => "application/json",
+                                    "Accept" => "*/*",
+                                    "X-Country" => "ZM",
+                                    "X-Currency" => "ZMW",
+                                    "Authorization" => "Bearer " . $token
+                                 ])->post($fullURL, [
+                                       "reference" => $configs['tx_reference'],
+                                       "subscriber" => [
+                                          "country" => "ZM",
+                                          "currency" => "ZMW",
+                                          "msisdn" => \substr($dto->walletNumber,3,9),
+                                       ],
+                                       "transaction" => [
+                                          "amount" => $dto->paymentAmount,
+                                          "country" => "ZM",
+                                          "currency" => "ZMW",
+                                          "id" => $mainResponse['transactionId']
+                                       ]
+                                 ]);
 
          if ($airtelResponse->status() >= 200 && $airtelResponse->status() < 300) {
             $airtelResponse = $airtelResponse->json();
@@ -124,13 +125,15 @@ class AirtelMoney implements IPaymentsProviderClient
          $apiToken = $this->getToken($configs);
          $token = $apiToken['access_token'];
          $fullURL = $configs['baseURL'] . "standard/v1/payments/".$dto->transactionId;
-         $apiResponse = Http::timeout($configs['timeout'])->withHeaders([
-               "Content-Type" => "application/json",
-               "Accept" => "*/*",
-               "X-Country" => "ZM",
-               "X-Currency" => "ZMW",
-               "Authorization" => "Bearer ".$token
-         ])->get($fullURL);
+         $apiResponse = Http::timeout($configs['timeout'])
+                              ->withHeaders([
+                                    "Content-Type" => "application/json",
+                                    "Accept" => "*/*",
+                                    "X-Country" => "ZM",
+                                    "X-Currency" => "ZMW",
+                                    "Authorization" => "Bearer ".$token
+                                 ])
+                              ->get($fullURL);
          if ($apiResponse->status() >= 200 && $apiResponse->status() < 300) {
                $apiResponse = $apiResponse->json();
                if (\array_key_exists('status', $apiResponse)) {
@@ -190,14 +193,16 @@ class AirtelMoney implements IPaymentsProviderClient
 
       try {
          $fullURL = $configs['baseURL'] . "auth/oauth2/token";
-         $apiResponse = Http::timeout($configs['timeout'])->withHeaders([
-                  "Content-Type" => "application/json",
-                  "Accept" => "*/*"
-               ])->post($fullURL, [
-                  "client_id" => $configs['clientId'],
-                  "client_secret" =>  $configs['clientSecret'],
-                  "grant_type" => $configs['grantType']
-               ]);
+         $apiResponse = Http::timeout($configs['timeout'])
+                              ->withHeaders([
+                                    "Content-Type" => "application/json",
+                                    "Accept" => "*/*"
+                                 ])
+                              ->post($fullURL, [
+                                    "client_id" => $configs['clientId'],
+                                    "client_secret" =>  $configs['clientSecret'],
+                                    "grant_type" => $configs['grantType']
+                                 ]);
          if ($apiResponse->status() >= 200 && $apiResponse->status() < 300) {
                $apiResponse = $apiResponse->json();
                $response['access_token'] = $apiResponse['access_token'];

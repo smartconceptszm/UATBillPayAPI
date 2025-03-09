@@ -9,6 +9,7 @@ use App\Http\DTOs\BaseDTO;
 
 class Step_LogStatus extends EfectivoPipelineContract
 {
+	
 	protected function stepProcess(BaseDTO $paymentDTO)
 	{
 		try {
@@ -19,7 +20,7 @@ class Step_LogStatus extends EfectivoPipelineContract
 						$this->logSMSStatus($paymentDTO);
 					}
 			} else {
-					$this->logError($paymentDTO);
+				$this->logError($paymentDTO);
 			}
 		} catch (\Throwable $e) {
 			$paymentDTO->error = 'At logging transaction. ' . $e->getMessage();
@@ -58,7 +59,7 @@ class Step_LogStatus extends EfectivoPipelineContract
 		$logMessage = sprintf(
 			'(%s) SMS Notification %s. Session: %s. Phone: %s',
 			$paymentDTO->urlPrefix,
-			$smsStatus === 'DELIVERED' ? 'SENT' : 'NOT SENT - ' . $paymentDTO->sms['error'],
+			$smsStatus === 'DELIVERED'? 'SENT' : 'NOT SENT - ' . $paymentDTO->sms['error'],
 			$paymentDTO->sessionId,
 			$paymentDTO->mobileNumber
 		);

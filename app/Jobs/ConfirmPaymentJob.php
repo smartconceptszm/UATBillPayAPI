@@ -27,7 +27,7 @@ class ConfirmPaymentJob extends BaseJob
          $paymentsProviderCredentials = $paymentsProviderCredentialService->getProviderCredentials($this->paymentDTO->payments_provider_id);
          if($paymentsProviderCredentials[$this->paymentDTO->walletHandler.'_HAS_FREESMS'] == "YES"){
             Cache::put($this->paymentDTO->transactionId.'_smsClient',
-                           $this->paymentDTO->walletHandler.'DeliverySMS',Carbon::now()->addSeconds(2));
+                           $this->paymentDTO->walletHandler.'DeliverySMS',Carbon::now()->addSeconds(120));
          }
       //
       //Handle Job Service

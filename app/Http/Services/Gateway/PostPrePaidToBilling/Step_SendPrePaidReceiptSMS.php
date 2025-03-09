@@ -5,7 +5,6 @@ namespace App\Http\Services\Gateway\PostPrePaidToBilling;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Enums\PaymentStatusEnum;
-use App\Http\Services\Enums\PaymentTypeEnum;
 use App\Http\Services\SMS\SMSService;
 use App\Http\DTOs\SMSTxDTO;
 use App\Http\DTOs\BaseDTO;

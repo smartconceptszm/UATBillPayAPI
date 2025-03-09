@@ -11,7 +11,7 @@ class MainDashboardController extends Controller
 {
 
 	public function __construct(
-		private MainDashboardService $mainDashboard)
+		private MainDashboardService $mainDashboardService)
 	{}
 
    /**
@@ -22,7 +22,10 @@ class MainDashboardController extends Controller
 
       try {
          $criteria = $this->getParameters($request);
-         $this->response['data']=$this->mainDashboard->findAll($criteria);
+         if(!$criteria['client_id']){
+            $criteria['client_id'] = $user->client_id;
+         }
+         $this->response['data']=$this->mainDashboardService->findAll($criteria);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

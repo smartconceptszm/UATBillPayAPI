@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\Enums\PaymentStatusEnum;
-use App\Http\Services\Gateway\ConfirmPayment;
+use App\Http\Services\Gateway\ReConfirmPayment;
 use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\MoMoDTO;
 use App\Jobs\BaseJob;
@@ -12,20 +12,21 @@ use App\Jobs\BaseJob;
 class ReConfirmCallBackPaymentJob extends BaseJob
 {
 
-   // public $timeout = 600;
+   public $timeout = 180;
    public function __construct(
       private $id)
    {}
 
-   public function handle(PaymentToReviewService $paymentToReviewService,ConfirmPayment $confirmPayment, MoMoDTO $paymentDTO)
-   {
+   public function handle(PaymentToReviewService $paymentToReviewService,
+                                 ReConfirmPayment $reConfirmPayment, MoMoDTO $paymentDTO){
 
       $thePayment = $paymentToReviewService->findById($this->id);
       $paymentDTO = $paymentDTO->fromArray(\get_object_vars($thePayment));
-      if($paymentDTO->paymentStatus == PaymentStatusEnum::Submitted->value){
+      if($paymentDTO->paymentStatus == PaymentStatusEnum::Submitted->value || 
+                     $paymentDTO->paymentStatus == PaymentStatusEnum::Submission_Failed->value ){
          Log::info('('.$paymentDTO->urlPrefix.') CallBack Reconfirmation job launched. Transaction ID = '.$paymentDTO->transactionId.
                      '- Channel: '.$paymentDTO->channel.' - Wallet: '.$paymentDTO->walletNumber);
-         return $confirmPayment->handle($paymentDTO);
+         return $reConfirmPayment->handle($paymentDTO);
       }
 
    }

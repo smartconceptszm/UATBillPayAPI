@@ -18,46 +18,7 @@ class MonthlyOverYearViewService
          $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
          $dto = (object)$criteria;
 
-         $dateFrom = Carbon::parse($dto->dateFrom);
-         $dateFromYMD = $dateFrom->copy()->format('Y-m-d');
-
-         $dateTo = Carbon::parse($dto->dateTo);
-         $dateToYMD = $dateTo->copy()->format('Y-m-d');
-
-         $thePayments = DB::table('dashboard_payments_provider_totals as ppt')
-                  ->join('payments_providers as p','ppt.payments_provider_id','=','p.id')
-                  ->select(DB::raw('p.shortName as paymentsProvider,p.colour,
-                                       SUM(ppt.numberOfTransactions) AS totalTransactions,
-                                          SUM(ppt.totalAmount) as totalRevenue'))
-                  ->whereBetween('ppt.dateOfTransaction', [$dateFromYMD, $dateToYMD])
-                  ->where('ppt.client_id', '=', $dto->client_id)
-                  ->groupBy('paymentsProvider','colour')
-                  ->orderByDesc('totalRevenue');
-         // $theSQLQuery = $thePayments->toSql();
-         // $theBindings = $thePayments-> getBindings();
-         // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
-         $byPaymentProvider = $thePayments->get();
-
-         $totalRevenue = $byPaymentProvider->reduce(function ($totalRevenue, $item) {
-                                    return $totalRevenue + $item->totalRevenue;
-                              });
-
-         $totalRevenue = $totalRevenue?$totalRevenue:0;
-
-         $paymentsSummary = $byPaymentProvider->map(function ($item) {
-                                          return [
-                                             'paymentsProvider'=>$item->paymentsProvider,
-                                             'totalAmount'=>$item->totalRevenue,
-                                             'colour'=>$item->colour
-                                          ];
-                                    });
-         $paymentsSummary->prepend([
-                           'paymentsProvider'=>'TOTAL',
-                           'totalAmount'=> $totalRevenue,
-                           'colour'=>$billpaySettings['ANALYTICS_PROVIDER_TOTALS_COLOUR']
-                     ]);
-
-         $endOfMonth = $dateTo->copy()->endOfMonth();
+         $endOfMonth = $dto->dateTo->copy()->endOfMonth();
 
          $endOfTransactionsYear = $endOfMonth->copy()->addDay(1);
          $oneYearBack = $endOfTransactionsYear->subYear(1);
@@ -91,75 +52,73 @@ class MonthlyOverYearViewService
          $paymentsTrends = $paymentsTrends->groupBy('month','year')
                                           ->groupBy('paymentsProvider','colour')
                                           ->orderBy('year')
-                                          ->orderBy('month');
-         // $theSQLQuery = $paymentsTrends->toSql();
-         // $theBindings = $paymentsTrends->getBindings();
-         // $rawSql3 = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
+                                          ->orderBy('month')
+                                          ->get();
 
-         $paymentsTrends = $paymentsTrends->get();
+         $paymentsProviders = $paymentsTrends->mapWithKeys(fn($item) => [$item->paymentsProvider => $item->colour])->all();
+         $paymentsProviders['TOTAL'] = $billpaySettings['ANALYTICS_PROVIDER_TOTALS_COLOUR'];
+         $paymentsProviders = collect($paymentsProviders);
 
-         
-         // $monthsCollection = $paymentsTrends->unique('month');
          $monthlyTotals = $monthsCollection->map(function ($record) use($paymentsTrends){
-                                 $recordsForMonth = $paymentsTrends->filter(function ($item) use($record) {
-                                                         return $item->month == (int)$record['month'];
-                                                   });
-                                 if($recordsForMonth->isNotEmpty()){
-                                    return $recordsForMonth->reduce(function ($totalAmount, $item) {
-                                                                     return $totalAmount + $item->totalRevenue;
-                                                               });
-                                 }else{
-                                    return 0;
-                                 }
-                              });
+                                    $recordsForMonth = $paymentsTrends->filter(function ($item) use($record) {
+                                                            return $item->month == (int)$record['month'];
+                                                      });
+                                    if($recordsForMonth->isNotEmpty()){
+                                       return $recordsForMonth->reduce(function ($totalAmount, $item) {
+                                                                        return $totalAmount + $item->totalRevenue;
+                                                                  });
+                                    }else{
+                                       return 0;
+                                    }
+                                 });
 
+         $monthylPaymentProviderTotals = $paymentsProviders->map(function ($colour, $paymentsProvider) use ($paymentsTrends, $monthlyTotals, $monthsCollection){
+                                                   
+                                                   if($paymentsProvider == 'TOTAL'){
+                                                      return collect([
+                                                               'backgroundColor'=> "rgba(255, 255, 255,0.2)",
+                                                               'borderColor' => $colour,
+                                                               'pointBackgroundColor' => $colour,
+                                                               'pointBorderColor' => $colour,
+                                                               'label' => $paymentsProvider,
+                                                               'data' => $monthlyTotals
+                                                            ]);
+                                                   }else{
+                                                      $theData = $monthsCollection->map(function ($monthInFocus) use ($paymentsTrends, $paymentsProvider){
+                                                                        $providerRecordForMonthInFocus = $paymentsTrends->first(function ($record) use($monthInFocus,$paymentsProvider) {
+                                                                                                return (($record->paymentsProvider == $paymentsProvider)
+                                                                                                         && ((int)$monthInFocus['year']==$record->year)
+                                                                                                         && ((int)$monthInFocus['month']==$record->month)
+                                                                                                      );
+                                                                                             });
+                                                                        if($providerRecordForMonthInFocus){
+                                                                           return $providerRecordForMonthInFocus->totalRevenue;
+                                                                        }else{
+                                                                           return 0;
+                                                                        }
+                                                                     });
+                                                      return collect([
+                                                               'backgroundColor'=> "rgba(255, 255, 255,0.2)",
+                                                               'borderColor' => $colour,
+                                                               'pointBackgroundColor' => $colour,
+                                                               'pointBorderColor' => $colour,
+                                                               'label' => $paymentsProvider,
+                                                               'data' => $theData
+                                                            ]);
+                                                   }
+                                                });
+                                                
          $paymentsTrendsLabels  = $monthsCollection->map(function ($record){
                                           $theDate = Carbon::createFromFormat('Y-m-d',$record['year'].'-'.$record['month'].'-01');
                                           return $theDate->format('M Y');
                                        });
 
-         $paymentsTrendsData = $paymentsSummary->map(function ($item) use ($paymentsTrends, $monthlyTotals, $monthsCollection){
-                                    if($item['paymentsProvider'] == 'TOTAL'){
-                                       return [
-                                                'backgroundColor'=> "rgba(255, 255, 255,0.2)",
-                                                'borderColor' => $item['colour'],
-                                                'pointBackgroundColor' => $item['colour'],
-                                                'pointBorderColor' => $item['colour'],
-                                                'label' => $item['paymentsProvider'],
-                                                'data' => $monthlyTotals
-                                             ];
-                                    }else{
-                                       $theData = $monthsCollection->map(function ($monthInFocus) use ($paymentsTrends, $item){
-                                                         $providerRecordForMonthInFocus = $paymentsTrends->first(function ($record) use($monthInFocus,$item) {
-                                                                                 return (($record->paymentsProvider == $item['paymentsProvider'])
-                                                                                          && ((int)$monthInFocus['year']==$record->year)
-                                                                                          && ((int)$monthInFocus['month']==$record->month)
-                                                                                       );
-                                                                              });
-                                                         if($providerRecordForMonthInFocus){
-                                                            return $providerRecordForMonthInFocus->totalRevenue;
-                                                         }else{
-                                                            return 0;
-                                                         }
-                                                      });
-                                       return [
-                                                'backgroundColor'=> "rgba(255, 255, 255,0.2)",
-                                                'borderColor' => $item['colour'],
-                                                'pointBackgroundColor' => $item['colour'],
-                                                'pointBorderColor' => $item['colour'],
-                                                'label' => $item['paymentsProvider'],
-                                                'data' => $theData
-                                             ];
-                                    }
 
-                              });
+         $datasets =  $monthylPaymentProviderTotals->map(fn($item) => collect($item))->values()->all();                              
+         $response =[];
+         $response['datasets'] = $datasets;
+         $response['labels'] = $paymentsTrendsLabels;
 
-
-         //
-         $response = [
-                     'paymentsTrendsData' => $paymentsTrendsData,
-                     'paymentsTrendsLabels' => $paymentsTrendsLabels,
-                  ];
          return $response;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

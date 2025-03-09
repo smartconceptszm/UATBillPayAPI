@@ -53,6 +53,17 @@ class DashboardConsumerTierTotalsService
                                           'dateOfTransaction' => $theDate->format('Y-m-d'),'consumerTier' => $consumerTier];
          }
 
+
+         $currentEntries = DashboardConsumerTierTotals::where([
+                                       ['dateOfTransaction', '=', $theDate->format('Y-m-d')],
+                                       ['client_id', '=', $params['client_id']],
+                                    ])
+                                    ->pluck('id')
+                                    ->toArray();
+
+         DashboardConsumerTierTotals::destroy($currentEntries);
+
+
          DashboardConsumerTierTotals::upsert(
                   $consumerTierTotalRecords,
                   ['client_id','consumerTier', 'dateOfTransaction'],

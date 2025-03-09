@@ -6,7 +6,7 @@ use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\Payments\PaymentFailedService;
 use App\Http\Services\Clients\ClientWalletService;
 use Illuminate\Support\Facades\Auth;
-use App\Jobs\ReConfirmPaymentJob;
+use App\Jobs\ConfirmPaymentJob;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\MoMoDTO;
 use Exception;
@@ -34,7 +34,7 @@ class PaymentFailedBatchService
             $paymentDTO->user_id = $user->id;
             $paymentDTO->error = "";
             $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-            ReConfirmPaymentJob::dispatch($paymentDTO)
+            ConfirmPaymentJob::dispatch($paymentDTO)
                                     ->delay(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']))
                                     ->onQueue('low');
          }

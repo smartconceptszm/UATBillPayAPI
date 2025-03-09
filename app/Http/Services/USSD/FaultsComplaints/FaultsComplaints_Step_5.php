@@ -25,10 +25,13 @@ class FaultsComplaints_Step_5
    {
 
       try{
+
          $arrCustomerJourney=\explode("*", $txDTO->customerJourney);
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->customerAccount = $txDTO->subscriberInput;
+
          try {
+
             $latestPayment = $this->paymentService->findOneBy(['customerAccount' => $txDTO->customerAccount]);
             if($latestPayment){
                $txDTO->paymentAmount =  \str_replace(",", "",$latestPayment->paymentAmount);
@@ -46,6 +49,7 @@ class FaultsComplaints_Step_5
             $txDTO->error='At get customer account to post complaint. '.$e->getMessage();
             return $txDTO;
          }
+
          $theComplaint = $this->cTypeService->findOneBy([
                                     'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-3],
                                     'client_id'=>$txDTO->client_id,
@@ -60,17 +64,15 @@ class FaultsComplaints_Step_5
             $complaintInfo = "";
          }
 
-         $revenuePoint =  empty($txDTO->customer['revenuePoint']) 
-                           ? 'OTHER' 
-                           : $txDTO->customer['revenuePoint'];
-
          $complaintData = [
                            'customerAccount'=>$txDTO->customerAccount,
-                           'revenuePoint'=> $revenuePoint,
                            'address'=> $txDTO->customer['address'],
                            'complaint_subtype_id'=>$theSubType->id,
                            'complaintCode' => $theSubType->code,
                            'mobileNumber'=>$txDTO->mobileNumber,
+                           'revenuePoint'=> $txDTO->revenuePoint,
+                           'consumerType'=> $txDTO->consumerType,
+                           'consumerTier'=> $txDTO->consumerTier,
                            'created_at'=>$txDTO->created_at,
                            'client_id'=>$txDTO->client_id,
                            'urlPrefix'=>$txDTO->urlPrefix,

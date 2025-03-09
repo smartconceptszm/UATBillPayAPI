@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\Analytics\Views;
 
+use \App\Http\Services\Enums\ChartColours;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 use Exception;
 
 class RevenuePointViewService
@@ -15,34 +15,39 @@ class RevenuePointViewService
       try {
 
          $dto = (object)$criteria;
-
-         $dateFrom = Carbon::parse($dto->dateFrom);
-         $dateFromYMD = $dateFrom->copy()->format('Y-m-d');
-
-         $dateTo = Carbon::parse($dto->dateTo);
-         $dateToYMD = $dateTo->copy()->format('Y-m-d');
-
          $thePayments = DB::table('dashboard_revenue_point_totals as ddt')
                            ->select(DB::raw('ddt.revenuePoint,
                                              SUM(ddt.numberOfTransactions) AS totalTransactions,
                                              SUM(ddt.totalAmount) as totalRevenue'))
-                           ->whereBetween('ddt.dateOfTransaction', [$dateFromYMD, $dateToYMD])
+                           ->whereBetween('ddt.dateOfTransaction', [$dto->dateFromYMD, $dto->dateToYMD])
                            ->where('ddt.client_id', '=', $dto->client_id)
                            ->groupBy('ddt.revenuePoint');
-         $byRevenuePoint= $thePayments->get();
-         $revenuePointLabels = $byRevenuePoint->map(function ($item) {
-                                             return $item->revenuePoint;
-                                          });
-         $revenuePointData = $byRevenuePoint->map(function ($item) {
-                                          return $item->totalRevenue;
-                                       });
+         $thePayments= $thePayments->get();
+
+         $theLabels = $thePayments->map(function ($item) {
+                              return $item->revenuePoint.' ('.number_format($item->totalTransactions,0,'.',',').')';
+                           });
+
+         $theData = $thePayments->pluck('totalRevenue')->unique()->values();
+
+         $colours = ChartColours::getColours(3);
+         $datasets = [collect([
+                        'label'=>'Collections by Revenue Point',
+                        'data'=>$theData->toArray(),
+                        'backgroundColor'=> $colours['backgroundColor'],
+                        'borderColor' => $colours['borderColor'],
+                        'pointBackgroundColor' => $colours['pointBackgroundColor'],
+                        'pointBorderColor' => $colours['pointBorderColor'],
+                        'fill' => false
+                     ])];
 
          $response = [
-                        'revenuePointLabels' => $revenuePointLabels,
-                        'revenuePointData' => $revenuePointData
+                        'labels' =>$theLabels,
+                        'datasets' =>$datasets,
                      ];
    
          return $response;
+
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

@@ -2,58 +2,87 @@
 
 namespace App\Http\Services\Payments;
 
-use App\Http\Services\Payments\PaymentToReviewService;
-use App\Http\Services\Clients\ClientMenuService;
-use App\Http\Services\Enums\PaymentStatusEnum;
-use App\Http\Services\Gateway\ConfirmPayment;
-use App\Http\Services\Enums\PaymentTypeEnum;
-use Illuminate\Support\Facades\Auth;
-use App\Http\DTOs\MoMoDTO;
+use Illuminate\Support\Facades\Schema;
+use App\Models\Receipt;
 use Exception;
 
 class ReceiptService
 {
 
    public function __construct(
-      private PaymentToReviewService $paymentToReviewService,
-      private ClientMenuService $clientMenuService, 
-      private ConfirmPayment $confirmPayment,
-      private MoMoDTO $paymentDTO)
-   {}
+      private Receipt $model
+   ) {}
 
-   public function create(array $data):object|null{
-      
+   public function findAll(array $criteria = null):array|null
+   {
       try {
-
-         $thePayment = $this->paymentToReviewService->findById($data['id']);
-         $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
-         if($paymentDTO->paymentStatus != PaymentStatusEnum::Paid->value){
-            throw new Exception("Unexpected payment status - ".$paymentDTO->paymentStatus);
-         }
-
-         if($paymentDTO->receiptNumber != ''){
-            $menu = $this->clientMenuService->findById($paymentDTO->menu_id);
-            if($menu->paymentType == PaymentTypeEnum::PostPaid->value){
-               throw new Exception("Payment appears receipted! Receipt number ".$paymentDTO->receiptNumber);
-            }
-         }
-
-         if($paymentDTO->ppTransactionId == ''){
-            throw new Exception("MNO transaction Id is null. Payment not yet confirmed!");
-         }  
-
-         if($user = Auth::user()){
-            $paymentDTO->user_id = $user->id;
-         }
-
-         $paymentDTO->error = "";
-         $paymentDTO = $this->confirmPayment->handle($paymentDTO);
-      
+         return $this->model->where($criteria)->get()->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
-      return $paymentDTO;
-      
+   }
+
+   public function findById(string $id) : object|null {
+      try {
+         $item = $this->model->findOrFail($id);
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
+   public function findOneBy(array $criteria) : object|null {
+      try {
+         $item = $this->model->where($criteria)->first();
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
+   public function create(array $data) : object|null {
+      try {
+         foreach ( $data as $key => $value) {
+            if (Schema::hasColumn($this->model->getTable(), $key) && $value != '') {
+               $this->model->$key = $value;
+            }
+         }
+         $this->model->save();
+         return $this->model;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
+   public function update(array $data, string $id) : object|null {
+
+      try {
+         unset($data['id']);
+         $record = $this->model->findOrFail($id);
+         foreach ($data as $key => $value) {
+            $record->$key = $value;
+         }
+         if($record->isDirty()){
+            $record->save();
+         }
+         return $record;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+
+   }
+
+   public function delete(string $id) : bool{
+      try {
+         return $this->model->where('id', $id)->delete();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+
    }
 
 }
+
+

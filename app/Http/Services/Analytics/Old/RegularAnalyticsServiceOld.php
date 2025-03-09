@@ -1,22 +1,18 @@
 <?php
 
-namespace App\Http\Services\Analytics;
+namespace App\Http\Services\Analytics\Old;
 
-use App\Http\Services\Analytics\AnalyticsGeneratorService;
-use App\Http\Services\Clients\DashboardSnippetService;
+use App\Http\Services\Analytics\Old\AnalyticsGeneratorServiceOld;
 use App\Http\Services\Clients\ClientWalletService;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
-
-class RegularAnalyticsNewService
+class RegularAnalyticsServiceOld
 {
 
    public function __construct(
-         private AnalyticsGeneratorService $analyticsGeneratorService,
-         private DashboardSnippetService $dashboardSnippetService,
+         private AnalyticsGeneratorServiceOld $analyticsGeneratorService,
          private ClientWalletService $clientWalletService) 
       {}
 
@@ -34,8 +30,6 @@ class RegularAnalyticsNewService
 
          $clientWallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
 
-         $dashboardSnippets = $this->dashboardSnippetService->findAll(['client_id'=>$clientWallet->client_id]);
-
          $params = [
                      'client_id' => $clientWallet->client_id,
                      'theMonth' => $theDate->month,
@@ -45,18 +39,12 @@ class RegularAnalyticsNewService
                      'dateTo' => $dateTo,
                      'theDate' => $theDate
                   ];
-
-         foreach ($dashboardSnippets as $snippet) {
-            $snippetHandler = App::make($snippet->handler);
-            $snippetHandler->generate($params);
-         }
-         
+         return $this->analyticsGeneratorService->generate($params);
       } catch (\Throwable $e) {
          Log::info($e->getMessage());
          return false;
       }
       
-      return true;
       
    }
 

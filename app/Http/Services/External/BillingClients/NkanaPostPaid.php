@@ -23,11 +23,12 @@ class NkanaPostPaid implements IBillingClient
          $configs = $this->getConfigs($params['client_id']);
          $fullURL = $configs['baseURL']."nwsc-api/ClientDetails/Customer_Details";
          
-         $apiResponse = Http::withHeaders([
-                                 'Accept' => '/',
-                                 'AuthenticationCode'=> $configs['AuthenticationCode']
-                              ])
-                           ->get($fullURL, ["customerID"=> $params['customerAccount']]);
+         $apiResponse = Http::timeout($configs['timeout'])
+                              ->withHeaders([
+                                    'Accept' => '/',
+                                    'AuthenticationCode'=> $configs['AuthenticationCode']
+                                 ])
+                              ->get($fullURL, ["customerID"=> $params['customerAccount']]);
 
          if ($apiResponse->status() == 200) {
             $apiResponse = $apiResponse->json();
@@ -74,11 +75,12 @@ class NkanaPostPaid implements IBillingClient
       try {
          $configs = $this->getConfigs($postParams['client_id']);
          $fullURL = $configs['baseURL']."nwsc-api/Payment/ClientPayment";
-         $apiResponse = Http::withHeaders([
-                                 'Accept' =>  '*/*',
-                                 'AuthenticationCode'=> $configs['AuthenticationCode']
-                              ])
-                           ->post($fullURL, $postParams);
+         $apiResponse = Http::timeout($configs['timeout'])
+                              ->withHeaders([
+                                    'Accept' =>  '*/*',
+                                    'AuthenticationCode'=> $configs['AuthenticationCode']
+                                 ])
+                              ->post($fullURL, $postParams);
          if ($apiResponse->status() == 201) {
                $apiResponse = $apiResponse->json();
                if($apiResponse['Trax_Code'] == 'CPM-003'){
@@ -112,6 +114,7 @@ class NkanaPostPaid implements IBillingClient
       $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
       $configs['AuthenticationCode'] = $clientCredentials['AuthenticationCode'];
       $configs['baseURL'] = $clientCredentials['POSTPAID_BASE_URL'];
+      $configs['timeout'] = $clientCredentials['POSTPAID_TIMEOUT'];
       return $configs;
 
    }

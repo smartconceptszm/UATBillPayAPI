@@ -2,8 +2,8 @@
 
 namespace App\Http\Services\Analytics\Views;
 
+use \App\Http\Services\Enums\ChartColours;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
 use Carbon\CarbonPeriod;
 use Exception;
 
@@ -16,32 +16,25 @@ class DailyCommulativeViewService
       try {
 
          $dto = (object)$criteria;
-
-         $dateFrom = Carbon::parse($dto->dateFrom);
-         $dateFromYMD = $dateFrom->copy()->format('Y-m-d');
-
-         $dateTo = Carbon::parse($dto->dateTo);
-         $dateToYMD = $dateTo->copy()->format('Y-m-d');
-
          $thePayments = DB::table('dashboard_payments_provider_totals as ppt')
                                  ->select(DB::raw('ppt.year,ppt.month,ppt.day,
                                                    SUM(ppt.numberOfTransactions) AS totalTransactions,
                                                    SUM(ppt.totalAmount) as totalRevenue'))
-                                 ->whereBetween('ppt.dateOfTransaction', [$dateFromYMD, $dateToYMD])
+                                 ->whereBetween('ppt.dateOfTransaction', [$dto->dateFromYMD, $dto->dateToYMD])
                                  ->where('ppt.client_id', '=', $dto->client_id)
-                                 ->groupBy('day','month','year')
-                                 ->orderBy('day');
-         $dailyTrends = $thePayments->get();
+                                 ->groupBy('ppt.day','ppt.month','ppt.year')
+                                 ->orderBy('ppt.day');
+         $thePayments = $thePayments->get();
 
-         $period = CarbonPeriod::create($dateFrom, $dateTo);
-         if($dateFrom->month != $dateTo->month){
-            $period = CarbonPeriod::create($dateFrom, $dateFrom->copy()->endOfMonth());
+         $period = CarbonPeriod::create($dto->dateFrom, $dto->dateTo);
+         if($dto->dateFrom->month != $dto->dateTo->month){
+            $period = CarbonPeriod::create($dto->dateFrom, $dto->dateFrom->copy()->endOfMonth());
          }
 
          $dailyLabels =[];
          $dailyData = [];
          foreach ($period as $date) {
-            $daysRecord = $dailyTrends->firstWhere('day','=',$date->day);
+            $daysRecord = $thePayments->firstWhere('day','=',$date->day);
             $dailyLabels[] = $date->day;
             if($daysRecord){
                $dailyData[] = $daysRecord->totalRevenue;
@@ -49,17 +42,6 @@ class DailyCommulativeViewService
                $dailyData[] = 0;
             }
          }
-
-         $dailyTrends = [
-                  [
-                     'backgroundColor'=> "rgba(255, 255, 255,0.2)",
-                     'borderColor' => "rgba(75,192,192,1)",
-                     'pointBackgroundColor' => "rgba(75,192,192,1)",
-                     'pointBorderColor' => "rgba(75,192,192,1)",
-                     'label' => "Daily revenue - ".$dateFrom->copy()->format('M-Y'),
-                     'data' => $dailyData
-                  ]
-               ];
 
          $cumulativeTotal = 0;
          $cumulativeTrends = [];
@@ -69,20 +51,20 @@ class DailyCommulativeViewService
             $cumulativeTrends[] = $cumulativeTotal;
          }
 
-         $dailyCumulativeTrends = [
-                  [
-                     'backgroundColor'=> "rgba(255, 255, 255,0.2)",
-                     'borderColor' => "rgba(75,192,192,1)",
-                     'pointBackgroundColor' => "rgba(75,192,192,1)",
-                     'pointBorderColor' => "rgba(75,192,192,1)",
-                     'label' => "Cummulative Daily revenue - ".$dateFrom->copy()->format('M-Y'),
-                     'data' => $cumulativeTrends
-                  ]
-               ];
+         $dailyTrends['labels'] = collect($dailyLabels);
+         $colours = ChartColours::getColours(2);
+         $dailyTrends['datasets'][] = collect([
+                                          'backgroundColor'=>  $colours['backgroundColor'],
+                                          'borderColor' =>  $colours['borderColor'],
+                                          'pointBackgroundColor' =>  $colours['pointBackgroundColor'],
+                                          'pointBorderColor' =>  $colours['pointBorderColor'],
+                                          'label' => $dto->dateFrom->copy()->format('M-Y'),
+                                          'data' => $cumulativeTrends,
+                                          'fill' => false
+                                       ]);
 
-
-         $dateFromPreviousMonth = $dateFrom->copy()->subMonth();
-         $dateToPreviousMonth = $dateTo->copy()->subMonth();
+         $dateFromPreviousMonth = $dto->dateFrom->copy()->subMonth();
+         $dateToPreviousMonth = $dto->dateTo->copy()->subMonth();
          $thePayments = DB::table('dashboard_payments_provider_totals as ppt')
                            ->select(DB::raw('ppt.year,ppt.month,ppt.day,
                                              SUM(ppt.numberOfTransactions) AS totalTransactions,
@@ -97,7 +79,7 @@ class DailyCommulativeViewService
 
          $period = CarbonPeriod::create($dateFromPreviousMonth, $dateToPreviousMonth);
          if($dateFromPreviousMonth->month != $dateToPreviousMonth->month){
-            $period = CarbonPeriod::create($dateFrom, $dateFromPreviousMonth->copy()->endOfMonth());
+            $period = CarbonPeriod::create($dateFromPreviousMonth, $dateFromPreviousMonth->copy()->endOfMonth());
          }
 
          $dailyDataLastMonth = [];
@@ -110,15 +92,6 @@ class DailyCommulativeViewService
             }
          }
 
-         $dailyTrends[] =  [
-                     'backgroundColor'=> "rgba(255, 255, 255,0.2)",
-                     'borderColor' => "rgba(248,177,20,0.5)",
-                     'pointBackgroundColor' => "rgba(248,177,20,0.5)",
-                     'pointBorderColor' => "rgba(248,177,20,0.5)",
-                     'label' => "Daily revenue - ".$dateFromPreviousMonth->copy()->format('M-Y'),
-                     'data' => $dailyDataLastMonth
-                  ];
-
          $cumulativeTotal = 0;
          $cumulativeLastMonthTrends = [];
 
@@ -127,20 +100,18 @@ class DailyCommulativeViewService
             $cumulativeLastMonthTrends[] = $cumulativeTotal;
          }
 
-         $dailyCumulativeTrends[] =  [
-                     'backgroundColor'=> "rgba(255, 255, 255,0.2)",
-                     'borderColor' => "rgba(248,177,20,0.5)",
-                     'pointBackgroundColor' => "rgba(248,177,20,0.5)",
-                     'pointBorderColor' => "rgba(248,177,20,0.5)",
-                     'label' => "Daily revenue - ".$dateFromPreviousMonth->copy()->format('M-Y'),
-                     'data' => $cumulativeLastMonthTrends
-                  ];
-         $response = [
-                     'dailyTrendsData' => collect($dailyTrends),
-                     'dailyTrendsLabels' => collect($dailyLabels),
-                     'dailyCumulativeTrendsData' => collect($dailyCumulativeTrends),
-                  ];
-         return $response;
+         $colours = ChartColours::getColours(3);
+         $dailyTrends['datasets'][] = collect([
+                                       'backgroundColor'=> $colours['backgroundColor'],
+                                       'borderColor' => $colours['borderColor'],
+                                       'pointBackgroundColor' => $colours['pointBackgroundColor'],
+                                       'pointBorderColor' => $colours['pointBorderColor'],
+                                       'label' => $dateFromPreviousMonth->copy()->format('M-Y'),
+                                       'data' => $cumulativeLastMonthTrends,
+                                       'fill' => false
+                                    ]);
+
+         return $dailyTrends;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

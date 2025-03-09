@@ -3,8 +3,6 @@
 namespace App\Http\Services\Gateway;
 
 use App\Http\Services\Clients\ClientMenuService;
-use App\Http\Services\Enums\PaymentStatusEnum;
-use App\Http\Services\Gateway\ConfirmPayment;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pipeline\Pipeline;
@@ -12,78 +10,97 @@ use App\Http\DTOs\BaseDTO;
 
 class ReConfirmPayment
 {
-   private array $billpaySettings;
+   
+   private const WALLET_USE_MOCK_KEY = 'WALLET_USE_MOCK_';
+   private const USE_RECEIPTING_MOCK_KEY = 'USE_RECEIPTING_MOCK_';
+   private const USE_BILLING_MOCK_KEY = 'USE_BILLING_MOCK_';
 
    public function __construct(
-      private ClientMenuService $clientMenuService,
-      private ConfirmPayment $confirmPayment)
-   {
-      $this->billpaySettings = json_decode(cache('billpaySettings', json_encode([])), true);
-   }
+      private ClientMenuService $clientMenuService
+   ) {}
 
-   public function handle(BaseDTO $paymentDTO): BaseDTO
+   public function handle(BaseDTO $paymentDTO)
    {
       try {
-         // Bind the PaymentsProviderClient
-         $walletHandler = $paymentDTO->walletHandler;
-         if ($this->billpaySettings['WALLET_USE_MOCK_' . strtoupper($paymentDTO->urlPrefix)] == 'YES') {
-            $walletHandler = 'MockWallet';
-         }
-         App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class, $walletHandler);
+         $billpaySettings = $this->getBillpaySettings();
+         $this->bindHandlers($paymentDTO, $billpaySettings);
 
-         // Bind Receipting and Billing Handlers
-         $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
-         $receiptingHandler = $theMenu->receiptingHandler;
-         $billingClient = $theMenu->billingClient;
-         if ($this->billpaySettings['USE_RECEIPTING_MOCK_' . strtoupper($paymentDTO->urlPrefix)] == "YES") {
-            $receiptingHandler = "MockReceipting";
-         }
-         if ($this->billpaySettings['USE_BILLING_MOCK_' . strtoupper($paymentDTO->urlPrefix)] == "YES") {
-            $billingClient = "MockBillingClient";
-         }
-         App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class, $billingClient);
-         App::bind(\App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment::class, $receiptingHandler);
+         $paymentDTO = App::make(Pipeline::class)
+                           ->send($paymentDTO)
+                           ->through([
+                              
+                              \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
 
-         // Re-confirm the payment with retries based on the threshold
-         for ($i = 0; $i < (int)$this->billpaySettings['PAYMENT_REVIEW_THRESHOLD']; $i++) {
-            $paymentDTO->error = '';
-            $paymentDTO->status = "REVIEWED";
-            $paymentDTO = App::make(Pipeline::class)
-               ->send($paymentDTO)
-               ->through([
-                  \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_GetPaymentStatus::class,
-                  \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
-                  \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
-                  \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
-                  \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,
-                  \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
-                  \App\Http\Services\Gateway\Utility\Step_RefreshAnalytics::class
-               ])
-               ->thenReturn();
+                              \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,
+                              \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
 
-            if ($paymentDTO->paymentStatus == PaymentStatusEnum::Payment_Failed->value && !$this->shouldRetryPayment($paymentDTO->error)) {
-               break;
-            }
+                              \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_CheckReceiptStatus::class,
+                              \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class,
 
-            if ($paymentDTO->paymentStatus != PaymentStatusEnum::Payment_Failed->value) {
-               break;
-            }
-         }
+                              \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,
+                              \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
+
+                              \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_AddShortcutMessageToReceipt::class,
+                              \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_AddPromoMessageToReceipt::class,
+                              \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_SendReceiptViaSMS::class,
+
+                              \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,
+                              \App\Http\Services\Gateway\Utility\Step_LogStatus::class,
+
+                              \App\Http\Services\Gateway\Utility\Step_RefreshAnalytics::class,
+                              \App\Http\Services\Gateway\Utility\Step_AddCutomerToShortcutList::class,
+
+                           ])
+                           ->thenReturn();
       } catch (\Throwable $e) {
-         Log::error("At re-confirm payment job. " . $e->getMessage() . ' - Session: ' . $paymentDTO->sessionId);
+         $paymentDTO->error = 'At get confirm payment pipeline. ' . $e->getMessage();
+         Log::info($paymentDTO->error);
       }
+
       return $paymentDTO;
    }
 
-   private function shouldRetryPayment(string $error): bool
+   private function getBillpaySettings(): array
    {
-      $retryableErrors = [
-         'on get transaction status',
-         'Token error',
-         'Status Code',
-         'on collect funds'
-      ];
+      return json_decode(cache('billpaySettings', json_encode([])), true);
+   }
 
-      return in_array($error, $retryableErrors);
+   private function bindHandlers(BaseDTO $paymentDTO, array $billpaySettings)
+   {
+      $walletHandler = $this->getWalletHandler($paymentDTO, $billpaySettings);
+      App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class, $walletHandler);
+
+      $menu = $this->clientMenuService->findById($paymentDTO->menu_id);
+      $this->bindReceiptingAndBillingHandlers($paymentDTO, $billpaySettings, $menu);
+   }
+
+   private function getWalletHandler(BaseDTO $paymentDTO, array $billpaySettings): string
+   {
+      return $billpaySettings[self::WALLET_USE_MOCK_KEY . strtoupper($paymentDTO->urlPrefix)] === 'YES'
+         ? 'MockWallet'
+         : $paymentDTO->walletHandler;
+   }
+
+   private function bindReceiptingAndBillingHandlers(BaseDTO $paymentDTO, array $billpaySettings, $menu)
+   {
+      $receiptingHandler = $this->getReceiptingHandler($paymentDTO, $billpaySettings, $menu);
+      $billingClient = $this->getBillingClient($paymentDTO, $billpaySettings, $menu);
+
+      App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class, $billingClient);
+      App::bind(\App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment::class, $receiptingHandler);
+   }
+
+   private function getReceiptingHandler(BaseDTO $paymentDTO, array $billpaySettings, $menu): string
+   {
+      return $billpaySettings[self::USE_RECEIPTING_MOCK_KEY . strtoupper($paymentDTO->urlPrefix)] === "YES"
+         ? "MockReceipting"
+         : $menu->receiptingHandler;
+   }
+
+   private function getBillingClient(BaseDTO $paymentDTO, array $billpaySettings, $menu): string
+   {
+      return $billpaySettings[self::USE_BILLING_MOCK_KEY . strtoupper($paymentDTO->urlPrefix)] === "YES"
+         ? "MockBillingClient"
+         : $menu->billingClient;
    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services\Analytics;
+namespace App\Http\Services\Analytics\Old;
 
 use App\Models\DashboardPaymentsProviderTotals;
 use App\Models\DashboardRevenueCollectorTotals;
@@ -13,7 +13,7 @@ use App\Models\DashboardHourlyTotals;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
-class AnalyticsGeneratorService
+class AnalyticsGeneratorServiceOld
 {
 
    public function __construct(

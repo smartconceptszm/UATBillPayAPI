@@ -25,6 +25,7 @@ class FaultsComplaints_Step_4
    {
 
       try {        
+
          $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
          $theComplaintType = $this->cTypeService->findOneBy([
                                           'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-2],
@@ -37,6 +38,7 @@ class FaultsComplaints_Step_4
          $txDTO->subscriberInput = $this->validateInput->handle($theSubType->detailType,$txDTO->subscriberInput);
          $clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
          $txDTO->response = "Enter ".$clientMenu->customerAccountPrompt.":\n";
+         
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = USSDStatusEnum::InvalidInput->value;

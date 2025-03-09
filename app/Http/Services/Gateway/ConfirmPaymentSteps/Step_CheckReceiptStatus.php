@@ -13,11 +13,12 @@ class Step_CheckReceiptStatus extends EfectivoPipelineContract
     protected function stepProcess(BaseDTO $paymentDTO)
     {
         try {
-            $payment = $this->paymentService->findById($paymentDTO->id);
 
+            $payment = $this->paymentService->findById($paymentDTO->id);
             if ($this->hasReceipt($payment)) {
                 $this->updatePaymentDTO($paymentDTO, $payment);
             }
+            
         } catch (\Throwable $e) {
             $paymentDTO->error = 'At check payment receipt status. ' . $e->getMessage();
         }

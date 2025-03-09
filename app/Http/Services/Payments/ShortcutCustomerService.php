@@ -11,7 +11,7 @@ class ShortcutCustomerService
 
    public function __construct(
          private ShortcutCustomer $model
-   ) {}
+   ){}
 
    public function findAll(array $criteria = null):array|null
    {

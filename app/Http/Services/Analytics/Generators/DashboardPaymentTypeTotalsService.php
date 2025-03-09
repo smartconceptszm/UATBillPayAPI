@@ -53,6 +53,15 @@ class DashboardPaymentTypeTotalsService
                                     'day' => $params['theDay'],'totalAmount'=>$menuTotal->totalAmount];
          }
 
+         $currentEntries = DashboardPaymentTypeTotals::where([
+                     ['dateOfTransaction', '=', $theDate->format('Y-m-d')],
+                     ['client_id', '=', $params['client_id']],
+                  ])
+                  ->pluck('id')
+                  ->toArray();
+
+         DashboardPaymentTypeTotals::destroy($currentEntries);
+
          DashboardPaymentTypeTotals::upsert(
                   $menuTotalRecords,
                   ['client_id','paymentType', 'dateOfTransaction'],

@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class PaymentTransactionService
+class PaymentTransactionsService
 {
 
    public function findAll(array $criteria):array|null
@@ -22,7 +22,6 @@ class PaymentTransactionService
          $records = DB::table('payments as p')
                      ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                      ->join('payments_providers as pp','cw.payments_provider_id','=','pp.id')
-                     ->join('sessions as s','p.session_id','=','s.id')
                      ->join('client_menus as m','p.menu_id','=','m.id')
                      ->select('p.*','m.prompt as paymentType','pp.shortName as paymentProvider');
          if($dto->dateFrom && $dto->dateTo){

@@ -12,6 +12,7 @@ class ChambeshiPrePaid implements IBillingClient
 {
 
    private string $passwordVend;
+   private string $timeout;
    private string $username;
    private string $password;
    private string $baseURL;
@@ -37,10 +38,11 @@ class ChambeshiPrePaid implements IBillingClient
                         "debt_percent" =>"50"
                      ];
 
-         $apiResponse  = Http::withHeaders([
+         $apiResponse  = Http::timeout($this->timeout)
+                                 ->withHeaders([
                                              'Content-Type' => 'application/json',
                                              'Accept' => '*/*',
-                                       ])->post($fullURL , $postData);
+                                 ])->post($fullURL , $postData);
                   
          if ($apiResponse->status() == 200) {
                $apiResponse = $apiResponse->json();
@@ -102,7 +104,8 @@ class ChambeshiPrePaid implements IBillingClient
          $postParams["password"] = $this->password;
          $postParams["password_vend"] = $this->passwordVend;
          $fullURL = $this->baseURL."pos_purchase";
-         $apiResponse  = Http::withHeaders([
+         $apiResponse  = Http::timeout($this->timeout)
+                              ->withHeaders([
                                     'Content-Type' => 'application/json',
                                     'Accept' => '*/*',
                               ])->post($fullURL , $postParams);
@@ -146,6 +149,7 @@ class ChambeshiPrePaid implements IBillingClient
       $this->passwordVend = $clientCredentials['PREPAID_PASSWORD_VEND'];
       $this->username = $clientCredentials['PREPAID_USERNAME'];
       $this->password = $clientCredentials['PREPAID_PASSWORD'];
+      $this->timeout = $clientCredentials['PREPAID_TIMEOUT'];
       $this->baseURL = $clientCredentials['PREPAID_BASE_URL'];
        
    }

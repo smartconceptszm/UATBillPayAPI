@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Payments;
 
-use App\Http\Services\Payments\PaymentTransactionService;
+use App\Http\Services\Payments\PaymentTransactionsService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class PaymentTransactionController extends Controller
+class PaymentTransactionsController extends Controller
 {
 
 	public function __construct(
-		private PaymentTransactionService $paymentTransactionService)
+		private PaymentTransactionsService $paymentTransactionService)
 	{}
 
    /**

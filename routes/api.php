@@ -112,9 +112,9 @@ Route::group(['middleware' => 'mode'], function (){
       Route::group(['middleware' => 'auth'], function (){
 
          //Analaytics
+            Route::get('summarydashboard', [\App\Http\Controllers\Analytics\TopTierDashboardController::class, 'index']);
             Route::get('maindashboard', [\App\Http\Controllers\Analytics\MainDashboardController::class, 'index']);
-            Route::get('clientdashboard', [\App\Http\Controllers\Analytics\ClientDashboardController::class, 'index']);
-            Route::get('dailydashboard', [\App\Http\Controllers\Analytics\DailyDashboardController::class, 'index']);
+            Route::get('daydashboard', [\App\Http\Controllers\Analytics\DayDashboardController::class, 'index']);
             Route::get('userdashboard', [\App\Http\Controllers\Analytics\UserDashboardController::class, 'index']);
 
             Route::controller(\App\Http\Controllers\Analytics\DailyAnalyticsController::class)->group(function () {
@@ -125,11 +125,31 @@ Route::group(['middleware' => 'mode'], function (){
          //
 
          //Payment Transactions Related Routes
-            Route::get('paymenttransactions', [\App\Http\Controllers\Payments\PaymentTransactionController::class, 'index']);
+            Route::get('paymenttransactions', [\App\Http\Controllers\Payments\PaymentTransactionsController::class, 'index']);
             Route::get('paymentsnotreceipted', [\App\Http\Controllers\Payments\PaymentNotReceiptedController::class, 'index']);
-            Route::post('receipts', [\App\Http\Controllers\Payments\ReceiptController::class, 'store']);
+            Route::post('clientreceipts', [\App\Http\Controllers\Payments\ClientReceiptController::class, 'store']);
             Route::post('tokens', [\App\Http\Controllers\Payments\TokenController::class, 'store']);
-            Route::put('receipts/{id}', [\App\Http\Controllers\Payments\ReceiptController::class, 'update']);
+            Route::put('clientreceipts/{id}', [\App\Http\Controllers\Payments\ClientReceiptController::class, 'update']);
+
+            Route::controller(\App\Http\Controllers\Payments\PaymentsByConsumerTierController::class)->group(function () {
+               Route::get('/consumertierpayments/all', 'index');
+               Route::get('/consumertierpayments/summary', 'summary');
+            });
+
+            Route::controller(\App\Http\Controllers\Payments\PaymentsByConsumerTypeController::class)->group(function () {
+               Route::get('/consumertypepayments/all', 'index');
+               Route::get('/consumertypepayments/summary', 'summary');
+            });
+
+            Route::controller(\App\Http\Controllers\Payments\PaymentsByRevenueCollectorController::class)->group(function () {
+               Route::get('/revenuecollectorpayments/all', 'index');
+               Route::get('/revenuecollectorpayments/summary', 'summary');
+            });
+
+            Route::controller(\App\Http\Controllers\Payments\PaymentsByRevenuePointController::class)->group(function () {
+               Route::get('/revenuepointpayments/all', 'index');
+               Route::get('/revenuepointpayments/summary', 'summary');
+            });
 
             Route::put('paymentreceipts/{id}', [\App\Http\Controllers\Payments\PaymentWithReceiptToDeliverController::class, 'update']);
             Route::post('batchpaymentreceipts', [\App\Http\Controllers\Payments\BatchReceiptController::class, 'store']);
@@ -152,6 +172,55 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //
 
+         //Payments Reports Routes
+            Route::get('payments/consumertiers/all', [\App\Http\Controllers\Payments\PaymentsByConsumerTierController::class, 'index']);
+            Route::get('payments/consumertiers/summary', [\App\Http\Controllers\Payments\PaymentsByConsumerTierController::class, 'summary']);
+            Route::get('payments/consumertypes/all', [\App\Http\Controllers\Payments\PaymentsByConsumerTypeController::class, 'index']);
+            Route::get('payments/consumertypes/summary', [\App\Http\Controllers\Payments\PaymentsByConsumerTypeController::class, 'summary']);
+            Route::get('payments/providers/all', [\App\Http\Controllers\Payments\PaymentsByProviderController::class, 'index']);
+            Route::get('payments/providers/summary', [\App\Http\Controllers\Payments\PaymentsByProviderController::class, 'summary']);
+            Route::get('payments/collectors/all', [\App\Http\Controllers\Payments\PaymentsByRevenueCollectorController::class, 'index']);
+            Route::get('payments/collectors/summary', [\App\Http\Controllers\Payments\PaymentsByRevenueCollectorController::class, 'summary']);
+            Route::get('payments/revenuepoints/all', [\App\Http\Controllers\Payments\PaymentsByRevenuePointController::class, 'index']);
+            Route::get('payments/revenuepoints/summary', [\App\Http\Controllers\Payments\PaymentsByRevenuePointController::class, 'summary']);
+            Route::get('payments/status/all', [\App\Http\Controllers\Payments\PaymentsByStatusController::class, 'index']);
+            Route::get('payments/status/summary', [\App\Http\Controllers\Payments\PaymentsByStatusController::class, 'summary']);
+            Route::get('payments/types/all', [\App\Http\Controllers\Payments\PaymentsByTypeController::class, 'index']);
+            Route::get('payments/types/summary', [\App\Http\Controllers\Payments\PaymentsByTypeController::class, 'summary']);
+         //
+
+         //Dashboard Snippets
+            Route::controller(\App\Http\Controllers\Clients\ClientDashboardSnippetController::class)->group(function () {
+               Route::get('/clientdashboardsnippets/findoneby', 'findOneBy');
+               Route::put('/clientdashboardsnippets/{id}', 'update');
+               Route::get('/clientdashboardsnippets/{id}', 'show');
+               Route::post('/clientdashboardsnippets', 'store');
+               Route::get('/clientdashboardsnippets', 'index');
+            });
+            Route::controller(\App\Http\Controllers\Clients\ClientDashboardSnippetController::class)->group(function () {
+               Route::get('/snippetsofdashboard/{id}', 'snippetsOfDashboard');
+            });
+
+            Route::controller(\App\Http\Controllers\Clients\DashboardSnippetController::class)->group(function () {
+               Route::get('/dashboardsnippets/findoneby', 'findOneBy');
+               Route::put('/dashboardsnippets/{id}', 'update');
+               Route::get('/dashboardsnippets/{id}', 'show');
+               Route::post('/dashboardsnippets', 'store');
+               Route::get('/dashboardsnippets', 'index');
+            });
+
+            Route::controller(\App\Http\Controllers\Clients\ClientDashboardController::class)->group(function () {
+               Route::get('/clientdashboards/findoneby', 'findOneBy');
+               Route::put('/clientdashboards/{id}', 'update');
+               Route::get('/clientdashboards/{id}', 'show');
+               Route::post('/clientdashboards', 'store');
+               Route::get('/clientdashboards', 'index');
+            });
+            Route::controller(\App\Http\Controllers\Clients\ClientDashboardController::class)->group(function () {
+               Route::get('/dashboardsofclient/{id}', 'dashboardsofclient');
+            });
+         //
+
          //Clients
             Route::controller(\App\Http\Controllers\Clients\ClientController::class)->group(function () {
                Route::get('/clients/findoneby', 'findOneBy');
@@ -161,7 +230,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/clients', 'index');
             });
          //
-
+      
          //Client Billing Credentials
             Route::controller(\App\Http\Controllers\Clients\BillingCredentialController::class)->group(function () {
                Route::get('/billingcredentials/findoneby', 'findOneBy');
@@ -174,7 +243,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/billingcredentialsofclient/{id}', 'credentialsofclient');
             });
          //
-         
+               
          //Menus
             Route::get('rootmenu', [\App\Http\Controllers\Clients\ClientMenuController::class,'findOneBy']);
             Route::controller(\App\Http\Controllers\Clients\ClientMenuController::class)->group(function () {
@@ -190,20 +259,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/submenusofclient/{id}', 'subMenus');
             });
          //
-
-         //Dashboard Snippets
-            Route::controller(\App\Http\Controllers\Clients\DashboardSnippetController::class)->group(function () {
-               Route::get('/dashboardsnippets/findoneby', 'findOneBy');
-               Route::put('/dashboardsnippets/{id}', 'update');
-               Route::get('/dashboardsnippets/{id}', 'show');
-               Route::post('/dashboardsnippets', 'store');
-               Route::get('/dashboardsnippets', 'index');
-            });
-            Route::controller(\App\Http\Controllers\Clients\DashboardSnippetController::class)->group(function () {
-               Route::get('/dashboardsnippetsofclient/{id}', 'dashboardsnippetsofclient');
-            });
-         //
-
+      
          //MNOs
             Route::controller(\App\Http\Controllers\Clients\MNOController::class)->group(function () {
                Route::get('/mnos/findoneby', 'findOneBy');

@@ -35,25 +35,26 @@ class MTNMoMo implements IPaymentsProviderClient
          $token=$apiToken['access_token'];
 
          $fullURL = $configs['baseURL']."v1_0/requesttopay";
-         $mtnResponse = Http::timeout($configs['timeout'])->withHeaders([
-                           'X-Reference-Id'=>$mainResponse['transactionId'],
-                           'X-Target-Environment'=>$configs['targetEnv'],
-                           'Content-Type' => 'application/json',
-                           'Ocp-Apim-Subscription-Key' => $configs['clientId'],
-                           'Accept' => '*/*',
-                     ])
-               ->withToken($token)
-               ->post($fullURL, [
-                  "amount"=> $dto->paymentAmount,
-                  'currency'=>$configs['txCurrency'],
-                  "externalId"=>$mainResponse['transactionId'],
-                  "payer" => [
-                     "partyIdType"=>"MSISDN",
-                     "partyId"=>$dto->walletNumber, 
-                  ],
-                  "payerMessage"=>"Payment Request",
-                  "payeeNote"=>"Click yes to approve"
-         ]);
+         $mtnResponse = Http::timeout($configs['timeout'])
+                              ->withHeaders([
+                                       'X-Reference-Id'=>$mainResponse['transactionId'],
+                                       'X-Target-Environment'=>$configs['targetEnv'],
+                                       'Content-Type' => 'application/json',
+                                       'Ocp-Apim-Subscription-Key' => $configs['clientId'],
+                                       'Accept' => '*/*',
+                                    ])
+                              ->withToken($token)
+                              ->post($fullURL, [
+                                    "amount"=> $dto->paymentAmount,
+                                    'currency'=>$configs['txCurrency'],
+                                    "externalId"=>$mainResponse['transactionId'],
+                                    "payer" => [
+                                       "partyIdType"=>"MSISDN",
+                                       "partyId"=>$dto->walletNumber, 
+                                    ],
+                                    "payerMessage"=>"Payment Request",
+                                    "payeeNote"=>"Click yes to approve"
+                                 ]);
 
          if($mtnResponse->status()>=200 && $mtnResponse->status()<300 ){
             $mainResponse['status']="SUBMITTED";
@@ -83,14 +84,15 @@ class MTNMoMo implements IPaymentsProviderClient
          $apiToken = $this->getToken($configs);
          $token=$apiToken['access_token'];
          $fullURL = $configs['baseURL']."v1_0/requesttopay/".$dto->transactionId;
-         $apiResponse = Http::timeout($configs['timeout'])->withHeaders([
-                              'Ocp-Apim-Subscription-Key' => $configs['clientId'],
-                              'X-Target-Environment'=>$configs['targetEnv'],
-                              'Content-Type' => 'application/json',
-                              'Accept' => '*/*'   
-                           ])
-                     ->withToken($token)
-                     ->get($fullURL);
+         $apiResponse = Http::timeout($configs['timeout'])
+                              ->withHeaders([
+                                       'Ocp-Apim-Subscription-Key' => $configs['clientId'],
+                                       'X-Target-Environment'=>$configs['targetEnv'],
+                                       'Content-Type' => 'application/json',
+                                       'Accept' => '*/*'   
+                                    ])
+                              ->withToken($token)
+                              ->get($fullURL);
          if($apiResponse->status()>=200 && $apiResponse->status()<300 ){
                $apiResponse=$apiResponse->json();
                if($apiResponse['status']==='SUCCESSFUL'){
