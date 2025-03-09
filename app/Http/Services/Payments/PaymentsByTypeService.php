@@ -58,7 +58,7 @@ class PaymentsByTypeService
                                  [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                     PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
                         ->where('cw.client_id', '=', $dto->client_id)
-                        ->groupBy('id','paymentType')
+                        ->groupBy('cm.id','cm.prompt')
                         ->get();
          return $records->all();
       } catch (\Throwable $e) {
