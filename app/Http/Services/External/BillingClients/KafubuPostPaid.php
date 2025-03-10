@@ -101,7 +101,7 @@ class KafubuPostPaid implements IBillingClient
             $fullAddress .= " ".$theCustomer['deptDesc'];
 
             $clientCustomer = $this->clientCustomerService->findOneBy(['customerAccount'=>$customerBalance['account']]);
-            $revenuePoint = 'UNKNOWN';
+            $revenuePoint = 'OTHER';
             $consumerTier = '';
             $consumerType = '';
             if($clientCustomer){
