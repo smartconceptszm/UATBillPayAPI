@@ -45,7 +45,6 @@ class BillingMock implements IBillingClient
          'tokenNumber'=> \implode('-', \str_split(str_replace(' ', '', "TOKN".\rand(100000000000,999999999999)), 4)),
          'error'=>''
       ];
-
       return $response;
 
    }

@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Http\Services\Analytics\Generators;
+namespace App\Http\Services\Analytics\Dashboards;
 
 use App\Http\Services\Enums\PaymentStatusEnum;
-use App\Models\DashboardRevenuePointTotals;
+use App\Models\DashboardPaymentTypeTotals;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class DashboardRevenuePointTotalsService
+class DashboardPaymentTypeTotalsService
 {
 
    public function __construct(
-         private DashboardRevenuePointTotals $model
+         private DashboardPaymentTypeTotals $model
    ) {}
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(?array $criteria):array|null
    {
       try {
          return $this->model->where($criteria)->get()->all();
@@ -31,43 +31,42 @@ class DashboardRevenuePointTotalsService
       try {
 
          $theDate = $params['theDate'];
-         $revenuePointTotals = DB::table('payments as p')
-                                 ->join('client_wallets as cw','p.wallet_id','=','cw.id')
-                                 ->select(DB::raw('p.revenuePoint,
-                                                      COUNT(p.id) AS numberOfTransactions,
-                                                         SUM(p.receiptAmount) as totalAmount'))
-                                 ->where('p.created_at', '>=' ,$params['dateFrom'])
-                                 ->where('p.created_at', '<=', $params['dateTo'])
-                                 ->whereIn('p.paymentStatus', 
-                                          [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
-                                             PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
-                                 ->where('cw.client_id', '=', $params['client_id'])
-                                 ->groupBy('p.revenuePoint')
-                                 ->get();
-
-         $revenuePointTotalRecords =[];
-         foreach ($revenuePointTotals as $revenuePointTotal) {
-            $revenuePoint = $revenuePointTotal->revenuePoint? $revenuePointTotal->revenuePoint:"OTHER";
-            $revenuePointTotalRecords[] = ['client_id' => $params['client_id'],'month' => $params['theMonth'],'day' => $params['theDay'], 
-                                          'numberOfTransactions' => $revenuePointTotal->numberOfTransactions,
-                                          'totalAmount'=>$revenuePointTotal->totalAmount, 'year' => $params['theYear'], 
-                                          'dateOfTransaction' => $theDate->format('Y-m-d'),'revenuePoint' => $revenuePoint];
+         $menuTotals = DB::table('payments as p')
+                           ->join('client_wallets as cw','p.wallet_id','=','cw.id')
+                           ->join('client_menus as cm','p.menu_id','=','cm.id')
+                           ->select(DB::raw('cm.prompt AS paymentType,
+                                                COUNT(p.id) AS numberOfTransactions,
+                                                   SUM(p.receiptAmount) as totalAmount'))
+                           ->where('p.created_at', '>=' ,$params['dateFrom'])
+                           ->where('p.created_at', '<=', $params['dateTo'])
+                           ->whereIn('p.paymentStatus', 
+                                    [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
+                                       PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                           ->where('cw.client_id', '=', $params['client_id'])
+                           ->groupBy('cm.prompt')
+                           ->get();
+         $menuTotalRecords =[];
+         foreach ($menuTotals as  $menuTotal) {
+            $menuTotalRecords[] = ['client_id' => $params['client_id'],'paymentType' => $menuTotal->paymentType, 
+                                    'year' => $params['theYear'], 'numberOfTransactions' => $menuTotal->numberOfTransactions
+                                    ,'month' => $params['theMonth'],'dateOfTransaction' => $theDate->format('Y-m-d'),
+                                    'day' => $params['theDay'],'totalAmount'=>$menuTotal->totalAmount];
          }
 
-         $currentEntries = DashboardRevenuePointTotals::where([
+         $currentEntries = DashboardPaymentTypeTotals::where([
                      ['dateOfTransaction', '=', $theDate->format('Y-m-d')],
                      ['client_id', '=', $params['client_id']],
                   ])
                   ->pluck('id')
                   ->toArray();
 
-         DashboardRevenuePointTotals::destroy($currentEntries);
+         DashboardPaymentTypeTotals::destroy($currentEntries);
 
-         DashboardRevenuePointTotals::upsert(
-                  $revenuePointTotalRecords,
-                  ['client_id','revenuePoint', 'dateOfTransaction'],
+         DashboardPaymentTypeTotals::upsert(
+                  $menuTotalRecords,
+                  ['client_id','paymentType', 'dateOfTransaction'],
                   ['numberOfTransactions','totalAmount','year','month','day']
-               );
+            );
 
       } catch (\Throwable $e) {
          Log::info($e->getMessage());

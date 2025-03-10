@@ -15,8 +15,8 @@ class WebPaymentAnalyticsDailyTest extends TestCase
       $theDate = Carbon::create("2024-10-18");
       
 
-      $dailyAnalyticsService = new \App\Http\Services\Analytics\DailyAnalyticsService(
-                                       new \App\Http\Services\Analytics\AnalyticsGeneratorService(),
+      $dailyAnalyticsService = new \App\Http\Services\Analytics\Generators\DailyAnalyticsService(
+                                       new \App\Http\Services\Analytics\Generators\AnalyticsGeneratorService(),
                                        new \App\Http\Services\Clients\ClientService( new \App\Models\Client())
                                     );
 

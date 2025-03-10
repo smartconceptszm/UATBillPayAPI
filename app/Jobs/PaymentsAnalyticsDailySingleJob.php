@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\Analytics\DailyAnalyticsService;
+use App\Http\Services\Analytics\Generators\DailyAnalyticsService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Jobs\BaseJob;

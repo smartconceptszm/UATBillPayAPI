@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Services\Analytics\Generators;
+namespace App\Http\Services\Analytics\Dashboards;
 
 use App\Models\DashboardRevenueCollectorTotals;
 use App\Http\Services\Enums\PaymentStatusEnum;
@@ -18,7 +18,7 @@ class DashboardRevenueCollectorTotalsService
          private UserService $userService
    ) {}
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(?array $criteria):array|null
    {
       try {
          return $this->model->where($criteria)->get()->all();

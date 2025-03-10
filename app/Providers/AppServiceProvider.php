@@ -324,33 +324,6 @@ class AppServiceProvider extends ServiceProvider
          });
       //
 
-      //Dashboard Generate Handlers
-         $this->app->singleton('ConsumerTier', function () {
-            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardConsumerTierTotalsService::class);
-         });
-         $this->app->singleton('ConsumerType', function () {
-            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardConsumerTypeTotalsService::class);
-         });
-         $this->app->singleton('Hourly', function () {
-            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardHourlyTotalsService::class);
-         });
-         $this->app->singleton('PaymentProvider', function () {
-            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardPaymentProviderTotalsService::class);
-         });
-         $this->app->singleton('PaymentStatus', function () {
-            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardPaymentStatusTotalsService::class);
-         });
-         $this->app->singleton('PaymentType', function () {
-            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardPaymentTypeTotalsService::class);
-         });
-         $this->app->singleton('RevenueCollector', function () {
-            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardRevenueCollectorTotalsService::class);
-         });
-         $this->app->singleton('RevenuePoint', function () {
-            return $this->app->make(\App\Http\Services\Analytics\Generators\DashboardRevenuePointTotalsService::class);
-         });
-      //
-
       //Dashboard View Handlers
          $this->app->singleton('ConsumerTierView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\ConsumerTierViewService::class);

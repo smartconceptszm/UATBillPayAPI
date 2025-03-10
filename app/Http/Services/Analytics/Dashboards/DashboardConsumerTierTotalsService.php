@@ -1,17 +1,16 @@
 <?php
 
-namespace App\Http\Services\CRM;
+namespace App\Http\Services\Analytics\Dashboards;
 
+use App\Models\DashboardConsumerTierTotals;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Auth;
-use App\Models\Complaint;
 use Exception;
 
-class ComplaintService
+class DashboardConsumerTierTotalsService
 {
 
    public function __construct(
-         private Complaint $model
+         private DashboardConsumerTierTotals $model
    ) {}
 
    public function findAll(?array $criteria):array|null
@@ -50,9 +49,8 @@ class ComplaintService
                $this->model->$key = $value;
             }
          }
-         $this->model->caseNumber = $data['customerAccount'].'_'.date('YmdHis');
          $this->model->save();
-        return $this->model;
+         return $this->model;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
@@ -62,9 +60,6 @@ class ComplaintService
 
       try {
          unset($data['id']);
-         $user = Auth::user(); 
-         $data['assignedTo'] = $user->id;
-         $data['assignedBy'] = $user->id;
          $record = $this->model->findOrFail($id);
          foreach ($data as $key => $value) {
             $record->$key = $value;
@@ -89,8 +84,3 @@ class ComplaintService
    }
 
 }
-
-
-
-
-

@@ -13,7 +13,7 @@ class BillingClientKafubuTest extends TestCase
 
       //Main Menu
       $params = [
-                  'customerAccount' => '4002523',
+                  'customerAccount' => '1031029',
                   'client_id' =>'a1ca6f8c-240b-11ef-98b6-0a3595084709'
                ];
       $billingClient =  new \App\Http\Services\External\BillingClients\KafubuPostPaid(

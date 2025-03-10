@@ -3,7 +3,7 @@
 namespace App\Http\Services\USSD\StepServices;
 
 use App\Http\Services\Clients\ClientWalletCredentialsService;
-use App\Http\Services\Clients\ClientRevenueCodeService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Clients\ClientWalletService;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -13,8 +13,8 @@ class GetAmount
 
    public function __construct(
       private ClientWalletCredentialsService $walletCredentialsService,
-      private ClientRevenueCodeService $clientRevenueCodeService,
-      private ClientWalletService $clientWalletService)
+      private ClientWalletService $clientWalletService,
+      private ClientMenuService $clientMenuService)
    {}
 
    public function handle(BaseDTO $txDTO):array
@@ -35,6 +35,7 @@ class GetAmount
                                                    ]);
          $txDTO->wallet_id = $theWallet->id;  
       }
+
       $walletCredentials = $this->walletCredentialsService->getWalletCredentials($txDTO->wallet_id);
       $maxPaymentAmount = (float)$walletCredentials['MAX_PAYMENT_AMOUNT'];
       $minPaymentAmount = (float)$walletCredentials['MIN_PAYMENT_AMOUNT'];
@@ -48,11 +49,25 @@ class GetAmount
          throw new Exception("Amount either below the minimum or above the maximum amount allowed", 1);
       }
 
-      $revenueCode = $this->clientRevenueCodeService->findOneBy(['menu_id'=>$txDTO->menu_id,'code'=>$txDTO->customerAccount]);
-      if($revenueCode){
-         if(($revenueCode->amountFixed) =='YES' && ($amount != $revenueCode->requiredAmount)){
-            throw new Exception("Payment amount MUST equal the required amount of ZMW ".
-            number_format($revenueCode->requiredAmount, 2, '.', ','), 1);
+      $theMenu = $this->clientMenuService->findById($txDTO->menu_id);
+      if($theMenu->amountFixed == 'YES'){
+         $arrRequiredAmounts = explode("*", trim($theMenu->requiredAmount));
+         array_walk($arrRequiredAmounts, function (&$value) {
+                        $value = (float) $value;
+                  });
+         $epsilon = 0.001;
+         $matches = array_filter($arrRequiredAmounts, fn($value) => abs($value - $amount) < $epsilon);
+
+         if (empty($matches)) {
+            $errorMessage = "Payment amount MUST equal the required amount of: ";
+            for ($i=1; $i <= count($arrRequiredAmounts); $i++) { 
+               if($i == 1){
+                  $errorMessage .= "ZMW ".number_format($arrRequiredAmounts[$i-1], 2, '.', ',');
+               }else{
+                  $errorMessage .= " or ZMW ".number_format($arrRequiredAmounts[$i-1], 2, '.', ',');
+               }
+            }
+            throw new Exception($errorMessage,1);
          }
       }
       return [$subscriberInput, $amount];

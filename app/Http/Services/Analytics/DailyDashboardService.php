@@ -19,6 +19,7 @@ class DailyDashboardService
    {
    
       try {
+
          $dto = (object)$criteria;
          $dateFrom = Carbon::parse($dto->theDate)->startOfDay();
          $dateTo = Carbon::parse($dto->theDate)->endOfDay();

@@ -28,31 +28,13 @@ class MakeCouncilPaymentShortcut
 
       $arrInputs = explode("*", $txDTO->subscriberInput);
 
-      if(count($arrInputs) < 3){
+      if(count($arrInputs) != 3){
          $txDTO->subscriberInput = $arrInputs[0];
          return $txDTO;
       }
 
-      $txDTO->subscriberInput = array_pop($arrInputs);
-      if(count($arrInputs) == 3){
-         $txDTO->reference = array_pop($arrInputs);
-      }else{
-         $txDTO->reference = $txDTO->mobileNumber;
-      }
-      array_pop($arrInputs);
-
-      if($selectedMenu->parent_id == '0'){
-         array_splice($arrInputs,1,0,$selectedMenu->order);
-      }else{
-         while ($selectedMenu->parent_id != '0') {
-            array_splice($arrInputs,1,0,(string)$selectedMenu->order);
-            $selectedMenu = $this->clientMenuService->findById($selectedMenu->parent_id);
-         }
-      }
-
-      $arrInputs[] = $txDTO->customerAccount;
-      $arrInputs[] = $txDTO->reference;
-      $txDTO->customerJourney = implode( "*" ,$arrInputs);
+      $txDTO->subscriberInput = $arrInputs[2];
+      $txDTO->customerJourney = $arrInputs[0].'*'.$arrInputs[1];
 
       $walletStatus = $this->checkPaymentsEnabled->handle($txDTO);
       if(!$walletStatus['enabled']){

@@ -1,38 +1,22 @@
 <?php
 
-namespace App\Http\Services\Clients;
+namespace App\Http\Services\Analytics\Dashboards;
 
+use App\Models\DashboardConsumerTypeTotals;
 use Illuminate\Support\Facades\Schema;
-use App\Models\ClientRevenueCode;
 use Exception;
 
-class ClientRevenueCodeService
+class DashboardConsumerTypeTotalsService
 {
 
    public function __construct(
-         private ClientRevenueCode $model
+         private DashboardConsumerTypeTotals $model
    ) {}
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(?array $criteria):array|null
    {
       try {
          return $this->model->where($criteria)->get()->all();
-      } catch (\Throwable $e) {
-         throw new Exception($e->getMessage());
-      }
-   }
-
-   public function getRevenueCodesOfMenu(string $menu_id):array|null
-   {
-      try {
-         $revenueCodes = [];
-         $records = $this->model->where(['menu_id'=>$menu_id])->get()->all();
-         if($records){
-            foreach ($records as $record) {
-               $revenueCodes[$record->code]=$record->name;
-            }
-         }
-         return $revenueCodes;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

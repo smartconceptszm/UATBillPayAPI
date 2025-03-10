@@ -16,7 +16,7 @@ class SurveyService
    ) {}
 
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(?array $criteria):array|null
    {
       try {
          $user = Auth::user(); 

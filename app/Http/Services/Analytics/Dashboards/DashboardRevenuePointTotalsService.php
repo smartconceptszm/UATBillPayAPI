@@ -1,22 +1,22 @@
 <?php
 
-namespace App\Http\Services\Analytics\Generators;
+namespace App\Http\Services\Analytics\Dashboards;
 
 use App\Http\Services\Enums\PaymentStatusEnum;
-use App\Models\DashboardConsumerTypeTotals;
+use App\Models\DashboardRevenuePointTotals;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class DashboardConsumerTypeTotalsService
+class DashboardRevenuePointTotalsService
 {
 
    public function __construct(
-         private DashboardConsumerTypeTotals $model
+         private DashboardRevenuePointTotals $model
    ) {}
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(?array $criteria):array|null
    {
       try {
          return $this->model->where($criteria)->get()->all();
@@ -29,10 +29,11 @@ class DashboardConsumerTypeTotalsService
    {
 
       try {
+
          $theDate = $params['theDate'];
-         $consumerTypeTotals = DB::table('payments as p')
+         $revenuePointTotals = DB::table('payments as p')
                                  ->join('client_wallets as cw','p.wallet_id','=','cw.id')
-                                 ->select(DB::raw('p.consumerType,
+                                 ->select(DB::raw('p.revenuePoint,
                                                       COUNT(p.id) AS numberOfTransactions,
                                                          SUM(p.receiptAmount) as totalAmount'))
                                  ->where('p.created_at', '>=' ,$params['dateFrom'])
@@ -41,31 +42,30 @@ class DashboardConsumerTypeTotalsService
                                           [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                              PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
                                  ->where('cw.client_id', '=', $params['client_id'])
-                                 ->groupBy('p.consumerType')
+                                 ->groupBy('p.revenuePoint')
                                  ->get();
 
-         $consumerTypeTotalRecords =[];
-         foreach ($consumerTypeTotals as $consumerTypeTotal) {
-            $consumerType = $consumerTypeTotal->consumerType? $consumerTypeTotal->consumerType:"OTHER";
-            $consumerTypeTotalRecords[] = ['client_id' => $params['client_id'],'month' => $params['theMonth'],'day' => $params['theDay'], 
-                                          'numberOfTransactions' => $consumerTypeTotal->numberOfTransactions,
-                                          'totalAmount'=>$consumerTypeTotal->totalAmount, 'year' => $params['theYear'], 
-                                          'dateOfTransaction' => $theDate->format('Y-m-d'),'consumerType' => $consumerType];
+         $revenuePointTotalRecords =[];
+         foreach ($revenuePointTotals as $revenuePointTotal) {
+            $revenuePoint = $revenuePointTotal->revenuePoint? $revenuePointTotal->revenuePoint:"OTHER";
+            $revenuePointTotalRecords[] = ['client_id' => $params['client_id'],'month' => $params['theMonth'],'day' => $params['theDay'], 
+                                          'numberOfTransactions' => $revenuePointTotal->numberOfTransactions,
+                                          'totalAmount'=>$revenuePointTotal->totalAmount, 'year' => $params['theYear'], 
+                                          'dateOfTransaction' => $theDate->format('Y-m-d'),'revenuePoint' => $revenuePoint];
          }
 
-
-         $currentEntries = DashboardConsumerTypeTotals::where([
+         $currentEntries = DashboardRevenuePointTotals::where([
                      ['dateOfTransaction', '=', $theDate->format('Y-m-d')],
                      ['client_id', '=', $params['client_id']],
                   ])
                   ->pluck('id')
                   ->toArray();
 
-         DashboardConsumerTypeTotals::destroy($currentEntries);
+         DashboardRevenuePointTotals::destroy($currentEntries);
 
-         DashboardConsumerTypeTotals::upsert(
-                  $consumerTypeTotalRecords,
-                  ['client_id','consumerType', 'dateOfTransaction'],
+         DashboardRevenuePointTotals::upsert(
+                  $revenuePointTotalRecords,
+                  ['client_id','revenuePoint', 'dateOfTransaction'],
                   ['numberOfTransactions','totalAmount','year','month','day']
                );
 

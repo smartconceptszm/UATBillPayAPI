@@ -19,7 +19,7 @@ class EnquiryHandler
 	{
 
 		try {
-			
+
 			$txDTO->customer = $this->billingClient->getAccountDetails([
 																		'customerAccount'=>$txDTO->customerAccount,
 																		'paymentAmount'=>$txDTO->paymentAmount,
@@ -69,8 +69,8 @@ class EnquiryHandler
 				throw new \Exception($e->getMessage(), 2);
 			}   
 		}
-      
 		return $txDTO;
+		
 	}
     
 }

@@ -20,14 +20,16 @@ class GetShortcutMenu
       try {
 
          $arrInputs = explode("*", $txDTO->subscriberInput);
-         $arrInputs = array_slice($arrInputs,0,2);
          if($txDTO->ussdAggregator == 'YES'){
+            $arrInputs = array_slice($arrInputs,0,3);
             $theClient = $this->aggregatedClientService->findOneBy(['client_id' =>$txDTO->client_id]);
-            array_splice($arrInputs,1,0,(string)$theClient->menuNo);
+            array_splice($arrInputs,1,0,(string)$theClient->menuNo);         
+            $strShortcut = implode('*',$arrInputs)."#";
+         }else{
+            $arrInputs = array_slice($arrInputs,0,2);
+            $strShortcut = implode('*',$arrInputs)."*(AMOUNT)#";
          }
-         $strShortcut = implode('*',$arrInputs)."*(AMOUNT)#";
          return $this->clientMenuService->findOneBy(['client_id' =>$txDTO->client_id, 'shortcut'=>$strShortcut]);
-         
       } catch (\Throwable $e) {
          throw $e;
       }

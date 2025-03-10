@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Http\Services\Analytics\RegularAnalyticsService;
+use App\Http\Services\Analytics\Generators\RegularAnalyticsService;
 use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\BaseDTO;
 use App\Jobs\BaseJob;

@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Services\Analytics;
+namespace App\Http\Services\Analytics\Generators;
 
-use App\Http\Services\Clients\DashboardGeneratorsOfClientService;
+use App\Http\Services\Analytics\Generators\AnalyticsGeneratorService;
 use App\Http\Services\Clients\ClientService;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Carbon;
 use Exception;
 
@@ -13,7 +12,7 @@ class DailyAnalyticsService
 {
 
    public function __construct(
-      private DashboardGeneratorsOfClientService $dashboardGeneratorsOfClientService,
+      private AnalyticsGeneratorService $analyticsGeneratorService,
       private ClientService $clientService)
    {}
    
@@ -21,11 +20,9 @@ class DailyAnalyticsService
    {
       
       try {
-
-         $dateFrom = $theDate->copy()->startOfDay();
-         $dateFrom = $dateFrom->format('Y-m-d H:i:s');
-         $dateTo = $theDate->copy()->endOfDay();
-         $dateTo = $dateTo->format('Y-m-d H:i:s');
+         
+         $dateFrom = $theDate->copy()->startOfDay()->format('Y-m-d H:i:s');
+         $dateTo = $theDate->copy()->endOfDay()->format('Y-m-d H:i:s');
          $params = [
                      'theMonth' => $theDate->month,
                      'theYear' => $theDate->year,
@@ -38,16 +35,8 @@ class DailyAnalyticsService
          $clients = $this->clientService->findAll(['status'=>'ACTIVE']);
 
          foreach ($clients as $client) {
-
             $params['client_id'] = $client->id;
-
-            $dashboardSnippets = $this->dashboardGeneratorsOfClientService->findAll($client->id);
-
-            foreach ($dashboardSnippets as $snippet) {
-               $snippetHandler = App::make($snippet);
-               $snippetHandler->generate($params);
-            }                                       
-
+            $this->analyticsGeneratorService->generate($params);                                 
          }
          
       } catch (\Throwable $e) {

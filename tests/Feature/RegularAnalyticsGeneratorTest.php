@@ -13,12 +13,14 @@ class RegularAnalyticsGeneratorTest extends TestCase
       $paymentDTO = $paymentDTO->fromArray(
          [
             'wallet_id' => '9dcb5dba-df36-4c09-bced-d2f0ddb4b3be',
-            'created_at' => '2025-03-07',
+            'created_at' => '2025-03-01',
          ]);
-      $regularGenerator = new \App\Http\Services\Analytics\RegularAnalyticsService(
-                              new \App\Http\Services\Clients\DashboardGeneratorsOfClientService(),
-                              new \App\Http\Services\Clients\ClientWalletService(new \App\Models\ClientWallet())
-                           );
+      $regularGenerator = new \App\Http\Services\Analytics\Generators\RegularAnalyticsService(
+         new \App\Http\Services\Analytics\Generators\AnalyticsGeneratorService(
+            new \App\Http\Services\Auth\UserService(new \App\Http\Services\Auth\UserGroupService(new \App\Models\UserGroup()),new \App\Models\User())
+         ),
+         new \App\Http\Services\Clients\ClientWalletService(new \App\Models\ClientWallet())
+      );
 
       $response = $regularGenerator->generate($paymentDTO);
       

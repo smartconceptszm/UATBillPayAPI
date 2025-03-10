@@ -4,7 +4,6 @@ namespace App\Http\Services\Gateway\ReceiptingHandlers;
 
 use App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\IBillingClient;
-use App\Http\Services\Clients\ClientRevenueCodeService;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Carbon;
@@ -14,7 +13,6 @@ class ReceiptMazabukaOnCustomerAccount implements IReceiptPayment
 {
 
     public function __construct(
-			private ClientRevenueCodeService $revenueCodeService,
 		  	private ClientMenuService $clientMenuService,
         	private IBillingClient $billingClient)
     {}

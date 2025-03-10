@@ -16,7 +16,7 @@ class ComplaintSubTypeService
    ) {}
 
   
-   public function findAll(array $criteria = null):array|null
+   public function findAll(?array $criteria):array|null
    {
       try {
          return $this->model->where($criteria)->orderBy('order')->get()->all();

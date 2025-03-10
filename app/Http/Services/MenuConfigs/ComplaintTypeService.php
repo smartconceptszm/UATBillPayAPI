@@ -15,7 +15,7 @@ class ComplaintTypeService
          private ComplaintType $model
    ) {}
 
-   public function findAll(array $criteria = null):array|null
+   public function findAll(?array $criteria):array|null
    {
       try {
          if(!Arr::exists($criteria,"client_id")){

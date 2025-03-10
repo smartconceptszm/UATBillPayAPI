@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Services\Analytics;
+namespace App\Http\Services\Analytics\Generators;
 
-use App\Http\Services\Clients\DashboardGeneratorsOfClientService;
+use App\Http\Services\Analytics\Generators\AnalyticsGeneratorService;
 use App\Http\Services\Clients\ClientWalletService;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
 
@@ -14,7 +13,7 @@ class RegularAnalyticsService
 {
 
    public function __construct(
-         private DashboardGeneratorsOfClientService $dashboardGeneratorsOfClientService,
+         private AnalyticsGeneratorService $analyticsGeneratorService,
          private ClientWalletService $clientWalletService) 
       {}
 
@@ -25,15 +24,11 @@ class RegularAnalyticsService
       try {
          
          $theDate = Carbon::parse($paymentDTO->created_at);
-         $dateFrom = $theDate->copy()->startOfDay();
-         $dateFrom = $dateFrom->format('Y-m-d H:i:s');
-         $dateTo = $theDate->copy()->endOfDay();
-         $dateTo = $dateTo->format('Y-m-d H:i:s');
+         $dateFrom = $theDate->copy()->startOfDay()->format('Y-m-d H:i:s');
+         $dateTo = $theDate->copy()->endOfDay()->format('Y-m-d H:i:s');
 
          $clientWallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
-
-         $dashboardSnippets = $this->dashboardGeneratorsOfClientService->findAll($clientWallet->client_id);
-
+         
          $params = [
                      'client_id' => $clientWallet->client_id,
                      'theMonth' => $theDate->month,
@@ -43,11 +38,7 @@ class RegularAnalyticsService
                      'dateTo' => $dateTo,
                      'theDate' => $theDate
                   ];
-
-         foreach ($dashboardSnippets as $snippet) {
-            $snippetHandler = App::make($snippet);
-            $snippetHandler->generate($params);
-         }
+         $this->analyticsGeneratorService->generate($params);
          
       } catch (\Throwable $e) {
          Log::info($e->getMessage());

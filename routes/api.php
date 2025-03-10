@@ -392,20 +392,7 @@ Route::group(['middleware' => 'mode'], function (){
             Route::controller(\App\Http\Controllers\Clients\AggregatedClientController::class)->group(function () {
                Route::get('/clientsofaggregator/{id}', 'clientsofaggregator');
             });
-         //
-
-         //Client Revenue Codes
-            Route::controller(\App\Http\Controllers\Clients\ClientRevenueCodeController::class)->group(function () {
-               Route::get('/revenuecodes/findoneby', 'findOneBy');
-               Route::put('/revenuecodes/{id}', 'update');
-               Route::get('/revenuecodes/{id}', 'show');
-               Route::post('/revenuecodes', 'store');
-               Route::get('/revenuecodes', 'index');
-            });
-            Route::controller(\App\Http\Controllers\Clients\ClientRevenueCodeController::class)->group(function () {
-               Route::get('/revenuecodesofmenu/{menu_id}', 'revenueCodesOfMenu');
-            });
-         //   
+         //  
    
          //Client Revenue Points
             Route::controller(\App\Http\Controllers\Clients\ClientRevenuePointController::class)->group(function () {

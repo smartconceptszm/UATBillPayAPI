@@ -21,8 +21,8 @@ class WebPaymentAnalyticsRegularTest extends TestCase
       $thePayment = $paymentDTO->fromArray(\get_object_vars($thePayment));
 
 
-      $regularAnalyticsService= new \App\Http\Services\Analytics\RegularAnalyticsService(
-                                       new \App\Http\Services\Analytics\AnalyticsGeneratorService(),
+      $regularAnalyticsService= new \App\Http\Services\Analytics\Generators\RegularAnalyticsService(
+                                       new \App\Http\Services\Analytics\Generators\AnalyticsGeneratorService(),
                                        new \App\Http\Services\Clients\ClientWalletService(new \App\Models\ClientWallet())
                                     );
 

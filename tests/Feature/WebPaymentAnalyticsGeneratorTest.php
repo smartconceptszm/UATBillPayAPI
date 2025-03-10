@@ -29,7 +29,7 @@ class WebPaymentAnalyticsGeneratorTest extends TestCase
                      'dateTo' => $dateTo,
                   ];
 
-      $analyticsGenerator = new \App\Http\Services\Analytics\AnalyticsGeneratorService();
+      $analyticsGenerator = new \App\Http\Services\Analytics\Generators\AnalyticsGeneratorService();
 
       $response = $analyticsGenerator->generate($params);
 
