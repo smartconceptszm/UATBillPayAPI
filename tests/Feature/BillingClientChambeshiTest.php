@@ -13,14 +13,13 @@ class BillingClientChambeshiTest extends TestCase
 
       //Main Menu
       $params = [
-                  'customerAccount' => 'KCT10482',
+                  'customerAccount' => 'KCT13657',
                   'client_id' =>'39d62802-7303-11ee-b8ce-fec6e52a2330'
                ];
 
       $billingClient =  new \App\Http\Services\External\BillingClients\ChambeshiPostPaid(
-                                 new \App\Http\Services\External\BillingClients\Chambeshi\Chambeshi(
-                                             new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential()))
-                              );
+                                    new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential())
+                                 );
 
       $response = $billingClient->getAccountDetails($params);
       $this->assertTrue($response);
@@ -42,9 +41,9 @@ class BillingClientChambeshiTest extends TestCase
                   'ReceiptNo'=>"KCT10482_".\now()->timestamp
                ];
 
+
       $billingClient =  new \App\Http\Services\External\BillingClients\ChambeshiPostPaid(
-                  new \App\Http\Services\External\BillingClients\Chambeshi\Chambeshi(
-                              new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential()))
+                  new \App\Http\Services\Clients\BillingCredentialService(new \App\Models\BillingCredential())
                );
       $response = $billingClient->postPayment($params);
       $this->assertTrue($response);

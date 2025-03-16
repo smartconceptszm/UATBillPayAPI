@@ -15,7 +15,7 @@ class Step_CheckReceiptStatus extends EfectivoPipelineContract
         try {
 
             $payment = $this->paymentService->findById($paymentDTO->id);
-            if ($this->hasReceipt($payment)) {
+            if (!empty($payment->receiptNumber)) {
                 $this->updatePaymentDTO($paymentDTO, $payment);
             }
             
@@ -25,12 +25,7 @@ class Step_CheckReceiptStatus extends EfectivoPipelineContract
 
         return $paymentDTO;
     }
-
-    private function hasReceipt($payment): bool
-    {
-        return !empty($payment->receiptNumber);
-    }
-
+    
     private function updatePaymentDTO(BaseDTO $paymentDTO, $payment): void
     {
         $paymentDTO->paymentStatus = $payment->paymentStatus;

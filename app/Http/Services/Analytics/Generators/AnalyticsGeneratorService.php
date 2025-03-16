@@ -220,7 +220,7 @@ class AnalyticsGeneratorService
             $menuTotals = DB::table('payments as p')
                               ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                               ->join('client_menus as cm','p.menu_id','=','cm.id')
-                              ->select(DB::raw('cm.prompt AS paymentType,
+                              ->select(DB::raw('cm.id, cm.prompt AS paymentType,
                                                    COUNT(p.id) AS numberOfTransactions,
                                                       SUM(p.receiptAmount) as totalAmount'))
                               ->where('p.created_at', '>=' ,$params['dateFrom'])
@@ -229,11 +229,11 @@ class AnalyticsGeneratorService
                                        [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                           PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
                               ->where('cw.client_id', '=', $params['client_id'])
-                              ->groupBy('cm.prompt')
+                              ->groupBy('cm.id','cm.prompt')
                               ->get();
             $menuTotalRecords =[];
             foreach ($menuTotals as  $menuTotal) {
-               $menuTotalRecords[] = ['client_id' => $params['client_id'],'paymentType' => $menuTotal->paymentType, 
+               $menuTotalRecords[] = ['client_id' => $params['client_id'],'menu_id' => $menuTotal->id,'paymentType' => $menuTotal->paymentType, 
                                  'year' => $params['theYear'], 'numberOfTransactions' => $menuTotal->numberOfTransactions
                                  ,'month' => $params['theMonth'],'dateOfTransaction' => $theDate->format('Y-m-d'),
                                  'day' => $params['theDay'],'totalAmount'=>$menuTotal->totalAmount];
@@ -241,7 +241,7 @@ class AnalyticsGeneratorService
 
             DashboardPaymentTypeTotals::upsert(
                                           $menuTotalRecords,
-                                          ['client_id','paymentType', 'dateOfTransaction'],
+                                          ['client_id','menu_id','paymentType', 'dateOfTransaction'],
                                           ['numberOfTransactions','totalAmount','year','month','day']
                                        );
          //

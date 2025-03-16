@@ -20,7 +20,7 @@ class PaymentsByConsumerTierController extends Controller
    {
 
       try {
-         $this->response['data'] =  $this->paymentsByConsumerTierService->findAll($request->query());
+            $this->response['data'] =  $this->paymentsByConsumerTierService->findAll($request->query());
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

@@ -9,6 +9,7 @@ use App\Http\Services\Clients\ClientService;
 use App\Http\Services\Clients\MnoService;
 use App\Http\Services\SMS\MessageService;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;  
 use App\Http\Services\Enums\MNOs;
@@ -46,6 +47,8 @@ class SMSService
          $dto = $this->getSMSChannel($dto);
          //Send the SMS
          $dto = $this->sendMessage($dto);
+         //Log the transaction
+         $this->logStatus($dto);
          // Save the Record
          DB::beginTransaction();
          try {
@@ -169,5 +172,26 @@ class SMSService
       return $dto;
 
    }
+
+   private function logStatus(BaseDTO $dto)
+   {
+
+      $logMessage = sprintf(
+         '(%s) SMS Message %s. Type: %s. %sPhone: %s.',
+         $dto->urlPrefix,
+         $dto->status === 'DELIVERED'? "SENT. Message: ".$dto->message:" NOT SENT, SMS Server error",
+         $dto->type,
+         $dto->transaction_id? "Transaction Id: ".$dto->transaction_id." .":" ",
+         $dto->mobileNumber
+      );
+
+      if ($dto->status === 'DELIVERED') {
+         Log::info($logMessage);
+      } else {
+         Log::error($logMessage);
+      }
+
+   }
+
 
 }

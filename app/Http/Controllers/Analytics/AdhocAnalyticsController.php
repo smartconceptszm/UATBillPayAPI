@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Analytics;
 
+use App\Jobs\PaymentsTypeAnalyticsReviewJob;
 use App\Jobs\PaymentsAnalyticsDailySingleJob;
 use App\Jobs\PaymentsAnalyticsDailyBulkJob;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Carbon;
 use Illuminate\Http\Request;
 
-class DailyAnalyticsController extends Controller
+class AdhocAnalyticsController extends Controller
 {
 
    public function oneMonth(Request $request)
@@ -46,5 +47,23 @@ class DailyAnalyticsController extends Controller
       return response()->json( $this->response);
 
    }
+
+   public function paymentTypeCorrection(Request $request)
+   {
+
+      try {
+         PaymentsTypeAnalyticsReviewJob::dispatch()
+                                       ->delay(Carbon::now()->addSeconds(1))
+                                       ->onQueue('high');
+
+         $this->response['data'] = ['Message' => "Payments type review Job submitted"];
+      } catch (\Throwable $e) {
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
+      }
+      return response()->json( $this->response);
+
+   }
+
 
 }

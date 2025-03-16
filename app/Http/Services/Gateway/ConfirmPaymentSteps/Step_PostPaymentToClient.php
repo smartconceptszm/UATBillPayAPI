@@ -32,9 +32,9 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
     private function isPaymentEligibleForReceipt(string $paymentStatus): bool
     {
         return in_array($paymentStatus, [
-            PaymentStatusEnum::Paid->value,
-            PaymentStatusEnum::NoToken->value,
-        ]);
+                                PaymentStatusEnum::Paid->value,
+                                PaymentStatusEnum::NoToken->value,
+                            ]);
     }
 
     private function processReceipt(BaseDTO $paymentDTO): void

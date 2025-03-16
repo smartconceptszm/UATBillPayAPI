@@ -552,7 +552,7 @@ class ComposerStaticInit4e18f2a8200f24ce56abd683a0e3a523
     public static $classMap = array (
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
-        'App\\Http\\Controllers\\Analytics\\DailyAnalyticsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Analytics/DailyAnalyticsController.php',
+        'App\\Http\\Controllers\\Analytics\\AdhocAnalyticsController' => __DIR__ . '/../..' . '/app/Http/Controllers/Analytics/AdhocAnalyticsController.php',
         'App\\Http\\Controllers\\Analytics\\DayDashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/Analytics/DayDashboardController.php',
         'App\\Http\\Controllers\\Analytics\\MainDashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/Analytics/MainDashboardController.php',
         'App\\Http\\Controllers\\Analytics\\TopTierDashboardController' => __DIR__ . '/../..' . '/app/Http/Controllers/Analytics/TopTierDashboardController.php',

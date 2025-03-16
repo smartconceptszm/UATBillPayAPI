@@ -117,10 +117,11 @@ Route::group(['middleware' => 'mode'], function (){
             Route::get('daydashboard', [\App\Http\Controllers\Analytics\DayDashboardController::class, 'index']);
             Route::get('userdashboard', [\App\Http\Controllers\Analytics\UserDashboardController::class, 'index']);
 
-            Route::controller(\App\Http\Controllers\Analytics\DailyAnalyticsController::class)->group(function () {
+            Route::controller(\App\Http\Controllers\Analytics\AdhocAnalyticsController::class)->group(function () {
                Route::get('/analytics/daily', 'index');
                Route::post('/analytics/onemonth', 'oneMonth');
                Route::post('/analytics/oneday', 'oneDay');
+               Route::post('/analytics/paymenttype', 'paymentTypeCorrection');
             });
          //
 

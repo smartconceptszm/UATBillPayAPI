@@ -32,7 +32,7 @@ class PostThePrePaidToBilling
                               \App\Http\Services\Gateway\PostPrePaidToBilling\Step_PostPaymentToBilling::class,
                               \App\Http\Services\Gateway\PostPrePaidToBilling\Step_SendPrePaidReceiptSMS::class,
                               \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,
-                              \App\Http\Services\Gateway\PostPrePaidToBilling\Step_LogAfterPostingToBilling::class,
+                              \App\Http\Services\Gateway\Utility\Step_LogStatusAll::class,
                            ])
                            ->thenReturn();
       } catch (\Throwable $e) {

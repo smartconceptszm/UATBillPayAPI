@@ -29,8 +29,14 @@ class PaymentsByConsumerTypeService
                                  [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                     PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
                         ->where('p.consumerType', '=', $dto->consumerType)
-                        ->where('cw.client_id', '=', $dto->client_id)
-                        ->get();
+                        ->where('cw.client_id', '=', $dto->client_id);
+
+         // $theSQLQuery = $records->toSql();
+         // $theBindings = $records-> getBindings();
+         // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
+
+         $records = $records->get();
+
          return $records->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
@@ -45,16 +51,16 @@ class PaymentsByConsumerTypeService
          $user = Auth::user(); 
          $criteria['client_id'] = $user->client_id;
          $dto = (object)$criteria;
-         $records = DB::table('dashboard_consumer_type_totals as p')
-                        ->select(DB::raw('p.consumerType,
-                                             SUM(p.numberOfTransactions) AS numberOfTransactions,
-                                                SUM(p.totalAmount) as totalAmount'))
-                        ->where('p.dateOfTransaction', '>=' ,$dto->dateFrom)
-                        ->where('p.dateOfTransaction', '<=',  $dto->dateTo)
-                        ->where('p.client_id', '=', $dto->client_id)
-                        ->groupBy('p.consumerType')
-                        ->get();
-         return $records->all();
+            $records = DB::table('dashboard_consumer_type_totals as p')
+                           ->select(DB::raw('p.consumerType,
+                                                SUM(p.numberOfTransactions) AS numberOfTransactions,
+                                                   SUM(p.totalAmount) as totalAmount'))
+                           ->where('p.dateOfTransaction', '>=' ,$dto->dateFrom)
+                           ->where('p.dateOfTransaction', '<=',  $dto->dateTo)
+                           ->where('p.client_id', '=', $dto->client_id)
+                           ->groupBy('p.consumerType')
+                           ->get();
+            return $records->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

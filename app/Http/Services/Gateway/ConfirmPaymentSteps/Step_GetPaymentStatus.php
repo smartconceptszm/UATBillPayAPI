@@ -63,4 +63,5 @@ class Step_GetPaymentStatus extends EfectivoPipelineContract
         $paymentDTO->paymentStatus = PaymentStatusEnum::Payment_Failed->value;
         $paymentDTO->error = $error;
     }
+    
 }

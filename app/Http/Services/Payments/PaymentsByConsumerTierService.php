@@ -29,8 +29,12 @@ class PaymentsByConsumerTierService
                                  [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                     PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
                         ->where('p.consumerTier', '=', $dto->consumerTier)
-                        ->where('cw.client_id', '=', $dto->client_id)
-                        ->get();
+                        ->where('cw.client_id', '=', $dto->client_id);
+                        
+         $theSQLQuery = $records->toSql();
+         $theBindings = $records-> getBindings();
+         $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
+         $records =$records->get();
          return $records->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

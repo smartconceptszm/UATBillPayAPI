@@ -14,19 +14,13 @@ class UtilityTest extends TestCase
     */
    public function _test_new_code(): void
    {
-
-
-      $response =  '{"Response":{"ReFNo":"9"}}';
-      $response = json_decode($response,true);
-      $response = $response['Response']['ReFNo'];
-
       
-      // $tokenArr = \explode(",", '32616529891228143314,32616529891228143314,32616529891228143314,32616529891228143314');
-      // $formattedTokens = [];
-      // foreach ($tokenArr as $value) {
-      //    $formattedTokens[]=\implode('-', \str_split(str_replace(' ', '', $value), 4));
-      // }
-      // $response = \implode(',',$formattedTokens);
+      $theService = new  \App\Http\Services\Analytics\Generators\DashboardMenuIdUpdaterService(
+                              new \App\Http\Services\Analytics\Dashboards\DashboardPaymentTypeTotalsService(new \App\Models\DashboardPaymentTypeTotals()),
+                              new \App\Http\Services\Clients\ClientMenuService(new \App\Models\ClientMenu())
+                           );
+
+      $response = $theService->generate();
 
       $this->assertTrue($response);
 
