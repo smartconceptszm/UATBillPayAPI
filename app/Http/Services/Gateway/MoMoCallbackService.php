@@ -43,7 +43,7 @@ class MoMoCallbackService
 
          // Create payment DTO from payment data
          $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
-         $walletCredentials = $this->walletCredentialsService->getWalletCredentials($paymentDTO->wallet_id);
+         $walletCredentials = $this->clientWalletCredentialsService->getWalletCredentials($paymentDTO->wallet_id);
 
          if ($walletCredentials['CALLBACK_ENABLED'] == 'YES') {
             $paymentDTO->ppTransactionId = $callbackParams['airtel_money_id'];

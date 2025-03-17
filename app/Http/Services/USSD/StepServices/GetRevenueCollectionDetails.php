@@ -21,7 +21,7 @@ class GetRevenueCollectionDetails
       try {
 
          $txDTO->revenueCollector = "POS";
-         $txDTO->revenuePoint = "UNKOWN";
+         $txDTO->revenuePoint = "UNKNOWN";
          $arrReference = explode("-",$txDTO->reference);
          if(count($arrReference)==2){
             
