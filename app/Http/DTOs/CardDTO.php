@@ -20,6 +20,7 @@ class CardDTO extends PaymentDTO
       $this->channel = "WEBSITE";
       $this->sms = [];
       return $this;
+      
    }
 
    public function toPaymentData():array{

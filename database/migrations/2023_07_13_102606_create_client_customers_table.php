@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('revenuePoint',150)->notNullable();
             $table->string('consumerTier',150)->notNullable();
             $table->string('consumerType',150)->notNullable();
+            $table->string("customerAddress",150)->nullable();
             $table->timestamps();
             $table->unique(['client_id', 'customerAccount'],'client_customerAccount');
             $table->index(['created_at']);

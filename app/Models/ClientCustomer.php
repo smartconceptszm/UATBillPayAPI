@@ -14,7 +14,7 @@ class ClientCustomer extends Model
    protected $table = "client_customers";
 
    protected $fillable = [
-         'client_id','customerAccount','revenuePoint','consumerTier','consumerType'
+         'client_id','customerAccount','revenuePoint','consumerTier','consumerType','customerAddress'
       ];
       
    protected $casts = [

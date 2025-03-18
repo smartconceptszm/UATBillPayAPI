@@ -27,8 +27,7 @@ class ComplaintsOfClientService
             ->leftJoin('users as u1','c.assignedBy','=','u1.id')
             ->leftJoin('users as u2','c.assignedTo','=','u2.id')
             ->select('c.*','cst.code as subTypeCode','cst.name as subType', 'ct.code as complaintCode',
-                     'ct.name as complaintType', 
-                     )
+                        'ct.name as complaintType')  
             // ->where('s.menu', '=', 'FaultsComplaints')
             ->where('c.client_id', '=', $dto->client_id);
          if($dto->dateFrom && $dto->dateTo){

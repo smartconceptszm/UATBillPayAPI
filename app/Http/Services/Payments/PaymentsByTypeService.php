@@ -24,7 +24,9 @@ class PaymentsByTypeService
                         ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                         ->join('payments_providers as pp','cw.payments_provider_id','=','pp.id')
                         ->join('client_menus as m','p.menu_id','=','m.id')
-                        ->select('p.*','m.prompt as paymentType','pp.shortName as paymentProvider')
+                        ->join('client_customers as cc','p.customerAccount','=','cc.customerAccount')
+                        ->select('p.*','m.prompt as paymentType','pp.shortName as paymentProvider',
+                                       'cc.revenuePoint','cc.customerAddress')
                         ->where('p.created_at', '>=' ,$dateFrom)
                         ->where('p.created_at', '<=',  $dateTo)
                         ->whereIn('p.paymentStatus', 

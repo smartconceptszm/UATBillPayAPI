@@ -95,16 +95,13 @@ class KafubuPostPaid implements IBillingClient
                 throw new Exception("Error extracting (getdebstatic) XML response. Details: ".$e->getMessage(),2);
             }
 
-            $fullAddress="";
-            $fullAddress = !(\is_array($theCustomer['streetNo'])) ? $theCustomer['streetNo'] : $fullAddress ;
-            $fullAddress = !(\is_array($theCustomer['streetName'])) ? $fullAddress. " ". $theCustomer['streetName'] : $fullAddress ;
-            $fullAddress .= " ".$theCustomer['deptDesc'];
-
             $clientCustomer = $this->clientCustomerService->findOneBy(['customerAccount'=>$customerBalance['account']]);
             $revenuePoint = 'OTHER';
             $consumerTier = 'OTHER';
             $consumerType = 'OTHER';
+            $fullAddress = 'OTHER';
             if($clientCustomer){
+                $fullAddress = $clientCustomer->customerAddress;
                 $revenuePoint = $clientCustomer->revenuePoint;
                 $consumerTier = $clientCustomer->consumerTier;
                 $consumerType = $clientCustomer->consumerType;
