@@ -41,7 +41,6 @@ class CouncilPaymentHistory_Step_3
          }else{
             $txDTO->response = "There are no Mobile Money based payments from: ".$txDTO->subscriberInput;
          }
-         $txDTO->lastResponse = true;
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
             $txDTO->errorType = USSDStatusEnum::InvalidInput->value;

@@ -43,7 +43,6 @@ class CouncilPaymentHistory_Step_2
                }else{
                   $txDTO->response = "There are no Mobile Money based payments from: ".$txDTO->mobileNumber;
                }
-               $txDTO->lastResponse = true;
                break;
             case '2':
                $txDTO->response = "Enter the phone number (e.g 09xx xxxxxx/07xx xxxxxx)\n";
