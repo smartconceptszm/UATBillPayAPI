@@ -102,6 +102,23 @@ class AppServiceProvider extends ServiceProvider
 
 		// 
 
+      //Menu All Council Payment History
+         $this->app->singleton('CouncilPaymentHistory', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\CouncilPaymentHistory::class);
+         });
+         //Menu Step Handlers
+            $this->app->singleton('CouncilPaymentHistory_Step_1', function () {
+               return $this->app->make(\App\Http\Services\USSD\CouncilPaymentHistory\CouncilPaymentHistory_Step_1::class);
+            });
+            $this->app->singleton('CouncilPaymentHistory_Step_2', function () {
+               return $this->app->make(\App\Http\Services\USSD\CouncilPaymentHistory\CouncilPaymentHistory_Step_2::class);
+            });
+            $this->app->singleton('CouncilPaymentHistory_Step_3', function () {
+               return $this->app->make(\App\Http\Services\USSD\CouncilPaymentHistory\CouncilPaymentHistory_Step_3::class);
+            });
+         //
+      // 
+
       //Shortcuts MENU
          $this->app->singleton('CheckPostPaidBalanceShortcut', function () {
             return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\CheckPostPaidBalanceShortcut::class);

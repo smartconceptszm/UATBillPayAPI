@@ -69,10 +69,9 @@ class CheckBalance_Step_3
 
          if($txDTO->subscriberInput == '2'){
             $billingCredentials = $this->billingCredentialService->getClientCredentials($txDTO->client_id);
-            $payments = $this->paymentHistoryService->findAll([
+            $payments = $this->paymentHistoryService->findByCustomerAccount([
                               'limit' => $billingCredentials['PAYMENT_HISTORY'],
                               'customerAccount' => $txDTO->customerAccount,
-                              //'mobileNumber' => $txDTO->mobileNumber,
                               'client_id' => $txDTO->client_id,
                            ]);
             if($payments){

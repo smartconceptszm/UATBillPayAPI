@@ -9,23 +9,48 @@ use Exception;
 class PaymentHistoryService
 {
 
-   public function findAll(array $criteria):array|null
+   public function findByCustomerAccount(array $criteria):array|null
    {
 
       try {
          $dto = (object)$criteria;
          $records = DB::table('payments as p')
                         ->join('client_wallets as cw','p.wallet_id','=','cw.id')
-                        ->join('clients as c','cw.client_id','=','c.id')
+                        ->join('client_menus as cm','p.menu_id','=','cm.id')
                         ->select('p.id','p.created_at','p.customerAccount','p.mobileNumber',
-                                                            'p.receiptAmount','p.receiptNumber')
+                                             'cm.prompt','p.receiptAmount','p.receiptNumber')
                         ->where('customerAccount', '=', $dto->customerAccount)
-                        //->where('mobileNumber', '=', $dto->mobileNumber)
                         ->whereIn('paymentStatus',[PaymentStatusEnum::NoToken->value,
                                                          PaymentStatusEnum::Paid->value,
                                                          PaymentStatusEnum::Receipted->value,
                                                          PaymentStatusEnum::Receipt_Delivered->value])
-                        ->where('c.id', '=', $dto->client_id)
+                        ->where('cw.client_id', '=', $dto->client_id)
+                        ->orderByDesc('created_at')
+                        ->limit($dto->limit)
+                        ->get();
+         return $records->all();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+      
+   }
+
+   public function findByWallet(array $criteria):array|null
+   {
+
+      try {
+         $dto = (object)$criteria;
+         $records = DB::table('payments as p')
+                        ->join('client_wallets as cw','p.wallet_id','=','cw.id')
+                        ->join('client_menus as cm','p.menu_id','=','cm.id')
+                        ->select('p.id','p.created_at','p.customerAccount','p.mobileNumber',
+                                             'cm.prompt','p.receiptAmount','p.receiptNumber')
+                        ->where('mobileNumber', '=', $dto->mobileNumber)
+                        ->whereIn('paymentStatus',[PaymentStatusEnum::NoToken->value,
+                                                         PaymentStatusEnum::Paid->value,
+                                                         PaymentStatusEnum::Receipted->value,
+                                                         PaymentStatusEnum::Receipt_Delivered->value])
+                        ->where('cw.client_id', '=', $dto->client_id)
                         ->orderByDesc('created_at')
                         ->limit($dto->limit)
                         ->get();
