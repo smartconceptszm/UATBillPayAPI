@@ -26,26 +26,26 @@ class RevenueCollectorViewService
                                        ->groupBy('drct.revenueCollector');
             $theCollectorPayments = $theCollectorPayments->get();
 
-            $theLabels = $theCollectorPayments->pluck('revenueCollector')->unique()->values();
-            $i=0;
-            $theData = $theCollectorPayments->map(function ($item) use(&$i)  {
-                           $i++;
-                           $colours = ChartColours::getColours($i);
-                           return [
-                              'label'=>$item->revenueCollector.
-                                          ' ('.number_format($item->totalTransactions,0,'.',',').')',
-                              'data'=>$item->totalRevenue,
-                              'backgroundColor'=> $colours['backgroundColor'],
-                              'borderColor' => $colours['borderColor'],
-                              'pointBackgroundColor' => $colours['pointBackgroundColor'],
-                              'pointBorderColor' => $colours['pointBorderColor'],
-                              'fill' => false
-                           ];
-                        });
+            $theLabels = $theCollectorPayments->map(function ($item) {
+                                    return $item->revenueCollector.' ('.number_format($item->totalTransactions,0,'.',',').')';
+                                 });
+
+            $theData = $theCollectorPayments->pluck('totalRevenue')->unique()->values();
+
+            $colours = ChartColours::getColours(5);
+            $datasets = [collect([
+                           'label'=>'Collections by Revenue Revenue Collector',
+                           'data'=>$theData->toArray(),
+                           'backgroundColor'=> $colours['backgroundColor'],
+                           'borderColor' => $colours['borderColor'],
+                           'pointBackgroundColor' => $colours['pointBackgroundColor'],
+                           'pointBorderColor' => $colours['pointBorderColor'],
+                           'fill' => false
+                        ])];
          //
          $response = [
                         'labels' =>$theLabels,
-                        'datasets' =>$theData 
+                        'datasets' =>$datasets 
                      ];
    
          return $response;
