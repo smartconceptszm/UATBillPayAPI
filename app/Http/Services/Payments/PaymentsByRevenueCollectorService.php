@@ -20,6 +20,7 @@ class PaymentsByRevenueCollectorService
          $dto = (object)$criteria;
          $dateFrom = Carbon::parse($dto->dateFrom)->startOfDay()->format('Y-m-d H:i:s');
          $dateTo = Carbon::parse($dto->dateTo)->endOfDay()->format('Y-m-d H:i:s');
+         preg_match('/\((.*?)\)/', $dto->revenueCollector, $matches);
          $records = DB::table('payments as p')
                         ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                         ->select('p.*')
@@ -28,7 +29,7 @@ class PaymentsByRevenueCollectorService
                         ->whereIn('p.paymentStatus', 
                                  [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                     PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
-                        ->where('p.revenueCollector', '=', $dto->revenueCollector)
+                        ->where('p.revenueCollector', '=', $matches[1])
                         ->where('cw.client_id', '=', $dto->client_id)
                         ->get();
          return $records->all();
