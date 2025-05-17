@@ -28,7 +28,7 @@ class Step_GetClient extends EfectivoPipelineContract
          $txDTO->shortCode = $client->shortCode;
          $txDTO->urlPrefix = $client->urlPrefix;
          $txDTO->client_id = $client->id;
-         
+      
          $txDTO = $client->status != 'ACTIVE'? $this->blockClient($txDTO):$txDTO;
          $txDTO = $client->mode != 'UP'? $this->setClientMode($txDTO):$txDTO;
 
@@ -58,6 +58,7 @@ class Step_GetClient extends EfectivoPipelineContract
       $txDTO->errorType = USSDStatusEnum::MaintenanceMode->value;
       $txDTO->lastResponse = true;
       $txDTO->exitPipeline = true;
+      return $txDTO;
    }
 
 }
