@@ -37,7 +37,7 @@ class CheckBalance_Step_2
 						$txDTO->error = $e->getMessage();
 						return $txDTO;
 				}
-				$txDTO->response = "Acc: ".$txDTO->subscriberInput."\n". 
+				$txDTO->response = 	"Acc: ".$txDTO->subscriberInput."\n". 
 											"Name: ".$txDTO->customer['name']."\n".
 											"Addr: ".$txDTO->customer['address']."\n". 
 											"Bal: ".$txDTO->customer['balance']."\n\n".

@@ -24,6 +24,7 @@ class InitiatePayment
 
       //Process the request
       try {
+         
          $paymentDTO  =  App::make(Pipeline::class)
                               ->send($paymentDTO)
                               ->through(
@@ -38,6 +39,7 @@ class InitiatePayment
                                  ]
                               )
                               ->thenReturn();
+
       } catch (\Throwable $e) {
          $paymentDTO->error='At get initiate payment pipeline. '.$e->getMessage();
          Log::info($paymentDTO->error);

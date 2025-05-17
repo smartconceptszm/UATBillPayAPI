@@ -29,23 +29,8 @@ class Step_GetClient extends EfectivoPipelineContract
          $txDTO->urlPrefix = $client->urlPrefix;
          $txDTO->client_id = $client->id;
          
-         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-
-         if($client->mode != 'UP'){
-            $txDTO->error = 'System in Maintenance Mode';
-            $txDTO->response = $billpaySettings['MODE_MESSAGE_'.\strtoupper($txDTO->urlPrefix)];
-            $txDTO->errorType = USSDStatusEnum::MaintenanceMode->value;
-            $txDTO->exitPipeline = true;
-            $txDTO->lastResponse = true;
-         }
-
-         if($client->status != 'ACTIVE'){
-            $txDTO->response=$billpaySettings['BLOCKED_MESSAGE']." ".\strtoupper($txDTO->urlPrefix);
-            $txDTO->error = 'Client is blocked';
-            $txDTO->errorType = USSDStatusEnum::ClientBlocked->value;
-            $txDTO->lastResponse = true;
-            $txDTO->exitPipeline = true;
-         }
+         $txDTO = $client->status != 'ACTIVE'? $this->blockClient($txDTO):$txDTO;
+         $txDTO = $client->mode != 'UP'? $this->setClientMode($txDTO):$txDTO;
 
       } catch (\Throwable $e) {
          $txDTO->error = 'At identify client step. '.$e->getMessage();
@@ -54,6 +39,25 @@ class Step_GetClient extends EfectivoPipelineContract
       }
       return $txDTO;
       
+   }
+
+   private function blockClient(BaseDTO $txDTO){
+      $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+      $txDTO->response=$billpaySettings['BLOCKED_MESSAGE']." ".\strtoupper($txDTO->urlPrefix);
+      $txDTO->error = 'Client is blocked';
+      $txDTO->errorType = USSDStatusEnum::ClientBlocked->value;
+      $txDTO->lastResponse = true;
+      $txDTO->exitPipeline = true;
+      return $txDTO;
+   }
+
+   private function setClientMode(BaseDTO $txDTO){
+      $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+      $txDTO->error = 'System in Maintenance Mode';
+      $txDTO->response = $billpaySettings['MODE_MESSAGE_'.\strtoupper($txDTO->urlPrefix)];
+      $txDTO->errorType = USSDStatusEnum::MaintenanceMode->value;
+      $txDTO->lastResponse = true;
+      $txDTO->exitPipeline = true;
    }
 
 }

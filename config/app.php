@@ -172,6 +172,7 @@ return [
             App\Providers\ChambeshiServiceProvider::class,
             App\Providers\KafubuServiceProvider::class,
             App\Providers\LukangaServiceProvider::class,
+            App\Providers\LuapulaServiceProvider::class,
             App\Providers\MazabukaServiceProvider::class,
             App\Providers\NkanaServiceProvider::class,
             App\Providers\SwascoServiceProvider::class

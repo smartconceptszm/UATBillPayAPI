@@ -21,12 +21,12 @@ class PaymentsByTypeService
          $dateFrom = Carbon::parse($dto->dateFrom)->startOfDay()->format('Y-m-d H:i:s');
          $dateTo = Carbon::parse($dto->dateTo)->endOfDay()->format('Y-m-d H:i:s');
          $records = DB::table('payments as p')
+                        ->leftJoin('client_customers as cc','p.customerAccount','=','cc.customerAccount')
                         ->join('client_wallets as cw','p.wallet_id','=','cw.id')
                         ->join('payments_providers as pp','cw.payments_provider_id','=','pp.id')
                         ->join('client_menus as m','p.menu_id','=','m.id')
-                        ->join('client_customers as cc','p.customerAccount','=','cc.customerAccount')
                         ->select('p.*','m.prompt as paymentType','pp.shortName as paymentProvider',
-                                       'cc.revenuePoint','cc.customerAddress')
+                                       'cc.customerAddress')
                         ->where('p.created_at', '>=' ,$dateFrom)
                         ->where('p.created_at', '<=',  $dateTo)
                         ->whereIn('p.paymentStatus', 

@@ -2,10 +2,10 @@
 
 namespace App\Http\Services\Gateway\ReceiptingHandlers;
 
+use App\Http\Services\Gateway\ReceiptingHandlers\PostLocalReceipt;
 use App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\External\BillingClients\IBillingClient;
-use App\Http\Services\Payments\ReceiptService;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use App\Jobs\PostThePrePaidToBillingJob;
 use Illuminate\Support\Facades\Cache;
@@ -16,8 +16,8 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 {
 
 	public function __construct(
+		private PostLocalReceipt $postLocalReceipt,
 		private EnquiryHandler $chambeshiEnquiry,
-		private ReceiptService $receiptService,
 		private IBillingClient $billingClient)
 	{}
 
@@ -59,30 +59,8 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 			}
 		}else if($paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value){
 
-			$receipt = $this->receiptService->findOneBy([
-												'client_id'=>$paymentDTO->client_id,
-												'payment_id'=>$paymentDTO->id
-											]);
-
-			if(!$receipt){
-				$receipt = $this->receiptService->create([
-												'description' => $paymentDTO->receipt,
-												'client_id'=>$paymentDTO->client_id,
-												'payment_id'=>$paymentDTO->id
-											]);
-			}
-			$paymentDTO->receiptNumber =  $receipt->id;
-			$receiptingParams = [
-										"payment_provider" => strtolower($paymentDTO->walletHandler).'_money', 
-										"payer_msisdn"=> $paymentDTO->mobileNumber, 
-										"txnDate"=> Carbon::now()->format('Y-m-d'),
-										"ReceiptNo"=> $paymentDTO->receiptNumber,
-										"account"=> $paymentDTO->customerAccount,
-										"amount" => $paymentDTO->receiptAmount,
-										"txnId"=> $paymentDTO->transactionId,
-										"client_id"=> $paymentDTO->client_id,
-										"transDesc"=>"PrePaid"
-									];
+			$receiptingParams = $this->postLocalReceipt->handle($paymentDTO);
+			$paymentDTO->receiptNumber =  $receiptingParams['ReceiptNo'];
 
 			$billingResponse = $this->billingClient->postPayment($receiptingParams);
 

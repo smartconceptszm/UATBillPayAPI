@@ -61,6 +61,7 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
          $paymentReviewDelay = (int) $billpaySettings[self::PAYMENT_REVIEW_DELAY_KEY];
          $this->dispatchReConfirmPaymentJob($paymentDTO, $paymentReviewDelay);
       }
+      
    }
 
    private function dispatchConfirmPaymentJob(BaseDTO $paymentDTO)

@@ -138,6 +138,7 @@ class NkanaPrePaid implements IBillingClient
                               "transid" => $postParams['transactionId'],
                               "purchaseparam" => $purchaseParameterString
                            ];
+                           
          $apiResponse = Http::timeout($configs['timeout'])
                               ->asForm()
                               ->post($configs['baseURL'], $tokenParameters);
@@ -244,7 +245,6 @@ class NkanaPrePaid implements IBillingClient
       $configs['timeout'] = $clientCredentials['PREPAID_TIMEOUT'];
       return $configs;
    }
-
 
 }
 

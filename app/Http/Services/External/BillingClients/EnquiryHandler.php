@@ -41,7 +41,6 @@ class EnquiryHandler
 						Cache::increment($txDTO->urlPrefix.'_BillingErrorCount');
 					}else{
 						//Send Notification here
-								
 								$adminMobileNumbers = \explode("*",$billpaySettings['APP_ADMIN_MSISDN']."*".$txDTO->testMSISDN);
 								$adminMobileNumbers = array_filter($adminMobileNumbers,function($entry){
 																			return $entry !== "";

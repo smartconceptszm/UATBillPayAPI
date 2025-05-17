@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Services\USSD\Menus;
 
 use App\Http\Services\Clients\ClientMenuService;

@@ -232,6 +232,7 @@ class LukangaPrePaid implements IBillingClient
 
    }
 
+
    private function getConfigs(string $client_id):array
    {
 
@@ -240,6 +241,7 @@ class LukangaPrePaid implements IBillingClient
       $configs['rootKey'] = $clientCredentials['PREPAID_ROOTKEY'];
       $configs['baseURL'] = $clientCredentials['PREPAID_BASE_URL'];
       $configs['timeout'] = $clientCredentials['PREPAID_TIMEOUT'];
+      $configs['apiVersion'] = $clientCredentials['PREPAID_API_VERSION'];
       return $configs;
 
    }
