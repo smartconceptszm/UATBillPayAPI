@@ -7,6 +7,7 @@ use App\Http\Services\MenuConfigs\ComplaintSubTypeService;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\MenuConfigs\ComplaintTypeService;
 use App\Http\Services\Payments\PaymentService;
+use App\Http\Services\CRM\ComplaintService;
 use App\Http\Services\Enums\USSDStatusEnum;
 use App\Http\DTOs\BaseDTO;
 
@@ -15,6 +16,7 @@ class FaultsComplaints_Step_5
 
    public function __construct(
       private ComplaintSubTypeService $cSubTypeService,
+      private ComplaintService $complaintService,
       private EnquiryHandler $getCustomerAccount,
       private ComplaintTypeService $cTypeService,
       private IComplaintClient $complaintClient,
@@ -64,25 +66,37 @@ class FaultsComplaints_Step_5
             $complaintInfo = "";
          }
 
-         $complaintData = [
-                           'customerAccount'=>$txDTO->customerAccount,
-                           'address'=> $txDTO->customer['address'],
-                           'complaint_subtype_id'=>$theSubType->id,
-                           'complaintCode' => $theSubType->code,
-                           'mobileNumber'=>$txDTO->mobileNumber,
-                           'revenuePoint'=> $txDTO->revenuePoint,
-                           'consumerType'=> $txDTO->consumerType,
-                           'consumerTier'=> $txDTO->consumerTier,
-                           'created_at'=>$txDTO->created_at,
-                           'client_id'=>$txDTO->client_id,
-                           'urlPrefix'=>$txDTO->urlPrefix,
-                           'details'=>$complaintInfo,
-                           'session_id'=>$txDTO->id
-                        ];
-         $caseNumber = $this->complaintClient->create($complaintData);
-         $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".$caseNumber; 
-         $txDTO->status =  USSDStatusEnum::Completed->value;
-         
+         $activeComplaint = $this->complaintService->findActiveComplaint([
+                                          'customerAccount' => $txDTO->customerAccount,
+                                          'complaint_subtype_id' => $theSubType->id,
+                                          'urlPrefix' => $txDTO->urlPrefix,
+                                          'client_id'=>$txDTO->client_id
+                                       ]);
+         if(!$activeComplaint){
+            $complaintData = [
+                                 'customerAccount'=>$txDTO->customerAccount,
+                                 'address'=> $txDTO->customer['address'],
+                                 'complaint_subtype_id'=>$theSubType->id,
+                                 'complaintCode' => $theSubType->code,
+                                 'mobileNumber'=>$txDTO->mobileNumber,
+                                 'revenuePoint'=> $txDTO->revenuePoint,
+                                 'consumerType'=> $txDTO->consumerType,
+                                 'consumerTier'=> $txDTO->consumerTier,
+                                 'created_at'=>$txDTO->created_at,
+                                 'client_id'=>$txDTO->client_id,
+                                 'urlPrefix'=>$txDTO->urlPrefix,
+                                 'details'=>$complaintInfo,
+                                 'session_id'=>$txDTO->id
+                              ];
+            $caseNumber = $this->complaintClient->create($complaintData);
+            $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".$caseNumber; 
+            $txDTO->status =  USSDStatusEnum::Completed->value;
+         }else{
+            $txDTO->error = "'".$theSubType->name."' complaint already lodged under Account: '".
+                                 $txDTO->customerAccount."'. Case Number = '".$activeComplaint->caseNumber."'";
+            $txDTO->errorType = USSDStatusEnum::InvalidInput->value;
+         }
+
       } catch (\Throwable $e) {
          $txDTO->error = 'At complaints step 5. '.$e->getMessage();
          $txDTO->errorType = USSDStatusEnum::SystemError->value;

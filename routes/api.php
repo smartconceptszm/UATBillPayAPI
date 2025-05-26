@@ -179,6 +179,32 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //
 
+         //Promotion Related Routes
+            Route::controller(\App\Http\Controllers\Promotions\PromotionController::class)->group(function () {
+               Route::get('/promotions/findoneby', 'findOneBy');
+               Route::put('/promotions/{id}', 'update');
+               Route::get('/promotions/{id}', 'show');
+               Route::post('/promotions', 'store');
+               Route::get('/promotions', 'index');
+            });
+
+            Route::controller(\App\Http\Controllers\Promotions\PromotionEntryController::class)->group(function () {
+               Route::get('/promotionentries/findoneby', 'findOneBy');
+               Route::put('/promotionentries/{id}', 'update');
+               Route::get('/promotionentries/{id}', 'show');
+               Route::post('/promotionentries', 'store');
+               Route::get('/promotionentries', 'index');
+            });
+            Route::controller(\App\Http\Controllers\Promotions\PromotionRateController::class)->group(function () {
+               Route::get('/promotionrates/findoneby', 'findOneBy');
+               Route::put('/promotionrates/{id}', 'update');
+               Route::get('/promotionrates/{id}', 'show');
+               Route::post('/promotionrates', 'store');
+               Route::get('/promotionrates', 'index');
+               Route::get('/ratesofpromtion/{id}', 'ratesofpromtion');
+            });
+         //
+
          //Payments Reports Routes
             Route::get('payments/consumertiers/all', [\App\Http\Controllers\Payments\PaymentsByConsumerTierController::class, 'index']);
             Route::get('payments/consumertiers/summary', [\App\Http\Controllers\Payments\PaymentsByConsumerTierController::class, 'summary']);
@@ -417,7 +443,9 @@ Route::group(['middleware' => 'mode'], function (){
          //Complaint
             Route::get('clientcomplaintsdashboard', [\App\Http\Controllers\CRM\ClientComplaintsDashboardController::class, 'index']);
             Route::get('maincomplaintsdashboard', [\App\Http\Controllers\CRM\MainComplaintsDashboardController::class, 'index']);
+            Route::get('closedcomplaintsofclient', [\App\Http\Controllers\CRM\ComplaintsOfClientClosedController::class, 'index']);
             Route::get('complaintsofclient', [\App\Http\Controllers\CRM\ComplaintsOfClientController::class, 'index']);
+
             Route::controller(\App\Http\Controllers\CRM\ComplaintController::class)->group(function () {
                Route::get('/complaints/findoneby', 'findOneBy');
                Route::put('/complaints/{id}', 'update');

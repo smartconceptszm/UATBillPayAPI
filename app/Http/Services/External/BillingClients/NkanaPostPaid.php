@@ -87,12 +87,12 @@ class NkanaPostPaid implements IBillingClient
                   $response['status']="SUCCESS";
                   $response['receiptNumber']=$apiResponse['ClientPayment_gen']['cp_refNumber'];
                }else{
-                  throw new Exception(' NKANA Billing Client server error. Details: '.
-                                       $apiResponse['Trax_Code'] == 'CPM-003'.$apiResponse['ClientPayment_gen']['cpPaymentStatus'],1);
+                  throw new Exception(' NKANA Billing Client error. Details: '.
+                                       $apiResponse['Trax_Code'].' '.$apiResponse['ClientPayment_gen']['cpPaymentStatus'],1);
                }
          } else {
             if ($apiResponse->status() >= 400) {
-               throw new Exception(' NKANA Billing Client server error. Status code: '.$apiResponse->status(),1);
+               throw new Exception(' NKANA Billing Client error. Status code: '.$apiResponse->status(),1);
             } else {
                throw new Exception(" Status code: " . $apiResponse->status(), 2);
             }
@@ -102,7 +102,7 @@ class NkanaPostPaid implements IBillingClient
          if ($e->getCode() == 1) {
             $response['error']=$e->getMessage();
          } else{
-            $response['error']=" NKANA Billing Client server error. Details: " . $e->getMessage();
+            $response['error']=" NKANA Billing Client error. Details: " . $e->getMessage();
          }
       }
       return $response;

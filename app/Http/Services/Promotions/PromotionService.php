@@ -1,19 +1,16 @@
 <?php
 
-namespace App\Http\Services\CRM;
+namespace App\Http\Services\Promotions;
 
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Carbon;
-use App\Models\Complaint;
+use App\Models\Promotion;
 use Exception;
 
-class ComplaintService
+class PromotionService
 {
 
    public function __construct(
-         private Complaint $model
+      private Promotion $model
    ) {}
 
    public function findAll(?array $criteria):array|null
@@ -45,26 +42,6 @@ class ComplaintService
       }
    }
 
-   public function findActiveComplaint(array $criteria) : object|null {
-      try {
-         $dto = (object)$criteria;
-         $billpaySettings = json_decode(cache('billpaySettings', json_encode([])), true);
-         $complaintsInterval = (int)$billpaySettings['COMPLAINT_INTERVAL_'.strtoupper($dto->urlPrefix)];
-         $record = DB::table('complaints as c')
-                        ->select('*')
-                        ->whereDate('c.created_at','>=',Carbon::now()->subDays($complaintsInterval))
-                        ->where('c.complaint_subtype_id', '=', $dto->complaint_subtype_id)
-                        ->where('c.customerAccount', '=', $dto->customerAccount)
-                        ->where('c.client_id', '=', $dto->client_id)
-                        ->where('c.status', '!=', 'CLOSED')
-                        ->orderByDesc('c.created_at')
-                        ->get()->first();
-         return $record;
-      } catch (\Throwable $e) {
-         throw new Exception($e->getMessage());
-      }
-   }
-
    public function create(array $data) : object|null {
       try {
          foreach ( $data as $key => $value) {
@@ -72,9 +49,8 @@ class ComplaintService
                $this->model->$key = $value;
             }
          }
-         $this->model->caseNumber = $data['customerAccount'].'_'.date('YmdHis');
          $this->model->save();
-        return $this->model;
+         return $this->model;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
@@ -84,9 +60,6 @@ class ComplaintService
 
       try {
          unset($data['id']);
-         $user = Auth::user(); 
-         $data['assignedTo'] = $user->id;
-         $data['assignedBy'] = $user->id;
          $record = $this->model->findOrFail($id);
          foreach ($data as $key => $value) {
             $record->$key = $value;
@@ -111,8 +84,5 @@ class ComplaintService
    }
 
 }
-
-
-
 
 

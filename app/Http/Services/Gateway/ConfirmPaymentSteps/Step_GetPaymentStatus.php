@@ -18,6 +18,7 @@ class Step_GetPaymentStatus extends EfectivoPipelineContract
 
     protected function stepProcess(BaseDTO $paymentDTO)
     {
+
         try {
             if ($this->isStatusCheckRequired($paymentDTO->paymentStatus)) {
                 $paymentsProviderResponse = $this->paymentsProviderClient->confirmPayment($paymentDTO->toProviderParams());
@@ -56,6 +57,7 @@ class Step_GetPaymentStatus extends EfectivoPipelineContract
         $paymentDTO->paymentStatus = ($theMenu->paymentType === PaymentTypeEnum::PrePaid->value)
             ? PaymentStatusEnum::NoToken->value
             : PaymentStatusEnum::Paid->value;
+            
     }
 
     private function handleFailedPayment(BaseDTO $paymentDTO, string $error): void
