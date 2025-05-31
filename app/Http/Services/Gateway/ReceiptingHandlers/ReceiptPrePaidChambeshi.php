@@ -29,11 +29,11 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 		$newBalance = "0";
 		if(!$paymentDTO->customer){
 			$paymentDTO = $this->chambeshiEnquiry->handle($paymentDTO);
+			$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) - 
+						(float)$paymentDTO->receiptAmount;
+			$newBalance = \number_format($newBalance, 2, '.', ',');
 		}
-		$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) - 
-										(float)$paymentDTO->receiptAmount;
-		$newBalance = \number_format($newBalance, 2, '.', ',');
-
+		
 		if( $paymentDTO->tokenNumber == '' && $paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value){				
 			$tokenParams = [
 										"total_paid" => $paymentDTO->receiptAmount, 

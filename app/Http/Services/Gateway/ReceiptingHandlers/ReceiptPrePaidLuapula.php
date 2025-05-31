@@ -30,10 +30,10 @@ class ReceiptPrePaidLuapula implements IReceiptPayment
 		$newBalance = "0";
 		if(!$paymentDTO->customer){
 			$paymentDTO = $this->luapulaEnquiry->handle($paymentDTO);
+			$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) - 
+						(float)$paymentDTO->receiptAmount;
+			$newBalance = \number_format($newBalance, 2, '.', ',');
 		}
-		$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) - 
-										(float)$paymentDTO->receiptAmount;
-		$newBalance = \number_format($newBalance, 2, '.', ',');
 
 		if( $paymentDTO->tokenNumber == '' && $paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value){	
 			$prePaidTransactionId = \now()->timestamp.\strtoupper(Str::random(6));			
