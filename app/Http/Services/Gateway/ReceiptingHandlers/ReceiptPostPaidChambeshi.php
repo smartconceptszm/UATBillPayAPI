@@ -24,15 +24,15 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 	public function handle(BaseDTO $paymentDTO):BaseDTO
 	{
 
+		$theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
 		$newBalance = "0";
-		if(!$paymentDTO->customer){
+		if(!$paymentDTO->customer && $theMenu->paymentType == 'PostPaid'){
 			$paymentDTO = $this->chambeshiEnquiry->handle($paymentDTO);
 		}
 		$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) - 
 										(float)$paymentDTO->receiptAmount;
 		$newBalance = \number_format($newBalance, 2, '.', ',');
 
-		$theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
 		$receiptingParams = $this->postLocalReceipt->handle($paymentDTO,$theMenu);
 		$billingResponse = $this->billingClient->postPayment($receiptingParams);
 		$paymentDTO->receiptNumber =  $receiptingParams['ReceiptNo'];
