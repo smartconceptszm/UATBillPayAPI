@@ -43,8 +43,10 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 										"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n";
 			if($theMenu->onOneAccount == 'YES'){
 				$paymentDTO->receipt .= "Service: ".$theMenu->prompt."\n";
-				$customerJourney = explode("*", $paymentDTO->customerJourney);
-				$paymentDTO->receipt .= "Ref: ".$customerJourney[4]."\n";
+				if($theMenu->requiresReference == 'YES'){
+					$customerJourney = explode("*", $paymentDTO->customerJourney);
+					$paymentDTO->receipt .= "Ref: ".$customerJourney[4]."\n";
+				}
 			}else{
 				$paymentDTO->receipt .= "Acc: ".$paymentDTO->customerAccount."\n";
 			}
