@@ -15,7 +15,7 @@ class PostLocalReceipt
    )
    {}
 
-   public function handle(BaseDTO $paymentDTO):array|null
+   public function handle(BaseDTO $paymentDTO, object $theMenu):array|null
    {
 
       try {
@@ -32,16 +32,38 @@ class PostLocalReceipt
                            ]);
          }
          $paymentDTO->receiptNumber =  $receipt->id;
+
+         switch ($theMenu->paymentType) {
+            case 'POST-PAID':
+               $transDesc = "PostPaid";
+               break;
+            case 'PRE-PAID':
+               $transDesc = "PrePaid";
+               break;
+            case 'OTHER':
+               $transDesc = $theMenu->prompt;
+               break;
+            default:
+               $transDesc = "OtherPayments";
+               break;
+         }
+
+         if($theMenu->onOneAccount == "YES"){
+            $account = "Other";
+         }else{
+            $account = $paymentDTO->customerAccount;
+         }
+
          $receiptingParams = [
                               "payment_provider" => strtolower($paymentDTO->walletHandler).'_money', 
                               "payer_msisdn"=> $paymentDTO->mobileNumber, 
                               "txnDate"=> Carbon::now()->format('Y-m-d'),
                               "ReceiptNo"=> $paymentDTO->receiptNumber,
-                              "account"=> $paymentDTO->customerAccount,
                               "amount" => $paymentDTO->receiptAmount,
                               "txnId"=> $paymentDTO->transactionId,
                               "client_id"=> $paymentDTO->client_id,
-                              "transDesc"=>"PrePaid"
+                              "transDesc"=>$transDesc,
+                              "account"=> $account
                            ];
          return $receiptingParams;
          

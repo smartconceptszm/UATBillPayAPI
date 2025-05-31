@@ -6,6 +6,7 @@ use App\Http\Services\External\BillingClients\PrePaidVendor\PurchaseEncryptor;
 use App\Http\Services\External\BillingClients\LuapulaPostPaid;
 use App\Http\Services\External\BillingClients\IBillingClient;
 use App\Http\Services\Clients\BillingCredentialService;
+use App\Http\Services\Clients\ClientCustomerService;
 use Illuminate\Support\Facades\Http;
 use Exception;
 
@@ -14,6 +15,7 @@ class LuapulaPrePaid implements IBillingClient
 
    public function __construct(
          private BillingCredentialService $billingCredentialsService,
+         private ClientCustomerService $clientCustomerService,
          private PurchaseEncryptor $purchaseEncryptor,
          private LuapulaPostPaid $luapulaPostPaid)
    {}
@@ -28,7 +30,7 @@ class LuapulaPrePaid implements IBillingClient
          $fullURL = $configs['baseURL']."purchase/calculatefee";
          $postData = [
                         "meterNumber" => $params['customerAccount'],
-                        "purchaseType" =>'1',
+                        "purchaseType" =>1,
                         "purchaseValue" =>$params['paymentAmount']
                      ];
 
@@ -45,12 +47,22 @@ class LuapulaPrePaid implements IBillingClient
             if($apiResponse["errorCode"] == '10000'){
                $configs['authorization'] = $authorization;
                $customerDetails = $this->getCustomerDetails($params,$configs);
+               $clientCustomer = $this->clientCustomerService->findOneBy(['customerAccount'=>$params['customerAccount']]);
+               $revenuePoint = 'OTHER';
+               $consumerTier = 'OTHER';
+               $consumerType = 'OTHER';
+               $fullAddress = $customerDetails['data']['address'];
+               if($clientCustomer){
+                  $revenuePoint = $clientCustomer->revenuePoint;
+                  $consumerTier = $clientCustomer->consumerTier;
+                  $consumerType = $clientCustomer->consumerType;
+               }
                $response['customerAccount'] = $apiResponse['data']['customerNumber'];
                $response['name'] = $customerDetails['data']['name'];
-               $response['address'] = $customerDetails['data']['address'];
-               $response['revenuePoint'] = $this->luapulaPostPaid->getRevenuePoint(\trim($apiResponse['data']['customerNumber']));
-               $response['consumerTier'] = '';
-               $response['consumerType'] = '';
+               $response['revenuePoint'] = $revenuePoint;
+               $response['consumerTier'] = $consumerTier;
+               $response['consumerType'] = $consumerType;
+               $response['address'] = $fullAddress;
                $response['mobileNumber'] = "";
                $response['balance'] = \number_format((float)$customerDetails['data']['debt']) ;
             }else{
@@ -142,7 +154,7 @@ class LuapulaPrePaid implements IBillingClient
          $postData = [
                         "meterNumber" => $postParams['customerAccount'],
                         "transID" => $postParams['transactionId'],
-                        "purchaseType" => 0,
+                        "purchaseType" => $configs['purchaseType'],
                         "purchaseParam" =>$purchaseParameterString
                      ];
          $fullURL = $configs['baseURL']."purchase/executepurchase";
@@ -195,6 +207,15 @@ class LuapulaPrePaid implements IBillingClient
          case 12902:
             throw new Exception("Invalid Luapula PRE-PAID Meter Number",1); 
             break;
+         case 12562:
+            throw new Exception("Payment is too little, less than additional fee",4);
+            break;
+         case 12563:
+            throw new Exception("Payment is too little, less than minimum purchase",4);
+            break;
+         case 12561:
+            throw new Exception("Payment is too high, exceeds maximum purchase",4);
+            break;
          default:
             throw new Exception($apiResponse["msg"],2);
             break;
@@ -240,11 +261,13 @@ class LuapulaPrePaid implements IBillingClient
    {
 
       $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
+      $configs['purchaseType'] = (int)$clientCredentials['PREPAID_PURCHASE_TYPE'];
+      $configs['apiVersion'] = $clientCredentials['PREPAID_API_VERSION'];
       $configs['platformId'] = $clientCredentials['PREPAID_PLATFORMID'];
       $configs['rootKey'] = $clientCredentials['PREPAID_ROOTKEY'];
       $configs['baseURL'] = $clientCredentials['PREPAID_BASE_URL'];
       $configs['timeout'] = $clientCredentials['PREPAID_TIMEOUT'];
-      $configs['apiVersion'] = $clientCredentials['PREPAID_API_VERSION'];
+
       return $configs;
        
    }

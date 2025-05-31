@@ -3,6 +3,8 @@
 namespace App\Http\Services\Promotions;
 
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 use App\Models\Promotion;
 use Exception;
 
@@ -37,6 +39,21 @@ class PromotionService
          $item = $this->model->where($criteria)->first();
          $item = \is_null($item)?null:(object)$item->toArray();
          return $item;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
+   public function findActivePromotion(string $client_id) : object|null {
+      try {
+         $record = DB::table('promotions')
+                        ->select('*')
+                        ->where('client_id', '=', $client_id)
+                        ->where('status', '=', "ACTIVE")
+                        ->whereDate('startDate','<=',Carbon::now())
+                        ->whereDate('endDate','>=',Carbon::now())
+                        ->first();
+         return $record;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

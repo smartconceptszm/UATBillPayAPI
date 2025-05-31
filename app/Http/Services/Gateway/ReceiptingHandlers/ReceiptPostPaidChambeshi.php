@@ -6,6 +6,7 @@ use App\Http\Services\Gateway\ReceiptingHandlers\PostLocalReceipt;
 use App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\External\BillingClients\IBillingClient;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
@@ -14,8 +15,9 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 {
 
 	public function __construct(
-		private EnquiryHandler $chambeshiEnquiry,
+		private ClientMenuService $clientMenuService,
 		private PostLocalReceipt $postLocalReceipt,
+		private EnquiryHandler $chambeshiEnquiry,
 		private IBillingClient $billingClient)
 	{}
 
@@ -30,18 +32,23 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 										(float)$paymentDTO->receiptAmount;
 		$newBalance = \number_format($newBalance, 2, '.', ',');
 
-		$receiptingParams = $this->postLocalReceipt->handle($paymentDTO);
-		$paymentDTO->receiptNumber =  $receiptingParams['ReceiptNo'];
-
+		$theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
+		$receiptingParams = $this->postLocalReceipt->handle($paymentDTO,$theMenu);
 		$billingResponse = $this->billingClient->postPayment($receiptingParams);
-	
+		$paymentDTO->receiptNumber =  $receiptingParams['ReceiptNo'];
 		if($billingResponse['status']=='SUCCESS'){
 			$paymentDTO->paymentStatus =  PaymentStatusEnum::Receipted->value;
 			$paymentDTO->receipt = "\n"."Payment successful"."\n".
 										"Rcpt No: " . $paymentDTO->receiptNumber . "\n" .
-										"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
-										"Acc: " . $paymentDTO->customerAccount . "\n";
-			$paymentDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
+										"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n";
+			if($theMenu->onOneAccount == 'YES'){
+				$paymentDTO->receipt .= "Service: ".$theMenu->prompt."\n";
+				$customerJourney = explode("*", $paymentDTO->customerJourney);
+				$paymentDTO->receipt .= "Ref: ".$customerJourney[4]."\n";
+			}else{
+				$paymentDTO->receipt .= "Acc: ".$paymentDTO->customerAccount."\n";
+			}
+			$paymentDTO->receipt.="Date: ".Carbon::now()->format('d-M-Y') . "\n";
 			
 		}else{
 			$paymentDTO->receiptNumber =  '';

@@ -14,14 +14,10 @@ class ModelServiceTest extends TestCase
    public function _test_FindAll(): void
    {
 
-      $client_id= '39d62960-7303-11ee-b8ce-fec6e52a2330';
-      $modelService = new \App\Http\Services\Clients\ClientMenuService(new \App\Models\ClientMenu());
-      $clientMenus = $modelService->findAll([
-                                       ['client_id','=', $client_id],
-                                       ['handler','!=', 'ParentMenu'],
-                                       ['isPayment','=', 'YES']
-                                    ]);
-      $this->assertTrue($clientMenus);
+      $client_id= '9eb01c2c-21d6-4bf7-9f88-d2150e9134e9';
+      $modelService = new \App\Http\Services\Promotions\PromotionService(new \App\Models\Promotion());
+      $activePromo = $modelService->findActivePromotion($client_id);
+      $this->assertTrue($activePromo);
       // $client->assertStatus(200);
 
    }

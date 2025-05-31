@@ -47,9 +47,9 @@ class MoMoCallbackService
 
          if ($walletCredentials['CALLBACK_ENABLED'] == 'YES') {
             $paymentDTO->ppTransactionId = $callbackParams['airtel_money_id'];
+            $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
             // Handle payment status based on callback status code
             if ($callbackParams['status_code'] === 'TS') {
-               $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
                if ($theMenu->paymentType === PaymentTypeEnum::PrePaid->value) {
                   $paymentDTO->paymentStatus = PaymentStatusEnum::NoToken->value;
                } else {

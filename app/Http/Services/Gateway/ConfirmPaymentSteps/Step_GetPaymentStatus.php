@@ -53,7 +53,6 @@ class Step_GetPaymentStatus extends EfectivoPipelineContract
     {
         $paymentDTO->ppTransactionId = $ppTransactionId;
         $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
-
         $paymentDTO->paymentStatus = ($theMenu->paymentType === PaymentTypeEnum::PrePaid->value)
             ? PaymentStatusEnum::NoToken->value
             : PaymentStatusEnum::Paid->value;

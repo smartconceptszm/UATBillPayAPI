@@ -4,24 +4,16 @@ namespace App\Http\Services\External\BillingClients;
 
 use App\Http\Services\External\BillingClients\IBillingClient;
 use App\Http\Services\Clients\BillingCredentialService;
+use App\Http\Services\Clients\ClientCustomerService;
 use Illuminate\Support\Facades\Http;
 use Exception;
 
 class LuapulaPostPaid implements IBillingClient
 {
-   
-   private $revenuePoints =[
-                              "MSA"=>"MANSA",
-                              "SAN"=>"SANFYA",
-                              "MIL"=>"MILENGE",
-                              "KAW"=>"KAWAMBWA",
-                              "NCH"=>"Chelenge",
-                              "CHI"=>"Chienge"
-                           ];
 
    public function __construct(
          private BillingCredentialService $billingCredentialService,
-      )
+         private ClientCustomerService $clientCustomerService)
    {}
 
    public function getAccountDetails(array $params): array
@@ -40,13 +32,24 @@ class LuapulaPostPaid implements IBillingClient
          if ($apiResponse->status() == 200) {
             $apiResponse = $apiResponse->json();
             if(isset($apiResponse['customer_name'])){
-               $revenuePoint = $this->getRevenuePoint($params['customerAccount']);
+               $clientCustomer = $this->clientCustomerService->findOneBy(['customerAccount'=>$params['customerAccount']]);
+               $revenuePoint = 'OTHER';
+               $consumerTier = 'OTHER';
+               $consumerType = 'OTHER';
+               $fullAddress = 'OTHER';
+               if($clientCustomer){
+                  $fullAddress = $clientCustomer->customerAddress;
+                  $revenuePoint = $clientCustomer->revenuePoint;
+                  $consumerTier = $clientCustomer->consumerTier;
+                  $consumerType = $clientCustomer->consumerType;
+               }
+
                $response['customerAccount'] = $params['customerAccount'];
                $response['name'] = $apiResponse['customer_name'];
-               $response['address'] = "";
+               $response['address'] = $fullAddress;
                $response['revenuePoint'] = $revenuePoint;
-               $response['consumerTier'] = '';
-               $response['consumerType'] = '';
+               $response['consumerTier'] = $consumerTier;
+               $response['consumerType'] = $consumerType;
                $response['mobileNumber'] =  "";
                $response['balance'] = \number_format((float)$apiResponse['balance'], 2, '.', ',');
             }else{
@@ -113,30 +116,6 @@ class LuapulaPostPaid implements IBillingClient
          }
       }
       return $response;
-   }
-
-   public function getRevenuePoint(String $customerAccount): string
-   {
-
-      try {
-         $arrAccountCharacter = \str_split($customerAccount);
-         $strCode = "";
-         foreach ($arrAccountCharacter as $value) {
-            if(\is_numeric($value)){
-               break;
-            }else{
-               $strCode .= \strtoupper($value); 
-            }
-         }
-         if(\array_key_exists($strCode,$this->revenuePoints)){
-            return $this->revenuePoints[$strCode];
-         }else{
-            return "OTHER";
-         }
-      } catch (\Throwable $th) {
-         return "OTHER";
-      }
-      
    }
 
    public function getConfigs(string $client_id):array
