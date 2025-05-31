@@ -49,7 +49,7 @@ class PostLocalReceipt
          }
 
          if($theMenu->onOneAccount == "YES"){
-            $account = "Other";
+            $account = "other";
          }else{
             $account = $paymentDTO->customerAccount;
          }
