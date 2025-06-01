@@ -5,16 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PromotionEntry extends Model
+class PromotionDrawEntry extends Model
 {
 
    use HasFactory;
 
-   protected $table = "promotion_entries";
+   protected $table = "promotion_draw_entries";
 
    protected $fillable=[
-                  'promotion_id','customerAccount','consumerType','mobileNumber','entryDate','paymentAmount',
-                  'rewardAmount','rewardRate','message','smsDelivered','status','entryDate'
+                  'promotion_id','customerAccount','consumerType','mobileNumber','entryDate',
+                  'raffleDate','raffleWinner','drawNumber','drawMessage','status'
                ];
 
    protected $casts = [

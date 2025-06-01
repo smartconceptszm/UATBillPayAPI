@@ -3,6 +3,7 @@
 namespace App\Http\Services\Gateway\ConfirmPaymentSteps;
 
 use App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient;
+use App\Http\Services\Gateway\Utility\StepService_ProcessPromotion;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Enums\PaymentStatusEnum;
@@ -12,6 +13,7 @@ use App\Http\DTOs\BaseDTO;
 class Step_GetPaymentStatus extends EfectivoPipelineContract
 {
     public function __construct(
+        private StepService_ProcessPromotion $stepServiceProcessPromotion,
         private IPaymentsProviderClient $paymentsProviderClient,
         private ClientMenuService $clientMenuService
     ) {}
@@ -44,6 +46,7 @@ class Step_GetPaymentStatus extends EfectivoPipelineContract
     {
         if ($paymentsProviderResponse->status === "PAYMENT SUCCESSFUL") {
             $this->handleSuccessfulPayment($paymentDTO, $paymentsProviderResponse->ppTransactionId);
+            $this->handlePromotion($paymentDTO);
         } else {
             $this->handleFailedPayment($paymentDTO, $paymentsProviderResponse->error);
         }
@@ -56,13 +59,17 @@ class Step_GetPaymentStatus extends EfectivoPipelineContract
         $paymentDTO->paymentStatus = ($theMenu->paymentType === PaymentTypeEnum::PrePaid->value)
             ? PaymentStatusEnum::NoToken->value
             : PaymentStatusEnum::Paid->value;
-            
     }
 
     private function handleFailedPayment(BaseDTO $paymentDTO, string $error): void
     {
         $paymentDTO->paymentStatus = PaymentStatusEnum::Payment_Failed->value;
         $paymentDTO->error = $error;
+    }
+
+    private function handlePromotion(BaseDTO $paymentDTO): void
+    {
+        $this->stepServiceProcessPromotion->handle($paymentDTO);
     }
     
 }

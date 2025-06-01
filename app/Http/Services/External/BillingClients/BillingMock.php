@@ -18,8 +18,8 @@ class BillingMock implements IBillingClient
                "name" => "Mock Customer",
                "address" => "No. 1, Street 1",
                "revenuePoint" => "MOCK",
-               "consumerType" => "",
-               "consumerTier" => "",
+               "consumerType" => "DOMESTIC",
+               "consumerTier" => "DOMESTIC",
                "mobileNumber" => "260761028631",
                "balance" => \number_format(100, 2, '.', ','),
             ]; 

@@ -48,8 +48,7 @@ class ReConfirmPayment
                               \App\Http\Services\Gateway\Utility\Step_LogStatusAll::class,
 
                               \App\Http\Services\Gateway\Utility\Step_RefreshAnalytics::class,
-                              \App\Http\Services\Gateway\Utility\Step_AddCutomerToShortcutList::class,
-
+                              \App\Http\Services\Gateway\Utility\Step_AddCutomerToShortcutList::class
                            ])
                            ->thenReturn();
       } catch (\Throwable $e) {

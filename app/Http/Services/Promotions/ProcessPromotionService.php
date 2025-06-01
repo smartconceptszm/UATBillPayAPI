@@ -10,42 +10,33 @@ use App\Http\DTOs\BaseDTO;
 class ProcessPromotionService
 {
 
-   public function handle(BaseDTO $paymentDTO)
+   public function handle(BaseDTO $promotionDTO)
    {
       
-      //Bind the PaymentsProvider Client Wallet 
-         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-         $walletHandler = $paymentDTO->walletHandler;
-         if( $billpaySettings['WALLET_USE_MOCK_'.strtoupper($paymentDTO->urlPrefix)] == 'YES'){
-            $walletHandler = 'MockWallet';
-         }
-         App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
-      //
 
       //Process the request
       try {
          
-         $paymentDTO  =  App::make(Pipeline::class)
-                              ->send($paymentDTO)
+         $promotionDTO  =  App::make(Pipeline::class)
+                              ->send($promotionDTO)
                               ->through(
                                  [
-                                    \App\Http\Services\Gateway\InitiatePaymentSteps\Step_GetPaymentAmounts::class,
-                                    \App\Http\Services\Gateway\InitiatePaymentSteps\Step_CreatePaymentRecord::class,
-                                    \App\Http\Services\Gateway\InitiatePaymentSteps\Step_SendPaymentsProviderRequest::class, 
-                                    \App\Http\Services\Gateway\InitiatePaymentSteps\Step_DispatchConfirmationJob::class,
-                                    \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,  
-                                    \App\Http\Services\Gateway\Utility\Step_LogStatusAll::class,
-                                    \App\Http\Services\Gateway\Utility\Step_DailyAnalytics::class,  
+                                    \App\Http\Services\Promotions\PromotionHandlers\Step_CustomerQualification::class,
+                                    \App\Http\Services\Promotions\PromotionHandlers\Step_PaymentsQualification::class,
+                                    \App\Http\Services\Promotions\PromotionHandlers\Step_CaculateReward::class,
+                                    \App\Http\Services\Promotions\PromotionHandlers\Step_SaveEntry::class,
+                                    \App\Http\Services\Promotions\PromotionHandlers\Step_EnterRaffle::class,
+                                    \App\Http\Services\Promotions\PromotionHandlers\Step_SendMessage::class
                                  ]
                               )
                               ->thenReturn();
 
       } catch (\Throwable $e) {
-         $paymentDTO->error='At get initiate payment pipeline. '.$e->getMessage();
-         Log::info($paymentDTO->error);
+         $promotionDTO->error='At promotion pipeline. '.$e->getMessage();
+         Log::info($promotionDTO->error);
       }
 
-      return $paymentDTO;
+      return $promotionDTO;
       
    }
 

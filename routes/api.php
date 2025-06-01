@@ -188,13 +188,6 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/promotions', 'index');
             });
 
-            Route::controller(\App\Http\Controllers\Promotions\PromotionEntryController::class)->group(function () {
-               Route::get('/promotionentries/findoneby', 'findOneBy');
-               Route::put('/promotionentries/{id}', 'update');
-               Route::get('/promotionentries/{id}', 'show');
-               Route::post('/promotionentries', 'store');
-               Route::get('/promotionentries', 'index');
-            });
             Route::controller(\App\Http\Controllers\Promotions\PromotionRateController::class)->group(function () {
                Route::get('/promotionrates/findoneby', 'findOneBy');
                Route::put('/promotionrates/{id}', 'update');
@@ -202,6 +195,31 @@ Route::group(['middleware' => 'mode'], function (){
                Route::post('/promotionrates', 'store');
                Route::get('/promotionrates', 'index');
                Route::get('/ratesofpromtion/{id}', 'ratesofpromtion');
+            });
+
+            Route::controller(\App\Http\Controllers\Promotions\PromotionMenuController::class)->group(function () {
+               Route::get('/promotionmenus/findoneby', 'findOneBy');
+               Route::put('/promotionmenus/{id}', 'update');
+               Route::get('/promotionmenus/{id}', 'show');
+               Route::post('/promotionmenus', 'store');
+               Route::get('/promotionmenus', 'index');
+               Route::get('/promotionmenus/{id}', 'ratesofpromtion');
+            });
+
+            Route::controller(\App\Http\Controllers\Promotions\PromotionEntryController::class)->group(function () {
+               Route::get('/promotionentries/findoneby', 'findOneBy');
+               Route::put('/promotionentries/{id}', 'update');
+               Route::get('/promotionentries/{id}', 'show');
+               Route::post('/promotionentries', 'store');
+               Route::get('/promotionentries', 'index');
+            });
+
+            Route::controller(\App\Http\Controllers\Promotions\PromotionEntryController::class)->group(function () {
+               Route::get('/promotionendrawtries/findoneby', 'findOneBy');
+               Route::put('/promotionendrawtries/{id}', 'update');
+               Route::get('/promotionendrawtries/{id}', 'show');
+               Route::post('/promotionendrawtries', 'store');
+               Route::get('/promotionendrawtries', 'index');
             });
          //
 

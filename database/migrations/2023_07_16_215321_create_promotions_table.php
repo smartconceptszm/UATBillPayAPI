@@ -16,7 +16,9 @@ return new class extends Migration
          $table->string('client_id',36)->notNullable();
          $table->string("name",150)->notNullable();
          $table->string("description",150)->nullable();
+         $table->enum('consumerType',['DOMESTIC','COMMERCIAL','INSTITUTIONAL','ALL'])->default('DOMESTIC')->notNullable();
          $table->float('entryAmount',10,2)->default(0);
+         $table->float('raffleEntryAmount',10,2)->default(0);
          $table->enum('onDebt',['NO','YES'])->default('YES')->notNullable();
          $table->enum('type',['TIERED','FLATRATE'])->default('FLATRATE')->notNullable();
          $table->enum('resetMonthly',['NO','YES'])->default('YES')->notNullable();

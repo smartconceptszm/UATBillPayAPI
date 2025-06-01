@@ -13,12 +13,12 @@ class ProcessPromotionJob extends BaseJob
    public $timeout = 120;
 
    public function __construct(
-      private BaseDTO $paymentDTO)
+      private BaseDTO $promotionDTO)
    {}
 
    public function handle(ProcessPromotionService $processPromotionService)
    {
-      $processPromotionService->handle($this->paymentDTO);
+      $processPromotionService->handle($this->promotionDTO);
    }
 
    /**
