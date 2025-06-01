@@ -14,9 +14,26 @@ class Step_CustomerQualification extends EfectivoPipelineContract
    {
 
       try {
-         if(!($promotionDTO->consumerType == $promotionDTO->promotionConsumerType || $promotionDTO->promotionConsumerType == "ALL")){
-            $promotionDTO->error = 'Customer does not qualify';
-            $promotionDTO->exitPipeline = true;
+         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+         if($billpaySettings['PROMOTION_MOCK_'.\strtoupper($promotionDTO->urlPrefix)] == "YES"){
+            $testMSISDN = \explode("*", $billpaySettings['APP_ADMIN_MSISDN']);
+            $testMSISDN = array_filter($testMSISDN,function($entry){
+                                                      return $entry !== "";
+                                                   });
+            if ((\in_array($promotionDTO->mobileNumber, $testMSISDN))) {
+               if(!($promotionDTO->consumerType == $promotionDTO->promotionConsumerType || $promotionDTO->promotionConsumerType == "ALL")){
+                  $promotionDTO->error = 'Customer does not qualify';
+                  $promotionDTO->exitPipeline = true;
+               }
+            }else{
+               $promotionDTO->error = 'Customer does not qualify';
+               $promotionDTO->exitPipeline = true;
+            }
+         }else{
+            if(!($promotionDTO->consumerType == $promotionDTO->promotionConsumerType || $promotionDTO->promotionConsumerType == "ALL")){
+               $promotionDTO->error = 'Customer does not qualify';
+               $promotionDTO->exitPipeline = true;
+            }
          }
       } catch (\Throwable $e) {
          $promotionDTO->error = 'At promotion step 1. ' . $e->getMessage();
