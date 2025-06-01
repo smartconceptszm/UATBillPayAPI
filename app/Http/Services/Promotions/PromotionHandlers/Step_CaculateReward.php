@@ -4,6 +4,7 @@ namespace App\Http\Services\Promotions\PromotionHandlers;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Promotions\PromotionRateService;
+use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\BaseDTO;
 
 class Step_CaculateReward extends EfectivoPipelineContract
@@ -17,7 +18,7 @@ class Step_CaculateReward extends EfectivoPipelineContract
    {
 
       try {
-
+         Log::info("(luapula) Step 3 Payment Qualification Account Number".$promotionDTO->customerAccount);
          if($promotionDTO->enterPromo){
             if($promotionDTO->promotionType == 'FLATRATE'){
                $promotionDTO->rewardAmount = $promotionDTO->paymentAmount * ($promotionDTO->promotionRateValue/100);

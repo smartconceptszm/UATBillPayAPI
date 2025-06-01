@@ -5,6 +5,7 @@ namespace App\Http\Services\Promotions\PromotionHandlers;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Promotions\PromotionMenuService;
 use App\Http\Services\Clients\ClientMenuService;
+use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\BaseDTO;
 
 class Step_PaymentsQualification extends EfectivoPipelineContract
@@ -19,7 +20,7 @@ class Step_PaymentsQualification extends EfectivoPipelineContract
    {
 
       try {
-
+         Log::info("(luapula) Step 2 Payment Qualification Account Number".$promotionDTO->customerAccount);
          $promoMenu = $this->promotionMenuService->findOneBy([
                                                       'promotion_id' =>$promotionDTO->promotion_id,
                                                       'menu_id' =>$promotionDTO->menu_id,

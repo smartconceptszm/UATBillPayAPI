@@ -13,10 +13,9 @@ class ProcessPromotionService
    public function handle(BaseDTO $promotionDTO)
    {
       
-
       //Process the request
       try {
-         
+         Log::info("(luapula) Promotion job started account Number".$promotionDTO->customerAccount);
          $promotionDTO  =  App::make(Pipeline::class)
                               ->send($promotionDTO)
                               ->through(
@@ -33,7 +32,7 @@ class ProcessPromotionService
 
       } catch (\Throwable $e) {
          $promotionDTO->error='At promotion pipeline. '.$e->getMessage();
-         Log::info($promotionDTO->error);
+         Log::error($promotionDTO->error);
       }
 
       return $promotionDTO;

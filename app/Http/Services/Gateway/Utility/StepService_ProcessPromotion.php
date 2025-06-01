@@ -40,7 +40,7 @@ class StepService_ProcessPromotion
             $promotionDTO->mno_id = $paymentDTO->mno_id;
             $promotionDTO->payment_id = $paymentDTO->id;
             ProcessPromotionJob::dispatch($promotionDTO)
-                                 ->delay(Carbon::now()->addSeconds(5))
+                                 ->delay(Carbon::now()->addSeconds(10))
                                  ->onQueue('low');
          }
       } catch (\Throwable $e) {
