@@ -9,6 +9,7 @@ class PromotionDTO extends BaseDTO
 
     public $customerAccount;
     public $paymentAmount;
+    public $receiptNumber;
     public $consumerType;
     public $promotion_id;
     public $rewardAmount;
@@ -47,6 +48,7 @@ class PromotionDTO extends BaseDTO
         return [
             'customerAccount' => $this->customerAccount,
             'paymentAmount' => $this->paymentAmount,
+            'receiptNumber' => $this->receiptNumber,
             'promotion_id' => $this->promotion_id,
             'rewardAmount' => $this->rewardAmount,
             'consumerType' => $this->consumerType,
@@ -64,6 +66,7 @@ class PromotionDTO extends BaseDTO
 
         return [
             'customerAccount' => $this->customerAccount,
+            'receiptNumber' => $this->receiptNumber,
             'paymentAmount' => $this->paymentAmount,
             'message' => $this->raffleEntryMessage,
             'consumerType' => $this->consumerType,

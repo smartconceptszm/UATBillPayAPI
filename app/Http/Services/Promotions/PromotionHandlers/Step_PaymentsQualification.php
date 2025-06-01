@@ -20,7 +20,6 @@ class Step_PaymentsQualification extends EfectivoPipelineContract
    {
 
       try {
-         Log::info("(luapula) Step 2 Payment Qualification Account Number".$promotionDTO->customerAccount);
          $promoMenu = $this->promotionMenuService->findOneBy([
                                                       'promotion_id' =>$promotionDTO->promotion_id,
                                                       'menu_id' =>$promotionDTO->menu_id,

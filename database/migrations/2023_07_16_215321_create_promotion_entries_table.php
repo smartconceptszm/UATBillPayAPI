@@ -18,6 +18,7 @@ return new class extends Migration
          $table->string("customerAccount",50)->notNullable();
          $table->string("mobileNumber",15)->nullable();
          $table->float('paymentAmount',10,2)->default(0);
+         $table->string("receiptNumber",50)->nullable();
          $table->float('rewardAmount',10,2)->default(0);
          $table->float('rewardRate',10,2)->default(0);
          $table->string("message",150)->nullable();

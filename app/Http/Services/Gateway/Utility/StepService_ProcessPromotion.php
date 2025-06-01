@@ -30,6 +30,7 @@ class StepService_ProcessPromotion
             $promotionDTO->promotionConsumerType = $activePromotion->consumerType;
             $promotionDTO->promotionEntryAmount = $activePromotion->entryAmount;
             $promotionDTO->promotionRateValue = $activePromotion->rateValue;
+            $promotionDTO->receiptNumber = $paymentDTO->receiptNumber;
             $promotionDTO->promotionOnDebt = $activePromotion->onDebt;
             $promotionDTO->consumerType = $paymentDTO->consumerType;
             $promotionDTO->client_id = $activePromotion->client_id;

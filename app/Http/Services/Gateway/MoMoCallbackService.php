@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\Gateway;
 
-use App\Http\Services\Gateway\Utility\StepService_ProcessPromotion;
 use App\Http\Services\Clients\ClientWalletCredentialsService;
 use App\Http\Services\Payments\PaymentToReviewService;
 use App\Http\Services\Clients\ClientMenuService;
@@ -19,7 +18,6 @@ class MoMoCallbackService
 
    public function __construct(
       private ClientWalletCredentialsService $clientWalletCredentialsService,
-      private StepService_ProcessPromotion $stepServiceProcessPromotion,
       private PaymentToReviewService $paymentToReviewService, 
       private ClientMenuService $clientMenuService,
       private ReConfirmPayment $reConfirmPayment,
@@ -58,9 +56,6 @@ class MoMoCallbackService
                   $paymentDTO->paymentStatus = PaymentStatusEnum::Paid->value;
                }
                $paymentDTO->error = "";
-
-               //Fire Promotion
-               $this->stepServiceProcessPromotion->handle($paymentDTO);
 
             } else {
                $paymentDTO->paymentStatus = PaymentStatusEnum::Payment_Failed->value;

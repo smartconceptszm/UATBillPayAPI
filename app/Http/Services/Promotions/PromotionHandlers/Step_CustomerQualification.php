@@ -15,7 +15,6 @@ class Step_CustomerQualification extends EfectivoPipelineContract
    {
 
       try {
-         Log::info("(luapula) Step 1 Customer Qualification Account Number".$promotionDTO->customerAccount);
          $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
          if($billpaySettings['PROMOTION_MOCK_'.\strtoupper($promotionDTO->urlPrefix)] == "YES"){
             $testMSISDN = \explode("*", $billpaySettings['APP_ADMIN_MSISDN']);

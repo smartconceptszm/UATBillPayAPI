@@ -14,7 +14,7 @@ class PromotionEntry extends Model
 
    protected $fillable=[
                   'promotion_id','customerAccount','consumerType','mobileNumber','entryDate','paymentAmount',
-                  'rewardAmount','rewardRate','message','smsDelivered','status','entryDate'
+                  'rewardAmount','rewardRate','message','smsDelivered','status','entryDate','receiptNumber'
                ];
 
    protected $casts = [

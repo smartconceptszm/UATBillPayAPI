@@ -14,7 +14,7 @@ class PromotionDrawEntry extends Model
 
    protected $fillable=[
                   'promotion_id','customerAccount','consumerType','mobileNumber','entryDate',
-                  'raffleDate','raffleWinner','drawNumber','drawMessage','status'
+                  'raffleDate','raffleWinner','drawNumber','drawMessage','status','receiptNumber'
                ];
 
    protected $casts = [

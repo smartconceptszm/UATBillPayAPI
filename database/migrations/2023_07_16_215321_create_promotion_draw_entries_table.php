@@ -18,6 +18,7 @@ return new class extends Migration
          $table->string("mobileNumber",15)->nullable();
          $table->timestamp('entryDate');
          $table->float('paymentAmount',10,2)->default(0);
+         $table->string("receiptNumber",50)->nullable();
          $table->timestamp('raffleDate');
          $table->enum('raffleWinner',['NO','YES'])->default('NO')->notNullable();
          $table->integer('drawNumber')->nullable();
