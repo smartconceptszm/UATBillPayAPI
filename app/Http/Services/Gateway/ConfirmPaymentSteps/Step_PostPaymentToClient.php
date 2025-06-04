@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Gateway\ConfirmPaymentSteps;
 
+use App\Http\Services\Gateway\Utility\StepService_ProcessPromotion;
 use App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Enums\PaymentStatusEnum;
@@ -10,6 +11,7 @@ use App\Http\DTOs\BaseDTO;
 class Step_PostPaymentToClient extends EfectivoPipelineContract
 {
     public function __construct(
+        private StepService_ProcessPromotion $stepServiceProcessPromotion,
         private IReceiptPayment $receiptPayment
     ) {}
 
@@ -44,6 +46,10 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
             $paymentDTO->paymentStatus = PaymentStatusEnum::Receipted->value;
         } else {
             $paymentDTO = $this->receiptPayment->handle($paymentDTO);
+            if($paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value ){
+                //Fire Promotion
+			    $this->stepServiceProcessPromotion->handle($paymentDTO);
+            }
         }
         
     }

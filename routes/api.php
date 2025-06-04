@@ -203,15 +203,20 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/promotionmenus/{id}', 'show');
                Route::post('/promotionmenus', 'store');
                Route::get('/promotionmenus', 'index');
-               Route::get('/promotionmenus/{id}', 'ratesofpromtion');
+               Route::get('/promotionmenus/{id}', 'menusofpromtion');
             });
 
             Route::controller(\App\Http\Controllers\Promotions\PromotionEntryController::class)->group(function () {
                Route::get('/promotionentries/findoneby', 'findOneBy');
+               Route::get('/promotionentries/notredeemed', 'notRedeemed');
+               Route::get('/promotionentries/redeemed', 'redeemed');
+               Route::get('/entriesofpromotion/{id}', 'entriesOfPromotion');
+               Route::put('/promotionentriessms/{id}', 'sendEntrySMS');
                Route::put('/promotionentries/{id}', 'update');
                Route::get('/promotionentries/{id}', 'show');
                Route::post('/promotionentries', 'store');
                Route::get('/promotionentries', 'index');
+
             });
 
             Route::controller(\App\Http\Controllers\Promotions\PromotionEntryController::class)->group(function () {

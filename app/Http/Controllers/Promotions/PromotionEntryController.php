@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Promotions;
 
 use App\Http\Services\Promotions\PromotionEntryService;
+use Illuminate\Contracts\Auth\Authenticatable;
+use App\Http\Services\SMS\MessageService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -10,7 +12,8 @@ class PromotionEntryController extends Controller
 {
 
 	public function __construct(
-		private PromotionEntryService $promotionEntryService)
+		private PromotionEntryService $promotionEntryService,
+      private MessageService $messageService)
 	{}
 
    /**
@@ -53,6 +56,55 @@ class PromotionEntryController extends Controller
 
    }
 
+      /**
+    * Display the specified resource.
+      */
+      public function entriesOfPromotion(Request $request, string $id)
+      {
+   
+         try {
+            $this->response['data'] = $this->promotionEntryService->findAll(['promotion_id'=>$id]);
+         } catch (\Throwable $e) {
+               $this->response['status']['code'] = 500;
+               $this->response['status']['message'] = $e->getMessage();
+         }
+         return response()->json($this->response);
+   
+      }
+
+
+   /* Display REDEEMED PROMOTIONS
+   */
+  public function redeemed(Request $request)
+  {
+
+     try {
+        $this->response['data'] =  $this->promotionEntryService->findAll(['status' => 'REDEEMED']);
+     } catch (\Throwable $e) {
+           $this->response['status']['code'] = 500;
+           $this->response['status']['message'] = $e->getMessage();
+     }
+     return response()->json( $this->response);
+
+  }
+
+
+     /**
+    * Display REDEEMED PROMOTIONS
+   */
+  public function notRedeemed(Request $request)
+  {
+
+     try {
+        $this->response['data'] =  $this->promotionEntryService->findAll(['status' => 'RECORDED']);
+     } catch (\Throwable $e) {
+           $this->response['status']['code'] = 500;
+           $this->response['status']['message'] = $e->getMessage();
+     }
+     return response()->json( $this->response);
+
+  }
+
    /**
     * Display one resource.
       */
@@ -68,6 +120,31 @@ class PromotionEntryController extends Controller
       return response()->json($this->response);
 
    }
+
+      /**
+    * Update the specified resource in storage.
+      */
+      public function sendEntrySMS(Request $request, Authenticatable $user, string $id)
+      {
+   
+         try {
+
+            $promotionEntry = $this->promotionEntryService->findById($id);
+            $promoSMS=[
+                     'mobileNumber' => $promotionEntry->mobileNumber,
+                     'message' => $promotionEntry->message,
+                     'client_id' => $user->client_id,
+                     'type' => "NOTIFICATION"
+                  ];
+            $this->response['data'] = $this->messageService->send($promoSMS);
+
+         } catch (\Throwable $e) {
+            $this->response['status']['code'] = 500;
+            $this->response['status']['message'] = $e->getMessage();
+         }
+         return response()->json($this->response);
+   
+      }
 
    /**
     * Update the specified resource in storage.

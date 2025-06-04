@@ -72,7 +72,7 @@ class PromotionMenuController extends Controller
    /**
    * Display the specified resources.
    */
-  public function ratesofpromotion(Request $request, string $id)
+  public function menusofpromotion(Request $request, string $id)
   {
 
      try {

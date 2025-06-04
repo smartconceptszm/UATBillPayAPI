@@ -8,7 +8,6 @@ use App\Jobs\SendSMSesJob;
 use App\Models\Message;
 use Exception;
 
-
 class MessageService
 {
 
@@ -20,8 +19,11 @@ class MessageService
    {
 
       try {
-         $user = Auth::user(); 
-         $data['type'] = 'SINGLE';
+         
+         if (empty($data['type'])) {
+            $data['type'] = "SINGLE";
+         }
+         $user = Auth::user();
 			$data['user_id'] = $user->id;
          SendSMSesJob::dispatch([$data])
                               ->delay(Carbon::now()->addSeconds(1))

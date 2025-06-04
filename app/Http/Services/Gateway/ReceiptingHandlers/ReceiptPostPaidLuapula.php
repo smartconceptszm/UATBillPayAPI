@@ -2,7 +2,6 @@
 
 namespace App\Http\Services\Gateway\ReceiptingHandlers;
 
-use App\Http\Services\Gateway\Utility\StepService_ProcessPromotion;
 use App\Http\Services\Gateway\ReceiptingHandlers\PostLocalReceipt;
 use App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
@@ -16,7 +15,6 @@ class ReceiptPostPaidLuapula implements IReceiptPayment
 {
 
 	public function __construct(
-		private StepService_ProcessPromotion $stepServiceProcessPromotion,
 		private ClientMenuService $clientMenuService,
 		private PostLocalReceipt $postLocalReceipt,
 		private EnquiryHandler $luapulaEnquiry,
@@ -46,10 +44,6 @@ class ReceiptPostPaidLuapula implements IReceiptPayment
 										"Amount: ZMW " . \number_format( $paymentDTO->receiptAmount, 2, '.', ',') . "\n".
 										"Acc: " . $paymentDTO->customerAccount . "\n";
 			$paymentDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
-
-			//Fire Promotion
-			$this->stepServiceProcessPromotion->handle($paymentDTO);
-			
 		}else{
 			$paymentDTO->receiptNumber =  '';
 			$paymentDTO->error = "At receipt payment. ".$billingResponse['error'];
