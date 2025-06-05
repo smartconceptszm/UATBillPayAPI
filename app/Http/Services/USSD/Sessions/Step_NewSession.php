@@ -20,6 +20,7 @@ class Step_NewSession extends EfectivoPipelineContract
                         ->send($txDTO)
                         ->through(
                            [
+                              \App\Http\Services\USSD\Sessions\NewSession\CheckInputValue::class,
                               \App\Http\Services\USSD\Sessions\NewSession\RedirectedSession::class,
                               \App\Http\Services\USSD\Sessions\NewSession\CreateSession::class,
                               \App\Http\Services\USSD\Sessions\NewSession\ResumingSession::class,

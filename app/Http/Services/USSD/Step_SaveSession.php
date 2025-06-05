@@ -5,10 +5,7 @@ namespace App\Http\Services\USSD;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Sessions\SessionService;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\BaseDTO;
-
-use function PHPUnit\Framework\isEmpty;
 
 class Step_SaveSession extends EfectivoPipelineContract
 {
@@ -26,11 +23,6 @@ class Step_SaveSession extends EfectivoPipelineContract
 			}else{
 				$txDTO->customerJourney = $txDTO->subscriberInput;
 			}
-
-			if($txDTO->mobileNumber=='260972702707'){
-				Log::info("(luapula) session id: ".$txDTO->sessionId." mobileNumber = ".$txDTO->mobileNumber." input = ".$txDTO->customerJourney);
-			}
-
 			$this->sessionService->update($txDTO->toSessionData(),$txDTO->id);
 		} catch (\Throwable $e) {
 			$billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);

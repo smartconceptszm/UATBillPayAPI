@@ -4,7 +4,6 @@ namespace App\Http\Services\USSD\Sessions\NewSession;
 
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Sessions\SessionService;
-use Illuminate\Support\Facades\Log;
 use App\Http\DTOs\BaseDTO;
 use Exception;
 
@@ -27,18 +26,9 @@ class RedirectedSession extends EfectivoPipelineContract
                                                       'sessionId'=>$txDTO->sessionId,
                                                    ]);
             if(!$ussdSession){
-               // if(isset($txDTO->subscriberInput) && $txDTO->subscriberInput !== ''){
-               //    $subscriberInput = \explode("*",$txDTO->subscriberInput);
-               //    $txDTO->subscriberInput = $subscriberInput[0];
-               // }else{
-               //    $txDTO->subscriberInput = $txDTO->shortCode ;
-               // }
-               Log::info("(luapula) session id: ".$txDTO->sessionId." mobileNumber = ".$txDTO->mobileNumber." input = ".$txDTO->subscriberInput);
                $txDTO->subscriberInput = $txDTO->shortCode ;
                $txDTO->isNewRequest = '1';
             }
-         }elseif ($txDTO->mobileNumber == '260972702707') {
-            Log::info("(luapula) session id: ".$txDTO->sessionId." mobileNumber = ".$txDTO->mobileNumber." input = ".$txDTO->subscriberInput." isnewrequest = ".$txDTO->isNewRequest);
          }
 
       } catch (\Throwable $e) {
