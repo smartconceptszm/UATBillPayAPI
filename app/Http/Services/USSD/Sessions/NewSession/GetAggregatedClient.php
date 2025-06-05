@@ -25,38 +25,35 @@ class GetAggregatedClient extends EfectivoPipelineContract
 
       try {
 
-         if(($txDTO->isNewRequest == '1') 
-                  && $txDTO->ussdAggregator == 'YES'
-                     && (\count(\explode("*", $txDTO->subscriberInput))>1)){
-            
+         if($txDTO->isNewRequest == '1') {
+            if(($txDTO->ussdAggregator == 'YES' && (\count(\explode("*", $txDTO->subscriberInput))>1))){
+               $arrInputs = explode("*", $txDTO->subscriberInput);
+               $aggregatedClient = $this->aggregatedClientService->findOneBy([
+                                                'parent_id' => $txDTO->client_id,
+                                                'menuNo' => $arrInputs[1]
+                                             ]);
+               if(!$aggregatedClient){
+                  return $txDTO;
+               }
 
-            $arrInputs = explode("*", $txDTO->subscriberInput);
-            $aggregatedClient = $this->aggregatedClientService->findOneBy([
-                                             'parent_id' => $txDTO->client_id,
-                                             'menuNo' => $arrInputs[1]
-                                          ]);
-            if(!$aggregatedClient){
-               return $txDTO;
+               $client = $this->clientService->findById($aggregatedClient->client_id);
+               $txDTO->clientSurcharge = $client->surcharge; 
+               $txDTO->testMSISDN = $client->testMSISDN;
+               $txDTO->shortCode = $client->shortCode;
+               $txDTO->urlPrefix = $client->urlPrefix;
+               $txDTO->client_id = $client->id;
+
+               $homeMenu = $this->clientMenuService->findOneBy([
+                                                         'client_id' => $txDTO->client_id,
+                                                         'parent_id' =>'0'
+                                                      ]);
+               $txDTO->billingClient = $homeMenu->billingClient; 
+               $txDTO->menuPrompt = $homeMenu->prompt;
+               $txDTO->handler = $homeMenu->handler; 
+               $txDTO->menu_id = $homeMenu->id;
+               array_splice($arrInputs,1,1);
+               $txDTO->subscriberInput =  implode('*',$arrInputs); 
             }
-
-            $client = $this->clientService->findById($aggregatedClient->client_id);
-            $txDTO->clientSurcharge = $client->surcharge; 
-            $txDTO->testMSISDN = $client->testMSISDN;
-            $txDTO->shortCode = $client->shortCode;
-            $txDTO->urlPrefix = $client->urlPrefix;
-            $txDTO->client_id = $client->id;
-
-            $homeMenu = $this->clientMenuService->findOneBy([
-                                                      'client_id' => $txDTO->client_id,
-                                                      'parent_id' =>'0'
-                                                   ]);
-            $txDTO->billingClient = $homeMenu->billingClient; 
-            $txDTO->menuPrompt = $homeMenu->prompt;
-            $txDTO->handler = $homeMenu->handler; 
-            $txDTO->menu_id = $homeMenu->id;
-            array_splice($arrInputs,1,1);
-            $txDTO->subscriberInput =  implode('*',$arrInputs); 
-
          }
 
       } catch (\Throwable $e) {

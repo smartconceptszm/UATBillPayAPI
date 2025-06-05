@@ -26,12 +26,13 @@ class RedirectedSession extends EfectivoPipelineContract
                                                       'sessionId'=>$txDTO->sessionId,
                                                    ]);
             if(!$ussdSession){
-               if(isset($txDTO->subscriberInput) && $txDTO->subscriberInput !== ''){
-                  $subscriberInput = \explode("*",$txDTO->subscriberInput);
-                  $txDTO->subscriberInput = $subscriberInput[0];
-               }else{
-                  $txDTO->subscriberInput = $txDTO->shortCode ;
-               }
+               // if(isset($txDTO->subscriberInput) && $txDTO->subscriberInput !== ''){
+               //    $subscriberInput = \explode("*",$txDTO->subscriberInput);
+               //    $txDTO->subscriberInput = $subscriberInput[0];
+               // }else{
+               //    $txDTO->subscriberInput = $txDTO->shortCode ;
+               // }
+               $txDTO->subscriberInput = $txDTO->shortCode ;
                $txDTO->isNewRequest = '1';
             }
          }
