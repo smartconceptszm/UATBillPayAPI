@@ -27,7 +27,7 @@ class Step_SaveSession extends EfectivoPipelineContract
 				$txDTO->customerJourney = $txDTO->subscriberInput;
 			}
 
-			if($txDTO->mobileNumber=='260977787659'){
+			if($txDTO->mobileNumber=='260972702707'){
 				Log::info("(luapula) session id: ".$txDTO->sessionId." mobileNumber = ".$txDTO->mobileNumber." input = ".$txDTO->customerJourney);
 			}
 

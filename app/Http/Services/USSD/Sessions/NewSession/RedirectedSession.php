@@ -37,7 +37,7 @@ class RedirectedSession extends EfectivoPipelineContract
                $txDTO->subscriberInput = $txDTO->shortCode ;
                $txDTO->isNewRequest = '1';
             }
-         }elseif ($txDTO->mobileNumber == '260977787659') {
+         }elseif ($txDTO->mobileNumber == '260972702707') {
             Log::info("(luapula) session id: ".$txDTO->sessionId." mobileNumber = ".$txDTO->mobileNumber." input = ".$txDTO->subscriberInput." isnewrequest = ".$txDTO->isNewRequest);
          }
 
