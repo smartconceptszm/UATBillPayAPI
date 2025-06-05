@@ -35,15 +35,18 @@ class Step_CaculateReward extends EfectivoPipelineContract
             }
 
             if($promotionDTO->paymentAmount >= $promotionDTO->promotionRaffleEntryAmount){
-               $promotionDTO->message = "Thank you for paying your bill, redeem your Luapula Beula gift of ZMW ". 
+               $promotionDTO->message = "Thank you for paying your bill! Redeem ZMW ". 
                                        \number_format((float)$promotionDTO->rewardAmount, 2, '.', ',').
-                                       " from Shoprite Mansa. You have been entered into the Motor Bike raffle.";
+                                       " Luapula Beula gift at LpWSC HQ in Mansa with your NRC.".
+                                       " You have been entered into the Motor Bike raffle.";
+
                $promotionDTO->raffleEntryMessage = $promotionDTO->message;
             }else{
-               $promotionDTO->message = "Thank you for paying your bill, redeem your Luapula Beula gift of ZMW ". 
-                                       \number_format((float)$promotionDTO->rewardAmount, 2, '.', ',').
-                                       " from Shoprite Mansa. Pay ZMW ".\number_format((float)$promotionDTO->promotionRaffleEntryAmount, 2, '.', ',').
-                                       " and get into the Motor Bike raffle.";                        
+               $promotionDTO->message = "Thank you for paying your bill! Redeem ZMW "
+                                          .\number_format((float)$promotionDTO->rewardAmount, 2, '.', ',').
+                                          " Luapula Beula gift at LpWSC HQ in Mansa with your NRC. Pay ZMW "
+                                          .\number_format((float)$promotionDTO->promotionRaffleEntryAmount, 2, '.', ',').
+                                          " and get into the Motor Bike raffle.";
             }
 
          }
