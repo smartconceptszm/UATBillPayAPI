@@ -7,6 +7,8 @@ use App\Http\Services\Sessions\SessionService;
 use Illuminate\Support\Facades\Cache;
 use App\Http\DTOs\BaseDTO;
 
+use function PHPUnit\Framework\isEmpty;
+
 class Step_SaveSession extends EfectivoPipelineContract
 {
 
@@ -18,7 +20,7 @@ class Step_SaveSession extends EfectivoPipelineContract
 	{
 		
 		try {
-			if( $txDTO->customerJourney){
+			if(isset($txDTO->customerJourney) && $txDTO->customerJourney !== ''){
 				$txDTO->customerJourney = $txDTO->customerJourney."*".$txDTO->subscriberInput;
 			}else{
 				$txDTO->customerJourney = $txDTO->subscriberInput;

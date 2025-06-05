@@ -19,7 +19,7 @@ class USSDAirtelController extends USSDController
             //IS_NEW_REQUEST=1&USSD_MESSAGE=&SEQUENCE=&END_OF_SESSION=&FRA=&SERVICE_KEY
             
             $requestParams = $this->getParameters($request);
-            $airtelParams['subscriberInput']=\strtoupper($requestParams['SUBSCRIBER_INPUT']);
+            $airtelParams['subscriberInput']=\strtoupper(\trim($requestParams['SUBSCRIBER_INPUT']));
             $airtelParams['isNewRequest']=$requestParams['IS_NEW_REQUEST'];
             $airtelParams['sessionId']=$requestParams['SESSION_ID'];
             if(\array_key_exists('MSISDN',$requestParams)){

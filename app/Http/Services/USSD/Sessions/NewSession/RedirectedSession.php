@@ -26,7 +26,7 @@ class RedirectedSession extends EfectivoPipelineContract
                                                       'sessionId'=>$txDTO->sessionId,
                                                    ]);
             if(!$ussdSession){
-               if($txDTO->subscriberInput){
+               if(isset($txDTO->subscriberInput) && $txDTO->subscriberInput !== ''){
                   $subscriberInput = \explode("*",$txDTO->subscriberInput);
                   $txDTO->subscriberInput = $subscriberInput[0];
                }else{
