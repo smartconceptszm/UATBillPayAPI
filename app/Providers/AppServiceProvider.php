@@ -310,13 +310,16 @@ class AppServiceProvider extends ServiceProvider
       //
 
       //SMS Clients
+         $this->app->singleton('DIAFAANSMS', function () {
+               return $this->app->make(\App\Http\Services\External\SMSClients\DiafaanSMS::class);
+            });
          $this->app->singleton('MockSMSDelivery', function () {
                return $this->app->make(\App\Http\Services\External\SMSClients\MockSMSDelivery::class);
             });
-         $this->app->singleton('MTNDeliverySMS', function () {
+         $this->app->singleton('MTNMoMoSMS', function () {
                return $this->app->make(\App\Http\Services\External\SMSClients\MTNMoMoDeliverySMS::class);
             });
-         $this->app->singleton('MTNSMS', function () {
+         $this->app->singleton('CPASSSMS', function () {
                return $this->app->make(\App\Http\Services\External\SMSClients\MTNSMS::class);
             });
 			$this->app->singleton('ZAMTELSMS', function () {
@@ -383,6 +386,7 @@ class AppServiceProvider extends ServiceProvider
             return $this->app->make(\App\Http\Services\Analytics\Views\PaymentProviderSummaryUserViewService::class);
          });
       //
+      
    //
       
    }

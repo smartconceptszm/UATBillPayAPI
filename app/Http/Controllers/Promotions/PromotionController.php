@@ -10,6 +10,18 @@ use Illuminate\Http\Request;
 class PromotionController extends Controller
 {
 
+   protected $validationRules = [
+      'client_id' => 'required',
+      'name' => 'required',
+      'consumerType' => 'required',
+      'entryAmount' => 'required',
+      'type' => 'required',
+      'startDate' => 'required',
+      'endDate' => 'required',
+      'status' => 'required',
+      'entryMessage' => 'required',
+   ];
+
 	public function __construct(
 		private PromotionService $promotionService)
 	{}
@@ -37,6 +49,16 @@ class PromotionController extends Controller
       */
    public function store(Request $request)
    {
+
+      try {
+         //validate incoming request 
+         $this->validate($request, $this->validationRules);
+         $this->response['data'] = $this->promotionService->create($this->getParameters($request));
+      } catch (\Throwable $e) {
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
+      }
+      return response()->json($this->response);
 
    }
 

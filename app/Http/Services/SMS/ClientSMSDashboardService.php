@@ -2,8 +2,11 @@
 
 namespace App\Http\Services\SMS;
 
-use Illuminate\Support\Facades\DB;
+use \App\Http\Services\Enums\ChartColours;
+use App\Models\SMSDashboardChannelTotals;
+use App\Models\SMSDashboardTypeTotals;
 use Illuminate\Support\Carbon;
+use Carbon\CarbonPeriod;
 use Exception;
 
 class ClientSMSDashboardService
@@ -16,52 +19,107 @@ class ClientSMSDashboardService
          $dto = (object)$criteria;
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
-         //Get all in Date Range
-            $theSMSs = DB::table('messages as sms')
-               ->join('mnos as m','sms.mno_id','=','m.id')
-               ->select('sms.*','m.name as mno','m.colour')
-               ->where('sms.status', '=', 'DELIVERED')
-               ->where('sms.client_id', '=', $dto->client_id)
-               ->whereBetween('sms.created_at', [$dto->dateFrom,$dto->dateTo])
-               ->get();
-            $groupedData = $theSMSs->groupBy('type');
-            $byType=[];
-            foreach ($groupedData as $key => $value) {
-               $byType[] = [
-                     "type"=>$key,
-                     "totalMessages" => $value->count('id')
-                  ];
+         //Get by Channel in Date Range
+            $theMessages = SMSDashboardChannelTotals::select('channel')
+                                                ->selectRaw('SUM(numberOfMessages) as totalMessages')
+                                                ->whereBetween('dateOfMessage', [$dto->dateFrom, $dto->dateTo])
+                                                ->where('client_id',$dto->client_id)
+                                                ->groupBy('channel')
+                                                ->get();
+
+            $theData = $theMessages->pluck('totalMessages')->unique()->values();
+            $theLabels = $theMessages->map(function ($item) {
+                                    return $item->channel.' ('.number_format($item->totalMessages,0,'.',',').')';
+                                 });
+            $colours = ChartColours::getColours(1);
+            $datasets = [collect([
+                              'label'=>'Messages by Channel',
+                              'data'=>$theData->toArray(),
+                              'backgroundColor'=> $colours['backgroundColor'],
+                              'borderColor' => $colours['borderColor'],
+                              'pointBackgroundColor' => $colours['pointBackgroundColor'],
+                              'pointBorderColor' => $colours['pointBorderColor'],
+                              'fill' => false
+                           ])];
+   
+            $byChannel = [
+                           'labels' =>$theLabels,
+                           'datasets' =>$datasets,
+                        ];
+
+         //
+         //Get by Type in Date Range
+            $typeMessages = SMSDashboardTypeTotals::select('messageType as type')
+                                                ->selectRaw('SUM(numberOfMessages) as totalMessages')
+                                                ->whereBetween('dateOfMessage', [$dto->dateFrom, $dto->dateTo])
+                                                ->where('client_id',$dto->client_id)
+                                                ->groupBy('messageType')
+                                                ->get();
+            $theData = $typeMessages->pluck('totalMessages')->unique()->values();
+            $theLabels = $typeMessages->map(function ($item) {
+                                    return $item->type.' ('.number_format($item->totalMessages,0,'.',',').')';
+                                 });
+            $colours = ChartColours::getColours(2);
+            $datasets = [collect([
+                              'label'=>'Messages Type',
+                              'data'=>$theData->toArray(),
+                              'backgroundColor'=> $colours['backgroundColor'],
+                              'borderColor' => $colours['borderColor'],
+                              'pointBackgroundColor' => $colours['pointBackgroundColor'],
+                              'pointBorderColor' => $colours['pointBorderColor'],
+                              'fill' => false
+                           ])];
+   
+            $byType = [
+                           'labels' =>$theLabels,
+                           'datasets' =>$datasets,
+                        ];
+         //
+         // Get all Days in Current Month
+            $dateFrom = Carbon::parse($dto->dateFrom)->startOfDay();
+            $dateTo = Carbon::parse($dto->dateTo)->endOfDay();
+            $theMessages = SMSDashboardTypeTotals::select('day')
+                                             ->selectRaw('SUM(numberOfMessages) as totalMessages')
+                                             ->whereBetween('dateOfMessage', [$dto->dateFrom, $dto->dateTo])
+                                             ->where('client_id',$dto->client_id)
+                                             ->groupBy('day')
+                                             ->get();
+
+            $period = CarbonPeriod::create($dto->dateFrom, $dto->dateTo);
+            if($dateFrom->month != $dateTo->month){
+               $period = CarbonPeriod::create($dateFrom, $dateFrom->copy()->endOfMonth());
             }
 
-            $groupedData = $theSMSs->groupBy('mno');
-            $byMNO=[];
-            foreach ($groupedData as $key => $value) {
-               $firstRow = $value->first();
-               $byMNO[]= [
-                     "mno"=>$key,
-                     "colour"=>$firstRow->colour,
-                     "totalMessages"=>$value->count('id')
-                  ];
+            $dailyLabels =[];
+            $dailyData = [];
+            foreach ($period as $date) {
+               $daysRecord = $theMessages->firstWhere('day','=',$date->day);
+               $dailyLabels[] = $date->day;
+               if($daysRecord){
+                  $dailyData[] = $daysRecord->totalMessages;
+               }else{
+                  $dailyData[] = 0;
+               }
             }
-         // Get all Days in Current Month
-            $theDateTo = Carbon::parse($dto->dateTo);
-            $currentYear = $theDateTo->format('Y');
-            $currentMonth = $theDateTo->format('m');
-            $firstDayOfCurrentMonth = $currentYear . '-' . $currentMonth . '-01 00:00:00';
-            $dailyTrends = DB::table('messages as sms')
-               ->select(DB::raw('dayofmonth(sms.created_at) as dayOfSMS,
-                                    COUNT(sms.id) AS noOfSMSs'))
-               ->where('sms.status', '=', 'DELIVERED')
-               ->where('sms.client_id', '=', $dto->client_id)
-               ->whereBetween('sms.created_at', [$firstDayOfCurrentMonth, $dto->dateTo])
-               ->groupBy('dayOfSMS')
-               ->orderBy('dayOfSMS')
-               ->get();
+
+            $dailyTrends['labels'] = collect($dailyLabels);
+            $colours = ChartColours::getColours(1);
+            $dailyTrends['datasets'][] = collect([
+                                             'backgroundColor'=> $colours['backgroundColor'],
+                                             'borderColor' => $colours['borderColor'],
+                                             'pointBackgroundColor' => $colours['pointBackgroundColor'],
+                                             'pointBorderColor' => $colours['pointBorderColor'],
+                                             'label' => $dateFrom->copy()->format('M-Y'),
+                                             'data' => collect($dailyData),
+                                             'fill' => false
+                                          ]);
+
+
          //
          $response=[
-               'byMNO' => $byMNO,
+               'byChannel' => $byChannel,
                'byType' => $byType,
-               'dailyTrends' => $dailyTrends->toArray(),
+               'dailyTrends' => $dailyTrends,
             ];
 
          return $response;

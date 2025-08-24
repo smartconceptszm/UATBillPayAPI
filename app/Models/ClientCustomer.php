@@ -15,6 +15,7 @@ class ClientCustomer extends Model
 
    protected $fillable = [
          'client_id','customerAccount','revenuePoint','consumerTier','consumerType','customerAddress'
+         ,'composite','parent_id','customerName','balance'
       ];
       
    protected $casts = [

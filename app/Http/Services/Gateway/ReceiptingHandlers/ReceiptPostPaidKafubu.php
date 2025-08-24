@@ -17,7 +17,7 @@ class ReceiptPostPaidKafubu implements IReceiptPayment
 
     public function handle(BaseDTO $paymentDTO):BaseDTO
     {
-        
+      
 		$receiptingParams = [ 
 									'balance' => $paymentDTO->customer?(float)(\str_replace(",", "", $paymentDTO->customer['balance'])):0,
 									'providerName'=>$paymentDTO->walletHandler,
@@ -25,7 +25,7 @@ class ReceiptPostPaidKafubu implements IReceiptPayment
 									'account' => $paymentDTO->customerAccount,
 									'amount' => $paymentDTO->receiptAmount,
 									'client_id'=>$paymentDTO->client_id
-							];
+								];
 
 		$billingResponse=$this->billingClient->postPayment($receiptingParams);
 		if($billingResponse['status']=='SUCCESS'){

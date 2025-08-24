@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Gateway;
 
+use App\Http\Services\Utility\SCLExternalServiceBinder;
 use App\Http\Services\Clients\ClientMenuService;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -11,10 +12,8 @@ use App\Http\DTOs\BaseDTO;
 class PostThePrePaidToBilling
 {
 
-   private const USE_RECEIPTING_MOCK_KEY = 'USE_RECEIPTING_MOCK_';
-   private const USE_BILLING_MOCK_KEY = 'USE_BILLING_MOCK_';
-
    public function __construct(
+      private SCLExternalServiceBinder $sclExternalServiceBinder,
       private ClientMenuService $clientMenuService
    ) {}
 
@@ -23,8 +22,9 @@ class PostThePrePaidToBilling
 
       try {
 
-         $billpaySettings = json_decode(cache('billpaySettings', json_encode([])), true);;
-         $this->bindHandlers($paymentDTO, $billpaySettings);
+         // Bind Billing and Receipting Handlers
+            $this->sclExternalServiceBinder->bindBillingAndReceipting($paymentDTO->urlPrefix,$paymentDTO->menu_id);
+         //
 
          $paymentDTO = App::make(Pipeline::class)
                            ->send($paymentDTO)
@@ -43,33 +43,4 @@ class PostThePrePaidToBilling
       return $paymentDTO;
    }
 
-   private function bindHandlers(BaseDTO $paymentDTO, array $billpaySettings)
-   {
-
-      $menu = $this->clientMenuService->findById($paymentDTO->menu_id);
-      $this->bindReceiptingAndBillingHandlers($paymentDTO, $billpaySettings, $menu);
-   }
-
-   private function bindReceiptingAndBillingHandlers(BaseDTO $paymentDTO, array $billpaySettings, $menu)
-   {
-      $receiptingHandler = $this->getReceiptingHandler($paymentDTO, $billpaySettings, $menu);
-      $billingClient = $this->getBillingClient($paymentDTO, $billpaySettings, $menu);
-
-      App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class, $billingClient);
-      App::bind(\App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment::class, $receiptingHandler);
-   }
-
-   private function getReceiptingHandler(BaseDTO $paymentDTO, array $billpaySettings, $menu): string
-   {
-      return $billpaySettings[self::USE_RECEIPTING_MOCK_KEY . strtoupper($paymentDTO->urlPrefix)] === "YES"
-         ? "MockReceipting"
-         : $menu->receiptingHandler;
-   }
-
-   private function getBillingClient(BaseDTO $paymentDTO, array $billpaySettings, $menu): string
-   {
-      return $billpaySettings[self::USE_BILLING_MOCK_KEY . strtoupper($paymentDTO->urlPrefix)] === "YES"
-         ? "MockBillingClient"
-         : $menu->billingClient;
-   }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\USSD\Menus;
 
+use App\Http\Services\Utility\SCLExternalServiceBinder;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\App;
@@ -10,6 +11,10 @@ use App\Http\DTOs\BaseDTO;
 class MakeOtherPayment implements IUSSDMenu
 {
 
+   public function __construct(
+      private SCLExternalServiceBinder $sclExternalServiceBinder
+   ) {}
+
    public function handle(BaseDTO $txDTO):BaseDTO
    {
 
@@ -17,9 +22,7 @@ class MakeOtherPayment implements IUSSDMenu
          if($txDTO->error==''){  
             $step = \count(\explode("*", $txDTO->customerJourney)) - 1; 
             if ($step == 4) {
-               $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-               $billingClient = $billpaySettings['USE_BILLING_MOCK_'.strtoupper($txDTO->urlPrefix)]=="YES"? 'MockBillingClient':$txDTO->billingClient;	
-               App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
+               $this->sclExternalServiceBinder->bindBillingClient($txDTO->urlPrefix,$txDTO->menu_id);
             }
             if($step >3){
                $customerJourney = explode("*", $txDTO->customerJourney);

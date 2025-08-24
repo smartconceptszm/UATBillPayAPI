@@ -33,6 +33,7 @@ class WebDTO extends BaseDTO
    public $wallet_id;
    public $client_id;
    public $reference;
+   public $composite;
    public $mnoName;
    public $handler;
    public $channel;

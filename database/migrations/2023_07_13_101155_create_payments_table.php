@@ -30,6 +30,7 @@ return new class extends Migration
          $table->string('receiptNumber',50)->nullable();
          $table->string('tokenNumber',150)->nullable();
          $table->string('receipt',255)->nullable();
+         $table->text('customerJourney')->nullable();
          $table->enum('channel',['USSD','MOBILEAPP','BANKAPI', 'WEBSITE'])
                               ->default('USSD')->notNullable();
          $table->enum('paymentStatus',['INITIATED','SUBMISSION FAILED','SUBMITTED','PAYMENT FAILED',

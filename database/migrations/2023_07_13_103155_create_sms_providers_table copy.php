@@ -15,6 +15,7 @@ return new class extends Migration
          $table->uuid('id')->primary();
          $table->string('name')->unique()->notNullable(); 
          $table->string('handler')->nullable();
+         $table->string('payments_provider_id')->nullable();
          $table->string('colour')->nullable();
          $table->string('contactName')->nullable();
          $table->string('contactEmail')->nullable();

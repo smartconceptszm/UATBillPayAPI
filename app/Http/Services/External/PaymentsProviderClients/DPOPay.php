@@ -119,8 +119,9 @@ class DPOPay implements IPaymentsProviderClient
 
    private function getTransactionTokenXML(array $configs, object $params):string
    {
-      $transactionDate = Carbon::now();
-      $transactionDate = $transactionDate->format('Y/m/d H:i');
+      // $transactionDate = Carbon::now();
+      // $transactionDate = $transactionDate->format('Y/m/d H:i');
+      $transactionDate = Carbon::now()->format('Y/m/d H:i');
       $xmlTemplate = '<?xml version=\"1.0\" encoding=\"utf-8\"?><API3G>';
       $xmlTemplate .= '<CompanyToken>'.$configs['companyToken'].'</CompanyToken>
                      <Request>createToken</Request>

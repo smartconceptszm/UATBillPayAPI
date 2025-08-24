@@ -31,9 +31,9 @@ class PaymentsByConsumerTierService
                         ->where('p.consumerTier', '=', $dto->consumerTier)
                         ->where('cw.client_id', '=', $dto->client_id);
                         
-         $theSQLQuery = $records->toSql();
-         $theBindings = $records-> getBindings();
-         $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
+         // $theSQLQuery = $records->toSql();
+         // $theBindings = $records-> getBindings();
+         // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
          $records =$records->get();
          return $records->all();
       } catch (\Throwable $e) {

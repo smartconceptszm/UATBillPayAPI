@@ -29,6 +29,24 @@ class PromotionDrawEntryController extends Controller
 
    }
 
+
+   /**
+    * Display the specified resource.
+   */
+  public function drawEntriesOfPromotion(Request $request)
+  {
+
+     try {
+        $this->response['data'] = $this->promotionDrawEntryService->drawEntriesOfPromotion($request->query());
+     } catch (\Throwable $e) {
+           $this->response['status']['code'] = 500;
+           $this->response['status']['message'] = $e->getMessage();
+     }
+     return response()->json($this->response);
+
+  }
+
+
    /**
     * Store a newly created resource in storage.
       */
@@ -85,12 +103,33 @@ class PromotionDrawEntryController extends Controller
 
    }
 
+   public function drawrandom(Request $request)
+   {
+
+      try {
+         $params = [
+                     'promotion_id' => $request->input('promotion_id'),
+                     'theMonth' => $request->input('theMonth'),
+                     'from' => $request->input('from'),
+                     'to' => $request->input('to')
+                     ];
+         $this->response['data'] =  $this->promotionDrawEntryService->drawRandom($params);
+
+      } catch (\Throwable $e) {
+            $this->response['status']['code'] = 500;
+            $this->response['status']['message'] = $e->getMessage();
+      }
+
+     return response()->json( $this->response);
+
+   }
+
    /**
     * Remove the specified resource from storage.
       */
    public function destroy(string $id)
    {
-      
+
       try {
          $this->response['data'] = $this->promotionDrawEntryService->delete($id);
       } catch (\Throwable $e) {
@@ -100,5 +139,5 @@ class PromotionDrawEntryController extends Controller
       return response()->json($this->response);
 
    }
-   
+
 }

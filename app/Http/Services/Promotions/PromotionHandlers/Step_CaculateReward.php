@@ -18,7 +18,7 @@ class Step_CaculateReward extends EfectivoPipelineContract
    {
 
       try {
-         Log::info("(luapula) Step 3 Payment Qualification Account Number".$promotionDTO->customerAccount);
+         Log::info("(luapula) Step 3 Payment Qualification Account Number: ".$promotionDTO->customerAccount);
          if($promotionDTO->enterPromo){
             if($promotionDTO->promotionType == 'FLATRATE'){
                $promotionDTO->rewardAmount = $promotionDTO->paymentAmount * ($promotionDTO->promotionRateValue/100);
@@ -35,18 +35,17 @@ class Step_CaculateReward extends EfectivoPipelineContract
             }
 
             if($promotionDTO->paymentAmount >= $promotionDTO->promotionRaffleEntryAmount){
-               $promotionDTO->message = "Thank you for paying your bill! Redeem ZMW ". 
-                                       \number_format((float)$promotionDTO->rewardAmount, 2, '.', ',').
-                                       " Luapula Beula gift at LpWSC HQ in Mansa with your NRC.".
-                                       " You have been entered into the Motor Bike raffle.";
-
+               $promotionDTO->message = sprintf($promotionDTO->promotionRaffleEntryMessage,
+                                    \number_format((float)$promotionDTO->rewardAmount, 2, '.', ',')
+                                 );
                $promotionDTO->raffleEntryMessage = $promotionDTO->message;
+
             }else{
-               $promotionDTO->message = "Thank you for paying your bill! Redeem ZMW "
-                                          .\number_format((float)$promotionDTO->rewardAmount, 2, '.', ',').
-                                          " Luapula Beula gift at LpWSC HQ in Mansa with your NRC. Pay ZMW "
-                                          .\number_format((float)$promotionDTO->promotionRaffleEntryAmount, 2, '.', ',').
-                                          " and get into the Motor Bike raffle.";
+               $promotionDTO->message = sprintf($promotionDTO->promotionEntryMessage,
+                                 \number_format((float)$promotionDTO->rewardAmount, 2, '.', ','),
+                                 \number_format((float)$promotionDTO->promotionRaffleEntryAmount, 2, '.', ',')
+                              );
+
             }
 
          }

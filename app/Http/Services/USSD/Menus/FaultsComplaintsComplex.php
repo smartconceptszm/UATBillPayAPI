@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\USSD\Menus;
 
+use App\Http\Services\Utility\SCLExternalServiceBinder;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\App;
@@ -9,6 +10,10 @@ use App\Http\DTOs\BaseDTO;
 
 class FaultsComplaintsComplex implements IUSSDMenu
 {
+
+   public function __construct(
+      private SCLExternalServiceBinder $sclExternalServiceBinder
+   ) {}
 
    public function handle(BaseDTO $txDTO):BaseDTO
    {
@@ -18,9 +23,7 @@ class FaultsComplaintsComplex implements IUSSDMenu
             $stepCount = \count(\explode("*", $txDTO->customerJourney)) -1;
             if ($stepCount == 5) {
                //Bind selected Billing Client to the Interface
-                  $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-                  $billingClient = $billpaySettings['USE_BILLING_MOCK_'.strtoupper($txDTO->urlPrefix)]=="YES"? 'MockBillingClient':$txDTO->billingClient;	
-                  App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
+                  $this->sclExternalServiceBinder->bindBillingClient($txDTO->urlPrefix,$txDTO->menu_id);
                //
                //Bind the Complaint Creator Client 
                   App::bind(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient::class,'Complaint_'.$txDTO->urlPrefix);

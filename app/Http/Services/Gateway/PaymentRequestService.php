@@ -4,7 +4,10 @@ namespace App\Http\Services\Gateway;
 
 use App\Http\Services\USSD\StepServices\GetRevenueCollectionDetails;
 use App\Http\Services\Clients\PaymentsProviderCredentialService;
+use App\Http\Services\Utility\SCLExternalServiceBinder;
 use App\Http\Services\Payments\PaymentToReviewService;
+
+
 use App\Http\Services\Clients\ClientWalletService;
 use App\Http\Services\USSD\StepServices\GetAmount;
 use App\Http\Services\Enums\PaymentStatusEnum;
@@ -30,7 +33,9 @@ class PaymentRequestService
    public function __construct(
       private PaymentsProviderCredentialService $paymentsProviderCredentialService,
       private GetRevenueCollectionDetails $getRevenuePointAndCollector,
+      private SCLExternalServiceBinder $sclExternalServiceBinder,
       private PaymentToReviewService $paymentToReviewService,
+
       private ClientWalletService $ClientWalletService,
       private ClientMenuService $clientMenuService,
       private SessionService $sessionService,
@@ -121,15 +126,8 @@ class PaymentRequestService
          $paymentDTO = $thePaymentDTO->fromArray($webDTO->toArray());
          $paymentDTO->session_id = $session->id;
 
-         $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($paymentDTO->payments_provider_id);
-
          //Bind the PaymentsProvider Client Wallet 
-            $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-            $walletHandler = $paymentDTO->walletHandler;
-            if( $billpaySettings['WALLET_USE_MOCK_'.strtoupper($paymentDTO->urlPrefix)] == 'YES'){
-               $walletHandler = 'MockWallet';
-            }
-            App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
+            $this->sclExternalServiceBinder->bindWallet($paymentDTO->urlPrefix,$paymentDTO->walletHandler);
          //
 
          $paymentDTO  =  App::make(Pipeline::class)
@@ -164,30 +162,16 @@ class PaymentRequestService
 
    public function confirmWebPayment(string $transactionId) : object {
 
-      $thePayment = $this->paymentToReviewService->findByTransactionId($transactionId);
-      $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
-      try {
+
       
-         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-         //Bind the PaymentsProvider Client Wallet 
-            $walletHandler = $paymentDTO->walletHandler;
-            if( $billpaySettings['WALLET_USE_MOCK_'.strtoupper($paymentDTO->urlPrefix)] == 'YES'){
-               $walletHandler = 'MockWallet';
-            }
-            App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
-         //
-         // Bind Receipting and Billing Handlers
-            $theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
-            $receiptingHandler = $theMenu->receiptingHandler;
-            $billingClient = $theMenu->billingClient;
-            if ($billpaySettings['USE_RECEIPTING_MOCK_' . strtoupper($paymentDTO->urlPrefix)] == "YES") {
-               $receiptingHandler = "MockReceipting";
-            }
-            if ($billpaySettings['USE_BILLING_MOCK_' . strtoupper($paymentDTO->urlPrefix)] == "YES") {
-               $billingClient = "MockBillingClient";
-            }
-            App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class, $billingClient);
-            App::bind(\App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment::class, $receiptingHandler);
+      try {
+
+         $thePayment = $this->paymentToReviewService->findByTransactionId($transactionId);
+         $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
+      
+         // Bind Billing and Receipting Handlers and Wallet 
+            $this->sclExternalServiceBinder->bindAll(
+                  $paymentDTO->urlPrefix,$paymentDTO->menu_id,$paymentDTO->walletHandler);
          //
 
          $paymentDTO = App::make(Pipeline::class)
@@ -198,9 +182,11 @@ class PaymentRequestService
                               \App\Http\Services\Gateway\ConfirmPaymentSteps\Step_PostPaymentToClient::class
                            ])
                            ->thenReturn();
+
          if($paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value){
             $paymentDTO->paymentStatus = PaymentStatusEnum::Receipt_Delivered->value;
          }
+         
          $paymentDTO = App::make(Pipeline::class)
                            ->send($paymentDTO)
                            ->through([
@@ -209,13 +195,14 @@ class PaymentRequestService
                               \App\Http\Services\Gateway\Utility\Step_RefreshAnalytics::class
                            ])
                            ->thenReturn();
+
       } catch (\Exception $e) {
          throw new Exception($e->getMessage(), 1);
       }
+
       return $paymentDTO;
       
    }
-   
 
    private function getMNO(WebDTO $webDTO) : WebDTO
    {

@@ -40,6 +40,7 @@ class MazabukaOnCustomerAccount implements IBillingClient
                $response['customerAccount'] = $apiResponse['Id'];
                $response['name'] = $apiResponse['AccountName'];
                $response['address'] = $apiResponse['ContactAddress'];
+               $response['composite'] = 'ORDINARY';
                $response['revenuePoint'] = "OTHER";
                $response['consumerTier'] = '';
                $response['consumerType'] = '';

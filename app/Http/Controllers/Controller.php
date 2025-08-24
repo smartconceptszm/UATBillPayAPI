@@ -29,4 +29,15 @@ class Controller extends BaseController
       return $requestParameters;
    }
 
+   protected function successResponse($data, $code = 200)
+   {
+      return response()->json([
+         'status' => [
+               'code' => $code,
+               'message' => 'Success'
+         ],
+         'data' => $data ?? []
+      ], $code);
+   }
+
 }

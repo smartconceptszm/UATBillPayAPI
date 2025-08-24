@@ -48,6 +48,7 @@ class NkanaPrePaid implements IBillingClient
                      case "0":
                         $response['customerAccount'] = $apiResponseArray['identificationnumber'];
                         $response['name'] = $apiResponseArray['customername'];
+                        $response['composite'] = 'ORDINARY';
                         $response['address'] = "KITWE";
                         $response['revenuePoint'] = "KITWE";
                         $response['consumerTier'] = '';

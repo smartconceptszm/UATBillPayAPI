@@ -12,6 +12,7 @@ namespace App\Http\DTOs;
 class UssdDTO extends BaseDTO
 {
 
+   public $compositeAccount = FALSE;
    public $payments_provider_id;
    public $revenueCollector;
    public $clientSurcharge;
@@ -33,6 +34,7 @@ class UssdDTO extends BaseDTO
    public $menuPrompt;
    public $created_at;
    public $updated_at;
+   public $composite;
    public $urlPrefix;
    public $sessionId;
    public $wallet_id;

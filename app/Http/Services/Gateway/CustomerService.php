@@ -15,11 +15,11 @@ class CustomerService
    )
    {}
 
-   public function getCustomer(array $criteria):array
+   public function getCustomer(array $data):array
    {
 
       try {
-         $paymentDTO = $this->momoDTO->fromArray($criteria);
+         $paymentDTO = $this->momoDTO->fromArray($data);
          $paymentDTO = $this->enquiryHandler->handle($paymentDTO);
          return $paymentDTO->customer;
       } catch (\Throwable $e) {

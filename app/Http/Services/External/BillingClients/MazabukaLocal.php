@@ -21,6 +21,7 @@ class MazabukaLocal implements IBillingClient
       $response = [
                      'customerAccount' => $params['customerAccount'],
                      "name" => "Mazabuka Customer",
+                     "composite" => "ORDINARY",
                      "address" => "MAZABUKA",
                      "revenuePoint" => 'MAZABUKA',
                      "consumerTier" => '',

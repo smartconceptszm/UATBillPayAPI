@@ -46,6 +46,7 @@ class LukangaPrePaid implements IBillingClient
                      case "0":
                         $response['customerAccount'] = $apiResponseArray['identificationnumber'];
                         $response['name'] = $apiResponseArray['customername'];
+                        $response['composite'] = 'ORDINARY';
                         $response['address'] = "CENTRAL";
                         $response['revenuePoint'] = "CENTRAL";
                         $response['consumerTier'] = '';

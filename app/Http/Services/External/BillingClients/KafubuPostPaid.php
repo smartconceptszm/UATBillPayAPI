@@ -33,88 +33,103 @@ class KafubuPostPaid implements IBillingClient
 
         try {
 
-            $this->setConfigs($params['client_id']);
-
-            $getDebtBalParams=[ 
-                'functionName' => 'getdebtbal',
-                'rdusername' => $this->soapUserName,
-                'rdpassword' => $this->soapPassword,
-                'token' => $this->soapToken ,
-                'account' => $params['customerAccount'],
-            ];
-
-            $apiResponse = $this->kafubuSoapService->getdebtbal($getDebtBalParams);
-
-            if(\substr($apiResponse->promunError,0,7)!="00 - OK"){
-                Log::error(' Kafubu Billing Client error (getdebtbal for account number '.$params['customerAccount'].'): '.$apiResponse->promunError);
-                if(substr($apiResponse->promunError,0,2)=="14"){
-                    //throw new Exception("Customer account number not found",1);
-                    throw new Exception("Invalid Kafubu POST-PAID Account Number",1);
-                }else{
-                    throw new Exception("Error getting balance from Promun. Details: ".$apiResponse->promunError,2);
-                }
-                
-            }
-
-            try {
-                $customerBalance = $this->xmlToArrayParser->handle($apiResponse->promunResponse);
-            } catch (\Throwable $e) {
-                throw new Exception("Error extracting (getdebtbal) XML response. Details: ".$e->getMessage(),2);
-            }
-
-            $theBalance=0;
-            if($customerBalance['items']){
-                foreach ($customerBalance['items']['item'] as $billItem) {
-                    if(\is_array($billItem)){
-                        $theBalance+=(float)$billItem['bmf-tot'];
-                    }else{
-                        $theBalance+=(float)$customerBalance['items']['item']['bmf-tot'];
-                        break;
-                    }
-                }
-            }
-
-            $getDebtStaticParams = [ 
-                                        'functionName' => 'getdebstatic',
-                                        'rdusername' => $this->soapUserName,
-                                        'rdpassword' => $this->soapPassword,
-                                        'token' => $this->soapToken ,
-                                        'account' => $params['customerAccount'],
-                                    ];
-
-            $apiResponse = $this->kafubuSoapService->getdebstatic($getDebtStaticParams);
-
-            if(\substr($apiResponse->promunError,0,7)!="00 - OK"){
-                Log::error(' Kafubu Billing Client (getdebstatic  for account number '.$params['customerAccount'].'): '.$apiResponse->promunError);
-                throw new Exception("Error getting customer details from Promun. Details: ".$apiResponse->promunError,2);
-            }
-
-            try {
-                $theCustomer = $this->xmlToArrayParser->handle($apiResponse->promunResponse);
-            } catch (\Throwable $e) {
-                throw new Exception("Error extracting (getdebstatic) XML response. Details: ".$e->getMessage(),2);
-            }
-
-            $clientCustomer = $this->clientCustomerService->findOneBy(['customerAccount'=>$customerBalance['account']]);
             $revenuePoint = 'OTHER';
             $consumerTier = 'OTHER';
             $consumerType = 'OTHER';
             $fullAddress = 'OTHER';
+            $composite = 'ORDINARY';
+            $customerName = "";
+            $mobileNumber = "";
+            $balance = 0;
+            $clientCustomer = $this->clientCustomerService->findOneBy(['customerAccount'=>$params['customerAccount']]);
             if($clientCustomer){
                 $fullAddress = $clientCustomer->customerAddress;
                 $revenuePoint = $clientCustomer->revenuePoint;
                 $consumerTier = $clientCustomer->consumerTier;
                 $consumerType = $clientCustomer->consumerType;
+                $customerName = $clientCustomer->customerName;
+                $composite = $clientCustomer->composite;
+                $balance = $clientCustomer->balance;
+
             }
+
+            if($composite != 'PARENT'){
+                $this->setConfigs($params['client_id']);
+
+                $getDebtBalParams=[ 
+                    'functionName' => 'getdebtbal',
+                    'rdusername' => $this->soapUserName,
+                    'rdpassword' => $this->soapPassword,
+                    'token' => $this->soapToken ,
+                    'account' => $params['customerAccount'],
+                ];
+
+                $apiResponse = $this->kafubuSoapService->getdebtbal($getDebtBalParams);
+
+                if(\substr($apiResponse->promunError,0,7)!="00 - OK"){
+                    Log::error(' Kafubu Billing Client error (getdebtbal for account number '.$params['customerAccount'].'): '.$apiResponse->promunError);
+                    if(substr($apiResponse->promunError,0,2)=="14"){
+                        //throw new Exception("Customer account number not found",1);
+                        throw new Exception("Invalid Kafubu POST-PAID Account Number",1);
+                    }else{
+                        throw new Exception("Error getting balance from Promun. Details: ".$apiResponse->promunError,2);
+                    }
+                    
+                }
+
+                try {
+                    $customerBalance = $this->xmlToArrayParser->handle($apiResponse->promunResponse);
+                } catch (\Throwable $e) {
+                    throw new Exception("Error extracting (getdebtbal) XML response. Details: ".$e->getMessage(),2);
+                }
+
+                if($customerBalance['items']){
+                    foreach ($customerBalance['items']['item'] as $billItem) {
+                        if(\is_array($billItem)){
+                            $balance+=(float)$billItem['bmf-tot'];
+                        }else{
+                            $balance+=(float)$customerBalance['items']['item']['bmf-tot'];
+                            break;
+                        }
+                    }
+                }
+
+                $getDebtStaticParams = [ 
+                                            'functionName' => 'getdebstatic',
+                                            'rdusername' => $this->soapUserName,
+                                            'rdpassword' => $this->soapPassword,
+                                            'token' => $this->soapToken ,
+                                            'account' => $params['customerAccount'],
+                                        ];
+
+                $apiResponse = $this->kafubuSoapService->getdebstatic($getDebtStaticParams);
+
+                if(\substr($apiResponse->promunError,0,7)!="00 - OK"){
+                    Log::error(' Kafubu Billing Client (getdebstatic  for account number '.$params['customerAccount'].'): '.$apiResponse->promunError);
+                    throw new Exception("Error getting customer details from Promun. Details: ".$apiResponse->promunError,2);
+                }
+
+                try {
+                    $theCustomer = $this->xmlToArrayParser->handle($apiResponse->promunResponse);
+                } catch (\Throwable $e) {
+                    throw new Exception("Error extracting (getdebstatic) XML response. Details: ".$e->getMessage(),2);
+                }
+
+                $customerName = $theCustomer['name'];
+                $mobileNumber = $theCustomer['cell'];
+
+            }
+
             $response = [
-                            "customerAccount" => $customerBalance['account'],
-                            "name" => $theCustomer['name'],
+                            "customerAccount" => $params['customerAccount'],
+                            "name" => $customerName,
                             "address" => $fullAddress,
+                            "composite" => $composite,
                             "revenuePoint" => $revenuePoint,
                             "consumerTier" => $consumerTier,
                             "consumerType" => $consumerType,
-                            "mobileNumber" => $theCustomer['cell'],
-                            "balance" => \number_format($theBalance, 2, '.', ','),
+                            "mobileNumber" => $mobileNumber,
+                            "balance" => \number_format($balance, 2, '.', ','),
                         ];
 
         } catch (\Throwable $e) {

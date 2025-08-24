@@ -28,6 +28,7 @@ class EnquiryHandler
 			$txDTO->revenuePoint = $txDTO->customer['revenuePoint'];
 			$txDTO->consumerTier = $txDTO->customer['consumerTier'];
 			$txDTO->consumerType = $txDTO->customer['consumerType'];
+			$txDTO->composite = $txDTO->customer['composite'];
 
 			Cache::forget($txDTO->urlPrefix.'_BillingErrorCount');
 		} catch (\Throwable $e) {

@@ -27,6 +27,9 @@ class KafubuServiceProvider extends ServiceProvider
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidKafubu::class);
          });
 
+         $this->app->bind('ReceiptCompositeKAFUBU', function () {
+            return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptCompositeKafubu::class);
+         });
       //
       
       //Complaint Handlers

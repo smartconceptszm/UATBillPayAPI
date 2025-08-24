@@ -39,7 +39,7 @@ class ClientReceiptService
          }
 
          if($paymentDTO->ppTransactionId == ''){
-            throw new Exception("MNO transaction Id is null. Payment not yet confirmed!");
+            throw new Exception("Payments Provider transaction Id is null. Payment not yet confirmed!");
          }  
 
          if($user = Auth::user()){

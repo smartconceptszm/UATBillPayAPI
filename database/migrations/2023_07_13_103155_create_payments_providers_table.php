@@ -20,6 +20,7 @@ return new class extends Migration
          $table->string('contactEmail')->nullable();
          $table->string('contactNo')->nullable();
          $table->string('logo')->nullable();
+         $table->string('client_id')->nullable();
          $table->timestamps();
          $table->unique('shortName','indx_shortName');
          $table->unique('name','name_unique');

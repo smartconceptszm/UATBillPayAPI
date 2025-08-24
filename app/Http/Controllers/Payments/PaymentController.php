@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Payments;
 
+use App\Http\Services\Payments\PaymentUpdateService;
 use App\Http\Services\Payments\PaymentService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ class PaymentController extends Controller
 {
 
 	public function __construct(
+      private PaymentUpdateService $paymentUpdateService,
 		private PaymentService $paymentService)
 	{}
 
@@ -76,7 +78,7 @@ class PaymentController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->paymentService->update($this->getParameters($request),$id);
+         $this->response['data'] = $this->paymentUpdateService->handle($this->getParameters($request),$id);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

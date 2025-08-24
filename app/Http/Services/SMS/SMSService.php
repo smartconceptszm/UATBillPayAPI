@@ -2,17 +2,22 @@
 
 namespace App\Http\Services\SMS;
 
+
+
 use App\Http\Services\Clients\ClientSMSChannelService;
 use App\Http\Services\Clients\SMSProviderService;
 use App\Http\Services\Clients\ClientMnoService;
 use App\Http\Services\Clients\ClientService;
 use App\Http\Services\Clients\MnoService;
 use App\Http\Services\SMS\MessageService;
+use App\Jobs\SMSAnalyticsDailySingleJob;
 use Illuminate\Support\Facades\Cache;
+use App\Jobs\SMSAnalyticsRegularJob;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;  
 use App\Http\Services\Enums\MNOs;
+use Illuminate\Support\Carbon;
 use App\Http\DTOs\SMSTxDTO;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -44,11 +49,14 @@ class SMSService
          //Get MNO details
          $dto = $this->getMNO($dto);
          //Take Care of Charges
-         $dto = $this->getSMSChannel($dto);
+         if(!$dto->handler){
+            $dto = $this->getSMSChannel($dto);
+         }
          //Send the SMS
          $dto = $this->sendMessage($dto);
          //Log the transaction
          $this->logStatus($dto);
+
          // Save the Record
          DB::beginTransaction();
          try {
@@ -61,8 +69,12 @@ class SMSService
             DB::rollBack();
             throw new Exception($e->getMessage());
          }
+         $dto->created_at = $sms->created_at;
          $dto->status = $sms->status;
          $dto->id = $sms->id;
+
+         //Do Analytics
+         $this->dispatchAnalyticsJobs($dto);
 
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
@@ -128,10 +140,6 @@ class SMSService
          return $dto;
       }
 
-      if( $dto->handler = Cache::get($dto->transaction_id."_smsClient",'')){
-         return $dto;
-      }
-
       $clientMNOs = $this->clientMnoService->findOneBy([
                                                    'client_id' => $dto->client_id,
                                                    'mno_id' => $dto->mno_id
@@ -142,6 +150,7 @@ class SMSService
       $dto->channel_id = $clientMNOs->smsChannel;
       $dto->sms_provider_id = $smsProvider->id;
       $dto->handler = $smsProvider->handler;
+      
       //Check if Client has enough balance
          if(($dto->smsPayMode == 'POST-PAID') || ($dto->balance > $dto->smsCharge)){
             $dto->balance = $dto->balance - $dto->smsCharge;
@@ -189,6 +198,28 @@ class SMSService
          Log::info($logMessage);
       } else {
          Log::error($logMessage);
+      }
+
+   }
+
+   private function dispatchAnalyticsJobs(BaseDTO $dto)
+   {
+
+      if($dto->status =='DELIVERED'){
+         //Regular Analytics
+         SMSAnalyticsRegularJob::dispatch($dto)
+                                 ->delay(Carbon::now()->addSeconds(1))
+                                 ->onQueue('low');
+
+         //Daily Analytics
+         $yesterday = Carbon::yesterday()->toDateString();
+         $lastDailyAnalytics = Cache::get('DATE_OF_LAST_SMS_DAILY_ANALYTICS');
+         if($lastDailyAnalytics  != $yesterday ){
+            Cache::put('DATE_OF_LAST_SMS_DAILY_ANALYTICS',$yesterday,Carbon::now()->addHours(24));
+            SMSAnalyticsDailySingleJob::dispatch(Carbon::yesterday())
+                                             ->delay(Carbon::now()->addSeconds(1))
+                                             ->onQueue('low');
+         }
       }
 
    }

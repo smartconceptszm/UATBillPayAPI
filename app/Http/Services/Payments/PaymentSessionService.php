@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Payments;
 
+use App\Http\Services\Enums\PaymentStatusEnum;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -68,6 +69,44 @@ class PaymentSessionService
          // $theBindings = $records-> getBindings();
          // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
          return $records->get()->first();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+
+   }
+
+   public function auditList(array $criteria):array|null{
+      try {
+         $dto = (object)$criteria;
+         $records = DB::table('payments as p')
+         ->join('client_menus as m','p.menu_id','=','m.id')
+         ->poin('client_wallets as cw','p.wallet_id','=','cw.id')
+         ->join('payments_providers as pps','cw.payments_provider_id','=','pps.id')
+         ->leftJoin(' sessions as s','p.session_id','=','s.id')
+         ->select('p.id','cw.client_id','s.customerJourney','p.mobileNumber','p.customerAccount','p.revenuePoint',
+                     'p.reference','p.ppTransactionId','p.surchargeAmount','p.paymentAmount','p.receiptAmount',
+                     'p.transactionId','p.receiptNumber','p.tokenNumber','p.receipt','p.channel','p.error',
+                     'p.paymentStatus','p.created_at','p.menu_id','m.description as paymentType',
+                     'pps.shortName as paymentProvider');
+         // ->whereIn('p.paymentStatus', 
+         //             [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
+         //                PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value]);
+
+         if(\array_key_exists('customerAccount',$criteria)){
+            $records = $records->where('s.customerAccount', '=', $dto->customerAccount);
+         }
+         if(\array_key_exists('mobileNumber',$criteria)){
+            $records = $records->where('s.mobileNumber', '=', $dto->mobileNumber);
+         }
+         if(\array_key_exists('dateFrom',$criteria) && \array_key_exists('dateTo',$criteria)){
+            $records =$records->whereBetween('s.created_at', [$dto->dateFrom." 00:00:00", $dto->dateTo." 23:59:59"]);
+         }
+         $records = $records->where('cw.client_id', '=', $dto->client_id)
+                              ->orderByDesc('p.created_at');
+         // $theSQLQuery = $records->toSql();
+         // $theBindings = $records-> getBindings();
+         // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
+         return $records->get()->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

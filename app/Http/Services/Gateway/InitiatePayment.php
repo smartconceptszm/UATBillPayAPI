@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Gateway;
 
+use App\Http\Services\Utility\SCLExternalServiceBinder;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Pipeline\Pipeline;
@@ -10,16 +11,15 @@ use App\Http\DTOs\BaseDTO;
 class InitiatePayment
 {
 
+   public function __construct(
+		private SCLExternalServiceBinder $sclExternalServiceBinder
+  	){}
+
    public function handle(BaseDTO $paymentDTO)
    {
       
       //Bind the PaymentsProvider Client Wallet 
-         $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-         $walletHandler = $paymentDTO->walletHandler;
-         if( $billpaySettings['WALLET_USE_MOCK_'.strtoupper($paymentDTO->urlPrefix)] == 'YES'){
-            $walletHandler = 'MockWallet';
-         }
-         App::bind(\App\Http\Services\External\PaymentsProviderClients\IPaymentsProviderClient::class,$walletHandler);
+         $this->sclExternalServiceBinder->bindWallet($paymentDTO->urlPrefix,$paymentDTO->walletHandler);
       //
 
       //Process the request

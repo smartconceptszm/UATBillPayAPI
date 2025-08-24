@@ -26,8 +26,10 @@ class StepService_ProcessPromotion
          $activePromotion = $this->promotionService->findActivePromotion($clientWallet->client_id);
          if($activePromotion){
             $promotionDTO = $this->promotionDTO->fromArray($paymentDTO->toArray());
+            $promotionDTO->promotionRaffleEntryMessage = $activePromotion->raffleEntryMessage;
             $promotionDTO->promotionRaffleEntryAmount = $activePromotion->raffleEntryAmount;
             $promotionDTO->promotionConsumerType = $activePromotion->consumerType;
+            $promotionDTO->promotionEntryMessage = $activePromotion->entryMessage;
             $promotionDTO->promotionEntryAmount = $activePromotion->entryAmount;
             $promotionDTO->promotionRateValue = $activePromotion->rateValue;
             $promotionDTO->receiptNumber = $paymentDTO->receiptNumber;

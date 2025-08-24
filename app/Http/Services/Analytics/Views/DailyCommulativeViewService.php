@@ -52,7 +52,7 @@ class DailyCommulativeViewService
          }
 
          $dailyTrends['labels'] = collect($dailyLabels);
-         $colours = ChartColours::getColours(2);
+         $colours = ChartColours::getColours(1);
          $dailyTrends['datasets'][] = collect([
                                           'backgroundColor'=>  $colours['backgroundColor'],
                                           'borderColor' =>  $colours['borderColor'],
@@ -100,7 +100,7 @@ class DailyCommulativeViewService
             $cumulativeLastMonthTrends[] = $cumulativeTotal;
          }
 
-         $colours = ChartColours::getColours(3);
+         $colours = ChartColours::getColours(2);
          $dailyTrends['datasets'][] = collect([
                                        'backgroundColor'=> $colours['backgroundColor'],
                                        'borderColor' => $colours['borderColor'],

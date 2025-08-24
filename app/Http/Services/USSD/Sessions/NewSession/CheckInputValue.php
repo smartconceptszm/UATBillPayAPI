@@ -15,7 +15,7 @@ class CheckInputValue extends EfectivoPipelineContract
       try {
 
          if($txDTO->isNewRequest == '1' && $txDTO->subscriberInput == ''){
-            $txDTO->subscriberInput = $txDTO->shortCode ;
+            $txDTO->subscriberInput = "115";//$txDTO->shortCode ;
          }
 
       } catch (\Throwable $e) {

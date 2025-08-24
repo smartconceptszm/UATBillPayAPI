@@ -46,6 +46,7 @@ class LuapulaPostPaid implements IBillingClient
 
                $response['customerAccount'] = $params['customerAccount'];
                $response['name'] = $apiResponse['customer_name'];
+               $response['composite'] = 'ORDINARY';
                $response['address'] = $fullAddress;
                $response['revenuePoint'] = $revenuePoint;
                $response['consumerTier'] = $consumerTier;

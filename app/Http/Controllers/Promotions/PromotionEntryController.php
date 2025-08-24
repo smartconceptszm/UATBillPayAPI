@@ -56,22 +56,21 @@ class PromotionEntryController extends Controller
 
    }
 
-      /**
+   /**
     * Display the specified resource.
-      */
-      public function entriesOfPromotion(Request $request, string $id)
-      {
-   
-         try {
-            $this->response['data'] = $this->promotionEntryService->findAll(['promotion_id'=>$id]);
-         } catch (\Throwable $e) {
-               $this->response['status']['code'] = 500;
-               $this->response['status']['message'] = $e->getMessage();
-         }
-         return response()->json($this->response);
-   
-      }
+   */
+   public function entriesOfPromotion(Request $request)
+   {
 
+      try {
+         $this->response['data'] = $this->promotionEntryService->entriesOfPromotion($request->query());
+      } catch (\Throwable $e) {
+            $this->response['status']['code'] = 500;
+            $this->response['status']['message'] = $e->getMessage();
+      }
+      return response()->json($this->response);
+
+   }
 
    /* Display REDEEMED PROMOTIONS
    */
@@ -79,7 +78,7 @@ class PromotionEntryController extends Controller
   {
 
      try {
-        $this->response['data'] =  $this->promotionEntryService->findAll(['status' => 'REDEEMED']);
+        $this->response['data'] =  $this->promotionEntryService->redeemedEntriesOfPromotion($request->query());
      } catch (\Throwable $e) {
            $this->response['status']['code'] = 500;
            $this->response['status']['message'] = $e->getMessage();
@@ -92,7 +91,9 @@ class PromotionEntryController extends Controller
      /**
     * Display REDEEMED PROMOTIONS
    */
-  public function notRedeemed(Request $request)
+  
+  
+   public function notRedeemed(Request $request)
   {
 
      try {

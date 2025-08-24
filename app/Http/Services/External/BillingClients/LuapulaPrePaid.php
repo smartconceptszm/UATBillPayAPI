@@ -59,6 +59,7 @@ class LuapulaPrePaid implements IBillingClient
                }
                $response['customerAccount'] = $apiResponse['data']['customerNumber'];
                $response['name'] = $customerDetails['data']['name'];
+               $response['composite'] = 'ORDINARY';
                $response['revenuePoint'] = $revenuePoint;
                $response['consumerTier'] = $consumerTier;
                $response['consumerType'] = $consumerType;
@@ -245,13 +246,13 @@ class LuapulaPrePaid implements IBillingClient
                $response = $apiResponse->header('Authorization');
             }
          } else {
-               throw new Exception("LUKANGA PrePaid API Get Login error. LUKANGA PrePaid Service responded with status: " . $apiResponse->status().".",1);
+               throw new Exception("LUAPULA PrePaid API Get Login error. LUAPULA PrePaid Service responded with status: " . $apiResponse->status().".",1);
          }
       } catch (\Throwable $e) {
          if($e->getCode() == 1){
-               throw new Exception($e->getMessage(), 1);
+            throw new Exception($e->getMessage(), 2);
          }else{
-               throw new Exception("LUKANGA PrePaid API Get Token error. Details: " . $e->getMessage(), 1);
+            throw new Exception("LUAPULA PrePaid API Get Token error. Details: " . $e->getMessage(), 2);
          }
       }
       return $response;

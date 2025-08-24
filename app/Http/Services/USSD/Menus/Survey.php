@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\USSD\Menus;
 
+use App\Http\Services\Utility\SCLExternalServiceBinder;
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Facades\App;
@@ -11,15 +12,17 @@ use Exception;
 class Survey implements IUSSDMenu
 {
 
+   public function __construct(
+      private SCLExternalServiceBinder $sclExternalServiceBinder
+   ) {}
+
    public function handle(BaseDTO $txDTO):BaseDTO
    {
       
       try {
          if ($txDTO->error == '') {
             if (\count(\explode("*", $txDTO->customerJourney)) == 2 || \count(\explode("*", $txDTO->customerJourney)) == 5) {
-               $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-               $billingClient = $billpaySettings['USE_BILLING_MOCK_'.strtoupper($txDTO->urlPrefix)]=="YES"? 'MockBillingClient':$txDTO->billingClient;		
-               App::bind(\App\Http\Services\External\BillingClients\IBillingClient::class,$billingClient);	
+               $this->sclExternalServiceBinder->bindBillingClient($txDTO->urlPrefix,$txDTO->menu_id);	
             }
             if (\count(\explode("*", $txDTO->customerJourney)) == 5) {
                App::bind(\App\Http\Services\USSD\Survey\ClientCallers\ISurveyClient::class,'Survey_'.$txDTO->urlPrefix);

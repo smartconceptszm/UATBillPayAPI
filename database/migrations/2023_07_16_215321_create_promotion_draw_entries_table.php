@@ -15,15 +15,15 @@ return new class extends Migration
          $table->id();
          $table->unsignedInteger('promotion_id');
          $table->string("customerAccount",50)->notNullable();
+         $table->string("consumerType",50)->notNullable();
          $table->string("mobileNumber",15)->nullable();
          $table->timestamp('entryDate');
          $table->float('paymentAmount',10,2)->default(0);
          $table->string("receiptNumber",50)->nullable();
          $table->timestamp('raffleDate');
-         $table->enum('raffleWinner',['NO','YES'])->default('NO')->notNullable();
          $table->integer('drawNumber')->nullable();
          $table->string("drawMessage",150)->nullable();
-         $table->enum('status',['RECORDED','REDEEEMED'])->default('RECORDED')->notNullable();
+         $table->enum('status',['RECORDED','WINNER','REDEEEMED'])->default('RECORDED')->notNullable();
          $table->timestamps();
       });
    }

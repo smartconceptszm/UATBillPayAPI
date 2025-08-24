@@ -14,8 +14,8 @@ class SMSProvider extends Model
    protected $table = 'sms_providers';
 
    protected $fillable=[
-      'name','handler', 'colour','contactName', 'contactEmail','contactNo',
-      'logo'
+      'name','handler','payments_provider_id', 'colour','contactName', 
+      'contactEmail','contactNo','logo'
    ];
 
    protected $casts = [

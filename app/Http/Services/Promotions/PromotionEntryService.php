@@ -3,7 +3,9 @@
 namespace App\Http\Services\Promotions;
 
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 use App\Models\PromotionEntry;
+
 use Exception;
 
 class PromotionEntryService
@@ -17,6 +19,48 @@ class PromotionEntryService
    {
       try {
          return $this->model->where($criteria)->get()->all();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
+   public function entriesOfPromotion(?array $criteria):array|null
+   {
+      try {
+         $dto = (object)$criteria;
+         $dto->dateFrom = $dto->dateFrom." 00:00:00";
+         $dto->dateTo = $dto->dateTo." 23:59:59";
+         $records = DB::table('promotion_entries as p')
+                        ->select('p.*');
+         if($dto->dateFrom && $dto->dateTo){
+            $records =$records->where('p.entryDate', '>=', $dto->dateFrom)
+                              ->where('p.entryDate', '<=',$dto->dateTo);
+         }
+         $records = $records->where('p.status', '=', 'RECORDED')
+                              ->where('p.promotion_id', '=', $dto->promotion_id)
+                              ->orderByDesc('p.entryDate')->get();
+         return $records->all();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
+   public function redeemedEntriesOfPromotion(?array $criteria):array|null
+   {
+      try {
+         $dto = (object)$criteria;
+         $dto->dateFrom = $dto->dateFrom." 00:00:00";
+         $dto->dateTo = $dto->dateTo." 23:59:59";
+         $records = DB::table('promotion_entries as p')
+                        ->select('p.*');
+         if($dto->dateFrom && $dto->dateTo){
+            $records =$records->where('p.entryDate', '>=', $dto->dateFrom)
+                              ->where('p.entryDate', '<=',$dto->dateTo);
+         }
+         $records = $records->where('p.status', '=', 'REDEEMED')
+                              ->where('p.promotion_id', '=', $dto->promotion_id)
+                              ->orderByDesc('p.entryDate')->get();
+         return $records->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

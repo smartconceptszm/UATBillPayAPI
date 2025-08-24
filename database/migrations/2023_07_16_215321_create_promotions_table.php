@@ -19,12 +19,15 @@ return new class extends Migration
          $table->enum('consumerType',['DOMESTIC','COMMERCIAL','INSTITUTIONAL','ALL'])->default('DOMESTIC')->notNullable();
          $table->float('entryAmount',10,2)->default(0);
          $table->float('raffleEntryAmount',10,2)->default(0);
+         $table->integer('raffleDrawTimeout')->default(10);
          $table->enum('onDebt',['NO','YES'])->default('YES')->notNullable();
          $table->enum('type',['TIERED','FLATRATE'])->default('FLATRATE')->notNullable();
          $table->enum('resetMonthly',['NO','YES'])->default('YES')->notNullable();
          $table->float('rateValue',10,2)->default(0);
          $table->timestamp('startDate');
          $table->timestamp('endDate');
+         $table->string("entryMessage",160)->nullable();
+         $table->string("raffleEntryMessage",150)->nullable();
          $table->enum('status',['ACTIVE', 'CLOSED'])->default('ACTIVE')->notNullable();
          $table->timestamps();
       });

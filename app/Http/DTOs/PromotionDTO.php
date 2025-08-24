@@ -27,7 +27,9 @@ class PromotionDTO extends BaseDTO
     public $raffleEntryMessage;
     public $totalMonthAmount;
 
+    public $promotionRaffleEntryMessage;
     public $promotionRaffleEntryAmount;
+    public $promotionEntryMessage;
     public $promotionConsumerType;
     public $promotionEntryAmount;
     public $promotionRateValue;
@@ -45,6 +47,7 @@ class PromotionDTO extends BaseDTO
 
     public function toPromotionEntryData(): array
     {
+        
         return [
             'customerAccount' => $this->customerAccount,
             'paymentAmount' => $this->paymentAmount,

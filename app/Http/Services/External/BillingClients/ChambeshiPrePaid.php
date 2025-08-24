@@ -52,6 +52,7 @@ class ChambeshiPrePaid implements IBillingClient
                      $response['name'] = $apiResponse['result']['customer_name'];
                      $response['address'] = $apiResponse['result']['customer_addr'];
                      $response['revenuePoint'] = $this->chambeshiPostPaid->getRevenuePoint(\trim($apiResponse['result']['customer_number']));
+                     $response['composite'] = 'ORDINARY';
                      $response['consumerTier'] = '';
                      $response['consumerType'] = '';
                      $response['mobileNumber'] = "";

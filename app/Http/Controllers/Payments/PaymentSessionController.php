@@ -34,6 +34,26 @@ class PaymentSessionController extends Controller
 
    }
 
+      /**
+    * Display a listing of the resource.
+   */
+  public function audited(Request $request, Authenticatable $user)
+  {
+
+     try {
+        $parameters = $this->getParameters($request);
+        if(!$parameters['client_id']){
+           $parameters['client_id'] = $user->client_id;
+        }
+        $this->response['data'] = $this->paymentSessionService->auditList($parameters );
+     } catch (\Throwable $e) {
+        $this->response['status']['code'] = 500;
+        $this->response['status']['message'] = $e->getMessage();
+     }
+     return response()->json( $this->response);
+
+  }
+
    public function show(Request $request,$id)
    {
 

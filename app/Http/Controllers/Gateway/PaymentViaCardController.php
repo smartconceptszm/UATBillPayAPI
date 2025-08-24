@@ -39,11 +39,11 @@ class PaymentViaCardController extends Controller
 
    }
 
-   public function update(Request $request)
+   public function update(Request $request, $id)
    {
 
       try {
-         $this->response['data'] = $this->paymentRequestService->confirmWebPayment($request->input('id'));
+         $this->response['data'] = $this->paymentRequestService->confirmWebPayment($id);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

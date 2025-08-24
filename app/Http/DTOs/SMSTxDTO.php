@@ -13,6 +13,7 @@ class SMSTxDTO extends BaseDTO
    public $mobileNumber;
    public $smsPayMode;
    public $channel_id;
+   public $created_at;
    public $wallet_id;
    public $client_id;
    public $urlPrefix;
@@ -37,8 +38,9 @@ class SMSTxDTO extends BaseDTO
       $this->customerAccount = $txDTO->customerAccount;
       $this->transaction_id = $txDTO->transactionId;
       $this->mobileNumber = $txDTO->mobileNumber;
-      $this->wallet_id = $txDTO->wallet_id;
       $this->client_id = $txDTO->client_id;
+      $this->wallet_id = $txDTO->wallet_id;
+      $this->hanlder = $txDTO->smsHandler;
       $this->message = $txDTO->receipt;
       $this->mno_id = $txDTO->mno_id;
       $this->status = 'INITIATED';
@@ -51,12 +53,14 @@ class SMSTxDTO extends BaseDTO
    public function toSMSMessageData():array{
       return [
             'customerAccount'=>$this->customerAccount,
+            'sms_provider_id'=>$this->sms_provider_id,
             'transaction_id'=>$this->transaction_id,
             'mobileNumber'=>$this->mobileNumber,
             'client_id'=>$this->client_id,
             'amount'=>$this->smsCharge,
-            'message'=>$this->message,
+            'channel'=>$this->handler,
             'user_id'=>$this->user_id,
+            'message'=>$this->message,
             'mno_id'=>$this->mno_id,
             'status'=>$this->status,
             'error'=>$this->error,

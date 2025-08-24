@@ -17,7 +17,7 @@ class ChartColours
 												'pointBorderColor' => "#02AC56",
 											],
 								2 => [
-											'backgroundColor'=> '#F7C405',"rgba(255, 255, 255,0.2)",
+											'backgroundColor'=> '#F7C405',//"rgba(255, 255, 255,0.2)",
 											'borderColor' => '#F7C405',
 											'pointBackgroundColor' => '#F7C405',
 											'pointBorderColor' => '#F7C405',
@@ -47,7 +47,7 @@ class ChartColours
 											'pointBorderColor' => "#02AC56",
 										],
 								7 => [
-											'backgroundColor'=> '#F7C405',"rgba(255, 255, 255,0.2)",
+											'backgroundColor'=> '#F7C405',//"rgba(255, 255, 255,0.2)",
 											'borderColor' => '#F7C405',
 											'pointBackgroundColor' => '#F7C405',
 											'pointBorderColor' => '#F7C405',

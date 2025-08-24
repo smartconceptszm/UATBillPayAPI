@@ -52,6 +52,7 @@ class ChambeshiPostPaid implements IBillingClient
                $response['name'] = $apiResponse['customer_name'];
                $response['address'] = "";
                $response['revenuePoint'] = $revenuePoint;
+               $response['composite'] = 'ORDINARY';
                $response['consumerTier'] = '';
                $response['consumerType'] = '';
                $response['mobileNumber'] =  "";
@@ -67,7 +68,6 @@ class ChambeshiPostPaid implements IBillingClient
          } else {
             throw new Exception("status code: " . $apiResponse->status(), 2);
          }
-
 
       } catch (\Throwable $e) {
          if ($e->getCode() == 1) {

@@ -15,7 +15,7 @@ class ProcessPromotionService
       
       //Process the request
       try {
-         Log::info("(luapula) Promotion job started account Number".$promotionDTO->customerAccount);
+         Log::info("(luapula) Promotion job started account Number: ".$promotionDTO->customerAccount);
          $promotionDTO  =  App::make(Pipeline::class)
                               ->send($promotionDTO)
                               ->through(

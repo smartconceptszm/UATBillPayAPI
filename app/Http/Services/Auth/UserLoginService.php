@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Auth;
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
 use App\Http\DTOs\BaseDTO;
 use Exception;
@@ -18,9 +19,9 @@ class UserLoginService
 	public function create(BaseDTO $dto): BaseDTO
 	{
 
-		try {
+		// try {
 			if (!$token = Auth::attempt($dto->credentials())) {
-					throw new Exception("Invalid username and/or password. Try again!", 1);
+					throw new AuthenticationException("Invalid username and/or password. Try again!");
 			}
 			$user = Auth::user(); 
 			$dto->expires_in = Auth::factory()->getTTL()*60;
@@ -34,9 +35,9 @@ class UserLoginService
 			$dto->token = $token;
 			$dto->id = $user->id;
 			return  $dto;
-		} catch (\Throwable $e) {
-			throw new Exception($e->getMessage());
-		}
+		// } catch (\Throwable $e) {
+		// 	throw new Exception($e->getMessage());
+		// }
 
 	}
 

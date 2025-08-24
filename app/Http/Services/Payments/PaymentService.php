@@ -56,6 +56,15 @@ class PaymentService
       }
    }
 
+   public function recordBeforeUpdate(string $id) : object|null {
+      try {
+         $item = $this->model->findOrFail($id);
+         return $item;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
    public function update(array $data, string $id) : object|null {
 
       try {

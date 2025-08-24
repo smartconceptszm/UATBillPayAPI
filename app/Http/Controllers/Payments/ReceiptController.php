@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Payments;
 
-use App\Http\Services\Payments\PaymentService;
+use App\Http\Services\Payments\ReceiptService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -10,7 +10,7 @@ class ReceiptController extends Controller
 {
 
 	public function __construct(
-		private PaymentService $paymentService)
+		private ReceiptService $receiptService)
 	{}
 
    /**
@@ -20,7 +20,7 @@ class ReceiptController extends Controller
    {
 
       try {
-         $this->response['data'] =  $this->paymentService->findAll($request->query());
+         $this->response['data'] =  $this->receiptService->findAll($request->query());
       } catch (\Throwable $e) {
             $this->response['status']['code'] = 500;
             $this->response['status']['message'] = $e->getMessage();
@@ -44,7 +44,7 @@ class ReceiptController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->paymentService->findById($id);
+         $this->response['data'] = $this->receiptService->findById($id);
       } catch (\Throwable $e) {
             $this->response['status']['code'] = 500;
             $this->response['status']['message'] = $e->getMessage();
@@ -60,7 +60,7 @@ class ReceiptController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->paymentService->findOneBy($this->getParameters($request));
+         $this->response['data'] = $this->receiptService->findOneBy($this->getParameters($request));
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -76,7 +76,7 @@ class ReceiptController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->paymentService->update($this->getParameters($request),$id);
+         $this->response['data'] = $this->receiptService->update($this->getParameters($request),$id);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -92,7 +92,7 @@ class ReceiptController extends Controller
    {
       
       try {
-         $this->response['data'] = $this->paymentService->delete($id);
+         $this->response['data'] = $this->receiptService->delete($id);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

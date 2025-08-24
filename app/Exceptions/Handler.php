@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\AuthenticationException;
+use App\Exceptions\ApiException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -27,4 +31,50 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    public function render($request, Throwable $exception)
+    {
+        $statusCode = 500;
+        $message = 'Server Error';
+        $data = [];
+
+        if ($exception instanceof ApiException) {
+            $statusCode = $exception->getCode() ?: 500;
+            $message = $exception->getMessage();
+        }
+        elseif ($exception instanceof ValidationException) {
+            $statusCode = 422;
+            $message = 'Validation Error';
+            $data = $exception->errors();
+        } elseif ($exception instanceof AuthenticationException) {
+            $statusCode = 401;
+            $message =  $exception->getMessage()? $exception->getMessage(): 'Unauthenticated';
+        } elseif ($exception instanceof NotFoundHttpException) {
+            $statusCode = 404;
+            $message = 'Resource Not Found';
+        } else {
+            $message = $exception->getMessage() ?: $message;
+        }
+
+        return response()->json([
+            'status' => [
+                'code' => $statusCode,
+                'message' => $message,
+            ],
+            'data' => $data
+        ], $statusCode);
+    }
+
+    // protected function unauthenticated($request, AuthenticationException $exception)
+    // {
+    //     return response()->json([
+    //         'status' => [
+    //             'code' => 401,
+    //             'message' => 'Unauthenticated'
+    //         ],
+    //         'data' => []
+    //     ], 401);
+    // }
+
+
 }

@@ -122,6 +122,7 @@ class LukangaPostPaid implements IBillingClient
                 "name" => $theCustomer['name'],
                 "address" => $fullAddress,
                 "revenuePoint" => $theCustomer['deptDesc'],
+                "composite" => 'ORDINARY',
                 "consumerTier" => '',
                 "consumerType" => '',
                 "mobileNumber" => $theCustomer['cell'],

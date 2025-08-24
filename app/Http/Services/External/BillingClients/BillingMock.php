@@ -17,6 +17,7 @@ class BillingMock implements IBillingClient
                "customerAccount" => $params['customerAccount'],
                "name" => "Mock Customer",
                "address" => "No. 1, Street 1",
+               "composite" =>'ORDINARY',
                "revenuePoint" => "MOCK",
                "consumerType" => "DOMESTIC",
                "consumerTier" => "DOMESTIC",

@@ -15,7 +15,7 @@ class PaymentsProvider extends Model
 
    protected $fillable=[
       'name','shortName', 'colour','contactName', 'contactEmail','contactNo',
-      'logo'
+      'logo','client_id'
    ];
 
    protected $casts = [

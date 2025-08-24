@@ -23,10 +23,7 @@ class MoMoDTO extends PaymentDTO
    }
 
    public function toPaymentData():array{
-      
-      $paymentData = $this->getCommonPaymentData();
-      $paymentData['walletNumber'] = $this->walletNumber;
-      return $paymentData;
+      return $this->getCommonPaymentData();
    }
 
    public function toProviderParams():object{

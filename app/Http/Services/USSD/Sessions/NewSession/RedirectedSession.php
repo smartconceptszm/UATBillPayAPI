@@ -5,7 +5,6 @@ namespace App\Http\Services\USSD\Sessions\NewSession;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Sessions\SessionService;
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class RedirectedSession extends EfectivoPipelineContract
 {
@@ -21,14 +20,16 @@ class RedirectedSession extends EfectivoPipelineContract
       try {
 
          if($txDTO->isNewRequest != '1'){
+            
             $ussdSession = $this->sessionService->findOneBy([   
                                                       'mobileNumber'=>$txDTO->mobileNumber,
                                                       'sessionId'=>$txDTO->sessionId,
                                                    ]);
             if(!$ussdSession){
-               $txDTO->subscriberInput = $txDTO->shortCode ;
+               $txDTO->subscriberInput = "115";  //$txDTO->shortCode;
                $txDTO->isNewRequest = '1';
             }
+
          }
 
       } catch (\Throwable $e) {
