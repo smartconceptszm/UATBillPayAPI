@@ -2,6 +2,7 @@
 
 namespace App\Http\Services\Promotions;
 
+use App\Http\Services\Promotions\PromotionService;
 use Illuminate\Support\Facades\Schema;
 use App\Models\RaffleDraw;
 use Exception;
@@ -10,6 +11,7 @@ class RaffleDrawService
 {
 
    public function __construct(
+      private PromotionService $promotionService,
       private RaffleDraw $model
    ) {}
 

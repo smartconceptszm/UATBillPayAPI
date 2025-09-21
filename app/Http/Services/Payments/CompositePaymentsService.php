@@ -42,9 +42,6 @@ class CompositePaymentsService
                            ->where('cc.customerAccount', '=', $dto->customerAccount)
                            ->where('cw.client_id', '=', $dto->client_id)
                            ->where('cc.composite', '=', 'PARENT');
-         // $theSQLQuery = $records->toSql();
-         // $theBindings = $records-> getBindings();
-         // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
          $records = $records->orderByDesc('p.created_at')
                            ->get();
          return $records->all();
@@ -53,6 +50,8 @@ class CompositePaymentsService
       }
       
    }
+
+   
 
    public function findById(string $id):object|null
    {

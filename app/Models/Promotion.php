@@ -11,9 +11,9 @@ class Promotion extends Model
    use HasFactory;
 
    protected $fillable=[
-            'client_id','name','description','consumerType','type','entryAmount','entryMessage',
-            'raffleEntryAmount','raffleEntryMessage','raffleDrawType','raffleDrawLimit',
-            'raffleDrawTimeout','onDebt','rateValue','startDate','endDate','status'
+            'client_id','name','description','consumerType','type','entryAmount','entryMessage','raffleEntryAmount',
+            'raffleEntryMessage','raffleWinnerMessage','raffleDrawType','raffleDrawLimit',
+            'raffleDrawTimeout','onDebt','rateValue','startDate','endDate','status',
          ];
 
    protected $casts = [

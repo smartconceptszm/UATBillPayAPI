@@ -4,7 +4,6 @@ namespace App\Http\Services\Auth;
 
 use App\Http\Services\Auth\UserGroupService;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Group;
 use Exception;
 

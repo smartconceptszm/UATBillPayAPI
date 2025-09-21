@@ -66,8 +66,8 @@ class SMSService
             }
             DB::commit();
          } catch (\Throwable $e) {
+            Log::error('Error at creating SMS record in database. '.$e->getMessage());
             DB::rollBack();
-            throw new Exception($e->getMessage());
          }
          $dto->created_at = $sms->created_at;
          $dto->status = $sms->status;

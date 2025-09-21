@@ -192,6 +192,10 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/paymentaudits/{id}', 'show');
                Route::get('/paymentaudits', 'index');
             });
+            Route::controller(\App\Http\Controllers\Payments\PaymentsAuditedController::class)->group(function () {
+               Route::get('/auditedpayments/{id}', 'trail');
+               Route::get('/auditedpayments', 'index');
+            });
          //
          
          //Promotion Related Routes
@@ -209,7 +213,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/promotionrates/{id}', 'show');
                Route::post('/promotionrates', 'store');
                Route::get('/promotionrates', 'index');
-               Route::get('/ratesofpromtion/{id}', 'ratesofpromtion');
+               Route::get('/ratesofpromotion/{id}', 'ratesofpromotion');
             });
 
             Route::controller(\App\Http\Controllers\Promotions\PromotionMenuController::class)->group(function () {
@@ -234,14 +238,20 @@ Route::group(['middleware' => 'mode'], function (){
 
             });
 
-            Route::controller(\App\Http\Controllers\Promotions\PromotionDrawEntryController::class)->group(function () {
-               Route::get('/promotiondrawentries/findoneby', 'findOneBy');
-               Route::get('/promotiondrawentries/random', 'drawrandom');
+            Route::controller(\App\Http\Controllers\Promotions\PromotionEntriesNotProcessedController::class)->group(function () {
+               Route::get('/omittedpromotionentries', 'index');
+               Route::put('/omittedpromotionentries/{id}', 'update');
+            });
+
+            Route::controller(\App\Http\Controllers\Promotions\RaffleDrawEntryController::class)->group(function () {
+               Route::get('/raffledrawentries/findoneby', 'findOneBy');
+               Route::get('/raffledrawentries/random', 'drawrandom');
                Route::get('/drawentriesofpromotion', 'drawEntriesOfPromotion');
-               Route::put('/promotiondrawentries/{id}', 'update');
-               Route::get('/promotiondrawentries/{id}', 'show');
-               Route::post('/promotiondrawentries', 'store');
-               Route::get('/promotiondrawentries', 'index');
+               Route::put('/raffledrawentrysms/{id}', 'sendEntrySMS');
+               Route::put('/raffledrawentries/{id}', 'update');
+               Route::get('/raffledrawentries/{id}', 'show');
+               Route::post('/raffledrawentries', 'store');
+               Route::get('/raffledrawentries', 'index');
 
             });
 
@@ -249,8 +259,17 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/raffledraws/findoneby', 'findOneBy');
                Route::put('/raffledraws/{id}', 'update');
                Route::get('/raffledraws/{id}', 'show');
-               Route::post('/raffledraws', 'store');
+               // Route::post('/raffledraws', 'store');
                Route::get('/raffledraws', 'index');
+            });
+
+            Route::controller(\App\Http\Controllers\Promotions\RaffleWinnerController::class)->group(function () {
+               Route::put('/rafflewinners/{id}', 'update');
+               Route::post('/rafflewinners', 'store');
+            });
+
+            Route::controller(\App\Http\Controllers\Promotions\RaffleDrawCompletedController::class)->group(function () {
+               Route::get('/completedraffledraws', 'index');
             });
 
          //
@@ -270,6 +289,8 @@ Route::group(['middleware' => 'mode'], function (){
             Route::get('payments/status/summary', [\App\Http\Controllers\Payments\PaymentsByStatusController::class, 'summary']);
             Route::get('payments/types/all', [\App\Http\Controllers\Payments\PaymentsByTypeController::class, 'index']);
             Route::get('payments/types/summary', [\App\Http\Controllers\Payments\PaymentsByTypeController::class, 'summary']);
+            Route::get('payments/composite/all', [\App\Http\Controllers\Payments\PaymentsByCompositeController::class, 'index']);
+            Route::get('payments/composite/receipts', [\App\Http\Controllers\Payments\CompositePaymentAllocationController::class, 'index']);
          //
 
          //Dashboard Snippets
@@ -489,6 +510,16 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/revenuepointsofclient/{client_id}', 'revenuePointsOfClient');
             });
          // 
+
+         //ClientCustomers
+            Route::controller(\App\Http\Controllers\Clients\ClientCustomerController::class)->group(function () {
+               Route::get('/clientcustomers/findoneby', 'findOneBy');
+               Route::put('/clientcustomers/{id}', 'update');
+               Route::get('/clientcustomers/{id}', 'show');
+               Route::post('/clientcustomers', 'store');
+               Route::get('/clientcustomers', 'index');
+            });
+         //
 
          //Complaint
             Route::get('clientcomplaintsdashboard', [\App\Http\Controllers\CRM\ClientComplaintsDashboardController::class, 'index']);

@@ -13,8 +13,8 @@ class PromotionEntry extends Model
    protected $table = "promotion_entries";
 
    protected $fillable=[
-                  'promotion_id','customerAccount','consumerType','mobileNumber','entryDate','paymentAmount',
-                  'rewardAmount','rewardRate','message','smsDelivered','status','entryDate','receiptNumber'
+                  'promotion_id','payment_id','customerAccount','consumerType','mobileNumber','entryDate','paymentAmount',
+                  'receiptNumber','rewardAmount','rewardRate','message','smsDelivered','status','entryDate','dateRedeemed'
                ];
 
    protected $casts = [

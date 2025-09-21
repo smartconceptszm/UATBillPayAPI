@@ -23,7 +23,7 @@ class StepService_ProcessPromotion
 
       try {
          $clientWallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
-         $activePromotion = $this->promotionService->findActivePromotion($clientWallet->client_id);
+         $activePromotion = $this->promotionService->findActivePromotion($clientWallet->client_id, $paymentDTO->consumerType);
          if($activePromotion){
             $promotionDTO = $this->promotionDTO->fromArray($paymentDTO->toArray());
             $promotionDTO->promotionRaffleEntryMessage = $activePromotion->raffleEntryMessage;
@@ -42,6 +42,7 @@ class StepService_ProcessPromotion
             $promotionDTO->menu_id = $paymentDTO->menu_id;
             $promotionDTO->mno_id = $paymentDTO->mno_id;
             $promotionDTO->payment_id = $paymentDTO->id;
+
             ProcessPromotionJob::dispatch($promotionDTO)
                                  ->delay(Carbon::now()->addSeconds(20))
                                  ->onQueue('low');

@@ -14,6 +14,7 @@ return new class extends Migration
       Schema::create('promotion_entries', function (Blueprint $table) {
          $table->id();
          $table->unsignedInteger('promotion_id');
+         $table->string("payment_id",36)->notNullable();
          $table->timestamp('entryDate');
          $table->string("customerAccount",50)->notNullable();
          $table->string("mobileNumber",15)->nullable();
@@ -24,6 +25,7 @@ return new class extends Migration
          $table->string("message",150)->nullable();
          $table->enum('smsDelivered',['YES','NO'])->default('NO')->notNullable();
          $table->enum('status',['RECORDED','REDEEEMED'])->default('RECORDED')->notNullable();
+         $table->date('dateRedeemed');
          $table->timestamps();
       });
    }

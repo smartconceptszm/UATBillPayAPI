@@ -1,34 +1,41 @@
 <?php
 
-namespace App\Http\Controllers\Promotions;
+namespace App\Http\Controllers\Clients;
 
-use App\Http\Services\Promotions\RaffleDrawService;
-use Illuminate\Contracts\Auth\Authenticatable;
+use App\Http\Services\Clients\ClientCustomerService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class RaffleDrawController extends Controller
+class ClientCustomerController extends Controller
 {
 
-   protected $validationRules = [
-      'promotion_id' => 'required',
-      'dateOfDraw' => 'required',
-   ];
+   protected  $validationRules=[
+                  'client_id' => 'required',
+                  'customerAccount' => 'required',
+                  'revenuePoint' => 'required',
+                  'consumerTier' => 'required',
+                  'consumerType' =>  'required',
+                  'customerAddress' => 'required',
+                  'composite' => 'required',
+                  'parent_id' => 'required',
+                  'customerName' => 'required',
+                  'balance' => 'required',
 
+
+               ];
 	public function __construct(
-		private RaffleDrawService $raffleDrawService)
+		private ClientCustomerService $clientCustomer)
 	{}
+
 
    /**
     * Display a listing of the resource.
    */
-   public function index(Request $request, Authenticatable $user)
+   public function index(Request $request)
    {
 
-      try { 
-         $params = $request->all();
-         $params['client_id'] = $user->client_id;
-         $this->response['data'] =  $this->raffleDrawService->findAll($params);
+      try {
+         $this->response['data'] = $this->clientCustomer->findAll($request->query());
       } catch (\Throwable $e) {
             $this->response['status']['code'] = 500;
             $this->response['status']['message'] = $e->getMessage();
@@ -44,9 +51,9 @@ class RaffleDrawController extends Controller
    {
 
       try {
-         //validate incoming request 
+         //validate incoming request
          $this->validate($request, $this->validationRules);
-         $this->response['data'] = $this->raffleDrawService->create($this->getParameters($request));
+         $this->response['data'] = $this->clientCustomer->create($this->getParameters($request));
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -62,7 +69,7 @@ class RaffleDrawController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->raffleDrawService->findById($id);
+         $this->response['data'] = $this->clientCustomer->findById($id);
       } catch (\Throwable $e) {
             $this->response['status']['code'] = 500;
             $this->response['status']['message'] = $e->getMessage();
@@ -78,7 +85,7 @@ class RaffleDrawController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->raffleDrawService->findOneBy($this->getParameters($request));
+         $this->response['data'] = $this->clientCustomer->findOneBy($this->getParameters($request));
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -94,7 +101,7 @@ class RaffleDrawController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->raffleDrawService->update($this->getParameters($request),$id);
+         $this->response['data'] = $this->clientCustomer->update($this->getParameters($request),$id);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -108,9 +115,9 @@ class RaffleDrawController extends Controller
       */
    public function destroy(string $id)
    {
-      
+
       try {
-         $this->response['data'] = $this->raffleDrawService->delete($id);
+         $this->response['data'] = $this->clientCustomer->delete($id);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -118,5 +125,5 @@ class RaffleDrawController extends Controller
       return response()->json($this->response);
 
    }
-   
+
 }

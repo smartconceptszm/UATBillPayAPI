@@ -11,9 +11,10 @@ return new class extends Migration
     */
    public function up(): void
    {
-      Schema::create('promotion_draw_entries', function (Blueprint $table) {
+      Schema::create('raffle_draw_entries', function (Blueprint $table) {
          $table->id();
          $table->unsignedInteger('promotion_id');
+         $table->unsignedInteger('promotion_entry_id')->nullable();
          $table->string("customerAccount",50)->notNullable();
          $table->string("consumerType",50)->notNullable();
          $table->string("mobileNumber",15)->nullable();
@@ -22,7 +23,7 @@ return new class extends Migration
          $table->string("receiptNumber",50)->nullable();
          $table->timestamp('raffleDate');
          $table->integer('drawNumber')->nullable();
-         $table->string("drawMessage",150)->nullable();
+         $table->string("winMessage",150)->nullable();
          $table->enum('status',['RECORDED','WINNER','REDEEEMED'])->default('RECORDED')->notNullable();
          $table->timestamps();
       });
@@ -33,7 +34,7 @@ return new class extends Migration
     */
    public function down(): void
    {
-      Schema::dropIfExists('promotion_draw_entries');
+      Schema::dropIfExists('raffle_draw_entries');
    }
    
 };

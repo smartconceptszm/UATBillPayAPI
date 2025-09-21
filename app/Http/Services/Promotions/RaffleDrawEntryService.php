@@ -4,15 +4,15 @@ namespace App\Http\Services\Promotions;
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
-use App\Models\PromotionDrawEntry;
+use App\Models\RaffleDrawEntry;
 use Illuminate\Support\Carbon;
 use Exception;
 
-class PromotionDrawEntryService
+class RaffleDrawEntryService
 {
 
    public function __construct(
-      private PromotionDrawEntry $model
+      private RaffleDrawEntry $model
    ) {}
 
    public function findAll(?array $criteria):array|null
@@ -31,14 +31,14 @@ class PromotionDrawEntryService
          $dto = (object)$criteria;
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
-         $records = DB::table('promotion_draw_entries as p')
-                        ->select('p.*');
+         $records = DB::table('raffle_draw_entries as rde')
+                        ->select('rde.*');
          if($dto->dateFrom && $dto->dateTo){
-            $records =$records->where('p.entryDate', '>=', $dto->dateFrom)
-                              ->where('p.entryDate', '<=',$dto->dateTo);
+            $records =$records->where('rde.entryDate', '>=', $dto->dateFrom)
+                              ->where('rde.entryDate', '<=',$dto->dateTo);
          }
-         $records = $records->where('p.promotion_id', '=', $dto->promotion_id)
-                              ->orderByDesc('p.entryDate')->get();
+         $records = $records->where('rde.promotion_id', '=', $dto->promotion_id)
+                              ->orderByDesc('rde.entryDate')->get();
          return $records->all();
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
@@ -101,31 +101,33 @@ class PromotionDrawEntryService
    public function drawRandom(array $params) : object|null {
 
         try {
+
             if(isset($params['theMonth'])){
 
                $theDate = Carbon::createFromFormat('Y-m-d',$params['theMonth'].'-01');
                $startOfMonth = $theDate->copy()->startOfMonth();
                $endOfMonth = $theDate->copy()->endOfMonth();
 
-               $item = $this->model::whereNull('drawNumber')
+               $item = $this->model::whereBetween('entryDate', [$startOfMonth, $endOfMonth])
                                     ->where('promotion_id',$params['promotion_id'])
-                                    ->whereBetween('entryDate', [$startOfMonth, $endOfMonth])
+                                    ->where('status','RECORDED')
+                                    ->whereNull('drawNumber')
+                                    ->whereNull('raffleDate')
                                     ->inRandomOrder()
                                     ->first();
             }else{
-               $item = $this->model::whereNull('drawNumber')
-                                    ->whereBetween('entryDate', [$params['from'], $params['to']])
+               $item = $this->model::whereBetween('entryDate', [$params['from'], $params['to']])
                                     ->where('promotion_id',$params['promotion_id'])
+                                    ->where('status','RECORDED')
+                                    ->whereNull('drawNumber')
+                                    ->whereNull('raffleDate')
                                     ->inRandomOrder()
                                     ->first();
             }
-
             $item = \is_null($item)?null:(object)$item->toArray();
 
-            //Flag Raffle Winner with YES
-            // $this->update(["raffleWinner"=>"YES"],$item->id) ? $item->raffleWinner='YES':$item;
-
             return $item;
+            
         } catch (\Throwable $e) {
             throw new Exception($e->getMessage());
             // Output to Debugbar

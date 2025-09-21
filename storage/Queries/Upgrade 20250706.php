@@ -81,3 +81,17 @@
 	1. create new table payments_audit
 
 //4. Promotions 
+
+		UPDATE `promotion_entries` pe
+				JOIN `payments` p ON p.customerAccount = pe.customerAccount 
+									AND p.receiptNumber = pe.receiptNumber
+		SET pe.payment_id = p.id;
+
+
+	//Update Promotion entries Table
+		Set dateRedeemed = updatedAt for all redeemed entries
+
+
+		UPDATE `client_customers`
+SET `customerAccount` = CONCAT('C', LPAD(`customerAccount`, 4, '0'))
+where `composite` ='PARENT'  AND  `client_id` = 'a1ca6f8c-240b-11ef-98b6-0a3595084709';

@@ -57,6 +57,7 @@ class PromotionDTO extends BaseDTO
             'consumerType' => $this->consumerType,
             'mobileNumber' => $this->mobileNumber,
             'paymentType' => $this->paymentType,
+            'payment_id' => $this->payment_id,
             'rewardRate' => $this->rewardRate,
             'entryDate' => $this->entryDate,
             'message' => $this->message
@@ -75,6 +76,7 @@ class PromotionDTO extends BaseDTO
             'consumerType' => $this->consumerType,
             'mobileNumber' => $this->mobileNumber,
             'promotion_id' => $this->promotion_id,
+            'promotion_entry_id' => $this->id,
             'entryDate' => $this->entryDate,
         ];
 

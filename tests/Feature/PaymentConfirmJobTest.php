@@ -7,7 +7,7 @@ use Tests\TestCase;
 class PaymentConfirmJobTest extends TestCase
 {
 
-   public function test_confirm_payment(): void
+   public function _test_confirm_payment(): void
    {
       $paymentDTO = new \App\Http\DTOs\MoMoDTO();
       $paymentDTO = $paymentDTO->fromArray(

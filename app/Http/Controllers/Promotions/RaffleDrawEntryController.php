@@ -2,15 +2,19 @@
 
 namespace App\Http\Controllers\Promotions;
 
-use App\Http\Services\Promotions\PromotionDrawEntryService;
+use App\Http\Services\Promotions\RaffleDrawEntryService;
+use Illuminate\Contracts\Auth\Authenticatable;
+use App\Http\Services\SMS\MessageService;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class PromotionDrawEntryController extends Controller
+class RaffleDrawEntryController extends Controller
 {
 
 	public function __construct(
-		private PromotionDrawEntryService $promotionDrawEntryService)
+		private RaffleDrawEntryService $raffleDrawEntryService,
+      private MessageService $messageService
+      )
 	{}
 
    /**
@@ -20,7 +24,7 @@ class PromotionDrawEntryController extends Controller
    {
 
       try {
-         $this->response['data'] =  $this->promotionDrawEntryService->findAll($request->query());
+         $this->response['data'] =  $this->raffleDrawEntryService->findAll($request->query());
       } catch (\Throwable $e) {
             $this->response['status']['code'] = 500;
             $this->response['status']['message'] = $e->getMessage();
@@ -37,7 +41,7 @@ class PromotionDrawEntryController extends Controller
   {
 
      try {
-        $this->response['data'] = $this->promotionDrawEntryService->drawEntriesOfPromotion($request->query());
+        $this->response['data'] = $this->raffleDrawEntryService->drawEntriesOfPromotion($request->query());
      } catch (\Throwable $e) {
            $this->response['status']['code'] = 500;
            $this->response['status']['message'] = $e->getMessage();
@@ -62,7 +66,7 @@ class PromotionDrawEntryController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->promotionDrawEntryService->findById($id);
+         $this->response['data'] = $this->raffleDrawEntryService->findById($id);
       } catch (\Throwable $e) {
             $this->response['status']['code'] = 500;
             $this->response['status']['message'] = $e->getMessage();
@@ -78,7 +82,7 @@ class PromotionDrawEntryController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->promotionDrawEntryService->findOneBy($this->getParameters($request));
+         $this->response['data'] = $this->raffleDrawEntryService->findOneBy($this->getParameters($request));
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -94,7 +98,7 @@ class PromotionDrawEntryController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->promotionDrawEntryService->update($this->getParameters($request),$id);
+         $this->response['data'] = $this->raffleDrawEntryService->update($this->getParameters($request),$id);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -107,13 +111,14 @@ class PromotionDrawEntryController extends Controller
    {
 
       try {
+
          $params = [
                      'promotion_id' => $request->input('promotion_id'),
                      'theMonth' => $request->input('theMonth'),
                      'from' => $request->input('from'),
                      'to' => $request->input('to')
                      ];
-         $this->response['data'] =  $this->promotionDrawEntryService->drawRandom($params);
+         $this->response['data'] =  $this->raffleDrawEntryService->drawRandom($params);
 
       } catch (\Throwable $e) {
             $this->response['status']['code'] = 500;
@@ -124,6 +129,28 @@ class PromotionDrawEntryController extends Controller
 
    }
 
+   public function sendEntrySMS(Request $request, Authenticatable $user, string $id)
+   {
+
+      try {
+
+         $raffleDrawEntry = $this->raffleDrawEntryService->findById($id);
+         $promoSMS=[
+                     'mobileNumber' => $raffleDrawEntry->mobileNumber,
+                     'message' => $raffleDrawEntry->winMessage,
+                     'client_id' => $user->client_id,
+                     'type' => "NOTIFICATION"
+                  ];
+         $this->response['data'] = $this->messageService->send($promoSMS);
+
+      } catch (\Throwable $e) {
+         $this->response['status']['code'] = 500;
+         $this->response['status']['message'] = $e->getMessage();
+      }
+      return response()->json($this->response);
+
+   }
+
    /**
     * Remove the specified resource from storage.
       */
@@ -131,7 +158,7 @@ class PromotionDrawEntryController extends Controller
    {
 
       try {
-         $this->response['data'] = $this->promotionDrawEntryService->delete($id);
+         $this->response['data'] = $this->raffleDrawEntryService->delete($id);
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

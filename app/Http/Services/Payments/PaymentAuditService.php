@@ -14,27 +14,6 @@ class PaymentAuditService
       private PaymentAudit $model
    ) {}
 
-   public function updateHistory(string $id) : object|null {
-      
-      try {
-
-         $records = DB::table('payments as p')
-                        ->join('payment_audits as pa','pa.payment_id','=','p.id')
-                        ->join('users as u','pa.user_id','=','u.id')
-                        ->select('pa.oldValues','pa.newValues','pa.updateChannel','p.id','p.customerAccount',
-                                       'p.mobileNumber','p.transactionId','p.ppTransactionId',
-                                       'p.paymentStatus','p.receipt','p.receiptNumber')
-                        ->where('p.id', '=', $id);
-
-         return $records;
-
-      } catch (\Throwable $e) {
-         throw new Exception($e->getMessage());
-      }
-
-   }
-
-
    public function findAll(?array $criteria):array|null
    {
       try {

@@ -15,12 +15,23 @@ class UtilityTest extends TestCase
    public function _test_new_code(): void
    {
       
-      $theService = new  \App\Http\Services\Analytics\Generators\DashboardMenuIdUpdaterService(
-                              new \App\Http\Services\Analytics\Dashboards\DashboardPaymentTypeTotalsService(new \App\Models\DashboardPaymentTypeTotals()),
-                              new \App\Http\Services\Clients\ClientMenuService(new \App\Models\ClientMenu())
+      $theService = new  \App\Http\Services\Promotions\PromotionEntriesNotProcessedService(
+                              new \App\Http\Services\Promotions\ProcessPromotionService(),
+                              new \App\Http\Services\Payments\PaymentToReviewService(),
+                              new \App\Http\Services\Promotions\PromotionService(new \App\Models\Promotion()),
+                              new \App\Http\DTOs\PromotionDTO(),
+                              new \App\Http\DTOs\MoMoDTO()
                            );
+      
+      $response = $theService->findAll([
+                                    'client_id' => '9eb01c2c-21d6-4bf7-9f88-d2150e9134e9',
+                                    'dateFrom' => '2025-06-05',
+                                    'dateTo' => '2025-07-31',
+                                 ]);
 
-      $response = $theService->generate();
+      foreach ($response as $payment) {
+         $response2 = $theService->processEntry($payment->id,$payment->promotion_id);
+      }
 
       $this->assertTrue($response);
 

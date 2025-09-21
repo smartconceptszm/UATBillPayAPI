@@ -2,7 +2,7 @@
 
 namespace App\Http\Services\Promotions\PromotionHandlers;
 
-use App\Http\Services\Promotions\PromotionDrawEntryService;
+use App\Http\Services\Promotions\RaffleDrawEntryService;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\DTOs\BaseDTO;
 
@@ -10,7 +10,7 @@ class Step_EnterRaffle extends EfectivoPipelineContract
 {
 
    public function __construct(
-      private PromotionDrawEntryService $promotionDrawEntryService)
+      private RaffleDrawEntryService $promotionDrawEntryService)
    {}
 
    protected function stepProcess(BaseDTO $promotionDTO)

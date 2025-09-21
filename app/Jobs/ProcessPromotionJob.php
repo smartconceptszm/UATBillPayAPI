@@ -10,7 +10,7 @@ use App\Jobs\BaseJob;
 class ProcessPromotionJob extends BaseJob
 {
 
-   public $timeout = 120;
+   // public $timeout = 600;
 
    public function __construct(
       private BaseDTO $promotionDTO)

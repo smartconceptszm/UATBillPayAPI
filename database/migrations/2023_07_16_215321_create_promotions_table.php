@@ -27,7 +27,8 @@ return new class extends Migration
          $table->timestamp('startDate');
          $table->timestamp('endDate');
          $table->string("entryMessage",160)->nullable();
-         $table->string("raffleEntryMessage",150)->nullable();
+         $table->string("raffleEntryMessage",150)->nullable();         
+         $table->string("raffleWinnerMessage",150)->nullable();
          $table->enum('status',['ACTIVE', 'CLOSED'])->default('ACTIVE')->notNullable();
          $table->timestamps();
       });

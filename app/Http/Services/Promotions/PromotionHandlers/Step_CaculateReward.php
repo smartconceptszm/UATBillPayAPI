@@ -46,6 +46,7 @@ class Step_CaculateReward extends EfectivoPipelineContract
                                  \number_format((float)$promotionDTO->promotionRaffleEntryAmount, 2, '.', ',')
                               );
 
+
             }
 
          }

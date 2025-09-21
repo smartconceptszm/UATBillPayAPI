@@ -24,8 +24,7 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
         try {
 
             $this->checkCompositeAccount($paymentDTO);
-            if ($this->isPaymentEligibleForReceipt($paymentDTO->paymentStatus)
-                    && $paymentDTO->composite != "PARENT") 
+            if ($this->isPaymentEligibleForReceipt($paymentDTO)) 
             {
                 $this->processReceipt($paymentDTO);
             }
@@ -37,13 +36,21 @@ class Step_PostPaymentToClient extends EfectivoPipelineContract
         return $paymentDTO;
     }
 
-    private function isPaymentEligibleForReceipt(string $paymentStatus): bool
+    private function isPaymentEligibleForReceipt(BaseDTO $paymentDTO): bool
     {
 
-        return in_array($paymentStatus, [
+        $eligible = in_array($paymentDTO->paymentStatus, [
                                 PaymentStatusEnum::Paid->value,
                                 PaymentStatusEnum::NoToken->value,
                             ]);
+
+        if($eligible){
+            if($paymentDTO->channel != 'USSD' && $paymentDTO->composite == "PARENT"){
+                $eligible = false;
+            }
+        }
+        
+        return $eligible;
 
     }
 
