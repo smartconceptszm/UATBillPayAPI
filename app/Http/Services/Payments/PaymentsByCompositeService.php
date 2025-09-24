@@ -25,17 +25,20 @@ class PaymentsByCompositeService
                      ->join('client_customers as cc','cw.client_id','=','cc.client_id')
                      ->join('payments_providers as pp','cw.payments_provider_id','=','pp.id')
                      ->join('client_menus as m','p.menu_id','=','m.id')
-                     ->select('p.*','cc.customerName','m.prompt as paymentType','pp.shortName as paymentProvider')
-                     ->where('p.created_at', '>=' ,$dateFrom)
-                     ->where('p.created_at', '<=',  $dateTo)
+                     ->select('p.id','p.transactionId','p.customerAccount','p.reference','p.revenuePoint','cc.customerAddress',
+                              'p.mobileNumber','p.receiptAmount','p.paymentStatus','p.ppTransactionId','p.created_at',
+                              'cc.customerName','m.prompt as paymentType','pp.shortName as paymentProvider')
+                     ->where('cw.client_id', '=', $dto->client_id)
+                     ->where('cc.composite', '=', 'PARENT')
                      ->whereIn('p.paymentStatus', 
                               [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
                                  PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
-                     ->where('cw.client_id', '=', $dto->client_id)
-                     ->where('cc.composite', '=', 'PARENT');
-         // $theSQLQuery = $records->toSql();
-         // $theBindings = $records-> getBindings();
-         // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
+                     ->whereColumn('p.customerAccount', '=', 'cc.customerAccount')
+                     ->where('p.created_at', '>=' ,$dateFrom)
+                     ->where('p.created_at', '<=',  $dateTo);
+         $theSQLQuery = $records->toSql();
+         $theBindings = $records-> getBindings();
+         $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
          $records = $records->get();
 
          return $records->all();
