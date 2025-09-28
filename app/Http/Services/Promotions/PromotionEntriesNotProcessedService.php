@@ -58,9 +58,9 @@ class PromotionEntriesNotProcessedService
                         ->where('pr.status', 'ACTIVE')
                         ->whereNull('pe.id');
 
-         // $theSQLQuery = $records->toSql();
-         // $theBindings = $records-> getBindings();
-         // $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
+         $theSQLQuery = $records->toSql();
+         $theBindings = $records-> getBindings();
+         $rawSql = vsprintf(str_replace(['?'], ['\'%s\''], $theSQLQuery), $theBindings);
 
          $records = $records->get();
 
