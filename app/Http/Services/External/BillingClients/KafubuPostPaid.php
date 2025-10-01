@@ -167,7 +167,7 @@ class KafubuPostPaid implements IBillingClient
                                 'operator' => $this->operator,
                                 'account' => $postParams['account'],
                                 'incomeCode' => 'ZZ',
-                                'payType' => 'B',
+                                'payType' => 'C',
                                 'recTime' => '',
                                 'amount' => $postParams['amount'],
                                 'reference' => $postParams['reference']
