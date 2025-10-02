@@ -16,8 +16,14 @@ class PlaceHolderMenu implements IUSSDMenu
    public function handle(BaseDTO $txDTO):BaseDTO
    {
       
-      $clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
-      $txDTO->response = $clientMenu->prompt.' option is coming soon! Thank you for the your patience';
+      $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+      $placeHolderKey = 'MENU_PLACEHOLDER_'.strtoupper($txDTO->urlPrefix);
+      if(array_key_exists($placeHolderKey,$billpaySettings)){
+         $txDTO->response = $billpaySettings['MENU_PLACEHOLDER_'.strtoupper($txDTO->urlPrefix)];
+      }else{
+         $clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
+         $txDTO->response = $clientMenu->prompt.' option is coming soon! Thank you for the your patience';
+      }
       $txDTO->lastResponse = true;
       return $txDTO;
       
