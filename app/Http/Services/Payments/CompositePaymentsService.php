@@ -51,8 +51,6 @@ class CompositePaymentsService
       
    }
 
-   
-
    public function findById(string $id):object|null
    {
 

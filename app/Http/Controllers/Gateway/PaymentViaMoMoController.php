@@ -31,6 +31,7 @@ class PaymentViaMoMoController extends Controller
          $params = $this->getParameters($request);
          $this->validate($request, $this->validationRules);
          $params = $this->getParameters($request);
+         $params['customerAccount'] = strtoupper($params['customerAccount']);
          $params['channel'] = 'WEBSITE';
          $this->response['data'] = $this->paymentRequestService->initiateMoMoWebPayement($params,$this->moMoDTO);
       } catch (\Throwable $e) {

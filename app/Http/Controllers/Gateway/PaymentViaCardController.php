@@ -29,6 +29,7 @@ class PaymentViaCardController extends Controller
          //validate incoming request 
          $this->validate($request, $this->validationRules);
          $params = $this->getParameters($request);
+         $params['customerAccount'] = strtoupper($params['customerAccount']);
          $params['channel'] = 'WEBSITE';
          $this->response['data'] = $this->paymentRequestService->initiateCardWebPayement($params,$this->cardDTO);
       } catch (\Throwable $e) {
