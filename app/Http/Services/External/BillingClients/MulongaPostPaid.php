@@ -31,7 +31,7 @@ class MulongaPostPaid implements IBillingClient
       try {
 
          if(!(\strlen($params['customerAccount'])==10)){
-            throw new Exception("Invalid SWASCo account number",1);
+            throw new Exception("Invalid MULONGA account number",1);
          }
 
          $this->setConfigs($params['client_id']);
