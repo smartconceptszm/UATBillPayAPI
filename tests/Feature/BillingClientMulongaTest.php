@@ -25,18 +25,18 @@ class BillingClientMulongaTest extends TestCase
 
    }
 
-   public function _test_PostPayment(): void
+   public function test_PostPayment(): void
    {
 
       //Main Menu
 
       $params = [
+                     'description' => 'Water Bill',
                      'referenceNumber' => 'MULONGA2025TEST016',
                      'account' => '2203000408',
                      'amount' => '1.00',
-                     'paymentType'=>"01",
-                     'receiptType'=>"2",
-                     'description'=>"WaterBill",
+                     'paymentType'=>"999",
+                     'receiptType'=>"01",
                      'mobileNumber'=> '260977787659',
                      'client_id' =>'9c836557-d6f5-497a-919b-c4e61a83536c'
                ];

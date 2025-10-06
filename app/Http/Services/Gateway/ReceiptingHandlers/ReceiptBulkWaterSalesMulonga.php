@@ -6,7 +6,7 @@ use App\Http\Services\Gateway\ReceiptingHandlers\AbrReceiptMulonga;
 use App\Http\Services\Gateway\ReceiptingHandlers\IReceiptPayment;
 use App\Http\DTOs\BaseDTO;
 
-class ReceiptPostPaidMulonga extends AbrReceiptMulonga implements IReceiptPayment
+class ReceiptBulkWaterSalesMulonga extends AbrReceiptMulonga implements IReceiptPayment
 {
 
 	public function handle(BaseDTO $paymentDTO):BaseDTO
@@ -16,21 +16,13 @@ class ReceiptPostPaidMulonga extends AbrReceiptMulonga implements IReceiptPaymen
 		$mulongaTransactionRef = \strlen($paymentDTO->sessionId) > 20 ? 
 												\substr($paymentDTO->sessionId, 0, 20) : $paymentDTO->sessionId;
 		$newBalance = "0";
-		if($paymentDTO->customer){
-			if(\key_exists('balance',$paymentDTO->customer)){
-				$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) - 
-												(float)$paymentDTO->receiptAmount;
-				$newBalance = \number_format($newBalance, 2, '.', ',');
-			}
-		}
-
 		$receiptingParams = [ 
-										'description' => "Water Bill",
+										'description' => "Bulk Water Sales",
 										'referenceNumber' => $mulongaTransactionRef,
 										'account' => $paymentDTO->customerAccount,
 										'amount' => $paymentDTO->receiptAmount,
 										'paymentType'=>"999",
-										'receiptType'=>"01",
+										'receiptType'=>"02",
 										'mobileNumber'=> $paymentDTO->mobileNumber,
 										'client_id' => $paymentDTO->client_id
 									];

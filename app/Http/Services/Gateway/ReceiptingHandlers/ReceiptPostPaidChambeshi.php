@@ -34,6 +34,7 @@ class ReceiptPostPaidChambeshi implements IReceiptPayment
 		}
 
 		$receiptingParams = $this->postLocalReceipt->handle($paymentDTO,$theMenu);
+		
 		$billingResponse = $this->billingClient->postPayment($receiptingParams);
 		$paymentDTO->receiptNumber =  $receiptingParams['ReceiptNo'];
 		if($billingResponse['status']=='SUCCESS'){

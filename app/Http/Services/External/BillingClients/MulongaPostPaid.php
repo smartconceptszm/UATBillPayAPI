@@ -87,12 +87,13 @@ class MulongaPostPaid implements IBillingClient
          $receiptingParams =  [ 
                                  'username' => $this->soapUserName,
                                  'password' => $this->soapPassword,
-                                 'referenceNumber' => $postParams['referenceNumber'],
+
                                  'accountNumber' => $postParams['account'],
                                  'lineAmount' => $postParams['amount'],
+                                 'referenceNumber' => $postParams['referenceNumber'],
                                  'paymentType' => $postParams['paymentType'],
-                                 'description' => $postParams['description'],
                                  'phoneNumber' => $postParams['mobileNumber'],
+                                 'description' => $postParams['description'],
                                  'receiptType' => $postParams['receiptType']
                               ];
 
