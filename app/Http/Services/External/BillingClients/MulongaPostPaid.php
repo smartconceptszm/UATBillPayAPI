@@ -12,9 +12,9 @@ class MulongaPostPaid implements IBillingClient
 {
 
    private $revenuePoints =[
-      "11"=>"CHINGOLA",
-      "22"=>"MUFULIRA",
-      "30"=>"CHILILABOMBWE",
+      "1"=>"CHINGOLA",
+      "2"=>"MUFULIRA",
+      "3"=>"CHILILABOMBWE"
    ];
    private $soapService;
    private string $soapUserName;
@@ -51,7 +51,7 @@ class MulongaPostPaid implements IBillingClient
                            "customerAccount" => $apiResponse['No'],
                            "name" => $apiResponse['Name'],
                            "address" => $apiResponse['Address'],
-                           "revenuePoint" => $this->getRevenuePoint(\substr($apiResponse['No'],0,2)),
+                           "revenuePoint" => $this->getRevenuePoint(\substr($apiResponse['No'],0,1)),
                            "composite" =>'ORDINARY',
                            "consumerTier" => '',
                            "consumerType" => '',
