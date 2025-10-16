@@ -15,7 +15,7 @@ class StepService_ProcessPromotion
    public function __construct(
       private ClientWalletService $clientWalletService,
 		private PromotionService $promotionService,
-      private PromotionDTO $promotionDTO) 
+      private PromotionDTO $promotionDTO)
 	{}
 
    public function handle(BaseDTO $paymentDTO)
@@ -46,7 +46,7 @@ class StepService_ProcessPromotion
 
                ProcessPromotionJob::dispatch($promotionDTO)
                                     ->delay(Carbon::now()->addSeconds(20))
-                                    ->onQueue('low');
+                                    ->onQueue('UATlow');
             }
          }
       } catch (\Throwable $e) {

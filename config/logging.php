@@ -60,14 +60,14 @@ return [
 
         'single' => [
             'driver' => 'single',
-            'path' => storage_path('logs/laravel.log'),
+            'path' => storage_path('logs/UATlaravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
         ],
 
         'daily' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/billpayapi.log'),
+            'path' => storage_path('logs/UATbillpayapi.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 90,
             'replace_placeholders' => true,
@@ -75,7 +75,7 @@ return [
 
         'web_requests' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/billpayapi_web.log'),
+            'path' => storage_path('logs/UATbillpayapi_web.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'days' => 90,
             'replace_placeholders' => true,
@@ -83,7 +83,7 @@ return [
 
         'php-fpm-slow' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/php8.3-fpm-slow.log'),
+            'path' => storage_path('logs/UATphp8.3-fpm-slow.log'),
             'level' => 'debug',
             'days' => 7, // Keep for 7 days
         ],

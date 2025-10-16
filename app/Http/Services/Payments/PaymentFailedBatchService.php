@@ -25,7 +25,7 @@ class PaymentFailedBatchService
    {
 
       try {
-         $user = Auth::user(); 
+         $user = Auth::user();
          $data['client_id'] = $user->client_id;
          $thePayments = $this->paymentToReviewService->findAll($data);
          foreach ($thePayments as $payment) {
@@ -36,10 +36,10 @@ class PaymentFailedBatchService
             $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
             ConfirmPaymentJob::dispatch($paymentDTO)
                                     ->delay(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']))
-                                    ->onQueue('low');
+                                    ->onQueue('UATlow');
          }
          $response = (object)[
-                              'data' => \count($thePayments).' payments submitted for review. Check status after a while'      
+                              'data' => \count($thePayments).' payments submitted for review. Check status after a while'
                            ];
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

@@ -17,7 +17,7 @@ class SMSAdhocAnalyticsController extends Controller
       try {
          SMSAnalyticsDailyBulkJob::dispatch($request->input('date'))
                                        ->delay(Carbon::now()->addSeconds(1))
-                                       ->onQueue('low');
+                                       ->onQueue('UATlow');
 
          $this->response['data'] = ['Message' => "Job submitted"];
       } catch (\Throwable $e) {
@@ -36,9 +36,9 @@ class SMSAdhocAnalyticsController extends Controller
          $theDate = Carbon::parse($request->input('date'));
          SMSAnalyticsDailySingleJob::dispatch($theDate)
                                           ->delay(Carbon::now()->addSeconds(1))
-                                          ->onQueue('low');
+                                          ->onQueue('UATlow');
          $this->response['data'] = ['Message' => "Job submitted"];
-         
+
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

@@ -49,7 +49,7 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
       $paymentReviewDelay = (int) $billpaySettings[self::PAYMENT_REVIEW_DELAY_KEY];
       ReConfirmCallBackPaymentJob::dispatch($paymentDTO->id)
                                     ->delay(Carbon::now()->addMinutes($paymentReviewDelay))
-                                    ->onQueue('high');
+                                    ->onQueue('UAThigh');
    }
 
    private function dispatchJobBasedOnPaymentStatus(BaseDTO $paymentDTO, array $billpaySettings)
@@ -61,7 +61,7 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
          $paymentReviewDelay = (int) $billpaySettings[self::PAYMENT_REVIEW_DELAY_KEY];
          $this->dispatchReConfirmPaymentJob($paymentDTO, $paymentReviewDelay);
       }
-      
+
    }
 
    private function dispatchConfirmPaymentJob(BaseDTO $paymentDTO)
@@ -73,8 +73,8 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
 
       ConfirmPaymentJob::dispatch($paymentDTO)
                         ->delay(Carbon::now()->addSeconds($delaySeconds))
-                        ->onQueue('high');
-                     
+                        ->onQueue('UAThigh');
+
    }
 
    private function dispatchReConfirmPaymentJob(BaseDTO $paymentDTO, int $paymentReviewDelay)
@@ -82,7 +82,7 @@ class Step_DispatchConfirmationJob extends EfectivoPipelineContract
 
       ReConfirmPaymentJob::dispatch($paymentDTO)
                            ->delay(Carbon::now()->addMinutes($paymentReviewDelay))
-                           ->onQueue('high');
+                           ->onQueue('UAThigh');
 
    }
 

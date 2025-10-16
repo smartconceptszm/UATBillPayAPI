@@ -22,7 +22,7 @@ class Step_DispatchReConfirmationJob extends EfectivoPipelineContract
             $billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
             ReConfirmPaymentJob::dispatch($paymentDTO)
                                  ->delay(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']))
-                                 ->onQueue('high');
+                                 ->onQueue('UAThigh');
          }else{
             $paymentDTO->status = "REVIEWED";
          }

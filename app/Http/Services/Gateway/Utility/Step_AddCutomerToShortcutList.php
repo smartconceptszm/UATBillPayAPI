@@ -17,7 +17,7 @@ class Step_AddCutomerToShortcutList extends EfectivoPipelineContract
          if($paymentDTO->channel == 'USSD'){
             AddCustomerToShotcutListJob::dispatch($paymentDTO)
                                        ->delay(Carbon::now()->addSeconds(5))
-                                       ->onQueue('low');
+                                       ->onQueue('UATlow');
          }
       } catch (\Throwable $e) {
          $paymentDTO->error='At add customer to shortcut list. '.$e->getMessage();

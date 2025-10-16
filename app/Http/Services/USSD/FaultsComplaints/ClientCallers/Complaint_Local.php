@@ -31,13 +31,13 @@ class Complaint_Local implements IComplaintClient
 							];
 			SendSMSesJob::dispatch($arrSMSes)
 								->delay(Carbon::now()->addSeconds(3))
-								->onQueue('low');
+								->onQueue('UATlow');
 
 			return $complaint->caseNumber;
-					
+
 		} catch (\Throwable $e) {
 			throw new Exception('At Post customer complaint. '.$e->getMessage());
-		}                                             
+		}
 
 	}
 

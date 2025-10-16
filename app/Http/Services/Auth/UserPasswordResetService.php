@@ -38,7 +38,7 @@ class UserPasswordResetService
 
             SendSMSesJob::dispatch($smses)
                            ->delay(Carbon::now()->addSeconds(1))
-                           ->onQueue('high');
+                           ->onQueue('UAThigh');
 
          }else{
             throw new Exception("Invalid username");
@@ -47,7 +47,7 @@ class UserPasswordResetService
          throw new Exception("Error at forgot password service: ".$e->getMessage());
       }
       return 'Password reset SMS Notification SENT!';
-      
+
    }
 
    public function update(array $data, string $id):object|null

@@ -43,13 +43,13 @@ class CompositePaymentReceiptController extends Controller
                   'client_id' => $data['client_id'],
                   'menu_id' => $data['menu_id']
                ];
-               
+
                CompositePaymentReceiptJob::dispatch($jobData)
                                           ->delay(Carbon::now()->addSeconds(1))
-                                          ->onQueue('low');
-            } 
+                                          ->onQueue('UATlow');
+            }
          //
-         
+
          //Update Main Payment Transaction Status
             $paymentService->update(['paymentStatus'=>PaymentStatusEnum::Receipt_Delivered->value],$data['transaction_id']);
          //

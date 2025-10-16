@@ -21,7 +21,7 @@ class ServiceApplications_Step_4
       private ValidateCRMInput $validateCRMInput,
       private ServiceTypeDetailService $serviceTypeDetails,
       private ServiceTypeService $serviceTypes)
-   {} 
+   {}
 
    public function run(BaseDTO $txDTO)
    {
@@ -32,7 +32,7 @@ class ServiceApplications_Step_4
             $theServiceType = $this->serviceTypes->findOneBy([
                   'client_id'=>$txDTO->client_id,
                   'order'=>$arrCustomerJourney[2]
-               ]); 
+               ]);
             $serviceAppResponses = \json_decode(Cache::get($txDTO->sessionId."ServicaAppResponses",''),true);
             $serviceAppResponses = $serviceAppResponses? $serviceAppResponses:[];
             $order = \count($serviceAppResponses) + 1;
@@ -42,7 +42,7 @@ class ServiceApplications_Step_4
             $applicationQuestion = \array_values(\array_filter($serviceAppQuestions, function ($record) use($order){
                         return ($record->order == $order);
                      }));
-            $applicationQuestion = $applicationQuestion[0]; 
+            $applicationQuestion = $applicationQuestion[0];
             $txDTO->subscriberInput = $this->validateCRMInput->handle($applicationQuestion,$txDTO->subscriberInput);
             $serviceAppResponses[$order] = $txDTO->subscriberInput;
             if(\count($serviceAppQuestions) == (\count($serviceAppResponses))){
@@ -56,19 +56,19 @@ class ServiceApplications_Step_4
                                     ];
                $caseNumber = $this->serviceAppCreateClient->create($serviceResponses);
                $txDTO->response = "Application for ".$theServiceType->name. " submitted. Reference number: ".
-                                    $caseNumber; 
+                                    $caseNumber;
                $this->sendSMSNotification($txDTO);
                $txDTO->lastResponse = true;
                $txDTO->status =  USSDStatusEnum::Completed->value;
 
             }else{
-               $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);	
-               Cache::put($txDTO->sessionId."ServicaAppResponses",\json_encode($serviceAppResponses), 
+               $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+               Cache::put($txDTO->sessionId."ServicaAppResponses",\json_encode($serviceAppResponses),
                               Carbon::now()->addMinutes(intval($billpaySettings['SESSION_CACHE'])));
                $applicationQuestion = \array_values(\array_filter($serviceAppQuestions, function ($record)use($order){
                      return ($record->order == $order +1);
                   }));
-               $applicationQuestion = $applicationQuestion[0]; 
+               $applicationQuestion = $applicationQuestion[0];
                $txDTO->response = $applicationQuestion->prompt;
                $arrCustomerJourney = \explode("*", $txDTO->customerJourney);
                $txDTO->subscriberInput = \end($arrCustomerJourney);
@@ -101,7 +101,7 @@ class ServiceApplications_Step_4
          ];
       SendSMSesJob::dispatch($arrSMSes)
                   ->delay(Carbon::now()->addSeconds(3))
-                  ->onQueue('low');
+                  ->onQueue('UATlow');
    }
 
 }

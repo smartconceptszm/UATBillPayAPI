@@ -23,7 +23,7 @@ class RaffleWinnerService
 
    public function handle(array $data) : object|null {
       try {
-         
+
          $thePromotion = $this->promotionService->findById($data['promotion_id']);
          if($thePromotion->raffleDrawType == "MONTHLY"){
             $theDate = Carbon::createFromFormat('Y-m-d', $data['theMonth']."-01");
@@ -83,14 +83,14 @@ class RaffleWinnerService
                            'message' => $winnerData['winMessage'],
                            'type' => "NOTIFICATION",
                         ]];
-                        
+
             SendSMSesJob::dispatch($smses)
                      ->delay(Carbon::now()->addSeconds(1))
-                     ->onQueue('high');
+                     ->onQueue('UAThigh');
          //
 
          return $theRaffleDraw;
-         
+
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

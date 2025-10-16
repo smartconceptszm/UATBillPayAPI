@@ -21,7 +21,7 @@ class UpdateDetails_Step_4
       private CustomerFieldService $customerFieldService,
       private IUpdateDetailsClient $updateDetailsClient,
       private EnquiryHandler $getCustomerAccount)
-   {} 
+   {}
 
    public function run(BaseDTO $txDTO)
    {
@@ -36,7 +36,7 @@ class UpdateDetails_Step_4
          $customerField = \array_values(\array_filter($customerFields, function ($record) use($order){
                                                             return ($record->order == $order);
                                                          }));
-         $customerField = (object)$customerField[0]->toArray(); 
+         $customerField = (object)$customerField[0]->toArray();
          $txDTO->subscriberInput = $this->validateCRMInput->handle($customerField->type,$txDTO->subscriberInput);
          $capturedUpdates[$order] = $txDTO->subscriberInput;
          if(\count($customerFields) == (\count($capturedUpdates))){
@@ -52,19 +52,19 @@ class UpdateDetails_Step_4
                                  ];
             $caseNumber = $this->updateDetailsClient->create($customerFieldUpdate);
             $txDTO->response = "Application to update customer details successfully submitted. Case number: ".
-                                 $caseNumber; 
+                                 $caseNumber;
             $this->sendSMSNotification($txDTO);
             $txDTO->lastResponse = true;
             $txDTO->status =  USSDStatusEnum::Completed->value;
 
          }else{
             $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-            Cache::put($txDTO->sessionId."Updates",\json_encode($capturedUpdates),  
+            Cache::put($txDTO->sessionId."Updates",\json_encode($capturedUpdates),
                            Carbon::now()->addMinutes(intval($billpaySettings['SESSION_CACHE'])));
             $customerField = \array_values(\array_filter($customerFields, function ($record)use($order){
                                                                return ($record->order == $order +1);
                                                             }));
-            $customerField = (object)$customerField[0]->toArray(); 
+            $customerField = (object)$customerField[0]->toArray();
             $txDTO->response = "Enter ".$customerField->prompt;
             if($customerField->placeHolder){
                $txDTO->response .= "(e.g. ".$customerField->placeHolder.")";
@@ -101,7 +101,7 @@ class UpdateDetails_Step_4
          ];
       SendSMSesJob::dispatch($arrSMSes)
                      ->delay(Carbon::now()->addSeconds(3))
-                     ->onQueue('low');
+                     ->onQueue('UATlow');
    }
 
 }

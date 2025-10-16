@@ -69,7 +69,7 @@ class PaymentRequestService
          InitiatePaymentJob::dispatch($paymentDTO)
                            ->delay(Carbon::now()
                            ->addSeconds((int)$paymentsProviderCredentials[$paymentDTO->walletHandler.'_SUBMIT_PAYMENT']))
-                           ->onQueue('high');
+                           ->onQueue('UAThigh');
 
          Log::info('('.$paymentDTO->urlPrefix.') '.
                         'MoMo Web payment initiated: Phone: '.
@@ -126,7 +126,7 @@ class PaymentRequestService
          $paymentDTO = $thePaymentDTO->fromArray($webDTO->toArray());
          $paymentDTO->session_id = $session->id;
 
-         //Bind the PaymentsProvider Client Wallet 
+         //Bind the PaymentsProvider Client Wallet
             $this->sclExternalServiceBinder->bindWallet($paymentDTO->urlPrefix,$paymentDTO->walletHandler);
          //
 
@@ -136,10 +136,10 @@ class PaymentRequestService
                                  [
                                     \App\Http\Services\Gateway\InitiatePaymentSteps\Step_GetPaymentAmounts::class,
                                     \App\Http\Services\Gateway\InitiatePaymentSteps\Step_CreatePaymentRecord::class,
-                                    \App\Http\Services\Gateway\InitiatePaymentSteps\Step_SendPaymentsProviderRequest::class, 
-                                    \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,  
+                                    \App\Http\Services\Gateway\InitiatePaymentSteps\Step_SendPaymentsProviderRequest::class,
+                                    \App\Http\Services\Gateway\Utility\Step_UpdateTransaction::class,
                                     \App\Http\Services\Gateway\Utility\Step_LogStatusAll::class,
-                                    \App\Http\Services\Gateway\Utility\Step_DailyAnalytics::class,  
+                                    \App\Http\Services\Gateway\Utility\Step_DailyAnalytics::class,
                                  ]
                               )
                               ->thenReturn();
@@ -163,13 +163,13 @@ class PaymentRequestService
    public function confirmWebPayment(string $transactionId) : object {
 
 
-      
+
       try {
 
          $thePayment = $this->paymentToReviewService->findByTransactionId($transactionId);
          $paymentDTO = $this->paymentDTO->fromArray(\get_object_vars($thePayment));
-      
-         // Bind Billing and Receipting Handlers and Wallet 
+
+         // Bind Billing and Receipting Handlers and Wallet
             $this->sclExternalServiceBinder->bindAll(
                   $paymentDTO->urlPrefix,$paymentDTO->menu_id,$paymentDTO->walletHandler);
          //
@@ -186,7 +186,7 @@ class PaymentRequestService
          if($paymentDTO->paymentStatus == PaymentStatusEnum::Receipted->value){
             $paymentDTO->paymentStatus = PaymentStatusEnum::Receipt_Delivered->value;
          }
-         
+
          $paymentDTO = App::make(Pipeline::class)
                            ->send($paymentDTO)
                            ->through([
@@ -201,7 +201,7 @@ class PaymentRequestService
       }
 
       return $paymentDTO;
-      
+
    }
 
    private function getMNO(WebDTO $webDTO) : WebDTO
@@ -209,7 +209,7 @@ class PaymentRequestService
 
       try {
          $mnoName = MNOs::getMNO(substr($webDTO->mobileNumber,0,5));
-         $mno = $this->mnoService->findOneBy(['name'=>$mnoName]);             
+         $mno = $this->mnoService->findOneBy(['name'=>$mnoName]);
          $webDTO->mnoName = $mno->name;
          $webDTO->mno_id = $mno->id;
          return $webDTO;

@@ -22,7 +22,7 @@ class AdhocAnalyticsController extends Controller
       try {
          PaymentsAnalyticsDailyBulkJob::dispatch($request->input('date'))
                                        ->delay(Carbon::now()->addSeconds(1))
-                                       ->onQueue('high');
+                                       ->onQueue('UAThigh');
 
          $this->response['data'] = ['Message' => "Job submitted"];
       } catch (\Throwable $e) {
@@ -41,9 +41,9 @@ class AdhocAnalyticsController extends Controller
          $theDate = Carbon::parse($request->input('date'));
          PaymentsAnalyticsDailySingleJob::dispatch($theDate)
                                           ->delay(Carbon::now()->addSeconds(1))
-                                          ->onQueue('high');
+                                          ->onQueue('UAThigh');
          $this->response['data'] = ['Message' => "Job submitted"];
-         
+
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();
@@ -58,7 +58,7 @@ class AdhocAnalyticsController extends Controller
       try {
          PaymentsTypeAnalyticsReviewJob::dispatch()
                                        ->delay(Carbon::now()->addSeconds(1))
-                                       ->onQueue('high');
+                                       ->onQueue('UAThigh');
 
          $this->response['data'] = ['Message' => "Payments type review Job submitted"];
       } catch (\Throwable $e) {
@@ -76,7 +76,7 @@ class AdhocAnalyticsController extends Controller
 
          SMSAnalyticsDailyBulkJob::dispatch($request->input('date'))
                                        ->delay(Carbon::now()->addSeconds(1))
-                                       ->onQueue('high');
+                                       ->onQueue('UAThigh');
 
          $this->response['data'] = ['Message' => "Job submitted"];
       } catch (\Throwable $e) {
@@ -95,9 +95,9 @@ class AdhocAnalyticsController extends Controller
          $theDate = Carbon::parse($request->input('date'));
          SMSAnalyticsDailySingleJob::dispatch($theDate)
                                           ->delay(Carbon::now()->addSeconds(1))
-                                          ->onQueue('high');
+                                          ->onQueue('UAThigh');
          $this->response['data'] = ['Message' => "Job submitted"];
-         
+
       } catch (\Throwable $e) {
          $this->response['status']['code'] = 500;
          $this->response['status']['message'] = $e->getMessage();

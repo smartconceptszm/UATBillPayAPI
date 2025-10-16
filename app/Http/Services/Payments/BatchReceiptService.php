@@ -16,7 +16,7 @@ class BatchReceiptService
    {
 
       try {
-         $user = Auth::user(); 
+         $user = Auth::user();
          $data['client_id'] = $user->client_id;
          $dto = (object)$data;
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
@@ -39,7 +39,7 @@ class BatchReceiptService
             foreach ($chunkedArr as $value) {
                BatchReceiptDeliveryJob::dispatch($value)
                                              ->delay(Carbon::now()->addSeconds(1))
-                                             ->onQueue('low');
+                                             ->onQueue('UATlow');
             }
             return (object)['data' => 'Batch receipt delivery process initiated. Check status after a few minutes!'];
          } else {

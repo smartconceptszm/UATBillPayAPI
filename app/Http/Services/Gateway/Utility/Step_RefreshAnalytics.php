@@ -89,7 +89,7 @@ class Step_RefreshAnalytics extends EfectivoPipelineContract
    {
       PaymentsAnalyticsRegularJob::dispatch($paymentDTO)
                                     ->delay(Carbon::now()->addSeconds(1))
-                                    ->onQueue('high');
+                                    ->onQueue('UAThigh');
    }
 
 }

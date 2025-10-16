@@ -58,10 +58,10 @@ class SMSMessageBulkCustomService
    }
 
    public function create(array $data) : object|null {
-      
+
       try {
-         
-         $user = Auth::user(); 
+
+         $user = Auth::user();
          $data['type'] = 'BULKCUSTOM';
          $data['user_id'] = $user->id;
          $bulkSMS = $this->model->create($data);
@@ -79,7 +79,7 @@ class SMSMessageBulkCustomService
             }
             SendSMSesJob::dispatch($arrSMSes)
                            ->delay(Carbon::now()->addSeconds(1))
-                           ->onQueue('low');
+                           ->onQueue('UATlow');
          }
          return (object)["description" => "Messages successfully submitted"];
 

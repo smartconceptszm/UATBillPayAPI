@@ -19,7 +19,7 @@ class MessageService
    {
 
       try {
-         
+
          if (empty($data['type'])) {
             $data['type'] = "SINGLE";
          }
@@ -27,7 +27,7 @@ class MessageService
 			$data['user_id'] = $user->id;
          SendSMSesJob::dispatch([$data])
                               ->delay(Carbon::now()->addSeconds(1))
-                              ->onQueue('low');
+                              ->onQueue('UATlow');
          return 'Message submitted';
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());

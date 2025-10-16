@@ -29,14 +29,14 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 		$newBalance = "0";
 		if(!$paymentDTO->customer){
 			$paymentDTO = $this->chambeshiEnquiry->handle($paymentDTO);
-			$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) - 
+			$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) -
 						(float)$paymentDTO->receiptAmount;
 			$newBalance = \number_format($newBalance, 2, '.', ',');
 		}
-		
-		if( $paymentDTO->tokenNumber == '' && $paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value){				
+
+		if( $paymentDTO->tokenNumber == '' && $paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value){
 			$tokenParams = [
-										"total_paid" => $paymentDTO->receiptAmount, 
+										"total_paid" => $paymentDTO->receiptAmount,
 										"meter_number"=> $paymentDTO->customerAccount,
 										'client_id'=>$paymentDTO->client_id,
 										"debt_percent"=> 50
@@ -54,7 +54,7 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 				$billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
 				PostThePrePaidToBillingJob::dispatch($paymentDTO)
                                  ->delay(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']))
-                                 ->onQueue('low');
+                                 ->onQueue('UATlow');
 
 			}else{
 				$paymentDTO->error = $tokenResponse['error'];

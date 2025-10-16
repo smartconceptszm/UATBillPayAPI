@@ -16,7 +16,7 @@ class FireMoMoRequestMiddleware
         private PaymentsProviderCredentialService $paymentsProviderCredentialService,
         private MoMoDTO $momoDTO)
     {}
-    
+
     /**
      * Handle an incoming request.
      *
@@ -31,7 +31,7 @@ class FireMoMoRequestMiddleware
 
     public function terminate($request, $response)
     {
-        
+
         $ussdParams = $request->ussdParams;
         if ($ussdParams) {
             if($ussdParams['fireMoMoRequest']){
@@ -39,16 +39,16 @@ class FireMoMoRequestMiddleware
                 $paymentDTO =  $this->momoDTO->fromSessionData($ussdParams);
                 $paymentDTO->customer = \json_decode(cache($paymentDTO->urlPrefix.
                                 $paymentDTO->customerAccount,\json_encode([])), true);
-        
+
                 $paymentsProviderCredentials = $this->paymentsProviderCredentialService->getProviderCredentials($paymentDTO->payments_provider_id);
 
                 InitiatePaymentJob::dispatch($paymentDTO)
                                 ->delay(Carbon::now()->addSeconds((int)$paymentsProviderCredentials[$paymentDTO->walletHandler.'_SUBMIT_PAYMENT']))
-                                ->onQueue('high');
-                                
+                                ->onQueue('UAThigh');
+
             }
         }
-        
+
     }
-    
+
 }

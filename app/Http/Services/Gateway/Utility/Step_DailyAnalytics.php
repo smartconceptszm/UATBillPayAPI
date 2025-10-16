@@ -21,7 +21,7 @@ class Step_DailyAnalytics extends EfectivoPipelineContract
                Cache::put('DATE_OF_LAST_DAILY_ANALYTICS',$yesterday,Carbon::now()->addHours(24));
                PaymentsAnalyticsDailySingleJob::dispatch(Carbon::yesterday())
                                                 ->delay(Carbon::now()->addSeconds(1))
-                                                ->onQueue('high');
+                                                ->onQueue('UAThigh');
             }
       } catch (\Throwable $e) {
          $paymentDTO->error='At refreshing analytics. '.$e->getMessage();

@@ -33,7 +33,7 @@ class SMSMessageBulkService
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
-      
+
    }
 
    public function findById(string $id) : object|null {
@@ -60,7 +60,7 @@ class SMSMessageBulkService
    {
 
       try {
-         $user = Auth::user(); 
+         $user = Auth::user();
          $data['type'] = 'BULK';
          $data['user_id'] = $user->id;
          $bulkSMS = $this->model->create($data);
@@ -78,13 +78,13 @@ class SMSMessageBulkService
             }
             SendSMSesJob::dispatch($arrSMSes)
                            ->delay(Carbon::now()->addSeconds(1))
-                           ->onQueue('low');
+                           ->onQueue('UATlow');
          }
          return (object)["description" => "Messages successfully submitted"];
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }
-      
+
    }
 
    public function update(array $data, string $id) : object|null {

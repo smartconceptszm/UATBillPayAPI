@@ -18,18 +18,18 @@ class SMSAnalyticsDailyBulkJob extends BaseJob
    {
 
       $theDate = Carbon::parse($this->theDate);
-      $dayOfMonth = $theDate->copy()->startOfMonth(); 
+      $dayOfMonth = $theDate->copy()->startOfMonth();
       $endOfMonth = $theDate->endOfMonth();
       $daysDone = 0;
       while ($dayOfMonth <= $endOfMonth) {
          SMSAnalyticsDailySingleJob::dispatch($dayOfMonth)
                                     ->delay(Carbon::now()->addSeconds($daysDone * 3))
-                                    ->onQueue('low');
+                                    ->onQueue('UATlow');
          $daysDone += 1;
          $dayOfMonth->addDay();
       }
       Log::info('(SCL) '.$daysDone. ' Daily SMS analytics Jobs dispatched for the month: '.$endOfMonth->format('Y-F'));
-      
+
    }
 
    /**

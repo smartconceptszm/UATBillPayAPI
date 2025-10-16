@@ -65,7 +65,7 @@ class Survey_Local implements ISurveyClient
       } catch (\Throwable $e) {
          throw new Exception('Error at  create survey entry. '.$e->getMessage());
       }
-      return  $response;                                            
+      return  $response;
 
    }
 
@@ -73,7 +73,7 @@ class Survey_Local implements ISurveyClient
    {
       SendSMSesJob::dispatch([$smsData])
                   ->delay(Carbon::now()->addSeconds(3))
-                  ->onQueue('low');
+                  ->onQueue('UATlow');
    }
 
 }

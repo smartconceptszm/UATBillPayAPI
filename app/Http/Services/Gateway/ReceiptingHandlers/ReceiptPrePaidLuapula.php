@@ -30,21 +30,21 @@ class ReceiptPrePaidLuapula implements IReceiptPayment
 		$newBalance = "0";
 		if(!$paymentDTO->customer){
 			$paymentDTO = $this->luapulaEnquiry->handle($paymentDTO);
-			$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) - 
+			$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) -
 						(float)$paymentDTO->receiptAmount;
 			$newBalance = \number_format($newBalance, 2, '.', ',');
 		}
 
-		if( $paymentDTO->tokenNumber == '' && $paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value){	
-			$prePaidTransactionId = \now()->timestamp.\strtoupper(Str::random(6));			
+		if( $paymentDTO->tokenNumber == '' && $paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value){
+			$prePaidTransactionId = \now()->timestamp.\strtoupper(Str::random(6));
 			$tokenParams = [
 										"customerAccount"=> $paymentDTO->customerAccount,
-										"paymentAmount" => $paymentDTO->receiptAmount, 
-										"transactionId" => $prePaidTransactionId, 
+										"paymentAmount" => $paymentDTO->receiptAmount,
+										"transactionId" => $prePaidTransactionId,
 										'client_id'=>$paymentDTO->client_id
 									];
 			$tokenResponse=$this->billingClient->generateToken($tokenParams);
-			
+
 			if($tokenResponse['status']=='SUCCESS'){
 				$paymentDTO->paymentStatus = PaymentStatusEnum::Paid->value;
 				$paymentDTO->tokenNumber = $tokenResponse['tokenNumber'];
@@ -57,7 +57,7 @@ class ReceiptPrePaidLuapula implements IReceiptPayment
 				$billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
 				PostThePrePaidToBillingJob::dispatch($paymentDTO)
                                  ->delay(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']))
-                                 ->onQueue('low');
+                                 ->onQueue('UATlow');
 
 			}else{
 				$paymentDTO->error = $tokenResponse['error'];

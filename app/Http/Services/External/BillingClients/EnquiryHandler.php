@@ -57,9 +57,9 @@ class EnquiryHandler
 								}
 								SendSMSesJob::dispatch($arrSMSes)
 													->delay(Carbon::now()->addSeconds(1))
-													->onQueue('low');
+													->onQueue('UATlow');
 						//
-						Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1, 
+						Cache::put($txDTO->urlPrefix.'_BillingErrorCount', 1,
 													Carbon::now()->addMinutes((int)$billpaySettings['BILLING_ERROR_CACHE']));
 					}
 				}else{
@@ -67,10 +67,10 @@ class EnquiryHandler
 												Carbon::now()->addMinutes((int)$billpaySettings['BILLING_ERROR_CACHE']));
 				}
 				throw new \Exception($e->getMessage(), 2);
-			}   
+			}
 		}
 		return $txDTO;
-		
+
 	}
-    
+
 }

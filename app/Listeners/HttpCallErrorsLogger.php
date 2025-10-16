@@ -21,7 +21,7 @@ class HttpCallErrorsLogger
     */
    public function __construct(
       private BillingCredentialService $billingCredentialService,
-      private PsrMessageToStringConvertor $messageConvertor, 
+      private PsrMessageToStringConvertor $messageConvertor,
       private ClientService $clientService)
    {}
 
@@ -72,7 +72,7 @@ class HttpCallErrorsLogger
                $logString.="SMS GATEWAY";
                $errorType="SMS_GATEWAY";
          }
-         
+
          $logString.=" Http REQUEST log:\n\n";
          $logString.="The REQUEST";
          $logString.=$this->messageConvertor->toString($event->request->toPsrRequest());
@@ -81,9 +81,9 @@ class HttpCallErrorsLogger
          $logString.="\n\n*******************************\n";
          Log::error($logString);
 
-         
+
          $httpErrorCount = (int)Cache::get($errorType.'_ErrorCount');
-         if($httpErrorCount){       
+         if($httpErrorCount){
             if (($httpErrorCount+1) < (int)$billpaySettings['HTTP_ERROR_THRESHOLD']) {
                Cache::increment($errorType.'_ErrorCount');
             }else{
@@ -101,10 +101,10 @@ class HttpCallErrorsLogger
                   }
                   SendSMSesJob::dispatch($arrSMSes)
                                  ->delay(Carbon::now()->addSeconds(1))
-                                 ->onQueue('low');
+                                 ->onQueue('UATlow');
                //
                Cache::put($errorType.'_ErrorCount', $httpErrorCount, Carbon::now()->addMinutes((int)$billpaySettings['HTTP_ERROR_CACHE']));
-            } 
+            }
          }else{
             Cache::put($errorType.'_ErrorCount', 1, Carbon::now()->addMinutes((int)$billpaySettings['HTTP_ERROR_CACHE']));
          }
@@ -133,6 +133,6 @@ class HttpCallErrorsLogger
       }
 
    }
-    
+
 }
 
