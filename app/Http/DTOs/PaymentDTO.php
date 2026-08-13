@@ -8,6 +8,7 @@ abstract class PaymentDTO extends BaseDTO
 {
 
     public $compositeAccount = FALSE;
+    public $receiptingType = "SINGLE";
     public $payments_provider_id;
     public $revenueCollector;
     public $ppTransactionId;

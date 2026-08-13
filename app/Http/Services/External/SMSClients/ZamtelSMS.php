@@ -35,6 +35,7 @@ class ZamtelSMS implements ISMSClient
                 $smsParams['mobileNumber'] = \substr($smsParams['mobileNumber'],1,\strlen($smsParams['mobileNumber'])-1);
             } 
             $smsParams['message'] = \str_replace(\chr(47), "", $smsParams['message']);
+            
             $fullURL = $credentials['SMS_GATEWAY_URL'].$credentials['SMS_GATEWAY_APIKEY']."/contacts/".$smsParams['mobileNumber']. 
                         "/senderId/".$credentials['SMS_SENDER_ID']."/message/".\rawurlencode($smsParams['message']);
             $apiResponse = Http::timeout($credentials['SMS_GATEWAY_Timeout'])

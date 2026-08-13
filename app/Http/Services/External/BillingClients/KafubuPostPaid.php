@@ -50,11 +50,10 @@ class KafubuPostPaid implements IBillingClient
                 $customerName = $clientCustomer->customerName;
                 $composite = $clientCustomer->composite;
                 $balance = $clientCustomer->balance;
-
             }
 
             if($composite != 'PARENT'){
-                $this->setConfigs($params['client_id']);
+                $this->setConfigs($params);
 
                 $getDebtBalParams=[ 
                     'functionName' => 'getdebtbal',
@@ -83,6 +82,7 @@ class KafubuPostPaid implements IBillingClient
                     throw new Exception("Error extracting (getdebtbal) XML response. Details: ".$e->getMessage(),2);
                 }
 
+                $balance = 0;
                 if($customerBalance['items']){
                     foreach ($customerBalance['items']['item'] as $billItem) {
                         if(\is_array($billItem)){
@@ -156,13 +156,14 @@ class KafubuPostPaid implements IBillingClient
             ];
 
         try {
-            $this->setConfigs($postParams['client_id'],$postParams['providerName']);
+
+            $this->setConfigs($postParams);
             $receiptingParams = [ 
                                 'functionName' => 'createreceipt1',
                                 'rdusername' => $this->soapUserName,
                                 'rdpassword' => $this->soapPassword,
                                 'token' => $this->soapToken ,
-                                'recDate' => \date('Ymd'),
+                                'recDate' => $postParams['recDate'],
                                 'mcno' => $this->cashierNo,
                                 'operator' => $this->operator,
                                 'account' => $postParams['account'],
@@ -174,9 +175,18 @@ class KafubuPostPaid implements IBillingClient
                             ];
 
             $apiResponse = $this->kafubuSoapService->createreceipt1($receiptingParams);
-            if(substr($apiResponse->promunError,0,7)!="00 - OK"){
-                Log::error(' Kafubu Billing Client (createreceipt1) error: '.$apiResponse->promunError);
-                throw new Exception(' Kafubu Billing Client (updatepreceipts) error: '.$apiResponse->promunError,1);
+            
+            if(substr($apiResponse->promunError,0,7) != "00 - OK"){
+                if(substr($apiResponse->promunError,0,7) == "RECEIPT"){
+                    $arrString = explode(" ",$apiResponse->promunError);
+                    Log::error(' Kafubu Billing Client: transaction ref '.$postParams['reference'].' already receipted with no -'.$arrString[1]);
+                    $response['status'] = "SUCCESS";
+                    $response['receiptNumber'] = $arrString[1];
+                    return $response;
+                }else{
+                    Log::error(' Kafubu Billing Client (createreceipt1) error: '.$apiResponse->promunError);
+                    throw new Exception(' Kafubu Billing Client (updatepreceipts) error: '.$apiResponse->promunError,1);
+                }
             }
             
             try {
@@ -185,6 +195,7 @@ class KafubuPostPaid implements IBillingClient
                 Log::error(' Kafubu Billing Client (createreceipt1  for account number '.$postParams['account'].'): '.$apiResponse->promunError);
                 throw new Exception(" Kafubu Billing Client (XML response extraction) error. Details: ".$e->getMessage(),1);
             }
+
             $response['status'] = "SUCCESS";
             $response['receiptNumber'] = $theReceipt['recno'];
 
@@ -211,10 +222,10 @@ class KafubuPostPaid implements IBillingClient
         return $response;
     }
 
-    private function setConfigs(string $client_id,string $providerName=null)
+    private function setConfigs(array $params)
     {
 
-        $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);
+        $clientCredentials = $this->billingCredentialsService->getClientCredentials($params['client_id']);
         $baseURL = $clientCredentials['BASE_URL'];
         $wsdlPath = $baseURL.$clientCredentials['wsdl_URI'];
         $soapOptions =  [
@@ -224,11 +235,18 @@ class KafubuPostPaid implements IBillingClient
                                 'trace' => 1,
                                 'connection_timeout' => $clientCredentials['SOAP_CONNECTION_TIMEOUT']
                             ];
+
+        if(array_key_exists('providerName',$params)){
+            if($params['receiptingType'] == 'FORCECLOSEBATCH'){
+                $this->cashierNo = $clientCredentials['RETRY_CASHIER_NO'];
+            }else{
+                $this->cashierNo = $clientCredentials['SOAP_CASHIER_NO_'.$params['providerName']];
+            }
+        }
+
         $this->kafubuSoapService = new \SoapClient($wsdlPath,$soapOptions);
         $this->kafubuSoapService->__setLocation($baseURL);
-        if($providerName){
-            $this->cashierNo = $clientCredentials['SOAP_CASHIER_NO_'.$providerName];
-        }
+
         $this->soapUserName =$clientCredentials['SOAP_USERNAME'];
         $this->soapPassword = $clientCredentials['SOAP_PASSWORD'];
         $this->operator = $clientCredentials['SOAP_OPERATOR'];

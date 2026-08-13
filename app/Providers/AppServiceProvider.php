@@ -14,88 +14,88 @@ class AppServiceProvider extends ServiceProvider
    {
 
       //Menu Home
-         $this->app->singleton('ParentMenu', function () {
+         $this->app->bind('ParentMenu', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\ParentMenu::class);
          });
       //
 
       //DUMMY MENU
-         $this->app->singleton('DummyMenu', function () {
+         $this->app->bind('DummyMenu', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\DummyMenu::class);
          });
       //
 
       //Next Page/Response Next
-         $this->app->singleton('NextPage', function () {
+         $this->app->bind('NextPage', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\NextPage::class);
          });
       //
 
       //PLACEHOLDER MENU
-         $this->app->singleton('PlaceHolder', function () {
+         $this->app->bind('PlaceHolder', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\PlaceHolderMenu::class);
          });
       //
 
       //ResumePreviousSession MENU
-         $this->app->singleton('ResumePreviousSession', function () {
+         $this->app->bind('ResumePreviousSession', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\ResumePreviousSession::class);
          });
       //
 
       //Menu Make Payment
-         $this->app->singleton('MakePayment', function () {
+         $this->app->bind('MakePayment', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\MakePayment::class);
          });
-         $this->app->singleton('MakeOtherPayment', function () {
+         $this->app->bind('MakeOtherPayment', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\MakeOtherPayment::class);
          });
          //Menu Step Handlers
-            $this->app->singleton('MakePayment_Step_1', function () {
+            $this->app->bind('MakePayment_Step_1', function () {
                return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_1::class);
             });
-            $this->app->singleton('MakePayment_Step_2', function () {
+            $this->app->bind('MakePayment_Step_2', function () {
                return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_2::class);
             });
-            $this->app->singleton('MakePayment_Step_3', function () {
+            $this->app->bind('MakePayment_Step_3', function () {
                return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_3::class);
             });
-            $this->app->singleton('MakePayment_Step_4', function () {
+            $this->app->bind('MakePayment_Step_4', function () {
                return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_4::class);
             });
-            $this->app->singleton('MakePayment_Step_5', function () {
+            $this->app->bind('MakePayment_Step_5', function () {
                return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_5::class);
             });
-            $this->app->singleton('MakePayment_Step_6', function () {
+            $this->app->bind('MakePayment_Step_6', function () {
                return $this->app->make(\App\Http\Services\USSD\MakePayment\MakePayment_Step_6::class);
             });
          //
       //
 
       //Menu All Council Payments
-			$this->app->singleton('CouncilPayment', function () {
+			$this->app->bind('CouncilPayment', function () {
 				return $this->app->make(\App\Http\Services\USSD\Menus\CouncilPayment::class);
 			});
 			//Menu Step Handlers
-				$this->app->singleton('CouncilPayment_Step_1', function () {
+				$this->app->bind('CouncilPayment_Step_1', function () {
 					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_1::class);
 				});
-				$this->app->singleton('CouncilPayment_Step_2', function () {
+				$this->app->bind('CouncilPayment_Step_2', function () {
 					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_2::class);
 				});
-				$this->app->singleton('CouncilPayment_Step_3', function () {
+				$this->app->bind('CouncilPayment_Step_3', function () {
 					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_3::class);
 				});
-				$this->app->singleton('CouncilPayment_Step_4', function () {
+				$this->app->bind('CouncilPayment_Step_4', function () {
 					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_4::class);
 				});
-				$this->app->singleton('CouncilPayment_Step_5', function () {
+				$this->app->bind('CouncilPayment_Step_5', function () {
 					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_5::class);
 				});
-            $this->app->singleton('CouncilPayment_Step_6', function () {
+            $this->app->bind('CouncilPayment_Step_6', function () {
 					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_6::class);
 				});
-            $this->app->singleton('CouncilPayment_Step_7', function () {
+            $this->app->bind('CouncilPayment_Step_7', function () {
 					return $this->app->make(\App\Http\Services\USSD\CouncilPayment\CouncilPayment_Step_7::class);
 				});
 			//
@@ -103,286 +103,313 @@ class AppServiceProvider extends ServiceProvider
 		// 
 
       //Menu All Council Payment History
-         $this->app->singleton('CouncilPaymentHistory', function () {
+         $this->app->bind('CouncilPaymentHistory', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\CouncilPaymentHistory::class);
          });
          //Menu Step Handlers
-            $this->app->singleton('CouncilPaymentHistory_Step_1', function () {
+            $this->app->bind('CouncilPaymentHistory_Step_1', function () {
                return $this->app->make(\App\Http\Services\USSD\CouncilPaymentHistory\CouncilPaymentHistory_Step_1::class);
             });
-            $this->app->singleton('CouncilPaymentHistory_Step_2', function () {
+            $this->app->bind('CouncilPaymentHistory_Step_2', function () {
                return $this->app->make(\App\Http\Services\USSD\CouncilPaymentHistory\CouncilPaymentHistory_Step_2::class);
             });
-            $this->app->singleton('CouncilPaymentHistory_Step_3', function () {
+            $this->app->bind('CouncilPaymentHistory_Step_3', function () {
                return $this->app->make(\App\Http\Services\USSD\CouncilPaymentHistory\CouncilPaymentHistory_Step_3::class);
             });
          //
       // 
 
       //Shortcuts MENU
-         $this->app->singleton('CheckPostPaidBalanceShortcut', function () {
+         $this->app->bind('CheckPostPaidBalanceShortcut', function () {
             return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\CheckPostPaidBalanceShortcut::class);
          });
-         $this->app->singleton('PayBillShortcut', function () {
+         $this->app->bind('PayBillShortcut', function () {
             return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\MakePaymentShortcut::class);
          });
-         $this->app->singleton('MakeCouncilPaymentShortcut', function () {
+         $this->app->bind('MakeCouncilPaymentShortcut', function () {
             return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\MakeCouncilPaymentShortcut::class);
          });
       //
 
       //Resume Payment Session
-         $this->app->singleton('ResumePreviousSession', function () {
+         $this->app->bind('ResumePreviousSession', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\ResumePreviousSession::class);
          });
          //Menu Step Handlers
-            $this->app->singleton('ResumePreviousSession_Step_1', function () {
+            $this->app->bind('ResumePreviousSession_Step_1', function () {
                return $this->app->make(\App\Http\Services\USSD\ResumePreviousSession\ResumePreviousSession_Step_1::class);
             });
-            $this->app->singleton('ResumePreviousSession_Step_2', function () {
+            $this->app->bind('ResumePreviousSession_Step_2', function () {
                return $this->app->make(\App\Http\Services\USSD\ResumePreviousSession\ResumePreviousSession_Step_2::class);
             });
          //
       //
 
       //Menu CheckBalance
-         $this->app->singleton('CheckBalance', function () {
+         $this->app->bind('CheckBalance', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\CheckBalance::class);
          });
          $this->app->bind('CheckBalanceComplex', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\CheckBalanceComplex::class);
          });
          //Menu Step Handlers
-            $this->app->singleton('CheckBalance_Step_1', function () {
+            $this->app->bind('CheckBalance_Step_1', function () {
                return $this->app->make(\App\Http\Services\USSD\CheckBalance\CheckBalance_Step_1::class);
             });
-            $this->app->singleton('CheckBalance_Step_2', function () {
+            $this->app->bind('CheckBalance_Step_2', function () {
                return $this->app->make(\App\Http\Services\USSD\CheckBalance\CheckBalance_Step_2::class);
             });
-            $this->app->singleton('CheckBalance_Step_3', function () {
+            $this->app->bind('CheckBalance_Step_3', function () {
                return $this->app->make(\App\Http\Services\USSD\CheckBalance\CheckBalance_Step_3::class);
             });
-            $this->app->singleton('CheckBalance_Step_4', function () {
+            $this->app->bind('CheckBalance_Step_4', function () {
                return $this->app->make(\App\Http\Services\USSD\CheckBalance\CheckBalance_Step_4::class);
+            });
+         //
+      //
+
+      //Menu GetTokens
+         $this->app->bind('GetTokens', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\GetTokens::class);
+         });
+         $this->app->bind('GetTokensComplex', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\GetTokensComplex::class);
+         });
+         //Menu Step Handlers
+            $this->app->bind('GetTokens_Step_1', function () {
+               return $this->app->make(\App\Http\Services\USSD\GetTokens\GetTokens_Step_1::class);
+            });
+            $this->app->bind('GetTokens_Step_2', function () {
+               return $this->app->make(\App\Http\Services\USSD\GetTokens\GetTokens_Step_2::class);
             });
          //
       //
       
       //Menu Complaints
-         $this->app->singleton('FaultsComplaints', function () {
+         $this->app->bind('FaultsComplaints', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\FaultsComplaints::class);
          });
          $this->app->bind('FaultsComplaintsComplex', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\FaultsComplaintsComplex::class);
          });
          //Menu Step Handlers
-            $this->app->singleton('FaultsComplaints_Step_1', function () {
+            $this->app->bind('FaultsComplaints_Step_1', function () {
                return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\FaultsComplaints_Step_1::class);
             });
-            $this->app->singleton('FaultsComplaints_Step_2', function () {
+            $this->app->bind('FaultsComplaints_Step_2', function () {
                return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\FaultsComplaints_Step_2::class);
             });
-            $this->app->singleton('FaultsComplaints_Step_3', function () {
+            $this->app->bind('FaultsComplaints_Step_3', function () {
                return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\FaultsComplaints_Step_3::class);
             });
-            $this->app->singleton('FaultsComplaints_Step_4', function () {
+            $this->app->bind('FaultsComplaints_Step_4', function () {
                return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\FaultsComplaints_Step_4::class);
             });
-            $this->app->singleton('FaultsComplaints_Step_5', function () {
+            $this->app->bind('FaultsComplaints_Step_5', function () {
                return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\FaultsComplaints_Step_5::class);
             });
-            $this->app->singleton('FaultsComplaints_Step_6', function () {
+            $this->app->bind('FaultsComplaints_Step_6', function () {
                return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\FaultsComplaints_Step_6::class);
             });
          //
       //
 
+      //Menu Rate Us
+         $this->app->bind('RateUs', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\RateUs::class);
+         });
+         //
+      //
+
       //Menu UpdateDetails
-         $this->app->singleton('UpdateDetails', function () {
+         $this->app->bind('UpdateDetails', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\UpdateDetails::class);
          });
          //Menu Handler Steps
-            $this->app->singleton('UpdateDetails_Step_1', function () {
+            $this->app->bind('UpdateDetails_Step_1', function () {
                return $this->app->make(\App\Http\Services\USSD\UpdateDetails\UpdateDetails_Step_1::class);
             });
-            $this->app->singleton('UpdateDetails_Step_2', function () {
+            $this->app->bind('UpdateDetails_Step_2', function () {
                return $this->app->make(\App\Http\Services\USSD\UpdateDetails\UpdateDetails_Step_2::class);
             });
-            $this->app->singleton('UpdateDetails_Step_3', function () {
+            $this->app->bind('UpdateDetails_Step_3', function () {
                return $this->app->make(\App\Http\Services\USSD\UpdateDetails\UpdateDetails_Step_3::class);
             });
-            $this->app->singleton('UpdateDetails_Step_4', function () {
+            $this->app->bind('UpdateDetails_Step_4', function () {
                return $this->app->make(\App\Http\Services\USSD\UpdateDetails\UpdateDetails_Step_4::class);
             });
-            $this->app->singleton('UpdateDetails_Step_5', function () {
+            $this->app->bind('UpdateDetails_Step_5', function () {
                return $this->app->make(\App\Http\Services\USSD\UpdateDetails\UpdateDetails_Step_5::class);
             });
          //
 
          //Client Callers
-            $this->app->singleton('UpdateDetails_mock', function () {
+            $this->app->bind('UpdateDetails_mock', function () {
                return $this->app->make(\App\Http\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Local::class);
             });
          //
       //
 
       //USSD Survey
-			$this->app->singleton('Survey', function () {
+			$this->app->bind('Survey', function () {
 				return $this->app->make(\App\Http\Services\USSD\Menus\Survey::class);
 			});
 			//Menu Step Handlers
-				$this->app->singleton('Survey_Step_1', function () {
+				$this->app->bind('Survey_Step_1', function () {
 					return $this->app->make(\App\Http\Services\USSD\Survey\Survey_Step_1::class);
 				});
-				$this->app->singleton('Survey_Step_2', function () {
+				$this->app->bind('Survey_Step_2', function () {
 					return $this->app->make(\App\Http\Services\USSD\Survey\Survey_Step_2::class);
 				});
-				$this->app->singleton('Survey_Step_3', function () {
+				$this->app->bind('Survey_Step_3', function () {
 					return $this->app->make(\App\Http\Services\USSD\Survey\Survey_Step_3::class);
 				});
-				$this->app->singleton('Survey_Step_5', function () {
+				$this->app->bind('Survey_Step_5', function () {
 					return $this->app->make(\App\Http\Services\USSD\Survey\Survey_Step_5::class);
 				});
 			//
 		//
 
       //Billing Clients
-         $this->app->singleton('ReceiptingMock', function () {
+         $this->app->bind('ReceiptingMock', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPaymentMock::class);
          });
-			$this->app->singleton('MockBillingClient', function () {
+			$this->app->bind('MockBillingClient', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\BillingMock::class);
 			});            
 		//
 
 		//Receipting Payment
-			$this->app->singleton('MockReceipting', function () {
+			$this->app->bind('MockReceipting', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPaymentMock::class);
 			});            
 		//
 
       //USSD Error Response Handlers
-         $this->app->singleton('INVALIDCONFIRMATION', function () {
+         $this->app->bind('INVALIDCONFIRMATION', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidConfirmation::class);
          });
-         $this->app->singleton('MAINTENANCEMODE', function () {
+         $this->app->bind('MAINTENANCEMODE', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\MaintenanceMode::class);
          });
-         $this->app->singleton('INVALIDACCOUNT', function () {
+         $this->app->bind('INVALIDACCOUNT', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidAccount::class);
          });
-         $this->app->singleton('INVALIDAMOUNT', function () {
+         $this->app->bind('INVALIDAMOUNT', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidAmount::class);
          });
-         $this->app->singleton('CLIENTBLOCKED', function () {
+         $this->app->bind('CLIENTBLOCKED', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\ClientBlocked::class);
          });
-         $this->app->singleton('INVALIDINPUT', function () {
+         $this->app->bind('INVALIDINPUT', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidInput::class);
          });
-         $this->app->singleton('INVALIDSURVEYRESPONSE', function () {
+         $this->app->bind('INVALIDSURVEYRESPONSE', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\InvalidSurveyResponse::class);
          });
-         $this->app->singleton('SYSTEMERROR', function () {
+         $this->app->bind('SYSTEMERROR', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\SystemError::class);
          });
-         $this->app->singleton('WALLETNOTACTIVATED', function () {
+         $this->app->bind('WALLETNOTACTIVATED', function () {
             return $this->app->make(\App\Http\Services\USSD\ErrorResponses\WalletNotActivated::class);
          });
       //
 
       //Payments Provider Clients
-			$this->app->singleton('ZAMTEL', function () {
+			$this->app->bind('ZAMTEL', function () {
             return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\ZamtelKwacha::class);
 				});
-			$this->app->singleton('AIRTEL', function () {
+			$this->app->bind('AIRTEL', function () {
                return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\AirtelMoney::class);
 				});
-			$this->app->singleton('MTN', function () {
+			$this->app->bind('MTN', function () {
                return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\MTNMoMo::class);
 				});
-         $this->app->singleton('DPOPay', function () {
+         $this->app->bind('DPOPay', function () {
                return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\DPOPay::class);
 				});
-         $this->app->singleton('MockWallet', function () {
+         $this->app->bind('MockWallet', function () {
                return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\MockWallet::class);
 				});
       //
 
       //SMS Clients
-         $this->app->singleton('DIAFAANSMS', function () {
+         $this->app->bind('DIAFAANSMS', function () {
                return $this->app->make(\App\Http\Services\External\SMSClients\DiafaanSMS::class);
             });
-         $this->app->singleton('MockSMSDelivery', function () {
+         $this->app->bind('MockSMSDelivery', function () {
                return $this->app->make(\App\Http\Services\External\SMSClients\MockSMSDelivery::class);
             });
-         $this->app->singleton('MTNMoMoSMS', function () {
+         $this->app->bind('MTNMoMoSMS', function () {
                return $this->app->make(\App\Http\Services\External\SMSClients\MTNMoMoDeliverySMS::class);
             });
-         $this->app->singleton('CPASSSMS', function () {
+         $this->app->bind('CPASSSMS', function () {
                return $this->app->make(\App\Http\Services\External\SMSClients\MTNSMS::class);
             });
-			$this->app->singleton('ZAMTELSMS', function () {
+			$this->app->bind('ZAMTELSMS', function () {
                return $this->app->make(\App\Http\Services\External\SMSClients\ZamtelSMS::class);
+				});
+         $this->app->bind('AIRTELSMS', function () {
+               return $this->app->make(\App\Http\Services\External\SMSClients\AirtelSMS::class);
 				});
       //
 
       //Aggregated
-         $this->app->singleton('AggregatedParentMenu', function () {
+         $this->app->bind('AggregatedParentMenu', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\AggregatedParentMenu::class);
          });
          //Clients
-            $this->app->singleton('AggregatedClient', function () {
+            $this->app->bind('AggregatedClient', function () {
                return $this->app->make(\App\Http\Services\USSD\ShortcutMenus\AggregatedClient::class);
             });
          //
       //
 
       //Tenant ShortCodes
-         $this->app->singleton('Tenants', function () {
+         $this->app->bind('Tenants', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\Tenants::class);
          });
       //
 
       //Dashboard View Handlers
-         $this->app->singleton('ConsumerTierView', function () {
+         $this->app->bind('ConsumerTierView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\ConsumerTierViewService::class);
          });
-         $this->app->singleton('ConsumerTypeView', function () {
+         $this->app->bind('ConsumerTypeView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\ConsumerTypeViewService::class);
          });
-         $this->app->singleton('DailyByMonthView', function () {
+         $this->app->bind('DailyByMonthView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\DailyByMonthViewService::class);
          });
-         $this->app->singleton('DailyCumulativeView', function () {
+         $this->app->bind('DailyCumulativeView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\DailyCommulativeViewService::class);
          });
-         $this->app->singleton('HourlySalesView', function () {
+         $this->app->bind('HourlySalesView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\HourlySalesViewService::class);
          });
-         $this->app->singleton('MonthlyOverYearView', function () {
+         $this->app->bind('MonthlyOverYearView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\MonthlyOverYearViewService::class);
          });
-         $this->app->singleton('PaymentProviderSummaryView', function () {
+         $this->app->bind('PaymentProviderSummaryView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\PaymentProviderSummaryViewService::class);
          });
-         $this->app->singleton('PaymentStatusView', function () {
+         $this->app->bind('PaymentStatusView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\PaymentStatusViewService::class);
          });
-         $this->app->singleton('PaymentTypeView', function () {
+         $this->app->bind('PaymentTypeView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\PaymentTypeViewService::class);
          });
-         $this->app->singleton('RevenueCollectorView', function () {
+         $this->app->bind('RevenueCollectorView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\RevenueCollectorViewService::class);
          });
-         $this->app->singleton('RevenuePointView', function () {
+         $this->app->bind('RevenuePointView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\RevenuePointViewService::class);
          });
 
-         $this->app->singleton('RevenuePointUserView', function () {
+         $this->app->bind('RevenuePointUserView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\RevenuePointUserViewService::class);
          });
-         $this->app->singleton('PaymentProviderSummaryUserView', function () {
+         $this->app->bind('PaymentProviderSummaryUserView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\PaymentProviderSummaryUserViewService::class);
          });
       //

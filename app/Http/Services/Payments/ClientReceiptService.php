@@ -46,6 +46,9 @@ class ClientReceiptService
             $paymentDTO->user_id = $user->id;
          }
 
+         if(array_key_exists('receiptingType',$data)){
+            $paymentDTO->receiptingType = $data['receiptingType'];
+         }
          $paymentDTO->error = "";
          $paymentDTO = $this->confirmPayment->handle($paymentDTO);
       

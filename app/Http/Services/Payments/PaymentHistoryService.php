@@ -98,7 +98,7 @@ class PaymentHistoryService
       
    }
 
-   public function getLatestToken(array $criteria):object|null
+   public function getLatestTokens(array $criteria):object|null
    {
 
       try {
@@ -110,7 +110,7 @@ class PaymentHistoryService
 
                         ->join('client_menus as cm','p.menu_id','=','cm.id')
 
-                        ->select('p.id','p.tokenNumber', 'p.receipt')
+                        ->select('p.id','p.created_at','p.customerAccount','p.mobileNumber','p.receiptAmount','p.tokenNumber', 'p.receipt')
 
                         ->where('p.customerAccount', '=', $dto->customerAccount)
                         ->whereIn('p.paymentStatus',[PaymentStatusEnum::Paid->value,
@@ -119,10 +119,10 @@ class PaymentHistoryService
                         ->where('c.id', '=', $dto->client_id)
                         ->where('cm.isPayment', '=', "YES")
                         ->where('cm.paymentType', '=', "PRE-PAID")
-                        ->where('cm.isDefault', '=', "YES")
 
                         ->orderByDesc('p.created_at')
-                        ->first();
+                        ->take($dto->limit)
+                        ->get();
          $record = \is_null($record)?null:(object)$record->toArray();
          return $record;
       } catch (\Throwable $e) {

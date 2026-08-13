@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Jobs\SMSAnalyticsRegularJob;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\DB;  
 use App\Http\Services\Enums\MNOs;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\SMSTxDTO;
@@ -30,7 +30,7 @@ class SMSService
    public function __construct(
       private ClientSMSChannelService $clientSMSChannelService,
       private SMSProviderService $smsProviderService,
-      private ClientMnoService $clientMnoService,
+      private ClientMnoService $clientMnoService, 
       private MessageService $messageService,
       private ClientService $clientService,
       private MnoService $mnoService,
@@ -65,13 +65,16 @@ class SMSService
                $this->clientService->update(['balance'=>$dto->balance],$dto->client_id);
             }
             DB::commit();
+            
+            $dto->created_at = $sms->created_at;
+            $dto->status = $sms->status;
+            $dto->id = $sms->id;
+            
          } catch (\Throwable $e) {
             Log::error('Error at creating SMS record in database. '.$e->getMessage());
             DB::rollBack();
          }
-         $dto->created_at = $sms->created_at;
-         $dto->status = $sms->status;
-         $dto->id = $sms->id;
+
 
          //Do Analytics
          $this->dispatchAnalyticsJobs($dto);
@@ -150,7 +153,7 @@ class SMSService
       $dto->channel_id = $clientMNOs->smsChannel;
       $dto->sms_provider_id = $smsProvider->id;
       $dto->handler = $smsProvider->handler;
-
+      
       //Check if Client has enough balance
          if(($dto->smsPayMode == 'POST-PAID') || ($dto->balance > $dto->smsCharge)){
             $dto->balance = $dto->balance - $dto->smsCharge;
@@ -175,7 +178,7 @@ class SMSService
             }else{
                $dto->error = "SMS message not delivered by SMS Server.";
                $dto->status="FAILED";
-            }
+            } 
          }
       //
       return $dto;
@@ -209,7 +212,7 @@ class SMSService
          //Regular Analytics
          SMSAnalyticsRegularJob::dispatch($dto)
                                  ->delay(Carbon::now()->addSeconds(1))
-                                 ->onQueue('UATlow');
+                                 ->onQueue('low');
 
          //Daily Analytics
          $yesterday = Carbon::yesterday()->toDateString();
@@ -218,7 +221,7 @@ class SMSService
             Cache::put('DATE_OF_LAST_SMS_DAILY_ANALYTICS',$yesterday,Carbon::now()->addHours(24));
             SMSAnalyticsDailySingleJob::dispatch(Carbon::yesterday())
                                              ->delay(Carbon::now()->addSeconds(1))
-                                             ->onQueue('UATlow');
+                                             ->onQueue('low');
          }
       }
 

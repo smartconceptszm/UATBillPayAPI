@@ -14,39 +14,39 @@ class SwascoServiceProvider extends ServiceProvider
 	{
 
 		//Update Handlers
-			$this->app->singleton('UpdateDetails_swasco', function () {
+			$this->app->bind('UpdateDetails_swasco', function () {
 				return $this->app->make(\App\Http\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Swasco::class);
 			});
 		//
 
 		//Survey Entry Handlers
-			$this->app->singleton('Survey_swasco', function () {
+			$this->app->bind('Survey_swasco', function () {
 				return $this->app->make(\App\Http\Services\USSD\Survey\ClientCallers\Survey_Local::class);
 			});
 		//
 
 		//Billing Client
-			$this->app->singleton('SwascoPostPaid', function () {
+			$this->app->bind('SwascoPostPaid', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\SwascoPostPaid::class);
          });
 		//
 		
 		//Receipting Handlers
-			$this->app->singleton('ReceiptPostPaidSwasco', function () {
+			$this->app->bind('ReceiptPostPaidSwasco', function () {
 				return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidSwasco::class);
 			});
 
-			$this->app->singleton('ReceiptReconnectionSwasco', function () {
+			$this->app->bind('ReceiptReconnectionSwasco', function () {
 				return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptReconnectionSwasco::class);
 			});
 			
-			$this->app->singleton('ReceiptVacuumTankerSwasco', function () {
+			$this->app->bind('ReceiptVacuumTankerSwasco', function () {
 				return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptVacuumTankerSwasco::class);
 			});
 		//
 
 		//Complaint Handlers
-			$this->app->singleton('Complaint_swasco', function () {
+			$this->app->bind('Complaint_swasco', function () {
 					return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Swasco::class);
 			});
 		//

@@ -20,7 +20,7 @@ class Step_DispatchReceiptingJob extends EfectivoPipelineContract
             $paymentDTO->status = "REVIEWED";
             PostPaymentToClientJob::dispatch($paymentDTO)
                                     ->delay(Carbon::now()->addSeconds(3))
-                                    ->onQueue('UAThigh');
+                                    ->onQueue('high');
          }
       } catch (\Throwable $e) {
          $paymentDTO->error='At dispatching receipting job. '.$e->getMessage();

@@ -115,6 +115,51 @@ class MulongaPostPaid implements IBillingClient
 
    }
 
+      public function postOtherPayment(Array $postParams): array 
+   {
+
+      $response=[
+            'status'=>'FAILED',
+            'receiptNumber'=>'',
+            'error'=>''
+         ];
+
+      try {
+         $this->setConfigs($postParams['client_id']);
+         $receiptingParams =  [ 
+                                 'username' => $this->soapUserName,
+                                 'password' => $this->soapPassword,
+
+                                 'receiptTypeCode' => $postParams['receiptTypeCode'],
+                                 'lineAmount' => $postParams['amount'],
+                                 'paymentType' => $postParams['paymentType'],
+                                 'phoneNumber' => $postParams['mobileNumber'],
+                                 'description' => $postParams['description'],
+                                 'receiptType' => $postParams['receiptType'],
+                                 'applicationNumber' => $postParams['referenceNumber'],                        
+                              ];
+         if($postParams['referenceNumber']){
+             $receiptingParams['referenceNumber'] =  $postParams['referenceNumber'];
+         }
+
+         $apiResponse = $this->soapService->PostCustomerOtherIncUSSD($receiptingParams);
+         if($apiResponse->return_value){
+            $response['status']="SUCCESS";
+            $response['receiptNumber'] = $apiResponse->return_value;
+         }else{
+            throw new Exception("MULONGA Billing Client PostCustomerReceipt error: ",1);
+         }
+      } catch (\Throwable $e) {
+         if ($e->getCode() == 1) {
+            $response['error']=$e->getMessage();
+         } else{
+            $response['error']=" MULONGA Billing Client (Post Payment) error. Details: " . $e->getMessage();
+         }
+      }
+      return $response;
+
+   }
+
    private function setConfigs(string $client_id){
 
       $clientCredentials = $this->billingCredentialsService->getClientCredentials($client_id);

@@ -53,8 +53,8 @@ return [
 
       'sqs' => [
          'driver' => 'sqs',
-         'key' => env('***REMOVED***'),
-         'secret' => env('***REMOVED***'),
+         'key' => env('AWS_ACCESS_KEY_ID'),
+         'secret' => env('AWS_SECRET_ACCESS_KEY'),
          'prefix' => env('SQS_PREFIX', 'https://sqs.us-east-1.amazonaws.com/your-account-id'),
          'queue' => env('SQS_QUEUE', 'default'),
          'suffix' => env('SQS_SUFFIX'),
@@ -65,7 +65,7 @@ return [
       'redis' => [
          'driver' => 'redis',
          'connection' => 'default',
-         'queue' => env('REDIS_QUEUE', 'UAThigh'),
+         'queue' => env('REDIS_QUEUE', 'high'),
          'retry_after' => 120,
          'block_for' => null,
          'after_commit' => false,

@@ -13,28 +13,34 @@ class NkanaServiceProvider extends ServiceProvider
    public function register(): void
    {
 
-      //Complaint Handlers
-         $this->app->singleton('Complaint_nkana', function () {
-            return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local::class);
+    //   //Complaint Handlers
+    //      $this->app->bind('Complaint_nkana', function () {
+    //         return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local::class);
+    //      });
+    //   //
+
+     //Complaint Handlers
+         $this->app->bind('Complaint_nkana', function () {
+            return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Nkana::class);
          });
       //
 
       //Billing Clients	PostPaid
-         $this->app->singleton('nkanaPostPaid', function () {
+         $this->app->bind('nkanaPostPaid', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\NkanaPostPaid::class);
          });
 
-         $this->app->singleton('ReceiptPostPaidNkana', function () {
+         $this->app->bind('ReceiptPostPaidNkana', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidNkana::class);
          });
       //
 
       //Billing Clients	PrePaid
-         $this->app->singleton('nkanaPrePaid', function () {
+         $this->app->bind('nkanaPrePaid', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\NkanaPrePaid::class);
          });
 
-         $this->app->singleton('ReceiptPrePaidNkana', function () {
+         $this->app->bind('ReceiptPrePaidNkana', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPrePaidNkana::class);
          });
 

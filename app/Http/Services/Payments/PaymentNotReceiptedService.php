@@ -47,4 +47,33 @@ class PaymentNotReceiptedService
       
    }
 
+      public function receipt(array $criteria):array|null
+   {
+
+      try {
+         $user = Auth::user(); 
+         $criteria['client_id'] = $user->client_id;
+         $dto=(object)$criteria;
+         $dto->dateFrom = $dto->dateFrom." 00:00:00";
+         $dto->dateTo = $dto->dateTo." 23:59:59";
+         $records = DB::table('payments as p')
+                        ->join('client_wallets as cw','p.wallet_id','=','cw.id')
+                        ->join('clients as c','cw.client_id','=','c.id')
+                        ->select('p.*');
+         if($dto->dateFrom && $dto->dateTo){
+            $records =$records->where('p.created_at', '>=', $dto->dateFrom)
+                              ->where('p.created_at', '<=',$dto->dateTo);
+         }
+         $records = $records->whereIn('p.paymentStatus', [PaymentStatusEnum::Paid->value])
+                              ->where('c.id', '=', $dto->client_id)
+                              ->orderByDesc('p.created_at')->get()
+                              ;
+         return $records->all();
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+      
+   }
+
+
 }

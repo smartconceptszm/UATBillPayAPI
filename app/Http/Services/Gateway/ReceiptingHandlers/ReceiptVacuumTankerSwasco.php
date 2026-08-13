@@ -42,7 +42,7 @@ class ReceiptVacuumTankerSwasco implements IReceiptPayment
 									'paymentType'=>"12",
 									'receiptType'=>"01"
 								];
-		$billingResponse = $this->billingClient->postPayment($receiptingParams);
+		$billingResponse = $this->billingClient->postVacuumTanker($receiptingParams);
 		if($billingResponse['status'] == 'SUCCESS'){
 			$paymentDTO->receiptNumber = $billingResponse['receiptNumber'];
 			$paymentDTO->paymentStatus = PaymentStatusEnum::Receipted->value;

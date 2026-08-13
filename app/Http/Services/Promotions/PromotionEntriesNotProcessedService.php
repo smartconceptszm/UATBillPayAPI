@@ -34,28 +34,26 @@ class PromotionEntriesNotProcessedService
          $dto->dateFrom = $dto->dateFrom." 00:00:00";
          $dto->dateTo = $dto->dateTo." 23:59:59";
 
+         $thePromotion = $this->promotionService->findById($dto->promotion_id);
+
          $records = DB::table('payments as p')
                         ->join('client_wallets as cw', 'p.wallet_id', '=', 'cw.id')
                         ->join('payments_providers as pp','cw.payments_provider_id','=','pp.id')
                         ->join('clients as c', 'c.id', '=', 'cw.client_id')
-                        ->join('promotion_menus as pm', 'pm.menu_id', '=', 'p.menu_id')
-                        ->join('promotions as pr', 'pr.id', '=', 'pm.promotion_id')
-                        ->join('client_menus as cm', 'cm.id', '=', 'pm.menu_id')
+                        ->join('client_menus as cm', 'cm.id', '=', 'p.menu_id')
                         ->leftJoin('promotion_entries as pe', 'p.id', '=', 'pe.payment_id')
-                        ->select('pe.id as entryId','p.*','pr.id as promotion_id','pr.name as promotion','pr.entryAmount',
-                                    'cm.prompt as paymentType','pp.shortName as paymentProvider')
+                        ->select('p.id','p.customerAccount','p.created_at','p.mobileNumber','cm.prompt as paymentType',
+                                    'p.receiptAmount','p.receiptNumber','p.tokenNumber','p.paymentStatus')
                         ->whereIn('p.paymentStatus', 
-                                 [PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
-                        ->where(function($query) {
-                                       $query->whereColumn('p.consumerType', '=', 'pr.consumerType')
-                                             ->orWhere('pr.consumerType', '=', 'ALL');
-                                 })
-                        ->whereColumn('p.paymentAmount','>=','pr.entryAmount')
+                                 [PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value]);
+         if($thePromotion->consumerType !== "ALL"){
+            $records = $records->where('p.consumerType', '=', $thePromotion->consumerType);
+         }
+
+         $records = $records->where('p.paymentAmount','>=',$thePromotion->entryAmount)
                         ->where('p.created_at', '>=', $dto->dateFrom)
                         ->where('p.created_at', '<=', $dto->dateTo)
                         ->where('c.id', $dto->client_id)
-                        ->where('pr.id', $dto->promotion_id)
-                        ->where('pr.status', 'ACTIVE')
                         ->whereNull('pe.id');
 
          $theSQLQuery = $records->toSql();

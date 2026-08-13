@@ -2,7 +2,8 @@
 
 namespace App\Http\Services\Gateway\PostPrePaidToBilling;
 
-use App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPrePaidChambeshi;
+// use App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPrePaidChambeshi;
+use App\Http\Services\Gateway\PostPrePaidToBilling\PostTokenToBilling;
 use App\Http\Services\Contracts\EfectivoPipelineContract;
 use App\Http\Services\Clients\ClientWalletService;
 use App\Http\Services\Enums\PaymentStatusEnum;
@@ -13,8 +14,9 @@ class Step_PostPaymentToBilling extends EfectivoPipelineContract
 {
 
    public function __construct(
-      private ReceiptPrePaidChambeshi $receiptPrePaidChambeshi,
+      // private ReceiptPrePaidChambeshi $receiptPrePaidChambeshi,
       private ClientWalletService $clientWalletService,
+      private PostTokenToBilling $posTokenToBilling,
       private MessageService $messageService)
    {}    
 
@@ -22,7 +24,11 @@ class Step_PostPaymentToBilling extends EfectivoPipelineContract
    {
       
       try {
-         $paymentDTO = $this->receiptPrePaidChambeshi->handle($paymentDTO);
+
+         // $paymentDTO = $this->receiptPrePaidChambeshi->handle($paymentDTO);
+
+         $paymentDTO = $this->posTokenToBilling->handle($paymentDTO);
+         
          $wallet = $this->clientWalletService->findById($paymentDTO->wallet_id);
          $theSMS = $this->messageService->findOneBy([
                                              'transaction_id' => $paymentDTO->transactionId,

@@ -67,6 +67,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
                Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
                Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
+               Route::post('/whatsapp', [\App\Http\Controllers\Chat\WhatsAppController::class, 'index'])->middleware('auth:efectivo');
             });
 
             Route::group(['prefix' => '/luapula'], function (){
@@ -167,7 +168,8 @@ Route::group(['middleware' => 'mode'], function (){
             });
 
             Route::put('paymentreceipts/{id}', [\App\Http\Controllers\Payments\PaymentWithReceiptToDeliverController::class, 'update']);
-            Route::post('batchpaymentreceipts', [\App\Http\Controllers\Payments\BatchReceiptController::class, 'store']);
+            Route::post('batchpaymentreceipts', [\App\Http\Controllers\Payments\BatchReceiptDeliveryController::class, 'store']);
+            Route::post('batchreceipts', [\App\Http\Controllers\Payments\BatchReceiptingController::class, 'store']);
 
             Route::get('failedpayments', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'index']);
             Route::put('failedpayments/{id}', [\App\Http\Controllers\Payments\PaymentFailedController::class, 'update']);
@@ -200,6 +202,7 @@ Route::group(['middleware' => 'mode'], function (){
          
          //Promotion Related Routes
             Route::controller(\App\Http\Controllers\Promotions\PromotionController::class)->group(function () {
+               Route::get('/activepromotions', 'activePromotions');
                Route::get('/promotions/findoneby', 'findOneBy');
                Route::put('/promotions/{id}', 'update');
                Route::get('/promotions/{id}', 'show');

@@ -15,52 +15,52 @@ class ChambeshiServiceProvider extends ServiceProvider
 
 
       //USSD Menu Option Handlers
-         $this->app->singleton('ServiceApplications', function () {
+         $this->app->bind('ServiceApplications', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\ServiceApplications::class);
          });
       //
 
       //Complaint Handlers
-         $this->app->singleton('Complaint_chambeshi', function () {
+         $this->app->bind('Complaint_chambeshi', function () {
             return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local::class);
          });
       //
 
       //Customer Updates Handlers
-         $this->app->singleton('Updates_chambeshi', function () {
+         $this->app->bind('Updates_chambeshi', function () {
             return $this->app->make(\App\Http\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Local::class);
          });
       //
 
       //Survey Entry Handlers
-			$this->app->singleton('Survey_chambeshi', function () {
+			$this->app->bind('Survey_chambeshi', function () {
 				return $this->app->make(\App\Http\Services\USSD\Survey\ClientCallers\Survey_Local::class);
 			});
 		//
 
 
       //Service Application Handlers
-         $this->app->singleton('ServiceApplications_chambeshi', function () {
+         $this->app->bind('ServiceApplications_chambeshi', function () {
             return $this->app->make(\App\Http\Services\USSD\ServiceApplications\ClientCallers\ServiceApplication_Local::class);
          });
       //
 
       //Billing Clients	PostPaid		
-         $this->app->singleton('chambeshiPostPaid', function () {
+         $this->app->bind('chambeshiPostPaid', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\ChambeshiPostPaid::class);
          });
 
-         $this->app->singleton('ReceiptPostPaidChambeshi', function () {
+         $this->app->bind('ReceiptPostPaidChambeshi', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidChambeshi::class);
          });
       //
 
       //Billing Clients	PrePaid
-         $this->app->singleton('chambeshiPrePaid', function () {
+         $this->app->bind('chambeshiPrePaid', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\ChambeshiPrePaid::class);
          });
 
-         $this->app->singleton('ReceiptPrePaidChambeshi', function () {
+         $this->app->bind('ReceiptPrePaidChambeshi', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPrePaidChambeshi::class);
          });
 

@@ -114,7 +114,6 @@ class SwascoPostPaid implements IBillingClient
                                  'source' => 1,
                                  'receiptType' => $postParams['receiptType']
                               ];
-
          $apiResponse = $this->swascoSoapService->PostCustomerReceipt($receiptingParams);
          if($apiResponse->return_value){
             $response['status']="SUCCESS";
@@ -227,7 +226,7 @@ class SwascoPostPaid implements IBillingClient
       
    }
 
-   public function _postReconnection(Array $postParams): array 
+   public function postReconnection(Array $postParams): array 
    {
 
       $response = [
@@ -244,12 +243,12 @@ class SwascoPostPaid implements IBillingClient
          $theDate = $theDate->format('Y-m-d');
 
          $receiptingParams =  [ 
-                                 'referenceNumber' => $postParams['referenceNumber'],
                                  'accountNumber' => $postParams['account'],
-                                 'sourcePhoneNumber' => $postParams['mobileNumber'],
-                                 'paymentType' => $postParams['paymentType'],
                                  'creditAmount' => $postParams['amount'],
+                                 'paymentType' => $postParams['paymentType'],
                                  'paymentDate' => $theDate,
+                                 'referenceNumber' => $postParams['referenceNumber'],
+                                 'sourcePhoneNumber' => $postParams['mobileNumber'],
                                  'source' => 1,
                                  'receiptType' => $postParams['receiptType'],
                                  'username' => $this->soapUserName,
@@ -265,6 +264,7 @@ class SwascoPostPaid implements IBillingClient
          }else{
             throw new Exception("SWASCO Billing Client Post Reconnection Payment error: ",1);
          }
+
       } catch (\Throwable $e) {
          if ($e->getCode() == 1) {
             $response['error']=$e->getMessage();
@@ -277,7 +277,7 @@ class SwascoPostPaid implements IBillingClient
 
    }
 
-   public function _postVacuumTanker(Array $postParams): array 
+   public function postVacuumTanker(Array $postParams): array 
    {
 
       $response = [
@@ -294,12 +294,12 @@ class SwascoPostPaid implements IBillingClient
          $theDate = $theDate->format('Y-m-d');
 
          $receiptingParams =  [ 
-                                 'referenceNumber' => $postParams['referenceNumber'],
                                  'accountNumber' => $postParams['account'],
-                                 'sourcePhoneNumber' => $postParams['mobileNumber'],
-                                 'paymentType' => $postParams['paymentType'],
                                  'creditAmount' => $postParams['amount'],
+                                 'paymentType' => $postParams['paymentType'],
                                  'paymentDate' => $theDate,
+                                 'referenceNumber' => $postParams['referenceNumber'],
+                                 'sourcePhoneNumber' => $postParams['mobileNumber'],
                                  'source' => 1,
                                  'receiptType' => $postParams['receiptType'],
                                  'username' => $this->soapUserName,

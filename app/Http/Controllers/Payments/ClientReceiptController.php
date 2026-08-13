@@ -10,7 +10,8 @@ class ClientReceiptController extends Controller
 {
 
    private $validationRules = [  
-                              'id' => 'required|string',
+                              'receiptingType' => 'required|string',
+                              'id' => 'required|string'
                            ];
 
 	public function __construct(

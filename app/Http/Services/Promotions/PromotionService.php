@@ -44,20 +44,16 @@ class PromotionService
       }
    }
 
-   public function findActivePromotion(string $client_id, string $consumerType) : object|null {
+   public function findActivePromotion(string $client_id) : object|null {
       try {
          $record = DB::table('promotions')
                         ->select('*')
                         ->where('client_id', '=', $client_id)
-                        ->where(function($query) use($consumerType){
-                                       $query->where('consumerType', '=', $consumerType)
-                                             ->orWhere('consumerType', '=', 'ALL');
-                                 })
                         ->where('status', '=', "ACTIVE")
                         ->whereDate('startDate','<=',Carbon::now())
                         ->whereDate('endDate','>=',Carbon::now())
                         ->first();
-         return $record;
+            return $record;
       } catch (\Throwable $e) {
          throw new Exception($e->getMessage());
       }

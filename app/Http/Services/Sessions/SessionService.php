@@ -42,6 +42,16 @@ class SessionService
       }
    }
 
+   public function findLatestBy(array $criteria) : object|null {
+      try {
+         $item = $this->model->where($criteria)->latest('created_at')->first();
+         $item = \is_null($item)?null:(object)$item->toArray();
+         return $item;
+      } catch (\Throwable $e) {
+         throw new Exception($e->getMessage());
+      }
+   }
+
    public function create(array $data) : object|null {
       try {
          foreach ( $data as $key => $value) {

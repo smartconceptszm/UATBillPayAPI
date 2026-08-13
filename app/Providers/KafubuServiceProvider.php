@@ -19,11 +19,11 @@ class KafubuServiceProvider extends ServiceProvider
       //
 
       //Billing Clients - POST PAID
-         $this->app->singleton('kafubuPostPaid', function () {
+         $this->app->bind('kafubuPostPaid', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\KafubuPostPaid::class);
          });
 
-         $this->app->singleton('ReceiptPostPaidKafubu', function () {
+         $this->app->bind('ReceiptPostPaidKafubu', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidKafubu::class);
          });
 
@@ -33,13 +33,13 @@ class KafubuServiceProvider extends ServiceProvider
       //
       
       //Complaint Handlers
-         $this->app->singleton('Complaint_kafubu', function () {
+         $this->app->bind('Complaint_kafubu', function () {
             return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local::class);
          });
       //
 
       //Customer Updates Handlers
-         $this->app->singleton('Updates_kafubu', function () {
+         $this->app->bind('Updates_kafubu', function () {
             return $this->app->make(\App\Http\Services\USSD\UpdateDetails\ClientCallers\UpdateDetails_Local::class);
          });
       //

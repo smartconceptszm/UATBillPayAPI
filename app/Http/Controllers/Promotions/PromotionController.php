@@ -95,6 +95,25 @@ class PromotionController extends Controller
    }
 
    /**
+    * Display a listing of the resource.
+   */
+  public function activePromotions(Request $request, Authenticatable $user)
+  {
+
+     try {
+        $params = $request->query();
+        $params['client_id'] = $user->client_id;
+        $this->response['data'] =  $this->promotionService->findActivePromotion( $user->client_id);
+     } catch (\Throwable $e) {
+           $this->response['status']['code'] = 500;
+           $this->response['status']['message'] = $e->getMessage();
+     }
+     return response()->json( $this->response);
+
+  }
+
+
+   /**
     * Update the specified resource in storage.
       */
    public function update(Request $request, string $id)

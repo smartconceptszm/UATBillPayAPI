@@ -14,23 +14,23 @@ class MazabukaServiceProvider extends ServiceProvider
 	{
 
 		//Billing Clients			
-			$this->app->singleton('mazabukaLocalCommonAccount', function () {
+			$this->app->bind('mazabukaLocalCommonAccount', function () {
 				return $this->app->make(\App\Http\Services\External\BillingClients\MazabukaLocal::class);
 			});
 
-			$this->app->singleton('mazabukaRemoteCommonAccount', function () {
+			$this->app->bind('mazabukaRemoteCommonAccount', function () {
 				return $this->app->make(\App\Http\Services\External\BillingClients\MazabukaOnCommonAccount::class);
 			});
 
-			$this->app->singleton('mazabukaRemoteCustomerAccount', function () {
+			$this->app->bind('mazabukaRemoteCustomerAccount', function () {
 				return $this->app->make(\App\Http\Services\External\BillingClients\MazabukaOnCustomerAccount::class);
 			});
 
-			$this->app->singleton('ReceiptMazabukaOnCommonAccount', function () {
+			$this->app->bind('ReceiptMazabukaOnCommonAccount', function () {
 				return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptMazabukaOnCommonAccount::class);
 			});
 
-			$this->app->singleton('ReceiptMazabukaOnCustomerAccount', function () {
+			$this->app->bind('ReceiptMazabukaOnCustomerAccount', function () {
 				return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptMazabukaOnCustomerAccount::class);
 			});
 		//

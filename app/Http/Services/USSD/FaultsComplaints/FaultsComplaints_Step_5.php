@@ -59,7 +59,7 @@ class FaultsComplaints_Step_5
          $theSubType = $this->cSubTypeService->findOneBy([
                         'complaint_type_id'=>$theComplaint->id,
                         'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-2]
-                     ]); 
+                     ]);
          if($theSubType->requiresDetails == 'YES'){
             $complaintInfo = \end($arrCustomerJourney);
          }else{
@@ -88,8 +88,10 @@ class FaultsComplaints_Step_5
                                  'details'=>$complaintInfo,
                                  'session_id'=>$txDTO->id
                               ];
-            $caseNumber = $this->complaintClient->create($complaintData);
-            $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".$caseNumber; 
+            $caseResponse = $this->complaintClient->create($complaintData);
+            $caseResponseObject = json_decode($caseResponse);
+            $caseNumber = $caseResponseObject->complaintNum->complaintNum;
+            $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".$caseNumber;
             $txDTO->status =  USSDStatusEnum::Completed->value;
          }else{
             $txDTO->error = "'".$theSubType->name."' complaint already lodged under Account: '".
@@ -100,7 +102,7 @@ class FaultsComplaints_Step_5
       } catch (\Throwable $e) {
          $txDTO->error = 'At complaints step 5. '.$e->getMessage();
          $txDTO->errorType = USSDStatusEnum::SystemError->value;
-      }                                             
+      }
       return $txDTO;
 
    }

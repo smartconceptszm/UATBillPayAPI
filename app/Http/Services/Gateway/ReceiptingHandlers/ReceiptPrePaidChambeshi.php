@@ -29,19 +29,21 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 		$newBalance = "0";
 		if(!$paymentDTO->customer){
 			$paymentDTO = $this->chambeshiEnquiry->handle($paymentDTO);
-			$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) -
+			$newBalance = (float)(\str_replace(",", "", $paymentDTO->customer['balance'])) - 
 						(float)$paymentDTO->receiptAmount;
 			$newBalance = \number_format($newBalance, 2, '.', ',');
 		}
-
-		if( $paymentDTO->tokenNumber == '' && $paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value){
+		
+		if( $paymentDTO->tokenNumber == '' && $paymentDTO->paymentStatus == PaymentStatusEnum::NoToken->value){				
 			$tokenParams = [
-										"total_paid" => $paymentDTO->receiptAmount,
+										"total_paid" => $paymentDTO->receiptAmount, 
 										"meter_number"=> $paymentDTO->customerAccount,
 										'client_id'=>$paymentDTO->client_id,
 										"debt_percent"=> 50
 									];
+
 			$tokenResponse=$this->billingClient->generateToken($tokenParams);
+
 			if($tokenResponse['status']=='SUCCESS'){
 				$paymentDTO->paymentStatus = PaymentStatusEnum::Paid->value;
 				$paymentDTO->tokenNumber = $tokenResponse['tokenNumber'];
@@ -51,10 +53,12 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 											"Token: ". $paymentDTO->tokenNumber . "\n".
 											"Date: " . Carbon::now()->format('d-M-Y') . "\n";
 				//Post the Payment to the Billing System
+
 				$billpaySettings = \json_decode(Cache::get('billpaySettings',\json_encode([])), true);
+
 				PostThePrePaidToBillingJob::dispatch($paymentDTO)
                                  ->delay(Carbon::now()->addMinutes((int)$billpaySettings['PAYMENT_REVIEW_DELAY']))
-                                 ->onQueue('UATlow');
+                                 ->onQueue('low');
 
 			}else{
 				$paymentDTO->error = $tokenResponse['error'];
@@ -62,9 +66,13 @@ class ReceiptPrePaidChambeshi implements IReceiptPayment
 		}else if($paymentDTO->paymentStatus == PaymentStatusEnum::Paid->value){
 
 			$theMenu = $this->clientMenuService->findById($paymentDTO->menu_id);
+
 			$receiptingParams = $this->postLocalReceipt->handle($paymentDTO,$theMenu);
+
 			$billingResponse = $this->billingClient->postPayment($receiptingParams);
+
 			$paymentDTO->receiptNumber =  $receiptingParams['ReceiptNo'];
+			
 			if($billingResponse['status']=='SUCCESS'){
 				$paymentDTO->paymentStatus =  PaymentStatusEnum::Receipted->value;
 			}else{

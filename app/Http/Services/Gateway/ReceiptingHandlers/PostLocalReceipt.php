@@ -19,6 +19,7 @@ class PostLocalReceipt
    {
 
       try {
+         
 			$receipt = $this->receiptService->findOneBy([
                                     'client_id'=>$paymentDTO->client_id,
                                     'payment_id'=>$paymentDTO->id
@@ -31,6 +32,7 @@ class PostLocalReceipt
                               'payment_id'=>$paymentDTO->id
                            ]);
          }
+
          $paymentDTO->receiptNumber =  $receipt->id;
 
          switch ($theMenu->paymentType) {
@@ -54,10 +56,12 @@ class PostLocalReceipt
             $account = $paymentDTO->customerAccount;
          }
 
+         $theDate = Carbon::parse($paymentDTO->created_at);
+
          $receiptingParams = [
                               "payment_provider" => strtolower($paymentDTO->walletHandler).'_money', 
                               "payer_msisdn"=> $paymentDTO->mobileNumber, 
-                              "txnDate"=> Carbon::now()->format('Y-m-d'),
+                              "txnDate"=> $theDate->format('Y-m-d'),
                               "ReceiptNo"=> $paymentDTO->receiptNumber,
                               "amount" => $paymentDTO->receiptAmount,
                               "txnId"=> $paymentDTO->transactionId,

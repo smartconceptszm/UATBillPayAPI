@@ -17,7 +17,7 @@ class CompositePaymentAllocationService
                               $join->on('cc.client_id', '=', 'cr.client_id')
                                  ->on('cc.customerAccount', '=', 'cr.customerAccount');
                         })
-                     ->select('cr.*','cc.customerAddress','cc.customerName')
+                     ->select('cr.*','cc.customerAddress','cc.customerName','cc.balance')
                      ->where('p.id', '=', $id)
                      ->get();
       } catch (\Throwable $e) {

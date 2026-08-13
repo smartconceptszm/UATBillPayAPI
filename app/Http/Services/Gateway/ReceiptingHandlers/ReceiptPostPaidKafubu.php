@@ -18,16 +18,21 @@ class ReceiptPostPaidKafubu implements IReceiptPayment
     public function handle(BaseDTO $paymentDTO):BaseDTO
     {
       
+		$theDate = Carbon::parse($paymentDTO->created_at);
+		
 		$receiptingParams = [ 
 									'balance' => $paymentDTO->customer?(float)(\str_replace(",", "", $paymentDTO->customer['balance'])):0,
-									'providerName'=>$paymentDTO->walletHandler,
+									'receiptingType' => $paymentDTO->receiptingType,
 									'reference' => $paymentDTO->ppTransactionId,
+									'providerName'=>$paymentDTO->walletHandler,
 									'account' => $paymentDTO->customerAccount,
 									'amount' => $paymentDTO->receiptAmount,
+									'recDate' => $theDate->format('Ymd'),
 									'client_id'=>$paymentDTO->client_id
 								];
 
 		$billingResponse=$this->billingClient->postPayment($receiptingParams);
+		
 		if($billingResponse['status']=='SUCCESS'){
 				$paymentDTO->receiptNumber=$billingResponse['receiptNumber'];
 				$paymentDTO->paymentStatus =  PaymentStatusEnum::Receipted->value;
@@ -35,7 +40,7 @@ class ReceiptPostPaidKafubu implements IReceiptPayment
 											"Rcpt No: " . $paymentDTO->receiptNumber . "\n" .
 											"Amount: ZMW " . \number_format($paymentDTO->receiptAmount, 2, '.', ',') . "\n".
 											"Acc: " . $paymentDTO->customerAccount . "\n";
-				$paymentDTO->receipt.="Date: " . Carbon::now()->format('d-M-Y') . "\n";
+				$paymentDTO->receipt.="Date: " . $theDate->format('d-M-Y') . "\n";
 		}else{
 				$paymentDTO->error = "At receipt payment. ".$billingResponse['error'];
 		}

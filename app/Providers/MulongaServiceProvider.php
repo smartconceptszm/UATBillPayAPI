@@ -14,38 +14,48 @@ class MulongaServiceProvider extends ServiceProvider
    {
 
       //Billing Clients	PostPaid		
-         $this->app->singleton('MulongaPostPaid', function () {
+         $this->app->bind('MulongaPostPaid', function () {
             return $this->app->make(\App\Http\Services\External\BillingClients\MulongaPostPaid::class);
          });
 
-         $this->app->singleton('ReceiptPostPaidMulonga', function () {
+         $this->app->bind('ReceiptPostPaidMulonga', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidMulonga::class);
          });
 
-         $this->app->singleton('ReceiptBulkWaterSalesMulonga', function () {
+         $this->app->bind('ReceiptOtherPaymentsMulonga', function () {
+            return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptOtherPaymentsMulonga::class);
+         });
+
+         $this->app->bind('ReceiptBulkWaterSalesMulonga', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptBulkWaterSalesMulonga::class);
          });
 
-         $this->app->singleton('ReceiptVacuumTankerMulonga', function () {
+         $this->app->bind('ReceiptVacuumTankerMulonga', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptVacuumTankerMulonga::class);
          });
          
-         $this->app->singleton('ReceiptHireWaterBowserMulonga', function () {
+         $this->app->bind('ReceiptHireWaterBowserMulonga', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptHireWaterBowserMulonga::class);
          });
 
-         $this->app->singleton('ReceiptUnblockingSewerMulonga', function () {
+         $this->app->bind('ReceiptUnblockingSewerMulonga', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptUnblockingSewerMulonga::class);
          });
 
-         $this->app->singleton('ReceiptNewWaterConnectionMulonga', function () {
+         $this->app->bind('ReceiptNewWaterConnectionMulonga', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptNewWaterConnectionMulonga::class);
          });
 
-         $this->app->singleton('ReceiptNewSewerConnectionMulonga', function () {
+         $this->app->bind('ReceiptNewSewerConnectionMulonga', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptNewSewerConnectionMulonga::class);
          });
          
+      //
+
+      //Complaint Handlers
+         $this->app->bind('Complaint_mulonga', function () {
+            return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local::class);
+         });
       //
 
       

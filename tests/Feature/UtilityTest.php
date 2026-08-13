@@ -3,7 +3,8 @@
 namespace Tests\Feature;
 
 // use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Models\DashboardPaymentStatusTotals;
+use App\Http\Services\Payments\BatchReceiptingService;
+
 use Tests\TestCase;
 
 class UtilityTest extends TestCase
@@ -15,24 +16,14 @@ class UtilityTest extends TestCase
    public function _test_new_code(): void
    {
       
-      $theService = new  \App\Http\Services\Promotions\PromotionEntriesNotProcessedService(
-                              new \App\Http\Services\Promotions\ProcessPromotionService(),
-                              new \App\Http\Services\Payments\PaymentToReviewService(),
-                              new \App\Http\Services\Promotions\PromotionService(new \App\Models\Promotion()),
-                              new \App\Http\DTOs\PromotionDTO(),
-                              new \App\Http\DTOs\MoMoDTO()
-                           );
-      
-      $response = $theService->findAll([
-                                    'client_id' => '9eb01c2c-21d6-4bf7-9f88-d2150e9134e9',
-                                    'dateFrom' => '2025-06-05',
-                                    'dateTo' => '2025-07-31',
-                                 ]);
+      $params = [
+         'client_id'=>'a1ca6f8c-240b-11ef-98b6-0a3595084709',
+         'dateFrom' => "2025-09-15",
+         'dateTo' => "2025-09-30",
+      ];
 
-      foreach ($response as $payment) {
-         $response2 = $theService->processEntry($payment->id,$payment->promotion_id);
-      }
-
+      $theClass = new BatchReceiptingService();
+      $response = $theClass->create($params);
       $this->assertTrue($response);
 
    }
@@ -43,24 +34,6 @@ class UtilityTest extends TestCase
    public function _test_a_feature(): void
    {
 
-
-      $currentEntries = DashboardPaymentStatusTotals::where([
-                                          ['dateOfTransaction', '=', '2024-10-24'],
-                                          ['client_id', '=', '39d6269a-7303-11ee-b8ce-fec6e52a2330'],
-                                       ])
-                                       ->pluck('id')
-                                       ->toArray();
-
-      DashboardPaymentStatusTotals::destroy($currentEntries);
-
-      $currentEntries = DashboardPaymentStatusTotals::where([
-                                                               ['dateOfTransaction', '=', '2024-10-24'],
-                                                               ['client_id', '=', '39d6269a-7303-11ee-b8ce-fec6e52a2330'],
-                                                            ])
-                                                            ->pluck('id')
-                                                            ->toArray();
-
-      $this->assertTrue($currentEntries);
 
    }
 

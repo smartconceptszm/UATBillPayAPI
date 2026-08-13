@@ -115,8 +115,8 @@ class RaffleDrawEntryController extends Controller
          $params = [
                      'promotion_id' => $request->input('promotion_id'),
                      'theMonth' => $request->input('theMonth'),
-                     'from' => $request->input('from'),
-                     'to' => $request->input('to')
+                     'from' => $request->input('dateFrom'),
+                     'to' => $request->input('dateTo')
                      ];
          $this->response['data'] =  $this->raffleDrawEntryService->drawRandom($params);
 
