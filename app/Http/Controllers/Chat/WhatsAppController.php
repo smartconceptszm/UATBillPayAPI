@@ -50,7 +50,7 @@ class WhatsAppController extends Controller
          //mobileNumber forever means a customer's second-ever conversation collides with the
          //row from their first and fails to save.
          $lastSession = $this->sessionService->findLatestBy(['mobileNumber' => $whatsAppParams['mobileNumber']]);
-         $whatsAppParams['isNewRequest'] = $this->isNewSession($lastSession) ? '1' : '0';
+         $whatsAppParams['isNewRequest'] = $this->isNewSession($lastSession, $whatsAppParams['urlPrefix']) ? '1' : '0';
          $whatsAppParams['sessionId'] = $whatsAppParams['isNewRequest'] === '1'
             ? $whatsAppParams['mobileNumber'].'-'.\now()->format('YmdHisv')
             : $lastSession->sessionId;
@@ -76,12 +76,12 @@ class WhatsAppController extends Controller
 
    /**
     * WhatsApp has no telecom-managed session, so we infer "new vs continuing" from the
-    * sessions table: no row, or one older than SESSION_CACHE minutes, means new.
-    * A message sent moments after a just-completed conversation will still read
-    * as "continuing" under this heuristic - the same limitation any purely
+    * sessions table: no row, or one older than WHATSAPP_SESSION_CACHE_<CLIENT> minutes,
+    * means new. A message sent moments after a just-completed conversation will still
+    * read as "continuing" under this heuristic - the same limitation any purely
     * time-based inference has without a telecom session boundary to anchor to.
     */
-   private function isNewSession(?object $lastSession): bool
+   private function isNewSession(?object $lastSession, string $urlPrefix): bool
    {
 
       if (!$lastSession) {
@@ -89,11 +89,17 @@ class WhatsAppController extends Controller
       }
 
       $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
-      $sessionCacheMinutes = \intval($billpaySettings['SESSION_CACHE'] ?? 5);
+      //Kept separate from the shared SESSION_CACHE - that setting also governs the
+      //back-button cache and several USSD flow timeouts (Step_TrimResponse, MakePayment,
+      //Survey, ...), so tuning WhatsApp's conversation-continuity window independently
+      //would otherwise ripple into unrelated USSD behaviour. Falls back to SESSION_CACHE
+      //when no WhatsApp-specific value has been configured for this client yet.
+      $key = 'WHATSAPP_SESSION_CACHE_' . \strtoupper($urlPrefix);
+      $sessionCacheMinutes = \intval($billpaySettings[$key] ?? $billpaySettings['SESSION_CACHE'] ?? 5);
 
       //sessions.updated_at round-trips through MySQL as a UTC-equivalent value, not
       //APP_TIMEZONE (Africa/Lusaka) - parsing it without saying so makes every session
-      //look ~2 hours older than it is, which is enough to blow past SESSION_CACHE on
+      //look ~2 hours older than it is, which is enough to blow past the cache window on
       //every single request regardless of how fast the customer actually replies.
       return Carbon::parse($lastSession->updated_at, 'UTC')->addMinutes($sessionCacheMinutes)->isPast();
 
