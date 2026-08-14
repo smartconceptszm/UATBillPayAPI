@@ -34,12 +34,17 @@ Route::group(['middleware' => 'mode'], function (){
       Route::post('/login', [\App\Http\Controllers\Auth\UserLoginController::class,'store']);
       Route::post('/passwordreset', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'store']);
       Route::put('/passwordreset/{id}', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'update']);
+
    //End
 
-   //USSD Routes
+   //USSD Route * Chat Bot Routes
       Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
       Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
       Route::get('/mtn',[\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
+      //Not nested under a client prefix - the alias-based nginx routing (e.g. /UAT/kafubu/*)
+      //strips the client segment before Laravel ever sees the path, so a prefixed route here
+      //never matches. urlPrefix comes from the request body instead (see WhatsAppController).
+      Route::post('/whatsapp', [\App\Http\Controllers\Chat\WhatsAppController::class, 'index'])->middleware('auth:efectivo');
       //DEV Routes to Simulate /clientPrefix/mno
             Route::group(['prefix' => '/swasco'], function (){
                Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
@@ -67,7 +72,6 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
                Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
                Route::get('/mtn', [\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
-               Route::post('/whatsapp', [\App\Http\Controllers\Chat\WhatsAppController::class, 'index'])->middleware('auth:efectivo');
             });
 
             Route::group(['prefix' => '/luapula'], function (){
@@ -124,7 +128,7 @@ Route::group(['middleware' => 'mode'], function (){
    //End
 
    // AUTHENTICATED Routes
-      Route::group(['middleware' => 'auth'], function (){                                                                                             
+      Route::group(['middleware' => 'auth'], function (){
 
          //Analaytics
             Route::get('summarydashboard', [\App\Http\Controllers\Analytics\TopTierDashboardController::class, 'index']);
@@ -177,7 +181,7 @@ Route::group(['middleware' => 'mode'], function (){
 
             Route::get('submittedpayments', [\App\Http\Controllers\Payments\PaymentSubmittedController::class, 'index']);
             Route::put('submittedpayments/{id}', [\App\Http\Controllers\Payments\PaymentSubmittedController::class, 'update']);
-            
+
             Route::get('paymentsessions', [\App\Http\Controllers\Payments\PaymentSessionController::class, 'index']);
             Route::get('auditedpayments', [\App\Http\Controllers\Payments\PaymentSessionController::class, 'audited']);
             Route::get('sessionpayment', [\App\Http\Controllers\Payments\PaymentController::class, 'findOneBy']);
@@ -199,7 +203,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/auditedpayments', 'index');
             });
          //
-         
+
          //Promotion Related Routes
             Route::controller(\App\Http\Controllers\Promotions\PromotionController::class)->group(function () {
                Route::get('/activepromotions', 'activePromotions');
@@ -337,7 +341,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/clients', 'index');
             });
          //
-      
+
          //Client Billing Credentials
             Route::controller(\App\Http\Controllers\Clients\BillingCredentialController::class)->group(function () {
                Route::get('/billingcredentials/findoneby', 'findOneBy');
@@ -350,7 +354,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/billingcredentialsofclient/{id}', 'credentialsofclient');
             });
          //
-               
+
          //Menus
             Route::get('rootmenu', [\App\Http\Controllers\Clients\ClientMenuController::class,'findOneBy']);
             Route::controller(\App\Http\Controllers\Clients\ClientMenuController::class)->group(function () {
@@ -366,7 +370,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/submenusofclient/{id}', 'subMenus');
             });
          //
-      
+
          //MNOs
             Route::controller(\App\Http\Controllers\Clients\MNOController::class)->group(function () {
                Route::get('/mnos/findoneby', 'findOneBy');
@@ -447,7 +451,7 @@ Route::group(['middleware' => 'mode'], function (){
             Route::controller(\App\Http\Controllers\Clients\PaymentsProviderCredentialController::class)->group(function () {
                Route::get('/credentialsofpaymentsprovider/{id}', 'credentialsofpaymentsprovider');
             });
-         //  
+         //
 
          //Client Wallets
             Route::controller(\App\Http\Controllers\Clients\ClientWalletController::class)->group(function () {
@@ -459,7 +463,7 @@ Route::group(['middleware' => 'mode'], function (){
             });
             Route::controller(\App\Http\Controllers\Clients\ClientWalletController::class)->group(function () {
                Route::get('/walletsofclient/{id}', 'walletsofclient');
-            });   
+            });
          //
 
          //Client Wallet Credentials
@@ -485,7 +489,7 @@ Route::group(['middleware' => 'mode'], function (){
             });
             Route::controller(\App\Http\Controllers\Clients\ClientSMSChannelController::class)->group(function () {
                Route::get('/smschannelsofclient/{id}', 'smschannelsofclient');
-            });   
+            });
          //
 
          //Aggregated Client
@@ -499,8 +503,8 @@ Route::group(['middleware' => 'mode'], function (){
             Route::controller(\App\Http\Controllers\Clients\AggregatedClientController::class)->group(function () {
                Route::get('/clientsofaggregator/{id}', 'clientsofaggregator');
             });
-         //  
-   
+         //
+
          //Client Revenue Points
             Route::controller(\App\Http\Controllers\Clients\ClientRevenuePointController::class)->group(function () {
                Route::get('/revenuepoints/findoneby', 'findOneBy');
@@ -512,7 +516,7 @@ Route::group(['middleware' => 'mode'], function (){
             Route::controller(\App\Http\Controllers\Clients\ClientRevenuePointController::class)->group(function () {
                Route::get('/revenuepointsofclient/{client_id}', 'revenuePointsOfClient');
             });
-         // 
+         //
 
          //ClientCustomers
             Route::controller(\App\Http\Controllers\Clients\ClientCustomerController::class)->group(function () {
@@ -549,7 +553,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/complainttypes', 'index');
             });
          //
-         
+
          //Complaint Sub Types
             Route::controller(\App\Http\Controllers\MenuConfigs\ComplaintSubTypeController::class)->group(function () {
                Route::get('/complaintsubtypes/findoneby', 'findOneBy');
@@ -625,7 +629,7 @@ Route::group(['middleware' => 'mode'], function (){
 
          //
 
-         // Sessions 
+         // Sessions
             Route::controller(\App\Http\Controllers\Sessions\SessionController::class)->group(function () {
                Route::get('/sessions', 'index');
                Route::get('/sessions/{id}', 'show');
@@ -645,8 +649,8 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //
 
-         // RBAC ROUTES 
-            Route::get('usersofclient/{id}', [\App\Http\Controllers\Auth\UsersOfClientController::class, 'index']);      
+         // RBAC ROUTES
+            Route::get('usersofclient/{id}', [\App\Http\Controllers\Auth\UsersOfClientController::class, 'index']);
             Route::get('groupsofuser/{id}', [\App\Http\Controllers\Auth\GroupsOfUserController::class, 'index']);
             Route::get('groupsofclient/{id}', [\App\Http\Controllers\Auth\GroupsOfClientController::class, 'index']);
             Route::get('rightsofgroup/{id}', [\App\Http\Controllers\Auth\RightsOfGroupController::class, 'index']);
@@ -698,8 +702,8 @@ Route::group(['middleware' => 'mode'], function (){
 
             Route::delete('/logout', [\App\Http\Controllers\Auth\UserLogoutController::class,'destroy']);
          //
-         
+
       });
    //
-   
+
 });
