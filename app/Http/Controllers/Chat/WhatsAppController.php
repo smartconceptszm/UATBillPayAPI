@@ -65,7 +65,7 @@ class WhatsAppController extends Controller
          $this->ussdDTO->response = $billpaySettings['ERROR_MESSAGE'] ?? 'Service temporarily unavailable, please try again later.';
          $this->ussdDTO->lastResponse = true;
       }
-      return $this->responder();
+      return $this->responder($request);
 
    }
 
@@ -105,8 +105,12 @@ class WhatsAppController extends Controller
 
    }
 
-   private function responder()
+   private function responder(Request $request)
    {
+      //For Terminate Middleware - without this, FireMoMoRequestMiddleware::terminate()
+      //never sees fireMoMoRequest and the mobile money charge is never actually requested,
+      //even though the customer is told a PIN prompt is on its way.
+      $request->merge(['ussdParams' => $this->ussdDTO->toArray()]);
       return response()->json([
          'response' => $this->ussdDTO->response,
          'lastResponse' => (bool) $this->ussdDTO->lastResponse,
