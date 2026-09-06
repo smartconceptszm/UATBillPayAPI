@@ -40,16 +40,21 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'api' => [
-            'driver' => 'jwt',
-            'provider' => 'users',
-            'hash' => false,
-        ],
         'efectivo' => [
             'driver' => 'jwt',
             'provider' => 'efectivo',
             'hash' => false,
         ],
+        'apiuser' => [
+            'driver' => 'jwt',
+            'provider' => 'apiuser',
+            'hash' => false,
+        ],
+        'apiclient' => [
+            'driver' => 'jwt',
+            'provider' => 'apiclient',
+            'hash' => false,
+        ]
     ],
 
     /*
@@ -78,10 +83,14 @@ return [
             'driver' => 'UserLogin',
             'table' => 'users',
         ],
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'apiclient' => [
+            'driver' => 'APIClientLogin',
+            'table' => 'api_clients',
+        ],
+        'apiuser' => [
+            'driver' => 'APIUserLogin',
+            'table' => 'api_users',
+        ],
     ],
 
     /*

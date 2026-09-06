@@ -15,10 +15,10 @@ class FaultsComplaints_Step_4
 {
 
    public function __construct(
-      private ValidateCRMInput $validateInput,
       private ComplaintSubTypeService $cSubTypeService,
       private ClientMenuService $clientMenuService,
-      private ComplaintTypeService $cTypeService
+      private ComplaintTypeService $cTypeService,
+      private ValidateCRMInput $validateInput,
    ){}
 
    public function run(BaseDTO $txDTO)

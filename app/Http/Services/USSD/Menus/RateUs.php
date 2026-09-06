@@ -4,7 +4,6 @@ namespace App\Http\Services\USSD\Menus;
 
 use App\Http\Services\USSD\Menus\IUSSDMenu;
 use App\Http\Services\Enums\USSDStatusEnum;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Jobs\SendSMSesJob;
 use App\Http\DTOs\BaseDTO;
@@ -36,7 +35,10 @@ class RateUs implements IUSSDMenu
    {
 
        // Add invisible zero-width character between https and ://
-      $shortUrl = 'https:%2F%2Fforms.cloud.microsoft%2FPages%2FResponsePage.aspx?id=8HzNLBQQEEmbDtSgokbZ838zR7I1gSBPqn5HhreChZlUMVJaOFE5RjRaUlIxUEtZMkhUVUQ0SUIxNi4u'; // Pre-create this once
+      $billpaySettings = \json_decode(cache('billpaySettings',\json_encode([])), true);
+      $key = 'RATE_US_URL_' . \strtoupper($txDTO->urlPrefix);
+      $shortUrl = $billpaySettings[$key];
+
       $arrSMSes = [
                [
                   'mobileNumber' => $txDTO->mobileNumber,
@@ -55,6 +57,3 @@ class RateUs implements IUSSDMenu
    }
 
 }
-
-  // 'message' => 'Kndly Rate us via "https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=8HzNLBQQEEmbDtSgokbZ838zR7I1gSBPqn5HhreChZlUMVJaOFE5RjRaUlIxUEtZMkhUVUQ0SUIxNi4u"',
-// 'message' => "Thank you for using our service. Please click on the link to rate us: https://tinyurl.com/2dey7a9l",

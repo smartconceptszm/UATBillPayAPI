@@ -20,7 +20,7 @@ class UserLoginService
 	{
 
 		// try {
-			if (!$token = Auth::attempt($dto->credentials())) {
+			if (!$token = Auth::guard('efectivo')->attempt($dto->credentials())) {
 					throw new AuthenticationException("Invalid username and/or password. Try again!");
 			}
 			$user = Auth::user(); 

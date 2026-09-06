@@ -13,15 +13,9 @@ class NkanaServiceProvider extends ServiceProvider
    public function register(): void
    {
 
-    //   //Complaint Handlers
-    //      $this->app->bind('Complaint_nkana', function () {
-    //         return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local::class);
-    //      });
-    //   //
-
-     //Complaint Handlers
+      //Complaint Handlers
          $this->app->bind('Complaint_nkana', function () {
-            return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Nkana::class);
+            return $this->app->make(\App\Http\Services\USSD\FaultsComplaints\ClientCallers\Complaint_Local::class);
          });
       //
 
@@ -30,8 +24,20 @@ class NkanaServiceProvider extends ServiceProvider
             return $this->app->make(\App\Http\Services\External\BillingClients\NkanaPostPaid::class);
          });
 
+         $this->app->bind('nkanaPostPaidV2', function () {
+            return $this->app->make(\App\Http\Services\External\BillingClients\NkanaPostPaidV2::class);
+         });
+
          $this->app->bind('ReceiptPostPaidNkana', function () {
             return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidNkana::class);
+         });
+
+         $this->app->bind('ReceiptPostPaidNkanaV2', function () {
+            return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptPostPaidNkanaV2::class);
+         });
+
+         $this->app->bind('ReceiptServiceConnectionNkana', function () {
+            return $this->app->make(\App\Http\Services\Gateway\ReceiptingHandlers\ReceiptServiceConnectionNkana::class);
          });
       //
 

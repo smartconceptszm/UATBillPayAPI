@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Chat;
 
-use App\Http\Controllers\Controller;
-use App\Http\Services\USSD\USSDService;
 use App\Http\Services\Sessions\SessionService;
 use App\Http\Services\Clients\MnoService;
+use App\Http\Services\USSD\USSDService;
+use App\Http\Controllers\Controller;
 use App\Http\Services\Enums\MNOs;
-use App\Http\DTOs\UssdDTO;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Http\Request;
+use App\Http\DTOs\UssdDTO;
 
 class WhatsAppController extends Controller
 {
@@ -34,6 +34,8 @@ class WhatsAppController extends Controller
          //The chatbot's own request tells us which client (nkana, kafubu, ...) this is for -
          //there's no per-client URL to derive it from, unlike the USSD channels.
          $whatsAppParams['urlPrefix'] = \trim((string) ($requestParams['urlPrefix'] ?? ''));
+
+         $whatsAppParams['channel'] = "WHATSAPP";
 
          //No telecom gateway to tell us the MNO either, so derive it from the MSISDN prefix,
          //same as SMSService does for the same reason.

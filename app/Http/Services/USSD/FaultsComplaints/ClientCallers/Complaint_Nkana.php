@@ -8,7 +8,7 @@ use Exception;
 
 class Complaint_Nkana implements IComplaintClient
 {
-
+   
    public function __construct(
       private IBillingClient $billingClient)
    {}
@@ -17,19 +17,21 @@ class Complaint_Nkana implements IComplaintClient
    {
 
       try{
+         
          return $this->billingClient->postComplaint([
-                              'custkey' => $complaintData["customerAccount"],
-                              'complaintDescription' => $complaintData["complaint_subtype_id"],
-                              'clientPhoneNumber' => $complaintData["mobileNumber"],
-                              'created_at' => $complaintData['created_at'],
+                              'complaintDescription' => $complaintData['complaintCode'].
+                                                         " - ".$complaintData['complaintTypeName'].
+                                                         " - ".$complaintData['complaintSubTypeName'],
+                              'clientPhoneNumber' => $complaintData['mobileNumber'],
+                              'custkey' => $complaintData['customerAccount'],
+                              'postPaid' =>  $complaintData['postPaid'],
                               'client_id' => $complaintData['client_id']
                            ]);
+
       } catch (\Throwable $e) {
          throw new Exception('At Post customer complaint. '.$e->getMessage());
-      }
+      }                                             
 
    }
 
 }
-
-

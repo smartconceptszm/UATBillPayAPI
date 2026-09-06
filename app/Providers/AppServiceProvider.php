@@ -214,13 +214,6 @@ class AppServiceProvider extends ServiceProvider
          //
       //
 
-      //Menu Rate Us
-         $this->app->bind('RateUs', function () {
-            return $this->app->make(\App\Http\Services\USSD\Menus\RateUs::class);
-         });
-         //
-      //
-
       //Menu UpdateDetails
          $this->app->bind('UpdateDetails', function () {
             return $this->app->make(\App\Http\Services\USSD\Menus\UpdateDetails::class);
@@ -269,6 +262,12 @@ class AppServiceProvider extends ServiceProvider
 				});
 			//
 		//
+
+      //Menu Rate Us
+         $this->app->bind('RateUs', function () {
+            return $this->app->make(\App\Http\Services\USSD\Menus\RateUs::class);
+         });
+      //
 
       //Billing Clients
          $this->app->bind('ReceiptingMock', function () {
@@ -330,6 +329,15 @@ class AppServiceProvider extends ServiceProvider
 				});
          $this->app->bind('MockWallet', function () {
                return $this->app->make(\App\Http\Services\External\PaymentsProviderClients\MockWallet::class);
+				});
+      //
+
+      //Initiate API Payments
+         $this->app->bind('MOMO', function () {
+            return $this->app->make(\App\Http\Services\PublicAPI\InitiateMoMoAPIPaymentService::class);
+				});
+			$this->app->bind('CARD', function () {
+               return $this->app->make(\App\Http\Services\PublicAPI\InitiateCardAPIPaymentService::class);
 				});
       //
 
@@ -411,6 +419,9 @@ class AppServiceProvider extends ServiceProvider
          });
          $this->app->bind('PaymentProviderSummaryUserView', function () {
             return $this->app->make(\App\Http\Services\Analytics\Views\PaymentProviderSummaryUserViewService::class);
+         });
+         $this->app->bind('ChannelView', function () {
+            return $this->app->make(\App\Http\Services\Analytics\Views\ChannelViewService::class);
          });
       //
       

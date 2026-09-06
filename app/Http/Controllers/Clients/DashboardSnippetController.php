@@ -13,8 +13,7 @@ class DashboardSnippetController extends Controller
                'name' => 'required',
                'title' => 'required',
                'type' => 'required',
-               'generateHandler' => 'required',
-               'viewHandler' => 'required',
+               'generateHandler' => 'required'
             ];
 	public function __construct(
 		private DashboardSnippetService $dashboardSnippetService)

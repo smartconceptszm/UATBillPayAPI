@@ -11,6 +11,7 @@ use App\Models\DashboardRevenuePointTotals;
 use App\Models\DashboardConsumerTierTotals;
 use App\Models\DashboardConsumerTypeTotals;
 use App\Models\DashboardPaymentTypeTotals;
+use App\Models\DashboardChannelTotals;
 use App\Models\DashboardHourlyTotals;
 use App\Http\Services\Auth\UserService;
 use Illuminate\Support\Facades\Log;
@@ -321,6 +322,46 @@ class AnalyticsGeneratorService
             DashboardRevenuePointTotals::upsert(
                      $revenuePointTotalRecords,
                      ['client_id','revenuePoint', 'dateOfTransaction'],
+                     ['numberOfTransactions','totalAmount','year','month','day']
+                  );
+         //
+
+         //Step 9 Generate Channel transactions totals
+            $channelTotals = DB::table('payments as p')
+                                    ->join('client_wallets as cw','p.wallet_id','=','cw.id')
+                                    ->select(DB::raw('p.channel,
+                                                         COUNT(p.id) AS numberOfTransactions,
+                                                            SUM(p.receiptAmount) as totalAmount'))
+                                    ->where('p.created_at', '>=' ,$params['dateFrom'])
+                                    ->where('p.created_at', '<=', $params['dateTo'])
+                                    ->whereIn('p.paymentStatus', 
+                                             [PaymentStatusEnum::NoToken->value,PaymentStatusEnum::Paid->value,
+                                                PaymentStatusEnum::Receipted->value,PaymentStatusEnum::Receipt_Delivered->value])
+                                    ->where('cw.client_id', '=', $params['client_id'])
+                                    ->groupBy('p.channel')
+                                    ->get();
+
+            $channelTotalRecords =[];
+            foreach ($channelTotals as $channelTotal) {
+               $channel = $channelTotal->channel? $channelTotal->channel:"OTHER";
+               $channelTotalRecords[] = ['client_id' => $params['client_id'],'month' => $params['theMonth'],'day' => $params['theDay'], 
+                                             'numberOfTransactions' => $channelTotal->numberOfTransactions,
+                                             'totalAmount'=>$channelTotal->totalAmount, 'year' => $params['theYear'], 
+                                             'dateOfTransaction' => $theDate->format('Y-m-d'),'channel' => $channel];
+            }
+
+            $currentEntries = DashboardChannelTotals::where([
+                        ['dateOfTransaction', '=', $theDate->format('Y-m-d')],
+                        ['client_id', '=', $params['client_id']],
+                     ])
+                     ->pluck('id')
+                     ->toArray();
+
+            DashboardChannelTotals::destroy($currentEntries);
+
+            DashboardChannelTotals::upsert(
+                     $channelTotalRecords,
+                     ['client_id','channel', 'dateOfTransaction'],
                      ['numberOfTransactions','totalAmount','year','month','day']
                   );
          //

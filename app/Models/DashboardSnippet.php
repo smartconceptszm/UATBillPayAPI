@@ -13,7 +13,7 @@ class DashboardSnippet extends Model
    protected $table = "dashboard_snippets";
 
    protected $fillable = [
-         'name','title','type','generateHandler','viewHandler'
+         'name','title','type','generateHandler'
       ];
 
    protected $casts = [

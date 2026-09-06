@@ -7,7 +7,6 @@ use App\Http\Services\Payments\PaymentHistoryService;
 use App\Http\Services\Enums\USSDStatusEnum;
 use Illuminate\Support\Carbon;
 use App\Http\DTOs\BaseDTO;
-use Exception;
 
 class GetTokens_Step_2
 {
@@ -34,7 +33,7 @@ class GetTokens_Step_2
 				foreach ($tokens as $key=>$token) {
 					
 					$prompt .= ($key+1).". ".$token->tokenNumber.
-									//" ".Carbon::parse($token->created_at)->format('d-M-Y').
+									" ".Carbon::parse($token->created_at)->format('d-M-Y H:i:s').
 									" ZMW ".number_format($token->receiptAmount, 2, '.', ',')."\n";
 				}
 				$txDTO->response = $prompt;

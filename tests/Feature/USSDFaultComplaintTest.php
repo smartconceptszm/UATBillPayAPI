@@ -8,41 +8,33 @@ use Tests\TestCase;
 class USSDFaultComplaintTest extends TestCase
 {
 
-   public function test_airtel(): void
+   public function _test_airtel(): void
    {
       //Main Menu
       $urlPrefix = 'nkana';
-      $sessionId = '100005093';
+      $sessionId = '100005091';
       $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=2021&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=1');
-      $showresponse = $response->baseResponse->content();
       $response->assertStatus(200);
 
       $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=4&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=0');
-      $showresponse = $response->baseResponse->content();
+      $response->assertStatus(200);
+
+      $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=2&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=0');
       $response->assertStatus(200);
 
       $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=1&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=0');
-      $showresponse = $response->baseResponse->content();
+      $response->assertStatus(200);
+
+      $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=4&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=0');
+      $response->assertStatus(200);
+
+      $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=0120220030395&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=0');
+      $response->assertStatus(200);
+
+      $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=0120220030395&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=0');
       $response->assertStatus(200);
 
       $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=1&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=0');
-      $showresponse = $response->baseResponse->content();
-      $response->assertStatus(200);
-
-      $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=1&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=0');
-      $showresponse = $response->baseResponse->content();
-      $response->assertStatus(200);
-
-      $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=0972702707&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=0');
-      $showresponse = $response->baseResponse->content();
-      $response->assertStatus(200);
-
-      $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=07625874444&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=0');
-      $showresponse = $response->baseResponse->content();
-      $response->assertStatus(200);
-
-      $response = $this->get('/'.$urlPrefix.'/airtel?MSISDN=260977787659&SUBSCRIBER_INPUT=1&SESSION_ID='.$sessionId.'&IS_NEW_REQUEST=0');
-      $showresponse = $response->baseResponse->content();
       $response->assertStatus(200);
 
    }

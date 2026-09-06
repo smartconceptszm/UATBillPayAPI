@@ -46,6 +46,7 @@ class UssdDTO extends BaseDTO
    public $response;
    public $mnoName;
    public $handler;
+   public $channel;
    public $menu_id;
    public $mno_id;
    public $status = 'INITIATED';

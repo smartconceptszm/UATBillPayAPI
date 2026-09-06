@@ -20,9 +20,9 @@ class ChambeshiPostPaid implements IBillingClient
                               "LUW"=>"Luwingu",
                               "MBA"=>"Mbala",
                               "MPI"=>"Mpika", 
-                              "MPU"=>"Mpika", 
+                              "MPU"=>"Mpulungu", 
                               "MPO"=>"Mporokoso", 
-                              "MUN"=>"Mpulungu", 
+                              "MUN"=>"Mungwi", 
                               "NAK"=>"Nakonde"
                            ];
 

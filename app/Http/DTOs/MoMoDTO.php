@@ -17,7 +17,9 @@ class MoMoDTO extends PaymentDTO
       $this->walletNumber = $ussdParams['mobileNumber'];
       $this->session_id = $ussdParams['id'];
       $this->status = 'INITIATED';
-      $this->channel = "USSD";
+      if($this->channel == ""){
+         $this->channel = "USSD";
+      }
       $this->sms = [];
       return $this;
    }

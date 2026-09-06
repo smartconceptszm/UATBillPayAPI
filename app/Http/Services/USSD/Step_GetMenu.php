@@ -45,9 +45,8 @@ class Step_GetMenu extends EfectivoPipelineContract
       }
 
       App::bind(\App\Http\Services\USSD\Menus\IUSSDMenu::class,$txDTO->handler);
-
       return $txDTO;
-
+      
    }
 
 }

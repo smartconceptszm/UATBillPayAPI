@@ -6,6 +6,7 @@ use App\Http\Services\USSD\FaultsComplaints\ClientCallers\IComplaintClient;
 use App\Http\Services\MenuConfigs\ComplaintSubTypeService;
 use App\Http\Services\External\BillingClients\EnquiryHandler;
 use App\Http\Services\MenuConfigs\ComplaintTypeService;
+use App\Http\Services\Clients\ClientMenuService;
 use App\Http\Services\Payments\PaymentService;
 use App\Http\Services\CRM\ComplaintService;
 use App\Http\Services\Enums\USSDStatusEnum;
@@ -16,6 +17,7 @@ class FaultsComplaints_Step_5
 
    public function __construct(
       private ComplaintSubTypeService $cSubTypeService,
+      private ClientMenuService $clientMenuService,
       private ComplaintService $complaintService,
       private EnquiryHandler $getCustomerAccount,
       private ComplaintTypeService $cTypeService,
@@ -26,21 +28,28 @@ class FaultsComplaints_Step_5
    public function run(BaseDTO $txDTO)
    {
 
+
       try{
 
          $arrCustomerJourney=\explode("*", $txDTO->customerJourney);
          $txDTO->subscriberInput = \str_replace(" ", "", $txDTO->subscriberInput);
          $txDTO->customerAccount = $txDTO->subscriberInput;
+         $postPaid = "YES";
 
          try {
 
-            $latestPayment = $this->paymentService->findOneBy(['customerAccount' => $txDTO->customerAccount]);
-            if($latestPayment){
-               $txDTO->paymentAmount =  \str_replace(",", "",$latestPayment->paymentAmount);
+            $clientMenu = $this->clientMenuService->findById($txDTO->menu_id);
+            if($clientMenu->paymentType == "PRE-PAID"){
+               $postPaid = "NO";
+               $latestPayment = $this->paymentService->findOneBy(['customerAccount' => $txDTO->customerAccount]);
+               if($latestPayment){
+                  $txDTO->paymentAmount =  \str_replace(",", "",$latestPayment->paymentAmount);
+               }
+               if(!$txDTO->paymentAmount){
+                  $txDTO->paymentAmount = '100';
+               }
             }
-            if(!$txDTO->paymentAmount){
-               $txDTO->paymentAmount = '100';
-            }
+
             $txDTO = $this->getCustomerAccount->handle($txDTO);
          } catch (\Throwable $e) {
             if($e->getCode()==1){
@@ -59,7 +68,7 @@ class FaultsComplaints_Step_5
          $theSubType = $this->cSubTypeService->findOneBy([
                         'complaint_type_id'=>$theComplaint->id,
                         'order'=>$arrCustomerJourney[\count($arrCustomerJourney)-2]
-                     ]);
+                     ]); 
          if($theSubType->requiresDetails == 'YES'){
             $complaintInfo = \end($arrCustomerJourney);
          }else{
@@ -74,6 +83,8 @@ class FaultsComplaints_Step_5
                                        ]);
          if(!$activeComplaint){
             $complaintData = [
+                                 'complaintSubTypeName' => $theSubType->name,
+                                 'complaintTypeName' => $theComplaint->name,
                                  'customerAccount'=>$txDTO->customerAccount,
                                  'address'=> $txDTO->customer['address'],
                                  'complaint_subtype_id'=>$theSubType->id,
@@ -86,12 +97,11 @@ class FaultsComplaints_Step_5
                                  'client_id'=>$txDTO->client_id,
                                  'urlPrefix'=>$txDTO->urlPrefix,
                                  'details'=>$complaintInfo,
-                                 'session_id'=>$txDTO->id
+                                 'session_id'=>$txDTO->id,
+                                 'potPaid' => $postPaid
                               ];
-            $caseResponse = $this->complaintClient->create($complaintData);
-            $caseResponseObject = json_decode($caseResponse);
-            $caseNumber = $caseResponseObject->complaintNum->complaintNum;
-            $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".$caseNumber;
+            $caseNumber = $this->complaintClient->create($complaintData);
+            $txDTO->response = "Complaint(Fault) successfully submitted. Case number: ".$caseNumber; 
             $txDTO->status =  USSDStatusEnum::Completed->value;
          }else{
             $txDTO->error = "'".$theSubType->name."' complaint already lodged under Account: '".
@@ -102,7 +112,7 @@ class FaultsComplaints_Step_5
       } catch (\Throwable $e) {
          $txDTO->error = 'At complaints step 5. '.$e->getMessage();
          $txDTO->errorType = USSDStatusEnum::SystemError->value;
-      }
+      }                                             
       return $txDTO;
 
    }

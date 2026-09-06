@@ -5,6 +5,8 @@ namespace App\Providers;
 // use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
+use App\Models\APIClientLogin;
+use App\Models\APIUserLogin;
 use App\Models\UserLogin;
 
 class AuthServiceProvider extends ServiceProvider
@@ -24,6 +26,12 @@ class AuthServiceProvider extends ServiceProvider
 	public function boot(): void
 	{
 		// add custom guard provider 
+		Auth::provider('APIClientLogin', function ($app, array $config) {
+			return new APIClientLogin($app['hash'],$config['table']);
+		});
+		Auth::provider('APIUserLogin', function ($app, array $config) {
+			return new APIUserLogin($app['hash'],$config['table']);
+		});
 		Auth::provider('UserLogin', function ($app, array $config) {
 			return new UserLogin($app['hash'],$config['table']);
 		});

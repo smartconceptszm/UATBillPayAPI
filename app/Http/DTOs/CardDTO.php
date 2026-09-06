@@ -17,7 +17,9 @@ class CardDTO extends PaymentDTO
       }
       $this->session_id = $sessionParams['id'];
       $this->status = 'INITIATED';
-      $this->channel = "WEBSITE";
+      if($this->channel == ""){
+         $this->channel = "WEBSITE";
+      }
       $this->sms = [];
       return $this;
       

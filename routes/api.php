@@ -34,17 +34,28 @@ Route::group(['middleware' => 'mode'], function (){
       Route::post('/login', [\App\Http\Controllers\Auth\UserLoginController::class,'store']);
       Route::post('/passwordreset', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'store']);
       Route::put('/passwordreset/{id}', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'update']);
-
    //End
 
-   //USSD Route * Chat Bot Routes
+   //DEV Portal Routes
+      Route::post('/dev/apiclients', [\App\Http\Controllers\Auth\APIClientController::class,'store']);
+      Route::post('/dev/apiclient/login', [\App\Http\Controllers\Auth\APIClientLoginController::class,'store']);
+      
+      Route::post('/dev/apiuser/login', [\App\Http\Controllers\Auth\APIUserLoginController::class,'store']);
+
+      Route::post('dev/apiclient/passwordreset', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'store']);
+      Route::put('dev/apiclient/passwordreset/{id}', [\App\Http\Controllers\Auth\UserPasswordResetController::class,'update']);
+   //
+
+   //USSD Routes
       Route::get('/airtel', [\App\Http\Controllers\USSD\USSDAirtelController::class, 'index']);
       Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
       Route::get('/mtn',[\App\Http\Controllers\USSD\USSDMTNController::class, 'index']);
+
       //Not nested under a client prefix - the alias-based nginx routing (e.g. /UAT/kafubu/*)
       //strips the client segment before Laravel ever sees the path, so a prefixed route here
       //never matches. urlPrefix comes from the request body instead (see WhatsAppController).
       Route::post('/whatsapp', [\App\Http\Controllers\Chat\WhatsAppController::class, 'index'])->middleware('auth:efectivo');
+
       //DEV Routes to Simulate /clientPrefix/mno
             Route::group(['prefix' => '/swasco'], function (){
                Route::get('/Zamtel', [\App\Http\Controllers\USSD\USSDZamtelController::class, 'index']);
@@ -127,8 +138,8 @@ Route::group(['middleware' => 'mode'], function (){
       Route::get('/app/compositepaymentallocations/{id}', [\App\Http\Controllers\Payments\CompositePaymentAllocationController::class, 'index']);
    //End
 
-   // AUTHENTICATED Routes
-      Route::group(['middleware' => 'auth'], function (){
+   // AUTHENTICATED  INTERNAL API Routes
+      Route::group(['middleware' => 'auth'], function (){                                                                                             
 
          //Analaytics
             Route::get('summarydashboard', [\App\Http\Controllers\Analytics\TopTierDashboardController::class, 'index']);
@@ -181,7 +192,7 @@ Route::group(['middleware' => 'mode'], function (){
 
             Route::get('submittedpayments', [\App\Http\Controllers\Payments\PaymentSubmittedController::class, 'index']);
             Route::put('submittedpayments/{id}', [\App\Http\Controllers\Payments\PaymentSubmittedController::class, 'update']);
-
+            
             Route::get('paymentsessions', [\App\Http\Controllers\Payments\PaymentSessionController::class, 'index']);
             Route::get('auditedpayments', [\App\Http\Controllers\Payments\PaymentSessionController::class, 'audited']);
             Route::get('sessionpayment', [\App\Http\Controllers\Payments\PaymentController::class, 'findOneBy']);
@@ -203,7 +214,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/auditedpayments', 'index');
             });
          //
-
+         
          //Promotion Related Routes
             Route::controller(\App\Http\Controllers\Promotions\PromotionController::class)->group(function () {
                Route::get('/activepromotions', 'activePromotions');
@@ -286,6 +297,8 @@ Route::group(['middleware' => 'mode'], function (){
             Route::get('payments/consumertiers/summary', [\App\Http\Controllers\Payments\PaymentsByConsumerTierController::class, 'summary']);
             Route::get('payments/consumertypes/all', [\App\Http\Controllers\Payments\PaymentsByConsumerTypeController::class, 'index']);
             Route::get('payments/consumertypes/summary', [\App\Http\Controllers\Payments\PaymentsByConsumerTypeController::class, 'summary']);
+            Route::get('payments/channel/all', [\App\Http\Controllers\Payments\PaymentsByChannelController::class, 'index']);
+            Route::get('payments/channel/summary', [\App\Http\Controllers\Payments\PaymentsByChannelController::class, 'summary']);
             Route::get('payments/providers/all', [\App\Http\Controllers\Payments\PaymentsByProviderController::class, 'index']);
             Route::get('payments/providers/summary', [\App\Http\Controllers\Payments\PaymentsByProviderController::class, 'summary']);
             Route::get('payments/collectors/all', [\App\Http\Controllers\Payments\PaymentsByRevenueCollectorController::class, 'index']);
@@ -342,6 +355,20 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //
 
+         //API Clients
+
+            Route::controller(\App\Http\Controllers\Auth\APIClientController::class)->group(function () {
+               Route::get('/apiclients/findoneby', 'findOneBy');
+               Route::put('/apiclients/{id}', 'update');
+               Route::get('/apiclients/{id}', 'show');
+               Route::post('/apiclients', 'store');
+               Route::get('/apiclients', 'index');
+            });
+
+            Route::get('apiusersofapiclient/{id}', [\App\Http\Controllers\Auth\APIUsersOfAPIClientController::class, 'index']);  
+
+         //
+      
          //Client Billing Credentials
             Route::controller(\App\Http\Controllers\Clients\BillingCredentialController::class)->group(function () {
                Route::get('/billingcredentials/findoneby', 'findOneBy');
@@ -354,7 +381,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/billingcredentialsofclient/{id}', 'credentialsofclient');
             });
          //
-
+               
          //Menus
             Route::get('rootmenu', [\App\Http\Controllers\Clients\ClientMenuController::class,'findOneBy']);
             Route::controller(\App\Http\Controllers\Clients\ClientMenuController::class)->group(function () {
@@ -370,7 +397,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/submenusofclient/{id}', 'subMenus');
             });
          //
-
+      
          //MNOs
             Route::controller(\App\Http\Controllers\Clients\MNOController::class)->group(function () {
                Route::get('/mnos/findoneby', 'findOneBy');
@@ -451,7 +478,7 @@ Route::group(['middleware' => 'mode'], function (){
             Route::controller(\App\Http\Controllers\Clients\PaymentsProviderCredentialController::class)->group(function () {
                Route::get('/credentialsofpaymentsprovider/{id}', 'credentialsofpaymentsprovider');
             });
-         //
+         //  
 
          //Client Wallets
             Route::controller(\App\Http\Controllers\Clients\ClientWalletController::class)->group(function () {
@@ -463,7 +490,7 @@ Route::group(['middleware' => 'mode'], function (){
             });
             Route::controller(\App\Http\Controllers\Clients\ClientWalletController::class)->group(function () {
                Route::get('/walletsofclient/{id}', 'walletsofclient');
-            });
+            });   
          //
 
          //Client Wallet Credentials
@@ -489,7 +516,7 @@ Route::group(['middleware' => 'mode'], function (){
             });
             Route::controller(\App\Http\Controllers\Clients\ClientSMSChannelController::class)->group(function () {
                Route::get('/smschannelsofclient/{id}', 'smschannelsofclient');
-            });
+            });   
          //
 
          //Aggregated Client
@@ -503,8 +530,8 @@ Route::group(['middleware' => 'mode'], function (){
             Route::controller(\App\Http\Controllers\Clients\AggregatedClientController::class)->group(function () {
                Route::get('/clientsofaggregator/{id}', 'clientsofaggregator');
             });
-         //
-
+         //  
+   
          //Client Revenue Points
             Route::controller(\App\Http\Controllers\Clients\ClientRevenuePointController::class)->group(function () {
                Route::get('/revenuepoints/findoneby', 'findOneBy');
@@ -516,7 +543,7 @@ Route::group(['middleware' => 'mode'], function (){
             Route::controller(\App\Http\Controllers\Clients\ClientRevenuePointController::class)->group(function () {
                Route::get('/revenuepointsofclient/{client_id}', 'revenuePointsOfClient');
             });
-         //
+         // 
 
          //ClientCustomers
             Route::controller(\App\Http\Controllers\Clients\ClientCustomerController::class)->group(function () {
@@ -553,7 +580,7 @@ Route::group(['middleware' => 'mode'], function (){
                Route::get('/complainttypes', 'index');
             });
          //
-
+         
          //Complaint Sub Types
             Route::controller(\App\Http\Controllers\MenuConfigs\ComplaintSubTypeController::class)->group(function () {
                Route::get('/complaintsubtypes/findoneby', 'findOneBy');
@@ -629,7 +656,7 @@ Route::group(['middleware' => 'mode'], function (){
 
          //
 
-         // Sessions
+         // Sessions 
             Route::controller(\App\Http\Controllers\Sessions\SessionController::class)->group(function () {
                Route::get('/sessions', 'index');
                Route::get('/sessions/{id}', 'show');
@@ -649,8 +676,8 @@ Route::group(['middleware' => 'mode'], function (){
             });
          //
 
-         // RBAC ROUTES
-            Route::get('usersofclient/{id}', [\App\Http\Controllers\Auth\UsersOfClientController::class, 'index']);
+         // RBAC ROUTES 
+            Route::get('usersofclient/{id}', [\App\Http\Controllers\Auth\UsersOfClientController::class, 'index']);      
             Route::get('groupsofuser/{id}', [\App\Http\Controllers\Auth\GroupsOfUserController::class, 'index']);
             Route::get('groupsofclient/{id}', [\App\Http\Controllers\Auth\GroupsOfClientController::class, 'index']);
             Route::get('rightsofgroup/{id}', [\App\Http\Controllers\Auth\RightsOfGroupController::class, 'index']);
@@ -702,8 +729,65 @@ Route::group(['middleware' => 'mode'], function (){
 
             Route::delete('/logout', [\App\Http\Controllers\Auth\UserLogoutController::class,'destroy']);
          //
-
+         
       });
    //
 
+   //AUTHENTICATED Dev Portal Routes
+      Route::group(['middleware' => 'auth:apiclient'], function (){  
+         
+         Route::get('dev/apiusersofapiclient/{id}', [\App\Http\Controllers\Auth\APIUsersOfAPIClientController::class, 'index']);
+
+         Route::controller(\App\Http\Controllers\Auth\APIClientController::class)->group(function () {
+            Route::get('/dev/apiclients/findoneby', 'findOneBy');
+            Route::put('/dev/apiclients/{id}', 'update');
+            Route::get('/dev/apiclients/{id}', 'show');
+            Route::get('/dev/apiclients', 'index');
+         });
+
+         Route::controller(\App\Http\Controllers\Auth\APIUserController::class)->group(function () {
+            Route::get('/dev/apiusers/findoneby', 'findOneBy');
+            Route::put('/dev/apiusers/{id}', 'update');
+            Route::get('/dev/apiusers/{id}', 'show');
+            Route::post('/dev/apiusers', 'store');
+            Route::get('/dev/apiusers', 'index');
+         });
+
+         //Clients/Service Providers
+         Route::controller(\App\Http\Controllers\Clients\ClientController::class)->group(function () {
+            Route::get('/dev/serviceproviders/{id}', 'show');
+            Route::get('/dev/serviceproviders', 'index');
+         });
+
+         //Payments Providers
+         Route::controller(\App\Http\Controllers\Clients\PaymentsProviderController::class)->group(function () {
+            Route::get('/dev/paymentsproviders/{id}', 'show');
+            Route::get('/dev/paymentsproviders', 'index');
+         });
+      });
+   //
+
+   //AUTHENTICATED Public API Routes
+
+      Route::group(['middleware' => 'auth:apiuser'], function (){  
+
+         Route::get('/pub/services', [\App\Http\Controllers\PublicAPI\PaymentsMenuController::class, 'index']);
+         Route::get('/pub/payments/{id}', [\App\Http\Controllers\PublicAPI\PaymentController::class, 'show']);
+
+         Route::group(['middleware' => 'api.customer'], function (){
+            Route::get('/pub/customers/{id}', [\App\Http\Controllers\PublicAPI\CustomerController::class, 'show']);
+         });
+
+         Route::group(['middleware' => 'api.payment.session'], function (){
+            Route::post('/pub/paymentsessions', [\App\Http\Controllers\PublicAPI\PaymentSessionController::class, 'store']);
+         });
+
+         Route::group(['middleware' => 'api.payment'], function (){
+            Route::post('/pub/payments', [\App\Http\Controllers\PublicAPI\PaymentController::class, 'store']);
+         });
+
+      });
+
+   //
+   
 });
